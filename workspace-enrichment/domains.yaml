@@ -1,0 +1,689 @@
+format: ai-engineer-workspace-enrichment/1
+schema_domains:
+  corpus: identity
+  temporal: temporal-facts
+  taxonomy: relationships
+  evidence: evidence
+  content: content
+  knowledge: knowledge-records
+  retrieval: retrieval
+  ranking: ranking
+  staging: staging
+  api: api-surface
+  orchestration: orchestration-ledger
+  knowledge_service: knowledge-service-runtime
+  research: research
+  evaluation: evaluation
+  curriculum: curriculum
+  observability: observability
+  provenance: provenance
+  public: research-starter-protected
+  util: api-surface
+  research_private: research-starter-protected
+domains:
+  - slug: identity
+    title: Identities
+    provenance: model_assisted
+    reviewed: null
+    aliases: [entity, canonical entity, aliases, identifiers]
+    schemas: [corpus]
+    relations: [corpus.entity, corpus.entity_alias, corpus.entity_identifier, corpus.entity_merge, taxonomy.entity_kind, corpus.organization, corpus.person, corpus.product, corpus.ai_model, corpus.ai_model_version, corpus.model_offering]
+    functions: [api.resolve_entity, api.entity_card]
+    tasks: [what-do-we-know-about-entity, resolve-or-create-entity, find-entity-by-identifier]
+    queries: [entity.resolve, entity.card, entity.by_identifier, entity.typed_row]
+    summary: One canonical row per industry identity; typed attributes live in corpus.<kind>.
+    body: |
+      `corpus.entity` is the identity. `kind` is a foreign key to `taxonomy.entity_kind` and
+      picks the typed child table (`canonical_schema` / `canonical_table`). Thirty-six kinds
+      share the composite key `(tenant_id, id, kind)`. Display name and slug live on the
+      identity row as projections; the authoritative name series is the
+      `temporal.stream_kind:entity_name` stream.
+
+      Resolve before creating. `q:entity.resolve` (`api.resolve_entity`) matches display
+      name, alias, and identifier value and returns at most 25 active rows. Prefer
+      `q:entity.by_identifier` when the source prints a schemed id: `(scheme, value)` is
+      unique per tenant. `q:entity.typed_row` joins the kind-dispatched child. `q:entity.card`
+      is the current overview for agents on `app_reader`.
+
+      Aliases are typed (`alias_kind` in synonym, acronym, former_name, handle, ticker, slug,
+      misspelling, translation, model_alias) and unique per entity, not globally. Identifiers
+      use a closed `scheme` check; unknown namespaces belong in `other`. Merges are
+      `corpus.entity_merge` rows: the loser becomes `lifecycle='merged'` with `merged_into_id`.
+      Resolve excludes merged rows.
+
+      Writers are `executor_service` only, and every entity needs `created_by_receipt_id`.
+      Agents author entity.create / entity.alias / entity.identifier proposals. If
+      resolve is ambiguous, use candidate.stage rather than guessing a new id. Common
+      traps: treating display_name as a unique key; inventing identifier schemes; creating
+      a `corpus.model_offering` without the parent `corpus.ai_model_version`.
+
+  - slug: relationships
+    title: Relationships
+    provenance: model_assisted
+    reviewed: null
+    aliases: [graph, edges, relationship kind]
+    schemas: [corpus, taxonomy]
+    relations: [corpus.relationship, taxonomy.relationship_kind, taxonomy.entity_kind, taxonomy.facet, taxonomy.term, taxonomy.assignment, corpus.media_appearance]
+    functions: [api.relationships, temporal.assert_relationship]
+    tasks: [assert-relationship, what-do-we-know-about-entity]
+    queries: [entity.relationships, relationships.current_by_kind, vocab.relationship_kind]
+    summary: One relationship table; kinds constrain endpoints and may carry a relationship_active stream.
+    body: |
+      `corpus.relationship` is the only edge table. `kind` references
+      `taxonomy.relationship_kind`, which lists `from_kinds`, `to_kinds`, whether the edge
+      is temporal, and a `property_schema`. Trigger `relationship_kinds` rejects illegal
+      endpoint kinds (SQLSTATE 23514). Current edges have `k_to` null; the unique current
+      key is `(tenant, kind, from, to, qualifier, episode)`.
+
+      Temporal kinds also need an active `relationship_active` stream on the relationship
+      subject. `api.relationships` and `api.current_relationships` hide temporal edges that
+      are not active at the requested world time. Non-temporal kinds (`offered_as`,
+      `version_of`, `founded`) are current whenever `k_to` is null.
+
+      Read with `q:entity.relationships` (direction both, outgoing, incoming) or
+      `q:relationships.current_by_kind`. Check `q:vocab.relationship_kind` before composing
+      a relationship.assert proposal. Properties must satisfy property_schema via
+      `temporal.payload_valid`. version_of additionally requires a matching pair
+      (product_version/product, ai_model_version/ai_model, and so on).
+
+      Facets and terms in `taxonomy` classify entities, knowledge records, or lessons
+      through `taxonomy.assignment`; they are not substitutes for relationship kinds.
+      `corpus.media_appearance` is a timed mention of an entity inside a media work, not a
+      `relationship` row. Agents never insert edges; `temporal.assert_relationship` runs as
+      `executor_service` inside a batch.
+
+  - slug: temporal-facts
+    title: Temporal facts (two clocks)
+    provenance: model_assisted
+    reviewed: null
+    aliases: [facts, two-clock, bitemporal, history, timeline, knowledge head, batch]
+    schemas: [temporal]
+    relations: [temporal.knowledge_head, temporal.knowledge_batch, temporal.extent, temporal.stream, temporal.segment, temporal.event, temporal.event_occurrence, temporal.stream_kind, temporal.event_kind]
+    functions: [temporal.begin_batch, temporal.commit_batch, temporal.make_extent, temporal.assert_state, temporal.assert_relationship, temporal.assert_event, temporal.close_segment, temporal.admit_support, temporal.withdraw_support, temporal.current_k, api.entity_at, api.entity_timeline, api.what_changed, api.knowledge_head]
+    tasks: [record-price-change, record-availability-change, supersede-stale-fact, what-changed-since-head, check-knowledge-head]
+    queries: [entity.at, entity.timeline, entity.what_changed, facts.current_by_stream, facts.history_for_stream, events.current_for_entity, vocab.stream_kind, vocab.event_kind, knowledge.head]
+    summary: A fact is a segment on a stream with a world interval and a knowledge interval.
+    body: |
+      A fact is a `temporal.segment` on a `temporal.stream`. The stream is
+      `(kind, subject_entity_id | subject_relationship_id, scope_key)`. The segment carries
+      world interval `valid_during` and knowledge interval `[k_from, k_to)`. Current means
+      `k_to is null`. "As the world was at T, as we knew at K" is `q:entity.at`.
+
+      `temporal.knowledge_head` is one row per tenant. `q:knowledge.head` reads it as
+      `app_reader` via `api.knowledge_head`. Writes open a batch with
+      `temporal.begin_batch(p_expected_head)`; a mismatch raises `rebase_required` (40001).
+      `temporal.commit_batch` seals the batch against a receipt, unique idempotency key,
+      and SHA-256 input digest, then validates stream slot rules (status, amount, unit,
+      currency, payload JSON Schema).
+
+      `temporal.assert_state` is a no-op when an identical current segment exists. Overlap
+      closes the old segment and re-inserts unaffected fragments with `replaces_segment_id`.
+      Two overlapping assertions in one batch are an error. `temporal_basis` explicit or
+      carry_forward requires a `temporal.extent`. Events are `temporal.event` plus a
+      current `temporal.event_occurrence`.
+
+      Traps: `api.current_facts` hides intervals that do not contain now() — use
+      `q:entity.at` for history and `q:entity.timeline` for unknown gaps. A new price series
+      defaults scope_key to the unit; an existing series keeps its own scope_key, so read
+      current facts before asserting a correction. Agents never DML temporal tables; they submit
+      fact.assert_state / event.assert intents.
+
+  - slug: evidence
+    title: Source and evidence lineage
+    provenance: model_assisted
+    reviewed: null
+    aliases: [claims, captures, locators, verification]
+    schemas: [evidence]
+    relations: [evidence.source, evidence.source_capture, evidence.locator, evidence.claim, evidence.claim_subject, evidence.segment_support, evidence.source_query, evidence.provider_result, evidence.source_encounter, evidence.capture_method]
+    functions: [temporal.admit_support, temporal.withdraw_support]
+    tasks: [admit-support-for-claim, what-do-we-know-about-entity, build-evidence-packet]
+    queries: [evidence.claims_for_entity, evidence.claim_support, evidence.captures_for_source, evidence.sources_by_domain]
+    summary: Source to capture to locator to claim; facts attach through segment_support.
+    body: |
+      Lineage is `evidence.source` → `evidence.source_capture` (artifact_id, content_sha256,
+      capture_method) → `evidence.locator` (selector, selected_content_sha256) →
+      `evidence.claim`. `evidence.claim_subject` names entities as subject, object, or
+      context. Canonical facts attach a `primary_claim_id` and, separately, k-stamped
+      `evidence.segment_support` rows that point at a segment or an event occurrence plus a
+      locator.
+
+      Discovery leads are `evidence.source_query` → `evidence.provider_result` →
+      `evidence.source_encounter`. Capture methods and search providers are vocabularies.
+      Verification runs, observations, seals and adjudication belong to the common
+      `knowledge_verification` component (withdrawn from this schema in 20261025010000).
+      A claim reaches `verified` only under a receipt bound to an admitted use decision,
+      with `research.use_admission` recorded in the same transaction.
+
+      app_reader cannot see evidence tables. Use `q:evidence.claims_for_entity` and
+      `q:evidence.claim_support` as pipeline_agent, or the claim/source slices inside
+      `q:entity.card`. Inserts into source/capture/locator/claim are permitted to
+      pipeline_agent and executor_service; `evidence.segment_support` is helper-only
+      (`temporal.admit_support`) and is stamped by `temporal.stamp_k`.
+
+      Traps: do not treat a verification filesystem run as already in `evidence.claim`.
+      Materialize cited claims first. Support role on the table is supports, challenges, or
+      context. Nine evidence tables are insert-only. Reach for
+      `q:evidence.claims_for_entity` when you already have an entity id, then
+      `q:evidence.claim_support` to see which segments that claim currently backs.
+      `admit-support-for-claim` is the write path; `build-evidence-packet` is the read
+      path that assembles locators for a question. Discovery queries
+      (`q:evidence.sources_by_domain`, `q:evidence.captures_for_source`) are how you
+      walk from a registrable domain to the bytes you would quote.
+
+  - slug: content
+    title: Documents and representations
+    provenance: model_assisted
+    reviewed: null
+    aliases: [documents, nodes, summaries, transformations]
+    schemas: [content]
+    relations: [content.document, content.document_version, content.document_representation, content.document_node, content.document_summary, content.document_summary_source, content.document_type, content.transformation_run, content.document_about_entity]
+    functions: [api.summary_evidence]
+    tasks: [build-evidence-packet]
+    queries: [retrieval.evidence_packet]
+    summary: Faithful documents, versions, nodes, and summaries with transformation lineage.
+    body: |
+      `content.document` is typed by `content.document_type` (family, default chunking,
+      default retrieval spaces). Versions and representations keep the bytes and parse
+      trees; `content.document_node` is the addressable unit (headings, table cells,
+      transcript windows with `start_ms` / `end_ms`). Summaries (`content.document_summary`)
+      must cite `content.document_summary_source` nodes so `api.summary_evidence` can expand
+      a summary into faithful nodes, chunks, and locators.
+
+      Transformations (`content.transformation_run` and kind vocabulary) record html_to_markdown,
+      asr_transcript, summarize, and similar steps. `content.document_about_entity` links a
+      document to corpus identities. Document types route into retrieval spaces; they are
+      not spaces themselves.
+
+      Agents read document structure when composing locators and packets. They do not
+      rewrite faithful content. New document kinds must be admitted into the routing
+      vocabulary before a foreign key is added. Runtime conversion evaluations live beside
+      the document tables and are not a write path for research agents.
+
+      Invariant: a summary without `content.document_summary_source` rows is not
+      expandable. Trap: treating a transcript window as a fact — the world interval
+      still lives on a `temporal.segment`; the node only locates the quote. Use
+      `q:retrieval.evidence_packet` and `build-evidence-packet` when a question needs
+      cited nodes, then follow `content.document_about_entity` to the corpus identity
+      those nodes are about. `api.summary_evidence` is the RPC that turns one summary
+      id into the faithful node and locator set.
+
+  - slug: knowledge-records
+    title: Knowledge records
+    provenance: model_assisted
+    reviewed: null
+    aliases: [engineering records, technical records]
+    schemas: [knowledge]
+    relations: [knowledge.record, knowledge.record_entity_link, knowledge.technical_problem, knowledge.solution_pattern, knowledge.implementation_example, knowledge.failure_mode, knowledge.assurance_level, knowledge.benchmark_result, knowledge.operational_practice, knowledge.security_consideration]
+    functions: []
+    tasks: [what-do-we-know-about-entity]
+    queries: [entity.card]
+    summary: Typed engineering records linked to entities, created only with a receipt.
+    body: |
+      `knowledge.record` is the identity of an engineering statement (kind, title,
+      statement, assurance_level, scope, provenance_claim_id). Nine typed children hold
+      problems, solution patterns, implementation examples, failure modes, benchmark
+      results, compatibility constraints, operational practices, security considerations,
+      and advanced usage patterns. `knowledge.record_entity_link` attaches records to
+      corpus entities.
+
+      Only `executor_service` creates records, and `created_by_receipt_id` is required.
+      `api.technical_record_search` exposes `knowledge.record` to `app_reader`. Assurance
+      vocabulary (`knowledge.assurance_level`) is shared with retrieval filters.
+
+      These records are not temporal segments. A price or availability fact belongs in
+      `temporal.segment`. A how-to-call-the-API pattern belongs here, linked to the
+      product or library entity and backed by a claim. Curriculum lessons point at these
+      typed rows through `curriculum.lesson_backed_by`. `knowledge.record_reconciliation`
+      remains for runtime repair of older records. Reach for this domain after
+      `q:entity.card` when the question is an engineering practice rather than a dated
+      world fact; then follow `knowledge.record_entity_link` to the subject entity.
+
+      Invariant: no record without `created_by_receipt_id`. Trap: writing a benchmark
+      number here when it is actually a `ranking.metric_observation` or a
+      `corpus.benchmark_run`. Agents do not DML these tables; they author a knowledge
+      record proposal after `what-do-we-know-about-entity` shows the linked identity.
+
+  - slug: retrieval
+    title: Vector retrieval
+    provenance: model_assisted
+    reviewed: null
+    aliases: [search, embeddings, packets, publication]
+    schemas: [retrieval]
+    relations: [retrieval.vector_space, retrieval.vector_space_version, retrieval.vector_store_space, retrieval.vector_item, retrieval.search_projection, retrieval.retrieval_chunk, retrieval.chunk_span, retrieval.evidence_packet, retrieval.packet_member, retrieval.space_publication, retrieval.projection_target, retrieval.retrieval_run]
+    functions: [api.hybrid_knowledge_search_1536, api.evidence_packet]
+    tasks: [run-hybrid-search, build-evidence-packet]
+    queries: [retrieval.hybrid_search, retrieval.evidence_packet]
+    summary: Published 1536-d spaces, hybrid search, and evidence packets.
+    body: |
+      Spaces (`retrieval.vector_space` slugs such as engineering_claims, entity_profiles,
+      market_intelligence) have versions and store attachments
+      (`retrieval.vector_store_space.active_space_version_id`). `retrieval.vector_item`
+      rows are what hybrid search ranks; child halfvec partitions are not a direct read
+      path for bounded roles. Publication (`retrieval.space_publication`, status published)
+      is the gate: `api.hybrid_knowledge_search_1536` refuses unpublished versions.
+
+      `q:retrieval.hybrid_search` fuses exact, full-text, trigram, and ANN channels with
+      RRF. The catalog entry needs a query embedding (`paramOrder` starts with `$embedding`,
+      `execute: false`). Agents pass `query_text` and a `vector_space_version_id`; the
+      executor embeds. Optional filters include entity ids, document types, content kinds,
+      as-of time, knowledge_seq, min assurance, and publication id.
+
+      Chunks, spans, and search projections are the derived text. `q:retrieval.evidence_packet`
+      returns one packet plus members, joining `content.document_node` timecodes when
+      present. Projection rebuilds emit a projection.rebuilt event on the knowledge-service
+      outbox. Agents never write embeddings.
+
+      Invariant: unpublished versions are invisible to `app_reader`. Trap: passing a
+      `vector_space` id where a `retrieval.vector_space_version` id is required, or
+      expecting `q:retrieval.hybrid_search` to embed the query in-database. Use
+      `run-hybrid-search` for ranking and `build-evidence-packet` when you already have
+      a packet id. Filters for entity ids, document types, as-of time, knowledge_seq,
+      and min assurance live in the jsonb argument, not as extra SQL.
+
+  - slug: ranking
+    title: Ranking and metrics
+    provenance: model_assisted
+    reviewed: null
+    aliases: [metrics, leaderboard, scores]
+    schemas: [ranking]
+    relations: [ranking.metric_definition, ranking.metric_definition_version, ranking.metric_observation, ranking.feature_value, ranking.ranking_result, ranking.ranking_run, ranking.leaderboard, ranking.ranking_policy]
+    functions: [api.leaderboard]
+    tasks: [what-do-we-know-about-entity]
+    queries: [entity.card]
+    summary: Entity-keyed metric observations and ranking results.
+    body: |
+      Observations land on `ranking.metric_observation`: a versioned metric definition, a
+      `subject_entity_id`, a numeric value, `observed_at`, and optional claim/locator.
+      Feature values and ranking results (`ranking.ranking_result`) are computed artifacts
+      of a `ranking.ranking_run` under a policy. `api.leaderboard` returns current
+      `ranking.ranking_result` rows for the tenant.
+
+      Control tables (groups, policies, selections, leaderboard editions) remain for
+      runtime. They are not a place to assert industry facts. A price belongs on
+      `model_offering_price`; a benchmark score that should be a first-class identity may
+      also be a `corpus.benchmark_run` plus relationships.
+
+      Ingestion uses metric.observe. Writers are executor_service. Agents read
+      leaderboard and observation rows when comparing models or libraries, and they cite
+      the claim that backs the number. `ranking.metric_definition` plus
+      `ranking.metric_definition_version` are the vocabulary for those numbers; do not
+      invent a unit that the version does not define. Group membership tables still
+      point at corpus entities and are not a second identity system.
+
+      Invariant: an observation without `subject_entity_id` cannot join the leaderboard.
+      Trap: treating `api.leaderboard` as current world facts — it is a computed ranking
+      snapshot. After `what-do-we-know-about-entity` / `q:entity.card`, come here only
+      when the question is “how does this entity score on a defined metric,” then cite
+      the backing claim on the observation. Writers use metric.observe inside a batch.
+
+  - slug: staging
+    title: Staging and identity resolution
+    provenance: model_assisted
+    reviewed: null
+    aliases: [candidates, review, identity match]
+    schemas: [staging]
+    relations: [staging.candidate, staging.identity_match, staging.resolution_decision, staging.vetting_decision, taxonomy.entity_kind]
+    functions: [api.resolve_entity]
+    tasks: [stage-uncertain-candidate, resolve-or-create-entity]
+    queries: [staging.candidates_for_kind, staging.unresolved]
+    summary: Candidates for new identities, not a staging copy of facts.
+    body: |
+      `staging.candidate` holds a proposed kind, payload, optional source, and optional
+      resolved entity. It is the identity-resolution zone. It is not a draft `temporal.segment`.
+      `staging.identity_match` records scored matches. `staging.resolution_decision`
+      (create, match, reject, defer) and `staging.vetting_decision` (admit, reject, defer)
+      each require a receipt.
+
+      `q:staging.unresolved` lists candidates with no create/match/reject decision.
+      `q:staging.candidates_for_kind` filters by `proposed_kind`. Low-confidence resolve
+      results should become candidate.stage (rule stage.when_confidence_below_threshold)
+      instead of entity.create.
+
+      `proposed_kind` must exist in `taxonomy.entity_kind`. Pipeline agents may insert
+      candidates; only the executor writes decisions with a receipt. Evaluation review
+      tasks can point at a candidate. Do not park an uncertain price here — use belief
+      disputed or stage only the unknown organization.
+
+      Invariant: a candidate is not an entity until `staging.resolution_decision` is
+      create or match. Trap: calling `q:entity.resolve` and treating a mid-score hit as
+      a create. Use `stage-uncertain-candidate` and `q:staging.unresolved` /
+      `q:staging.candidates_for_kind` until a human or identity pass decides. Then
+      `resolve-or-create-entity` can emit entity.create only for the admitted id. The
+      source_id on the candidate should point at the `evidence.source` that mentioned
+      the name, so later merges have a quote.
+
+  - slug: orchestration-ledger
+    title: Orchestration ledger
+    provenance: model_assisted
+    reviewed: null
+    aliases: [intents, receipts, artifacts, missions]
+    schemas: [orchestration]
+    relations: [orchestration.mission, orchestration.attempt, orchestration.operation_intent, orchestration.operation_receipt, orchestration.artifact, orchestration.artifact_lineage, orchestration.artifact_type, orchestration.intent_type, orchestration.work_item, orchestration.capability]
+    functions: [api.submit_intent]
+    tasks: [publish-report, check-knowledge-head]
+    queries: [receipts.for_intent, receipts.recent_for_mission, artifacts.by_type]
+    summary: Missions, intents, immutable receipts, and content-addressed artifacts.
+    body: |
+      `orchestration.operation_intent` records intent_type (including knowledge_ingestion),
+      schema_version, payload, preconditions, unique `idempotency_key`, optional mission and
+      attempt, and approval_state. `orchestration.operation_receipt` is one-to-one with an
+      intent and immutable: outcome applied, rejected, noop, or partial, plus
+      changes_summary and affected_refs. Facts cannot exist without a receipt id.
+
+      `orchestration.artifact` is content-addressed (sha256, bucket_class, storage_bucket,
+      unique object_path) and typed by `orchestration.artifact_type` (knowledge_read_intent,
+      knowledge_read_snapshot, knowledge_ingestion_plan, knowledge_ingestion_receipt,
+      schema_workspace_manifest, knowledge_report_markdown, and older codes). Lineage
+      (`orchestration.artifact_lineage`) records derived_from, supersedes, corrects,
+      produced_by, consumed_by.
+
+      pipeline_agent can select intents and artifacts but not receipt rows. `q:receipts.for_intent`
+      therefore joins the intent to `temporal.knowledge_batch` on idempotency_key to expose
+      receipt_id and knowledge_seq. Missions, attempts, work items, and capabilities are
+      the durable envelope; this workspace does not create Mission Control spine objects.
+
+      Invariant: two intents cannot share an idempotency_key. Trap: treating
+      `orchestration.operation_receipt` as readable under `pipeline_agent` — it is not;
+      use `q:receipts.for_intent` or `q:receipts.recent_for_mission`. Before writing,
+      `check-knowledge-head` then `publish-report` for report artifacts. `q:artifacts.by_type`
+      lists stored objects; bytes are fetched through the executor, never with bucket
+      credentials. A knowledge_ingestion intent is what the executor records when it
+      applies a schema-workspace plan.
+
+  - slug: knowledge-service-runtime
+    title: Knowledge service runtime
+    provenance: model_assisted
+    reviewed: null
+    aliases: [operations, outbox, leases]
+    schemas: [knowledge_service]
+    relations: [knowledge_service.operation, knowledge_service.operation_step, knowledge_service.operation_event, knowledge_service.outbox, knowledge_service.lease, knowledge_service.callback_delivery, knowledge_service.eve_operation_binding]
+    functions: [temporal.emit_outbox]
+    tasks: [check-knowledge-head]
+    queries: [knowledge.head]
+    summary: Durable KS operations, steps, outbox, and eve bindings.
+    body: |
+      `knowledge_service.operation` is the durable record of a platform or eve call
+      (operation_kind, idempotency_key, ownership_mode standalone | mission_control | eve,
+      attempt_id, request_sha256, status). Steps and events decompose the run. The outbox
+      emits knowledge.batch_sealed when a temporal batch commits and projection.rebuilt
+      when retrieval projections refresh.
+
+      Leases, callback deliveries, and eve operation bindings are runtime control. Agents
+      do not write these tables. The knowledge executor records a
+      `knowledge_ingestion` operation when it applies an intent. Ownership_mode is `eve`
+      in the experiment and `mission_control` when Mission Control calls.
+
+      If a batch sealed but an artifact upload is pending, the artifact row keeps
+      `storage_state='pending'` and a retry step finishes it. Receipts live in Postgres
+      even when object storage lags.
+
+      Invariant: one operation row per idempotency_key. Trap: treating the outbox as a
+      query catalog — agents should `check-knowledge-head` / `q:knowledge.head` after a
+      sealed batch instead of polling `knowledge_service.outbox`. `temporal.emit_outbox`
+      runs inside `temporal.commit_batch`; do not call it yourself. Eve bindings
+      (`knowledge_service.eve_operation_binding`) record proving-ground ownership and
+      are not a write path for research agents. When diagnosis needs more than the
+      head, read `knowledge_service.operation_step` as pipeline_agent.
+
+  - slug: research
+    title: Research reports
+    provenance: model_assisted
+    reviewed: null
+    aliases: [reports, findings, bundles, report structure, report lifecycle, report navigation]
+    schemas: [research]
+    relations: [research.report, research.report_version, research.report_claim, research.report_package, research.report_section, research.report_section_version, research.report_assertion, research.report_assertion_claim, research.report_artifact, research.report_question, research.report_question_section, research.report_section_dependency, research.finding, research.research_bundle, research.bundle_artifact, research.comparison, research.downstream_handoff]
+    functions: []
+    tasks: [navigate-report, register-report, publish-report]
+    queries: [reports.versions, reports.sections, reports.assertions, reports.questions, reports.dependencies, reports.artifacts, artifacts.by_type, receipts.recent_for_mission]
+    summary: Immutable research packages, reusable sections, evidence bindings, coverage and ingestion lineage.
+    body: |
+      research.report is the identity; report_version is immutable. Versions without a
+      report_package remain legacy reports. Package v1 adds scope, cutoff, producer,
+      sections, assertions, coverage and an ordered predecessor.
+
+      Read path: task:navigate-report maps the reports.* queries below to parameters and
+      result shapes. Select a revision, read its ordered sections, then follow assertion
+      spans to run-qualified evidence or questions to answering sections and gaps.
+      KS report_get assembles packages; queries return at most 200 rows.
+
+      Write path: task:register-report uses KS report_register for research-report.v1.
+      Both authoring modes support optional missions and require new revisions for edits.
+      The structural seal freezes projections; it is not verification or admission.
+      Partial reports retain gaps. Post-seal assessments bind exact-byte result artifacts;
+      ingestion links connect reportBinding proposals to receipts and canonical outcomes.
+      Interpret verdicts at the verification/policy owner, never from link presence alone.
+
+      task:publish-report is the legacy compatibility path.
+
+  - slug: research-v2
+    title: Research reports v2 (sealed projection and admission)
+    provenance: model_assisted
+    reviewed: null
+    aliases: [research-report.v2, report v2, exact report read, use admission, admitted use]
+    schemas: [research]
+    relations: [research.report_v2_revision, research.report_v2_assertion, research.report_v2_ingestion, research.use_admission]
+    functions: [research.read_report_package, research.assert_admitted_use, research.require_admitted_use, research.require_receipt_admission, research.guard_use_admission, research.guard_report_v2_revision, research.guard_report_v2_assertion, research.guard_report_v2_ingestion]
+    tasks: []
+    queries: []
+    summary: AI Engineer projection of sealed knowledge_verification report revisions, exact package reads and native exact-use guards.
+    body: |
+      The common component `knowledge_verification` owns report revisions, custody, runs, seals, use
+      decisions and admission. This domain only projects them: `research.report_v2_revision` keys a
+      sealed revision by (tenant_id, report_id, revision) and its run; `research.report_v2_assertion`
+      keys cited assertions by assertion ref digest; `research.report_v2_ingestion` keys the native
+      receipt that applied an admitted use by use decision id. Triggers validate every row against
+      the component; there are no cross-schema foreign keys.
+
+      Read path: `research.read_report_package` returns custody refs, digests, assertion refs and the
+      run manifest index for one exact revision of a sealed run, or EXACT_REVISION_UNAVAILABLE.
+
+      Write path (executor_service, inside the ingestion transaction): `research.assert_admitted_use`
+      calls admit_exact_use under the epoch lock and records `research.use_admission` for the current
+      transaction. A receipt that names a use decision, and every canonical row it creates, commits
+      only with that admission (ADMISSION_REQUIRED otherwise).
+
+  - slug: evaluation
+    title: Evaluation
+    provenance: model_assisted
+    reviewed: null
+    aliases: [eval, graders, review tasks, gates]
+    schemas: [evaluation]
+    relations: [evaluation.eval_dataset, evaluation.eval_case, evaluation.eval_run, evaluation.eval_score, evaluation.grader, evaluation.review_task, evaluation.experiment, evaluation.verification_benchmark_run, evaluation.gate]
+    functions: []
+    tasks: [stage-uncertain-candidate]
+    queries: [staging.unresolved]
+    summary: Datasets, graders, review tasks, and verification benchmarks.
+    body: |
+      Evaluation owns datasets, cases, graders, runs, scores, review tasks, experiments,
+      promotion gates, and verification benchmark ledgers. `api.review_queue` exposes
+      `evaluation.review_task` to `app_reader`. Review tasks may point at a staging
+      candidate, an entity merge, or a ranking result.
+
+      This domain measures systems; it does not store industry facts. A grader score is
+      not a `temporal.segment`. Verification benchmark runs compare sealed verification
+      arms and are distinct from the component's `knowledge_verification.verification_run`
+      (the sealed verification run). `evaluation.experiment` and `evaluation.experiment_arm` are the A/B
+      envelope used by the proving ground; they do not admit corpus identities.
+
+      Agents creating review work should prefer the staging and evidence domains, then
+      let evaluation attach a human or judge task. Do not treat `evaluation.eval_score`
+      as admitted knowledge. Gate results (`evaluation.gate`, `evaluation.gate_result`)
+      decide promotion of a system, not publication of a fact.
+
+      Invariant: a score without a grader version is not comparable. Trap: using
+      `evaluation.metric_observation` as if it were `ranking.metric_observation` — they
+      are different schemas. When identity is uncertain, `stage-uncertain-candidate`
+      plus `q:staging.unresolved` is the agent path; evaluation may later attach a
+      `evaluation.review_task` to that candidate. Do not ingest eval scores as
+      temporal facts. `evaluation.verification_benchmark_run` compares sealed
+      verification arms; ask the knowledge_verification component when the question is
+      “was this run sealed,” not “did arm B beat arm A.”
+
+  - slug: curriculum
+    title: Curriculum
+    provenance: model_assisted
+    reviewed: null
+    aliases: [lessons, challenges, learning paths]
+    schemas: [curriculum]
+    relations: [curriculum.curriculum, curriculum.track, curriculum.module, curriculum.lesson, curriculum.lesson_version, curriculum.challenge, curriculum.learning_objective, curriculum.lesson_backed_by]
+    functions: []
+    tasks: [what-do-we-know-about-entity]
+    queries: [entity.card]
+    summary: Learning paths that point at concepts and knowledge records.
+    body: |
+      Curriculum is tracks, modules, versioned lessons, challenges, and learning
+      objectives. `curriculum.lesson_covers_concept` and `curriculum.challenge_targets`
+      reference `corpus.entity` (often kind concept, library, mcp_server, agent_skill).
+      `curriculum.lesson_backed_by` points at typed knowledge records so a lesson is
+      grounded in admitted engineering knowledge.
+
+      Lessons are not claims and not temporal facts. When a lesson cites a product
+      behavior, the behavior still lives on a stream; the lesson only links. Agents
+      building official courses should resolve the concept entity first, then attach
+      backing records that already have receipts. `curriculum.lesson_prerequisite` and
+      `curriculum.challenge_derived_from` keep the graph of what a learner must already
+      know. Do not create a lesson that names a library the corpus cannot resolve.
+
+      Invariant: a lesson version is immutable; edits create `curriculum.lesson_version`
+      rows. Trap: putting a product availability date on a lesson — that date belongs
+      on `temporal.stream_kind:model_offering_availability`. Start with
+      `what-do-we-know-about-entity` / `q:entity.card` for the concept, then attach
+      backing records that already have receipts. Challenges
+      (`curriculum.challenge`, `curriculum.challenge_version`) target the same
+      identities. Official courses are agent-native: they must resolve the concept
+      before they name it in prose.
+
+  - slug: observability
+    title: Observability
+    provenance: model_assisted
+    reviewed: null
+    aliases: [traces, spans, events]
+    schemas: [observability]
+    relations: [observability.trace, observability.span, observability.raw_event, observability.normalized_event, observability.usage_rollup, observability.io_link, observability.coordinator_handoff]
+    functions: []
+    tasks: [check-knowledge-head]
+    queries: [knowledge.head]
+    summary: Traces, spans, and normalized runtime events (month-partitioned).
+    body: |
+      Observability stores traces, spans, raw and normalized events, usage rollups, IO
+      links, and coordinator handoffs. Event and span tables are month-partitioned
+      (`observability.normalized_event`, `observability.span`, `observability.raw_event`).
+      This is runtime telemetry for missions and executors, not industry knowledge.
+
+      Agents debugging a failed ingest should look here only after the receipt and
+      knowledge head. Do not copy span attributes into `temporal.segment`. Normalized
+      events are the query surface; raw events are the append-only capture.
+      `observability.usage_rollup` aggregates tokens and cost for experiment metrics.
+      `observability.coordinator_handoff` records where a durable worker paused. None of
+      these relations are named-query catalog targets today; operators read them as
+      pipeline_agent when diagnosing executor failures.
+
+      Invariant: partitions are monthly; queries without a time bound scan every
+      child. Trap: copying a span attribute into a fact stream. After
+      `check-knowledge-head` / `q:knowledge.head`, look at
+      `observability.normalized_event` for executor errors, then
+      `observability.io_link` for the artifact or RPC the step touched. Usage rollups
+      feed experiment cost, not `ranking.metric_observation`. This domain is
+      diagnostic only — it never admits industry knowledge.
+
+  - slug: provenance
+    title: Project provenance
+    provenance: model_assisted
+    reviewed: null
+    aliases: [project objects, bindings, edges]
+    schemas: [provenance]
+    relations: [provenance.object, provenance.binding, provenance.edge, provenance.revision, orchestration.artifact]
+    functions: []
+    tasks: [publish-report]
+    queries: [artifacts.by_type]
+    summary: Project objects, bindings, edges, and revisions.
+    body: |
+      Provenance tracks project-scoped objects, how they bind to other records, edges
+      between them, and revisions (`provenance.object`, `provenance.binding`,
+      `provenance.edge`, `provenance.revision`). It is the project lineage surface, not
+      the research-ingestion evidence chain (that chain is `evidence.source` plus
+      `orchestration.artifact`).
+
+      Four tables only. Agents working industry facts should not start here. When a
+      generated workspace or report needs a project-level binding, create the artifact
+      first, then a provenance object that points at it. Do not confuse a provenance
+      revision with a `temporal.knowledge_batch`: the former versions a project object,
+      the latter seals tenant knowledge.
+
+      Invariant: four provenance tables plus the artifact they bind to. Trap: starting
+      an industry-fact investigation here. Use `publish-report` and `q:artifacts.by_type`
+      for stored report bytes; only then create a `provenance.object` if a project
+      workspace needs a binding. `provenance.edge` is not `corpus.relationship`.
+      `provenance.binding` is not `evidence.segment_support`. Agents on the
+      schema-workspace mission should treat this schema as optional project
+      bookkeeping, not as a second knowledge graph.
+
+  - slug: api-surface
+    title: API surface
+    provenance: model_assisted
+    reviewed: null
+    aliases: [rpc, views, app_reader]
+    schemas: [api]
+    relations: [api.entities, api.current_facts, api.current_relationships, api.events_current, api.library_profile, api.technical_record_search, api.review_queue, api.mission_progress]
+    functions: [api.resolve_entity, api.entity_card, api.entity_at, api.relationships, api.entity_timeline, api.what_changed, api.knowledge_head, api.evidence_packet, api.hybrid_knowledge_search_1536, api.leaderboard, api.summary_evidence]
+    tasks: [what-do-we-know-about-entity, check-knowledge-head, run-hybrid-search]
+    queries: [entity.resolve, entity.card, entity.at, entity.relationships, entity.timeline, entity.what_changed, knowledge.head, facts.current_by_stream, events.current_for_entity, relationships.current_by_kind, retrieval.hybrid_search, retrieval.evidence_packet]
+    summary: Invoker views and security-definer RPCs for app_reader.
+    body: |
+      `api` has no tables. Eight invoker views are backed by tenant-filtered definer
+      functions so `app_reader` and `authenticated` can read without grants on
+      corpus or temporal tables. Views: `api.entities`, `api.current_facts`,
+      `api.current_relationships`, `api.events_current`, `api.library_profile`,
+      `api.technical_record_search`, `api.review_queue`, `api.mission_progress`.
+
+      RPCs implement the named-query catalog for identity, replay, and retrieval.
+      `api.current_facts` applies `k_to is null` and `valid_during @> now()` — that is the
+      usual trap. Historical reads must use `api.entity_at`. `util.current_tenant_id`
+      reads the app.tenant_id GUC and fails closed; every API call needs that GUC.
+
+      Long-tail reads are new catalog entries, not raw SQL. `api.submit_intent` exists
+      for older orchestration flows; knowledge ingestion goes through the executor, not
+      this RPC. `api.hybrid_knowledge_search_1536` requires a published space and an embedding.
+
+      Invariant: `app_reader` never SELECTs corpus or temporal tables. Trap: using
+      `api.current_facts` for a 2025 price. Prefer `what-do-we-know-about-entity`
+      (`q:entity.resolve`, `q:entity.card`), `check-knowledge-head` (`q:knowledge.head`),
+      and `run-hybrid-search` (`q:retrieval.hybrid_search`). Historical replay is
+      `q:entity.at`, `q:entity.timeline`, `q:entity.what_changed`. `util` helpers
+      (`util.current_tenant_id`) are the tenant seam for every invoker view.
+
+  - slug: research-starter-protected
+    title: Research-starter protected
+    provenance: model_assisted
+    reviewed: null
+    aliases: [pre-research, starter videos, factory]
+    schemas: [public, research_private]
+    relations: [public.research_starter_channels, public.research_starter_videos, public.research_pre_research_run, public.research_pre_research_video_state, public.research_video_analysis, public.research_ingestion_intent, public.research_evidence_anchor, public.research_pre_research_artifact, public.research_taxonomy_version]
+    functions: [research_private.claim_pre_research_video, research_private.complete_pre_research_stage, research_private.list_finished_pre_research_videos, corpus.import_research_starter_catalog]
+    tasks: [what-do-we-know-about-entity]
+    queries: [entity.resolve]
+    summary: Protected pre-research starter catalog and factory tables; do not mutate.
+    body: |
+      `public` holds twenty-five protected research-starter / pre-research tables and
+      sixteen retained factory tables. Both YouTube channels and all starter videos are
+      unchanged by the knowledge-model migrations. `research_private` holds the pipeline
+      routines that claim videos, checkpoint stages, and list finished packets.
+
+      This is intake, not the canonical graph. `corpus.import_research_starter_catalog`
+      can project channels and videos into media identities, but it was not run on the
+      shared cloud catalog and must not invent capture hashes. Factory tables such as
+      `public.factory_experiment` record canaries and promotions for the retained factory,
+      not industry facts.
+
+      Agents on the schema-workspace mission should treat these relations as read-only
+      context. Do not add migrations here. Do not confuse `public.research_ingestion_intent`
+      with `orchestration.operation_intent`. Transcript bytes live in storage buckets, not
+      in these tables.
+
+      Invariant: starter channel and video ids are stable across knowledge-model
+      migrations. Trap: treating a pre-research packet as already-admitted corpus
+      knowledge. Resolve names with `q:entity.resolve` / `what-do-we-know-about-entity`
+      after import, never by joining factory tables. `research_private` routines are
+      for the starter pipeline only; they are not temporal helpers. Do not confuse
+      `public.research_evidence_anchor` with `evidence.locator`. Operators may read
+      these tables as context; writers on this mission must not mutate them.

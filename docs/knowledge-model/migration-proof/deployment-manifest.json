@@ -1,0 +1,54 @@
+[
+  {
+    "file": "20260912010000_km_00_teardown.sql",
+    "sha256": "c30265dd81f81b6a0d245a1298d54e36af6ceffabbf90e47fd2fb0fd498c282e"
+  },
+  {
+    "file": "20260912010100_km_01_vocabularies.sql",
+    "sha256": "a686edd61442804d91280ae19d7adb94d1b39738df80552dca5405706554c922"
+  },
+  {
+    "file": "20260912010200_km_02_corpus_identity.sql",
+    "sha256": "b26c64314505f6caacae932f932b8987d164a378e594b5a62a14baeea04b1669"
+  },
+  {
+    "file": "20260912010300_km_03_relationship.sql",
+    "sha256": "94246fb3c4472c542bf147762da50464af492458cf8d476c7ede8f19b3b72dbb"
+  },
+  {
+    "file": "20260912010400_km_04_temporal.sql",
+    "sha256": "dcc4953a02905a2e1fc77f634c2ffeff25166b5947fb129cccfce7b8b8d8bbfb"
+  },
+  {
+    "file": "20260912010500_km_05_evidence.sql",
+    "sha256": "37a2ef716a62e2ed5aa07359910d4964dda2d474fe69166352c2425b3188f8ed"
+  },
+  {
+    "file": "20260912010600_km_06_content.sql",
+    "sha256": "741ab15ba534746948dd849bb3babb9734860a386d733af7ea8c151e8ad7bf05"
+  },
+  {
+    "file": "20260912010700_km_07_knowledge.sql",
+    "sha256": "c352b229d3584f472a12f47ae466a06a2af84907fdc8636b8843f04b186eff78"
+  },
+  {
+    "file": "20260912010800_km_08_retrieval.sql",
+    "sha256": "97ee29da443085d9585d769ddbefae0fdf9db7a0988c583e6e4402e959f4e715"
+  },
+  {
+    "file": "20260912010900_km_09_ranking_staging.sql",
+    "sha256": "29f08faec09eeab15fd0bc1a58839969ca70413df352f07b684ad55243707a85"
+  },
+  {
+    "file": "20260912011000_km_10_api.sql",
+    "sha256": "7869b3af4e7c2e0ac196c26838ff2de70b741a974ed138e1cf9b7679c9d7b033"
+  },
+  {
+    "file": "20260912011100_km_11_grants_rls.sql",
+    "sha256": "1ba3eda2a4b492829d9239d00c813b30d89fcce29bdde47992355c89360fce0f"
+  },
+  {
+    "file": "20260912011200_km_12_projection_workers.sql",
+    "sha256": "3e007f7ad13d31b135377a7d5266f47c10ddc72c3890c11fd781355337f8730b"
+  }
+]

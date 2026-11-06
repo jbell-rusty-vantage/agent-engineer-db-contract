@@ -1,0 +1,229 @@
+{
+  "migrationHead": "20261031010000",
+  "rules": [
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "entity.alias"
+      },
+      "basis": "curated",
+      "detail": "`entity_alias_tenant_id_entity_id_alias_normalized_alias_kin_key` is unique per entity,\nnot globally. The same alias string may exist on two entities. The executor rejects an\nalias that `api.resolve_entity` matches to a different active canonical entity at\nscore ≥ 0.98, so agents do not silently attach a well-known name to the wrong id.\n",
+      "id": "alias.must_not_collide_canonical",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:corpus.entity_alias",
+        "rel:corpus.entity",
+        "fn:api.resolve_entity(text)"
+      ],
+      "reviewed": null,
+      "title": "Alias must not collide with another canonical entity"
+    },
+    {
+      "action": "hold",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state",
+        "stream_kind": "model_offering_availability"
+      },
+      "basis": "curated",
+      "detail": "`temporal.stream_kind:model_offering_availability` admits statuses announced, preview,\nga, deprecated, retired. The database does not order them. Hold a proposal that would\nmove a current status backward along that sequence unless the evidence is an explicit\ncorrection with `temporal_basis=explicit` and a replacing interval. The same order\napplies to `temporal.stream_kind:product_feature_availability` (removed instead of retired).\n",
+      "id": "availability.transitions_are_ordered",
+      "provenance": "model_assisted",
+      "refs": [
+        "voc:temporal.stream_kind.model_offering_availability",
+        "voc:temporal.stream_kind.product_feature_availability",
+        "rel:temporal.segment"
+      ],
+      "reviewed": null,
+      "title": "Availability transitions are ordered"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "entity.create"
+      },
+      "basis": "enforced",
+      "detail": "`corpus.entity.kind` references `taxonomy.entity_kind(code)` via `entity_kind_fkey`.\nA `new` subject whose kind is not a vocabulary code is rejected before a batch opens\n(`VOCABULARY_VIOLATION`). Typed payloads must use columns of that kind's\n`canonical_table`.\n",
+      "id": "entity.kind_in_vocabulary",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:corpus.entity",
+        "rel:taxonomy.entity_kind"
+      ],
+      "reviewed": null,
+      "title": "Entity kind must be in vocabulary"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state"
+      },
+      "basis": "enforced",
+      "detail": "`temporal.segment.valid_during` is `not null` and `segment_valid_during_check` requires\na non-empty `[)` range bounded below. Events use the same shape on\n`temporal.event_occurrence.occurred_during`. A proposal without `worldInterval.from`\nis rejected.\n",
+      "id": "fact.world_time_required",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:temporal.segment",
+        "rel:temporal.event_occurrence",
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)"
+      ],
+      "reviewed": null,
+      "title": "World-time required on facts"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "entity.identifier"
+      },
+      "basis": "enforced",
+      "detail": "`entity_identifier_scheme_check` restricts `scheme` to the closed list\n(wikidata, ror, orcid, github, huggingface, npm, pypi, crates, go_module, doi, arxiv,\nopenreview, mcp_registry, cve, ghsa, spdx, crunchbase, pitchbook, linkedin, x,\nyoutube_channel, youtube_playlist, youtube_video, spotify, apple_podcasts, domain,\nsec_cik, lei, isin, other). `entity_identifier_tenant_id_scheme_value_key` makes\n`(scheme, value)` unique per tenant.\n",
+      "id": "identifier.namespace_in_vocabulary",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:corpus.entity_identifier"
+      ],
+      "reviewed": null,
+      "title": "Identifier namespace must be in vocabulary"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state",
+        "stream_kind": "model_offering_price"
+      },
+      "basis": "enforced",
+      "detail": "`temporal.commit_batch` requires `currency ~ '^[A-Z]{3}$'` for\n`model_offering_price`, `compute_offering_price`, and `valuation`. Amount and a\nunit from `unit_values` are also required (`requires_amount`).\n",
+      "id": "price.currency_iso4217",
+      "provenance": "model_assisted",
+      "refs": [
+        "voc:temporal.stream_kind.model_offering_price",
+        "fn:temporal.commit_batch(uuid,text,text,jsonb)",
+        "rel:temporal.segment"
+      ],
+      "reviewed": null,
+      "title": "Monetary streams require ISO-4217 currency"
+    },
+    {
+      "action": "rewrite",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state",
+        "stream_kind": "model_offering_price"
+      },
+      "basis": "curated",
+      "detail": "Two `model_offering_price` facts on the same subject and world interval do not collide\nonly when `scope_key` distinguishes them, so a **new** series with no `scopeKey` is\nrewritten to the proposal `unit` (for example `per_1m_input_tokens`); the exclusion\nconstraint `segment_stream_id_valid_during_excl` would otherwise reject the second\ncurrent segment. The database does not enforce any naming convention for `scope_key`:\na series that already exists for the same subject, stream, and unit keeps whatever\n`scope_key` it was created with (older data uses keys such as `input_tokens`). Read\n`q:facts.current_by_stream` first; if a current segment with the same unit exists under\nanother `scope_key`, name that key explicitly, or the stale segment stays current beside\nyour new one. Allowed units are the unit_values on `temporal.stream_kind:model_offering_price`.\n",
+      "id": "price.scope_key_is_unit",
+      "provenance": "model_assisted",
+      "refs": [
+        "voc:temporal.stream_kind.model_offering_price",
+        "rel:temporal.segment",
+        "rel:temporal.stream"
+      ],
+      "reviewed": null,
+      "title": "A new price series defaults its scope_key to the unit; an existing series keeps its key"
+    },
+    {
+      "action": "note",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state"
+      },
+      "basis": "enforced",
+      "detail": "`temporal.assert_state` returns the existing segment id when an identical current\nsegment exists. `temporal.knowledge_batch` is unique on `(tenant_id, idempotency_key)`\n(`knowledge_batch_tenant_id_idempotency_key_key`). A second submit of the same intent\nbytes returns `duplicate_of` without opening a new batch.\n",
+      "id": "proposal.idempotent_repeat",
+      "provenance": "model_assisted",
+      "refs": [
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)",
+        "rel:temporal.knowledge_batch",
+        "rel:orchestration.operation_intent"
+      ],
+      "reviewed": null,
+      "title": "Repeated identical proposals are no-ops"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "relationship.assert"
+      },
+      "basis": "enforced",
+      "detail": "Trigger `relationship_kinds` on `corpus.relationship` runs\n`corpus.check_relationship_kinds` and raises if the from/to entity kinds are not in\n`taxonomy.relationship_kind.from_kinds` / `to_kinds`. `version_of` additionally requires\na matching pair (product_version/product, ai_model_version/ai_model, …).\n",
+      "id": "relationship.kinds_constrain_endpoints",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:corpus.relationship",
+        "rel:taxonomy.relationship_kind",
+        "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)"
+      ],
+      "reviewed": null,
+      "title": "Relationship kinds constrain entity kinds"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state"
+      },
+      "basis": "curated",
+      "detail": "Closing a current segment (`k_to` set) without asserting a successor that starts at or\nafter the close instant leaves a world-time hole. `api.entity_timeline` will emit\n`unknown` gaps. Reject a close-only proposal that does not supply a later\n`worldInterval.from`. `temporal.close_segment` only stamps knowledge time; it does not\ninvent a replacement fact.\n",
+      "id": "segment.do_not_close_without_later_world_time",
+      "provenance": "model_assisted",
+      "refs": [
+        "fn:temporal.close_segment(uuid)",
+        "rel:temporal.segment",
+        "q:entity.timeline"
+      ],
+      "reviewed": null,
+      "title": "Do not close a segment without a later world-time"
+    },
+    {
+      "action": "stage",
+      "applies_to": {
+        "proposal_kind": "entity.create"
+      },
+      "basis": "curated",
+      "detail": "If `api.resolve_entity` or an identifier lookup scores below the configured threshold\n(default 0.98 on identifier, lower on alias), rewrite entity.create to\ncandidate.stage with reason `identity_ambiguous` unless the intent says\n`onMatch: use_existing`. `staging.candidate.proposed_kind` still must be a\n`taxonomy.entity_kind` (`candidate_proposed_kind_fkey`).\n",
+      "id": "stage.when_confidence_below_threshold",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:staging.candidate",
+        "fn:api.resolve_entity(text)",
+        "rel:taxonomy.entity_kind"
+      ],
+      "reviewed": null,
+      "title": "Stage when identity confidence is below threshold"
+    },
+    {
+      "action": "hold",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state"
+      },
+      "basis": "curated",
+      "detail": "A fact may cite `primary_claim_id` only after the claim exists. The executor implies\nclaim.materialize for cited claims not yet in `evidence.claim`, then admits\nsupport.admit through `temporal.admit_support`. `segment_support_claim_id_fkey` and\n`segment_primary_claim_id_fkey` enforce the FK once rows exist; the ordering is an\nexecutor rule so agents get a readable plan instead of a mid-batch FK failure.\n",
+      "id": "support.must_precede_claim_use",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:evidence.claim",
+        "rel:evidence.segment_support",
+        "fn:temporal.admit_support(uuid,uuid,uuid,uuid,text)",
+        "rel:temporal.segment"
+      ],
+      "reviewed": null,
+      "title": "Support must precede claim materialization of a fact"
+    },
+    {
+      "action": "reject",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state"
+      },
+      "basis": "enforced",
+      "detail": "`temporal.begin_batch(p_expected_head)` locks `temporal.knowledge_head` and raises\n`rebase_required` (SQLSTATE 40001) when `p_expected_head` is not null and does not\nequal the current `knowledge_seq`. The ingestion executor always passes the snapshot\nhead. A write without `expectedKnowledgeHead` is rejected at plan time so a stale\nsnapshot cannot silently land.\n",
+      "id": "write.expected_head_required",
+      "provenance": "model_assisted",
+      "refs": [
+        "fn:temporal.begin_batch(int8)",
+        "rel:temporal.knowledge_head",
+        "q:knowledge.head"
+      ],
+      "reviewed": null,
+      "title": "expected_head required for writes"
+    }
+  ],
+  "rulesVersion": "ingestion-rules.v1@519cea73ea54e133eab6d38d8f92a9a1e9af1e44585078ac40d9c68cef068e23",
+  "schemaVersion": "ingestion-rules.v1"
+}

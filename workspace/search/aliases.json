@@ -1,0 +1,1002 @@
+{
+  "accepted": [
+    "term:belief"
+  ],
+  "admission": [
+    "term:admission"
+  ],
+  "admit": [
+    "term:admission"
+  ],
+  "admitted": [
+    "term:admission"
+  ],
+  "admitted support": [
+    "term:support"
+  ],
+  "admitted use": [
+    "dom:research-v2"
+  ],
+  "alias": [
+    "rel:corpus.entity_alias",
+    "term:alias"
+  ],
+  "aliases": [
+    "dom:identity"
+  ],
+  "ambiguous identity": [
+    "task:stage-uncertain-candidate"
+  ],
+  "answering sections": [
+    "rel:research.report_question_section"
+  ],
+  "api sku": [
+    "rel:corpus.model_offering"
+  ],
+  "app_reader": [
+    "dom:api-surface"
+  ],
+  "artifact": [
+    "rel:orchestration.artifact",
+    "term:artifact"
+  ],
+  "artifacts": [
+    "dom:orchestration-ledger",
+    "q:artifacts.by_type"
+  ],
+  "as of": [
+    "q:entity.at"
+  ],
+  "as-of date": [
+    "term:world-time"
+  ],
+  "assurance": [
+    "term:assurance"
+  ],
+  "assurance level": [
+    "term:assurance"
+  ],
+  "assurance_rank": [
+    "term:assurance"
+  ],
+  "availability": [
+    "task:record-availability-change"
+  ],
+  "baseline": [
+    "task:what-do-we-know-about-entity"
+  ],
+  "batch": [
+    "dom:temporal-facts",
+    "term:knowledge-batch"
+  ],
+  "belief": [
+    "term:belief"
+  ],
+  "bindings": [
+    "dom:provenance"
+  ],
+  "bitemporal": [
+    "dom:temporal-facts",
+    "term:two-clocks"
+  ],
+  "bounded role": [
+    "term:role"
+  ],
+  "bundles": [
+    "dom:research"
+  ],
+  "candidate": [
+    "rel:staging.candidate",
+    "term:staging-candidate"
+  ],
+  "candidates": [
+    "dom:staging",
+    "q:staging.candidates_for_kind"
+  ],
+  "canonical entity": [
+    "dom:identity",
+    "rel:corpus.entity",
+    "term:canonical-entity"
+  ],
+  "capture": [
+    "rel:evidence.source_capture"
+  ],
+  "capture method": [
+    "rel:evidence.capture_method"
+  ],
+  "captures": [
+    "dom:evidence",
+    "q:evidence.captures_for_source"
+  ],
+  "card": [
+    "q:entity.card"
+  ],
+  "catalog query": [
+    "term:named-query"
+  ],
+  "challenges": [
+    "dom:curriculum"
+  ],
+  "cheap": [
+    "term:cost-class"
+  ],
+  "chunk": [
+    "rel:retrieval.retrieval_chunk"
+  ],
+  "chunk span": [
+    "rel:retrieval.chunk_span"
+  ],
+  "citations": [
+    "task:build-evidence-packet"
+  ],
+  "claim": [
+    "rel:evidence.claim",
+    "term:claim"
+  ],
+  "claim binding": [
+    "rel:research.report_assertion_claim"
+  ],
+  "claim role": [
+    "rel:evidence.claim_subject"
+  ],
+  "claims": [
+    "dom:evidence",
+    "q:evidence.claims_for_entity"
+  ],
+  "company": [
+    "rel:corpus.organization"
+  ],
+  "contradicts": [
+    "task:find-stale-facts"
+  ],
+  "correct": [
+    "task:supersede-stale-fact"
+  ],
+  "cost class": [
+    "term:cost-class"
+  ],
+  "create entity": [
+    "task:resolve-or-create-entity"
+  ],
+  "current events view": [
+    "rel:api.events_current"
+  ],
+  "current facts": [
+    "q:facts.current_by_stream"
+  ],
+  "current facts view": [
+    "rel:api.current_facts"
+  ],
+  "current relationships": [
+    "q:relationships.current_by_kind"
+  ],
+  "current relationships view": [
+    "rel:api.current_relationships"
+  ],
+  "date extent": [
+    "rel:temporal.extent",
+    "term:extent"
+  ],
+  "defer": [
+    "task:stage-uncertain-candidate"
+  ],
+  "delta": [
+    "q:entity.what_changed",
+    "task:what-changed-since-head"
+  ],
+  "deprecated": [
+    "task:record-availability-change"
+  ],
+  "diff": [
+    "q:entity.what_changed",
+    "task:what-changed-since-head"
+  ],
+  "disputed": [
+    "term:belief"
+  ],
+  "documents": [
+    "dom:content"
+  ],
+  "domain": [
+    "term:domain"
+  ],
+  "edge": [
+    "rel:corpus.relationship"
+  ],
+  "edges": [
+    "dom:provenance",
+    "dom:relationships"
+  ],
+  "embedding space": [
+    "term:vector-space"
+  ],
+  "embeddings": [
+    "dom:retrieval"
+  ],
+  "encounter": [
+    "rel:evidence.source_encounter"
+  ],
+  "engineering record": [
+    "rel:knowledge.record"
+  ],
+  "engineering records": [
+    "dom:knowledge-records"
+  ],
+  "entities view": [
+    "rel:api.entities"
+  ],
+  "entity": [
+    "dom:identity",
+    "rel:corpus.entity",
+    "term:canonical-entity"
+  ],
+  "entity alias": [
+    "term:alias"
+  ],
+  "entity kind": [
+    "term:entity-kind"
+  ],
+  "entity vocabulary": [
+    "rel:taxonomy.entity_kind"
+  ],
+  "eval": [
+    "dom:evaluation"
+  ],
+  "event identity": [
+    "rel:temporal.event"
+  ],
+  "event kinds": [
+    "q:vocab.event_kind"
+  ],
+  "event vocabulary": [
+    "rel:temporal.event_kind"
+  ],
+  "events": [
+    "dom:observability",
+    "q:events.current_for_entity"
+  ],
+  "evidence claim": [
+    "term:claim"
+  ],
+  "evidence packet": [
+    "term:evidence-packet"
+  ],
+  "exact report read": [
+    "dom:research-v2"
+  ],
+  "expected head": [
+    "task:check-knowledge-head"
+  ],
+  "extent": [
+    "term:extent"
+  ],
+  "external id": [
+    "rel:corpus.entity_identifier",
+    "task:find-entity-by-identifier",
+    "term:identifier"
+  ],
+  "fact": [
+    "rel:temporal.segment",
+    "term:segment"
+  ],
+  "fact kind": [
+    "term:stream-kind"
+  ],
+  "fact series": [
+    "rel:temporal.stream",
+    "term:stream"
+  ],
+  "factory": [
+    "dom:research-starter-protected"
+  ],
+  "facts": [
+    "dom:temporal-facts"
+  ],
+  "findings": [
+    "dom:research"
+  ],
+  "fingerprint": [
+    "term:fingerprint"
+  ],
+  "freshness": [
+    "task:check-knowledge-head"
+  ],
+  "fused search": [
+    "term:hybrid-search"
+  ],
+  "ga": [
+    "task:record-availability-change"
+  ],
+  "gap analysis": [
+    "task:find-stale-facts"
+  ],
+  "gaps": [
+    "q:entity.timeline"
+  ],
+  "gates": [
+    "dom:evaluation"
+  ],
+  "graders": [
+    "dom:evaluation"
+  ],
+  "graph": [
+    "dom:relationships",
+    "q:entity.relationships"
+  ],
+  "graph edge": [
+    "task:assert-relationship"
+  ],
+  "head": [
+    "q:knowledge.head",
+    "rel:temporal.knowledge_head",
+    "term:knowledge-head"
+  ],
+  "heavy": [
+    "term:cost-class"
+  ],
+  "historical facts": [
+    "q:entity.at"
+  ],
+  "history": [
+    "dom:temporal-facts"
+  ],
+  "hybrid search": [
+    "q:retrieval.hybrid_search",
+    "term:hybrid-search"
+  ],
+  "idempotency key": [
+    "term:idempotency-key"
+  ],
+  "idempotencykey": [
+    "term:idempotency-key"
+  ],
+  "identifier": [
+    "q:entity.by_identifier",
+    "term:identifier"
+  ],
+  "identifiers": [
+    "dom:identity"
+  ],
+  "identity": [
+    "task:resolve-or-create-entity"
+  ],
+  "identity match": [
+    "dom:staging"
+  ],
+  "identity row": [
+    "rel:corpus.entity",
+    "term:canonical-entity"
+  ],
+  "incremental report": [
+    "task:register-report"
+  ],
+  "ingestion intent": [
+    "task:compose-ingestion-intent"
+  ],
+  "intent": [
+    "rel:orchestration.operation_intent",
+    "term:intent"
+  ],
+  "intent skeleton": [
+    "task:compose-ingestion-intent"
+  ],
+  "intents": [
+    "dom:orchestration-ledger"
+  ],
+  "k": [
+    "term:knowledge-head"
+  ],
+  "k_from": [
+    "term:knowledge-time"
+  ],
+  "k_to": [
+    "term:knowledge-time"
+  ],
+  "kind": [
+    "term:entity-kind"
+  ],
+  "kind row": [
+    "q:entity.typed_row"
+  ],
+  "kind table": [
+    "term:vocabulary"
+  ],
+  "knowledge batch": [
+    "term:knowledge-batch"
+  ],
+  "knowledge head": [
+    "dom:temporal-facts",
+    "term:knowledge-head"
+  ],
+  "knowledge interval": [
+    "term:knowledge-time"
+  ],
+  "knowledge time": [
+    "term:knowledge-time"
+  ],
+  "knowledge_seq": [
+    "q:knowledge.head",
+    "term:knowledge-head"
+  ],
+  "ks operation": [
+    "rel:knowledge_service.operation"
+  ],
+  "l1 domain": [
+    "term:domain"
+  ],
+  "leaderboard": [
+    "dom:ranking"
+  ],
+  "learning paths": [
+    "dom:curriculum"
+  ],
+  "leases": [
+    "dom:knowledge-service-runtime"
+  ],
+  "legacy report": [
+    "rel:research.report_version"
+  ],
+  "legacy report publish": [
+    "task:publish-report"
+  ],
+  "lessons": [
+    "dom:curriculum"
+  ],
+  "library profile view": [
+    "rel:api.library_profile"
+  ],
+  "lineage": [
+    "rel:orchestration.artifact_lineage"
+  ],
+  "link": [
+    "rel:corpus.relationship",
+    "task:assert-relationship"
+  ],
+  "links": [
+    "q:entity.relationships"
+  ],
+  "locator": [
+    "term:locator"
+  ],
+  "locators": [
+    "dom:evidence"
+  ],
+  "lookup": [
+    "q:entity.resolve"
+  ],
+  "match": [
+    "rel:staging.identity_match"
+  ],
+  "medium": [
+    "term:cost-class"
+  ],
+  "merge": [
+    "rel:corpus.entity_merge"
+  ],
+  "metrics": [
+    "dom:ranking"
+  ],
+  "mission": [
+    "term:mission"
+  ],
+  "mission progress view": [
+    "rel:api.mission_progress"
+  ],
+  "mission receipts": [
+    "q:receipts.recent_for_mission"
+  ],
+  "missions": [
+    "dom:orchestration-ledger"
+  ],
+  "model family": [
+    "rel:corpus.ai_model"
+  ],
+  "model version": [
+    "rel:corpus.ai_model_version"
+  ],
+  "named query": [
+    "term:named-query"
+  ],
+  "nodes": [
+    "dom:content"
+  ],
+  "occurred_during": [
+    "term:world-time"
+  ],
+  "occurrence": [
+    "rel:temporal.event_occurrence"
+  ],
+  "offering": [
+    "rel:corpus.model_offering"
+  ],
+  "operation intent": [
+    "term:intent"
+  ],
+  "operation receipt": [
+    "term:receipt"
+  ],
+  "operations": [
+    "dom:knowledge-service-runtime"
+  ],
+  "orchestration mission": [
+    "term:mission"
+  ],
+  "org": [
+    "rel:corpus.organization"
+  ],
+  "outbox": [
+    "dom:knowledge-service-runtime"
+  ],
+  "outdated": [
+    "task:find-stale-facts"
+  ],
+  "overview": [
+    "q:entity.card"
+  ],
+  "packet": [
+    "q:retrieval.evidence_packet",
+    "rel:retrieval.evidence_packet",
+    "task:build-evidence-packet",
+    "term:evidence-packet"
+  ],
+  "packet member": [
+    "rel:retrieval.packet_member"
+  ],
+  "packets": [
+    "dom:retrieval"
+  ],
+  "people": [
+    "rel:corpus.person"
+  ],
+  "point in time": [
+    "q:entity.at"
+  ],
+  "post research report": [
+    "task:register-report"
+  ],
+  "post-ingest check": [
+    "task:verify-ingestion-result"
+  ],
+  "pre-research": [
+    "dom:research-starter-protected"
+  ],
+  "price": [
+    "task:record-price-change"
+  ],
+  "pricing": [
+    "task:record-price-change"
+  ],
+  "prior knowledge": [
+    "task:what-do-we-know-about-entity"
+  ],
+  "project objects": [
+    "dom:provenance"
+  ],
+  "projection": [
+    "rel:retrieval.search_projection",
+    "term:projection"
+  ],
+  "projection target": [
+    "rel:retrieval.projection_target"
+  ],
+  "proposal": [
+    "task:compose-ingestion-intent"
+  ],
+  "publication": [
+    "dom:retrieval",
+    "rel:retrieval.space_publication",
+    "term:publication"
+  ],
+  "question coverage": [
+    "rel:research.report_question"
+  ],
+  "quote": [
+    "rel:evidence.locator",
+    "task:admit-support-for-claim",
+    "term:locator"
+  ],
+  "rebase": [
+    "q:entity.what_changed",
+    "task:what-changed-since-head"
+  ],
+  "rebase_required": [
+    "term:rebase-required"
+  ],
+  "receipt": [
+    "q:receipts.for_intent",
+    "rel:orchestration.operation_receipt",
+    "task:verify-ingestion-result",
+    "term:receipt"
+  ],
+  "receipts": [
+    "dom:orchestration-ledger"
+  ],
+  "reference data": [
+    "term:vocabulary"
+  ],
+  "rel kind": [
+    "term:relationship-kind"
+  ],
+  "relationship kind": [
+    "dom:relationships",
+    "term:relationship-kind"
+  ],
+  "relationship kinds": [
+    "q:vocab.relationship_kind"
+  ],
+  "relationship vocabulary": [
+    "rel:taxonomy.relationship_kind"
+  ],
+  "replace": [
+    "task:supersede-stale-fact"
+  ],
+  "replay": [
+    "q:entity.at"
+  ],
+  "report": [
+    "rel:research.report"
+  ],
+  "report assertion": [
+    "rel:research.report_assertion"
+  ],
+  "report evidence": [
+    "q:reports.assertions",
+    "rel:research.report_assertion_claim",
+    "task:navigate-report"
+  ],
+  "report gaps": [
+    "q:reports.questions",
+    "rel:research.report_question",
+    "task:navigate-report"
+  ],
+  "report lifecycle": [
+    "dom:research"
+  ],
+  "report manifest": [
+    "rel:research.report_artifact"
+  ],
+  "report navigation": [
+    "dom:research"
+  ],
+  "report outline": [
+    "q:reports.sections",
+    "rel:research.report_section_version",
+    "task:navigate-report"
+  ],
+  "report package": [
+    "rel:research.report_package"
+  ],
+  "report registration": [
+    "task:register-report"
+  ],
+  "report renditions": [
+    "q:reports.artifacts",
+    "rel:research.report_artifact"
+  ],
+  "report revision": [
+    "rel:research.report_version"
+  ],
+  "report revisions": [
+    "q:reports.versions"
+  ],
+  "report structure": [
+    "dom:research",
+    "task:navigate-report"
+  ],
+  "report v2": [
+    "dom:research-v2"
+  ],
+  "report.publish": [
+    "task:publish-report"
+  ],
+  "reports": [
+    "dom:research"
+  ],
+  "required context": [
+    "rel:research.report_section_dependency"
+  ],
+  "research-report.v1": [
+    "rel:research.report_package"
+  ],
+  "research-report.v2": [
+    "dom:research-v2"
+  ],
+  "resolution": [
+    "rel:staging.resolution_decision"
+  ],
+  "resolve": [
+    "q:entity.resolve"
+  ],
+  "retrieval run": [
+    "rel:retrieval.retrieval_run"
+  ],
+  "review": [
+    "dom:staging"
+  ],
+  "review queue": [
+    "q:staging.unresolved"
+  ],
+  "review queue view": [
+    "rel:api.review_queue"
+  ],
+  "review tasks": [
+    "dom:evaluation"
+  ],
+  "rls": [
+    "term:rls"
+  ],
+  "role": [
+    "term:role"
+  ],
+  "row level security": [
+    "term:rls"
+  ],
+  "rpc": [
+    "dom:api-surface"
+  ],
+  "rrf": [
+    "task:run-hybrid-search",
+    "term:hybrid-search"
+  ],
+  "schema workspace": [
+    "term:workspace"
+  ],
+  "scheme": [
+    "rel:corpus.entity_identifier",
+    "task:find-entity-by-identifier",
+    "term:identifier"
+  ],
+  "scheme lookup": [
+    "q:entity.by_identifier"
+  ],
+  "scope": [
+    "term:scope-key"
+  ],
+  "scope key": [
+    "term:scope-key"
+  ],
+  "scopekey": [
+    "term:scope-key"
+  ],
+  "scores": [
+    "dom:ranking"
+  ],
+  "sealed batch": [
+    "rel:temporal.knowledge_batch",
+    "term:knowledge-batch"
+  ],
+  "sealed run": [
+    "term:verification-run"
+  ],
+  "search": [
+    "dom:retrieval",
+    "task:run-hybrid-search"
+  ],
+  "search hit": [
+    "rel:evidence.provider_result"
+  ],
+  "search projection": [
+    "term:projection"
+  ],
+  "search query": [
+    "rel:evidence.source_query"
+  ],
+  "section identity": [
+    "rel:research.report_section"
+  ],
+  "section reuse": [
+    "q:reports.dependencies",
+    "rel:research.report_section_dependency",
+    "task:navigate-report"
+  ],
+  "section revision": [
+    "rel:research.report_section_version"
+  ],
+  "segment": [
+    "term:segment"
+  ],
+  "segment support": [
+    "term:support"
+  ],
+  "selector": [
+    "rel:evidence.locator",
+    "term:locator"
+  ],
+  "sha256": [
+    "term:fingerprint"
+  ],
+  "source": [
+    "rel:evidence.source"
+  ],
+  "sources": [
+    "q:evidence.sources_by_domain"
+  ],
+  "space": [
+    "rel:retrieval.vector_space",
+    "term:vector-space"
+  ],
+  "space publication": [
+    "term:publication"
+  ],
+  "space version": [
+    "rel:retrieval.vector_space_version"
+  ],
+  "spans": [
+    "dom:observability"
+  ],
+  "stable section": [
+    "rel:research.report_section"
+  ],
+  "staging candidate": [
+    "term:staging-candidate"
+  ],
+  "stale": [
+    "task:find-stale-facts",
+    "task:supersede-stale-fact"
+  ],
+  "stale head": [
+    "term:rebase-required"
+  ],
+  "starter videos": [
+    "dom:research-starter-protected"
+  ],
+  "state segment": [
+    "rel:temporal.segment",
+    "term:segment"
+  ],
+  "store attachment": [
+    "rel:retrieval.vector_store_space"
+  ],
+  "stored artifact": [
+    "term:artifact"
+  ],
+  "stream": [
+    "term:stream"
+  ],
+  "stream history": [
+    "q:facts.history_for_stream"
+  ],
+  "stream kind": [
+    "term:stream-kind"
+  ],
+  "stream kinds": [
+    "q:vocab.stream_kind"
+  ],
+  "stream slot": [
+    "rel:temporal.stream",
+    "term:stream"
+  ],
+  "stream vocabulary": [
+    "rel:temporal.stream_kind"
+  ],
+  "summaries": [
+    "dom:content"
+  ],
+  "support": [
+    "q:evidence.claim_support",
+    "rel:evidence.segment_support",
+    "task:admit-support-for-claim",
+    "term:support"
+  ],
+  "synonym": [
+    "rel:corpus.entity_alias",
+    "term:alias"
+  ],
+  "task": [
+    "term:task"
+  ],
+  "task page": [
+    "term:task"
+  ],
+  "technical records": [
+    "dom:knowledge-records"
+  ],
+  "technical records view": [
+    "rel:api.technical_record_search"
+  ],
+  "temporal basis": [
+    "term:temporal-basis"
+  ],
+  "temporal extent": [
+    "term:extent"
+  ],
+  "temporal fact": [
+    "rel:temporal.segment",
+    "term:segment"
+  ],
+  "temporal_basis": [
+    "term:temporal-basis"
+  ],
+  "tenant": [
+    "term:tenant"
+  ],
+  "tenant clock": [
+    "rel:temporal.knowledge_head"
+  ],
+  "tenant_id": [
+    "term:tenant"
+  ],
+  "timeline": [
+    "dom:temporal-facts",
+    "q:entity.timeline"
+  ],
+  "traces": [
+    "dom:observability"
+  ],
+  "transformations": [
+    "dom:content"
+  ],
+  "two clocks": [
+    "term:two-clocks"
+  ],
+  "two-clock": [
+    "dom:temporal-facts",
+    "term:two-clocks"
+  ],
+  "typed row": [
+    "q:entity.typed_row"
+  ],
+  "unit": [
+    "term:unit-value"
+  ],
+  "unit value": [
+    "term:unit-value"
+  ],
+  "unresolved": [
+    "q:staging.unresolved"
+  ],
+  "url": [
+    "rel:evidence.source"
+  ],
+  "use admission": [
+    "dom:research-v2"
+  ],
+  "utf-16 span": [
+    "rel:research.report_assertion"
+  ],
+  "valid_during": [
+    "term:world-time"
+  ],
+  "vector": [
+    "task:run-hybrid-search"
+  ],
+  "vector item": [
+    "rel:retrieval.vector_item"
+  ],
+  "vector search": [
+    "q:retrieval.hybrid_search"
+  ],
+  "vector space": [
+    "term:vector-space"
+  ],
+  "verification": [
+    "dom:evidence"
+  ],
+  "verification run": [
+    "term:verification-run"
+  ],
+  "verify write": [
+    "task:verify-ingestion-result"
+  ],
+  "vetting": [
+    "rel:staging.vetting_decision"
+  ],
+  "views": [
+    "dom:api-surface"
+  ],
+  "vocabulary": [
+    "term:vocabulary"
+  ],
+  "workspace": [
+    "term:workspace"
+  ],
+  "workspace fingerprint": [
+    "term:fingerprint"
+  ],
+  "world time": [
+    "term:world-time"
+  ],
+  "write": [
+    "task:compose-ingestion-intent"
+  ]
+}

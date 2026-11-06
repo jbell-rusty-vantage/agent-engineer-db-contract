@@ -1,0 +1,1157 @@
+format: ai-engineer-workspace-enrichment/1
+defaults:
+  role: app_reader
+  limit: 200
+  maxLimit: 2000
+  statementTimeoutMs: { cheap: 15000, medium: 15000, heavy: 60000 }
+queries:
+  - name: entity.resolve
+    title: Find entities by name, alias, or identifier
+    kind: named_query
+    role: app_reader
+    sql: select * from api.resolve_entity($1::text)
+    paramOrder: [text]
+    params:
+      type: object
+      required: [text]
+      properties:
+        text: { type: string, minLength: 1 }
+      additionalProperties: false
+    result: { shape: rows, columns: [entity_id, kind, display_name, score] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: identity
+    tasks: [what-do-we-know-about-entity, resolve-or-create-entity]
+    aliases: [resolve, lookup]
+    example: { text: OpenAI }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.card
+    title: Current overview of one entity
+    kind: named_query
+    role: app_reader
+    sql: select api.entity_card($1::uuid) as card
+    paramOrder: [entity_id]
+    params:
+      type: object
+      required: [entity_id]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: single_json, columns: [card] }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: head }
+    pagination: null
+    volatile: false
+    domain: identity
+    tasks: [what-do-we-know-about-entity]
+    aliases: [card, overview]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.at
+    title: Facts for one entity at a world time as known at a knowledge seq
+    kind: named_query
+    role: app_reader
+    sql: select * from api.entity_at($1::uuid, $2::timestamptz, $3::bigint)
+    paramOrder: [entity_id, at, k]
+    params:
+      type: object
+      required: [entity_id, at]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        at: { type: string, format: date-time, pgType: timestamptz }
+        k: { type: ["integer", "null"], pgType: bigint, default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [segment_id, stream_kind, scope_key, valid_during, status, amount, currency, unit, ref_entity_id, ref_display_name, payload, belief, k_from, k_to] }
+    cost_class: cheap
+    temporal: { world_time: param:at, knowledge: param:k }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [what-do-we-know-about-entity, record-price-change]
+    aliases: [as of, point in time, historical facts, replay]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001", at: "2026-03-15T00:00:00Z", k: 0 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.relationships
+    title: Relationships touching one entity at a world time and knowledge seq
+    kind: named_query
+    role: app_reader
+    sql: select * from api.relationships($1::uuid, $2::text, $3::timestamptz, $4::bigint, $5::text)
+    paramOrder: [entity_id, kind, at, k, direction]
+    params:
+      type: object
+      required: [entity_id]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        kind: { type: ["string", "null"], default: null }
+        at: { type: string, format: date-time, pgType: timestamptz, default: "2026-09-11T00:00:00Z" }
+        k: { type: ["integer", "null"], pgType: bigint, default: null }
+        direction: { type: string, enum: [both, outgoing, incoming], default: both }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: param:at, knowledge: param:k }
+    pagination: null
+    volatile: false
+    domain: relationships
+    tasks: [what-do-we-know-about-entity, assert-relationship]
+    aliases: [graph, links]
+    example:
+      entity_id: "0192b000-0000-7000-8000-000000000001"
+      kind: null
+      at: "2026-09-11T00:00:00Z"
+      k: null
+      direction: both
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.timeline
+    title: Segments, events, and unknown gaps for one entity over a world interval
+    kind: named_query
+    role: app_reader
+    sql: select * from api.entity_timeline($1::uuid, $2::timestamptz, $3::timestamptz, $4::bigint)
+    paramOrder: [entity_id, from, to, k]
+    params:
+      type: object
+      required: [entity_id, from, to]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        from: { type: string, format: date-time, pgType: timestamptz }
+        to: { type: string, format: date-time, pgType: timestamptz }
+        k: { type: ["integer", "null"], pgType: bigint, default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [item_kind, item_id, world_interval, details] }
+    cost_class: medium
+    temporal: { world_time: param:from, knowledge: param:k }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [what-do-we-know-about-entity]
+    aliases: [timeline, gaps]
+    example:
+      entity_id: "0192b000-0000-7000-8000-000000000001"
+      from: "2025-01-01T00:00:00Z"
+      to: "2026-09-11T00:00:00Z"
+      k: null
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.what_changed
+    title: Opened and closed items for one entity between two knowledge heads
+    kind: named_query
+    role: app_reader
+    sql: select * from api.what_changed($1::uuid, $2::bigint, $3::bigint)
+    paramOrder: [entity_id, k_from, k_to]
+    params:
+      type: object
+      required: [entity_id, k_from, k_to]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        k_from: { type: integer, pgType: bigint }
+        k_to: { type: integer, pgType: bigint }
+      additionalProperties: false
+    result: { shape: rows, columns: [change_kind, item_kind, item_id, knowledge_seq, details] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: param:k_to }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [what-changed-since-head, check-knowledge-head]
+    aliases: [diff, delta, rebase]
+    example:
+      entity_id: "0192b000-0000-7000-8000-000000000001"
+      k_from: 0
+      k_to: 0
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.by_identifier
+    title: Find a canonical entity by external identifier scheme and value
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select e.id as entity_id, e.kind, e.display_name, e.lifecycle, i.scheme, i.value
+      from corpus.entity_identifier i
+      join corpus.entity e on e.id = i.entity_id and e.tenant_id = i.tenant_id
+      where i.tenant_id = util.current_tenant_id()
+        and i.scheme = $1
+        and i.value = $2
+    paramOrder: [scheme, value]
+    params:
+      type: object
+      required: [scheme, value]
+      properties:
+        scheme: { type: string, minLength: 1 }
+        value: { type: string, minLength: 1 }
+      additionalProperties: false
+    result: { shape: rows, columns: [entity_id, kind, display_name, lifecycle, scheme, value] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: identity
+    tasks: [find-entity-by-identifier, resolve-or-create-entity]
+    aliases: [identifier, scheme lookup]
+    example: { scheme: github, value: openai/openai-python }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.typed_row
+    title: Canonical entity plus the kind-dispatched typed child row
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select e.id as entity_id, e.kind, e.display_name, e.slug, e.lifecycle, e.summary,
+             ek.canonical_schema, ek.canonical_table,
+             coalesce(
+               to_jsonb(t_person), to_jsonb(t_organization), to_jsonb(t_product),
+               to_jsonb(t_product_version), to_jsonb(t_product_feature), to_jsonb(t_ai_model),
+               to_jsonb(t_ai_model_version), to_jsonb(t_model_offering), to_jsonb(t_technique),
+               to_jsonb(t_dataset), to_jsonb(t_benchmark), to_jsonb(t_benchmark_run),
+               to_jsonb(t_repository), to_jsonb(t_library), to_jsonb(t_library_release),
+               to_jsonb(t_mcp_server), to_jsonb(t_agent_skill), to_jsonb(t_ai_protocol),
+               to_jsonb(t_ai_protocol_version), to_jsonb(t_ai_protocol_feature), to_jsonb(t_paper),
+               to_jsonb(t_media_channel), to_jsonb(t_media_series), to_jsonb(t_media_work),
+               to_jsonb(t_event_series), to_jsonb(t_industry_event), to_jsonb(t_talk),
+               to_jsonb(t_story), to_jsonb(t_case_study), to_jsonb(t_concept),
+               to_jsonb(t_funding_round), to_jsonb(t_corporate_transaction), to_jsonb(t_registry),
+               to_jsonb(t_security_advisory), to_jsonb(t_compute_device), to_jsonb(t_compute_offering)
+             ) as typed_row
+      from corpus.entity e
+      join taxonomy.entity_kind ek on ek.code = e.kind
+      left join corpus.person t_person on t_person.id = e.id
+      left join corpus.organization t_organization on t_organization.id = e.id
+      left join corpus.product t_product on t_product.id = e.id
+      left join corpus.product_version t_product_version on t_product_version.id = e.id
+      left join corpus.product_feature t_product_feature on t_product_feature.id = e.id
+      left join corpus.ai_model t_ai_model on t_ai_model.id = e.id
+      left join corpus.ai_model_version t_ai_model_version on t_ai_model_version.id = e.id
+      left join corpus.model_offering t_model_offering on t_model_offering.id = e.id
+      left join corpus.technique t_technique on t_technique.id = e.id
+      left join corpus.dataset t_dataset on t_dataset.id = e.id
+      left join corpus.benchmark t_benchmark on t_benchmark.id = e.id
+      left join corpus.benchmark_run t_benchmark_run on t_benchmark_run.id = e.id
+      left join corpus.repository t_repository on t_repository.id = e.id
+      left join corpus.library t_library on t_library.id = e.id
+      left join corpus.library_release t_library_release on t_library_release.id = e.id
+      left join corpus.mcp_server t_mcp_server on t_mcp_server.id = e.id
+      left join corpus.agent_skill t_agent_skill on t_agent_skill.id = e.id
+      left join corpus.ai_protocol t_ai_protocol on t_ai_protocol.id = e.id
+      left join corpus.ai_protocol_version t_ai_protocol_version on t_ai_protocol_version.id = e.id
+      left join corpus.ai_protocol_feature t_ai_protocol_feature on t_ai_protocol_feature.id = e.id
+      left join corpus.paper t_paper on t_paper.id = e.id
+      left join corpus.media_channel t_media_channel on t_media_channel.id = e.id
+      left join corpus.media_series t_media_series on t_media_series.id = e.id
+      left join corpus.media_work t_media_work on t_media_work.id = e.id
+      left join corpus.event_series t_event_series on t_event_series.id = e.id
+      left join corpus.industry_event t_industry_event on t_industry_event.id = e.id
+      left join corpus.talk t_talk on t_talk.id = e.id
+      left join corpus.story t_story on t_story.id = e.id
+      left join corpus.case_study t_case_study on t_case_study.id = e.id
+      left join corpus.concept t_concept on t_concept.id = e.id
+      left join corpus.funding_round t_funding_round on t_funding_round.id = e.id
+      left join corpus.corporate_transaction t_corporate_transaction on t_corporate_transaction.id = e.id
+      left join corpus.registry t_registry on t_registry.id = e.id
+      left join corpus.security_advisory t_security_advisory on t_security_advisory.id = e.id
+      left join corpus.compute_device t_compute_device on t_compute_device.id = e.id
+      left join corpus.compute_offering t_compute_offering on t_compute_offering.id = e.id
+      where e.tenant_id = util.current_tenant_id()
+        and e.id = $1
+        and ($2::text is null or e.kind = $2)
+    paramOrder: [entity_id, kind]
+    params:
+      type: object
+      required: [entity_id]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        kind: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: single_row, columns: [entity_id, kind, display_name, slug, lifecycle, summary, canonical_schema, canonical_table, typed_row] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: identity
+    tasks: [what-do-we-know-about-entity, resolve-or-create-entity]
+    aliases: [typed row, kind row]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001", kind: organization }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: facts.current_by_stream
+    title: Current facts (k_to is null and valid_during contains now) by stream kind
+    kind: named_query
+    role: app_reader
+    sql: |
+      select id, stream_id, stream_kind, subject_entity_id, subject_relationship_id, scope_key,
+             valid_during, status, amount, currency, unit, belief, temporal_basis, k_from, k_to, payload
+      from api.current_facts
+      where ($1::text is null or stream_kind = $1)
+        and ($2::uuid is null or subject_entity_id = $2)
+      order by stream_kind, scope_key, id
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [stream_kind, entity_id, limit]
+    params:
+      type: object
+      properties:
+        stream_kind: { type: ["string", "null"], default: null }
+        entity_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: temporal-facts
+    tasks: [record-price-change, record-availability-change]
+    aliases: [current facts]
+    example: { stream_kind: model_offering_price, entity_id: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: facts.history_for_stream
+    title: All segments on one entity stream slot, including closed history
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select s.id, s.valid_during, s.k_from, s.k_to, s.status, s.amount, s.currency, s.unit,
+             s.belief, s.temporal_basis, s.replaces_segment_id, st.scope_key
+      from temporal.segment s
+      join temporal.stream st on st.id = s.stream_id and st.tenant_id = s.tenant_id
+      where s.tenant_id = util.current_tenant_id()
+        and st.subject_entity_id = $1
+        and st.kind = $2
+        and st.scope_key = coalesce($3, '')
+      order by s.k_from, lower(s.valid_during)
+      limit least(greatest(coalesce($4, 50), 1), 200)
+      offset greatest(coalesce($5, 0), 0)
+    paramOrder: [entity_id, stream_kind, scope_key, limit, offset]
+    params:
+      type: object
+      required: [entity_id, stream_kind]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        stream_kind: { type: string, minLength: 1 }
+        scope_key: { type: ["string", "null"], default: "" }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+        offset: { type: integer, minimum: 0, default: 0 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: medium
+    temporal: { world_time: history, knowledge: all }
+    pagination: { kind: offset, limitParam: limit, offsetParam: offset }
+    volatile: false
+    domain: temporal-facts
+    tasks: [supersede-stale-fact, record-price-change]
+    aliases: [stream history]
+    example:
+      entity_id: "0192b000-0000-7000-8000-000000000001"
+      stream_kind: model_offering_price
+      scope_key: per_1m_input_tokens
+      limit: 50
+      offset: 0
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: events.current_for_entity
+    title: Current event occurrences for one subject entity
+    kind: named_query
+    role: app_reader
+    sql: |
+      select event_id, kind, subject_entity_id, object_entity_id, occurrence_id,
+             occurred_during, occurrence_mode, payload
+      from api.events_current
+      where subject_entity_id = $1
+      order by lower(occurred_during) desc, event_id
+    paramOrder: [entity_id]
+    params:
+      type: object
+      required: [entity_id]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [what-do-we-know-about-entity]
+    aliases: [events]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: relationships.current_by_kind
+    title: Current relationships, optionally filtered by kind or endpoint
+    kind: named_query
+    role: app_reader
+    sql: |
+      select *
+      from api.current_relationships
+      where ($1::text is null or kind = $1)
+        and ($2::uuid is null or from_entity_id = $2 or to_entity_id = $2)
+      order by kind, id
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [kind, entity_id, limit]
+    params:
+      type: object
+      properties:
+        kind: { type: ["string", "null"], default: null }
+        entity_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: relationships
+    tasks: [assert-relationship]
+    aliases: [current relationships]
+    example: { kind: develops, entity_id: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: vocab.stream_kind
+    title: Stream-kind vocabulary and slot rules
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select code, subject_mode, subject_kinds, status_values, requires_amount, unit_values,
+             requires_ref_entity, ref_entity_kinds, payload_schema, description
+      from temporal.stream_kind
+      where ($1::text is null or code = $1)
+      order by code
+    paramOrder: [code]
+    params:
+      type: object
+      properties:
+        code: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [record-price-change, record-availability-change]
+    aliases: [stream kinds]
+    example: { code: model_offering_price }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: vocab.relationship_kind
+    title: Relationship-kind vocabulary with endpoint constraints
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select code, from_kinds, to_kinds, temporal, "symmetric", inverse_label, description, property_schema
+      from taxonomy.relationship_kind
+      where ($1::text is null or code = $1)
+      order by code
+    paramOrder: [code]
+    params:
+      type: object
+      properties:
+        code: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: null
+    volatile: false
+    domain: relationships
+    tasks: [assert-relationship]
+    aliases: [relationship kinds]
+    example: { code: employed_by }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: vocab.event_kind
+    title: Event-kind vocabulary
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select code, subject_kinds, object_kinds, starts_stream_kind, ends_stream_kind, description
+      from temporal.event_kind
+      where ($1::text is null or code = $1)
+      order by code
+    paramOrder: [code]
+    params:
+      type: object
+      properties:
+        code: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [what-do-we-know-about-entity]
+    aliases: [event kinds]
+    example: { code: price_changed }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claims_for_entity
+    title: Claims that name one entity as subject, object, or context
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select c.id, c.claim_type, c.statement, c.status, c.created_at, cs.role
+      from evidence.claim c
+      join evidence.claim_subject cs on cs.claim_id = c.id and cs.tenant_id = c.tenant_id
+      where c.tenant_id = util.current_tenant_id()
+        and cs.entity_id = $1
+      order by c.created_at desc, c.id
+      limit least(greatest(coalesce($2, 100), 1), 200)
+    paramOrder: [entity_id, limit]
+    params:
+      type: object
+      required: [entity_id]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 100 }
+      additionalProperties: false
+    result: { shape: rows, columns: [id, claim_type, statement, status, created_at, role] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: evidence
+    tasks: [what-do-we-know-about-entity, admit-support-for-claim]
+    aliases: [claims]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001", limit: 100 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claim_support
+    title: Segment and occurrence support rows for one claim
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select ss.id, ss.segment_id, ss.event_occurrence_id, ss.claim_id, ss.locator_id,
+             ss.role, ss.k_from, ss.k_to
+      from evidence.segment_support ss
+      where ss.tenant_id = util.current_tenant_id()
+        and ss.claim_id = $1
+      order by ss.k_from, ss.id
+    paramOrder: [claim_id]
+    params:
+      type: object
+      required: [claim_id]
+      properties:
+        claim_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: evidence
+    tasks: [admit-support-for-claim]
+    aliases: [support]
+    example: { claim_id: "0192d000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.captures_for_source
+    title: Captures registered for one source
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select sc.id, sc.source_id, sc.artifact_id, sc.content_sha256, sc.capture_method,
+             sc.captured_at, sc.request_url
+      from evidence.source_capture sc
+      where sc.tenant_id = util.current_tenant_id()
+        and sc.source_id = $1
+      order by sc.captured_at desc, sc.id
+    paramOrder: [source_id]
+    params:
+      type: object
+      required: [source_id]
+      properties:
+        source_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: null
+    volatile: false
+    domain: evidence
+    tasks: [admit-support-for-claim, build-evidence-packet]
+    aliases: [captures]
+    example: { source_id: "0192e000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.sources_by_domain
+    title: Sources filtered by registrable domain
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select s.id, s.canonical_url, s.registrable_domain, s.host, s.publisher_entity_id,
+             s.last_seen_at, s.next_revisit_after
+      from evidence.source s
+      where s.tenant_id = util.current_tenant_id()
+        and ($1::text is null or s.registrable_domain = $1)
+      order by s.last_seen_at desc nulls last, s.id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [domain, limit]
+    params:
+      type: object
+      properties:
+        domain: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: evidence
+    tasks: [build-evidence-packet]
+    aliases: [sources]
+    example: { domain: openai.com, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: staging.candidates_for_kind
+    title: Staging candidates of one proposed entity kind
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select c.id, c.proposed_kind, c.proposed_payload, c.resolved_entity_id, c.source_id, c.created_at
+      from staging.candidate c
+      where c.tenant_id = util.current_tenant_id()
+        and ($1::text is null or c.proposed_kind = $1)
+      order by c.created_at desc, c.id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [proposed_kind, limit]
+    params:
+      type: object
+      properties:
+        proposed_kind: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: staging
+    tasks: [stage-uncertain-candidate, resolve-or-create-entity]
+    aliases: [candidates]
+    example: { proposed_kind: organization, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: staging.unresolved
+    title: Candidates with no create, match, or reject decision
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select c.id, c.proposed_kind, c.proposed_payload, c.source_id, c.created_at
+      from staging.candidate c
+      where c.tenant_id = util.current_tenant_id()
+        and c.resolved_entity_id is null
+        and not exists (
+          select 1 from staging.resolution_decision d
+          where d.candidate_id = c.id and d.tenant_id = c.tenant_id
+            and d.decision in ('create', 'match', 'reject')
+        )
+      order by c.created_at desc, c.id
+      limit least(greatest(coalesce($1, 50), 1), 200)
+    paramOrder: [limit]
+    params:
+      type: object
+      properties:
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: staging
+    tasks: [stage-uncertain-candidate]
+    aliases: [unresolved, review queue]
+    example: { limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: knowledge.head
+    title: Current tenant knowledge sequence
+    kind: named_query
+    role: app_reader
+    sql: select knowledge_seq, updated_at from api.knowledge_head()
+    paramOrder: []
+    params:
+      type: object
+      properties: {}
+      additionalProperties: false
+    result: { shape: single_row, columns: [knowledge_seq, updated_at] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: temporal-facts
+    tasks: [check-knowledge-head, what-do-we-know-about-entity]
+    aliases: [head, knowledge_seq]
+    example: {}
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: receipts.for_intent
+    title: Intent row and sealed batch for one operation intent
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select i.id as intent_id, i.intent_type, i.idempotency_key, i.approval_state, i.created_at,
+             i.mission_id, b.knowledge_seq, b.receipt_id, b.recorded_at, b.summary
+      from orchestration.operation_intent i
+      left join temporal.knowledge_batch b
+        on b.tenant_id = i.tenant_id and b.idempotency_key = i.idempotency_key
+      where i.tenant_id = util.current_tenant_id()
+        and i.id = $1
+    paramOrder: [intent_id]
+    params:
+      type: object
+      required: [intent_id]
+      properties:
+        intent_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: orchestration-ledger
+    tasks: [publish-report, check-knowledge-head]
+    aliases: [receipt]
+    example: { intent_id: "0192f000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: receipts.recent_for_mission
+    title: Recent intents and sealed batches for one mission
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select i.id as intent_id, i.intent_type, i.approval_state, i.created_at, i.idempotency_key,
+             b.knowledge_seq, b.receipt_id, b.recorded_at
+      from orchestration.operation_intent i
+      left join temporal.knowledge_batch b
+        on b.tenant_id = i.tenant_id and b.idempotency_key = i.idempotency_key
+      where i.tenant_id = util.current_tenant_id()
+        and i.mission_id = $1
+      order by i.created_at desc, i.id
+      limit least(greatest(coalesce($2, 20), 1), 200)
+    paramOrder: [mission_id, limit]
+    params:
+      type: object
+      required: [mission_id]
+      properties:
+        mission_id: { type: string, format: uuid, pgType: uuid }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: orchestration-ledger
+    tasks: [publish-report]
+    aliases: [mission receipts]
+    example: { mission_id: "0192a000-0000-7000-8000-000000000001", limit: 20 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: artifacts.by_type
+    title: Artifacts of one artifact_type for the current tenant
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select a.id, a.artifact_type, a.sha256, a.bucket_class, a.storage_bucket,
+             a.object_path, a.mission_id, a.created_at
+      from orchestration.artifact a
+      where a.tenant_id = util.current_tenant_id()
+        and ($1::text is null or a.artifact_type = $1)
+      order by a.created_at desc, a.id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [artifact_type, limit]
+    params:
+      type: object
+      properties:
+        artifact_type: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: orchestration-ledger
+    tasks: [publish-report, build-evidence-packet]
+    aliases: [artifacts]
+    example: { artifact_type: knowledge_ingestion_receipt, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: retrieval.hybrid_search
+    title: Hybrid search over a published 1536-d vector-space version
+    kind: retrieval
+    role: app_reader
+    sql: select * from api.hybrid_knowledge_search_1536($2::uuid, $3::text, $1::extensions.halfvec, $4::jsonb, $5::integer)
+    paramOrder: ["$embedding", vector_space_version_id, query_text, filters, limit]
+    params:
+      type: object
+      required: [vector_space_version_id, query_text]
+      properties:
+        vector_space_version_id: { type: string, format: uuid, pgType: uuid }
+        query_text: { type: string, minLength: 1, maxLength: 4096 }
+        filters: { type: object, default: {} }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
+      additionalProperties: false
+    result: { shape: rows, columns: [vector_item_id, search_projection_id, search_text, source_kind, fused_score, channel_scores] }
+    cost_class: heavy
+    temporal: { world_time: n/a, knowledge: published }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: retrieval
+    tasks: [run-hybrid-search, build-evidence-packet]
+    aliases: [hybrid search, vector search]
+    example:
+      vector_space_version_id: "0192b100-0000-7000-8000-000000000001"
+      query_text: OpenAI API pricing 2026
+      filters: {}
+      limit: 20
+    execute: false
+    reason: requires embedding
+    provenance: model_assisted
+    reviewed: null
+
+  - name: retrieval.evidence_packet
+    title: One evidence packet with members and node timecodes
+    kind: named_query
+    role: app_reader
+    sql: select api.evidence_packet($1::uuid) as packet
+    paramOrder: [packet_id]
+    params:
+      type: object
+      required: [packet_id]
+      properties:
+        packet_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: single_json, columns: [packet] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: published }
+    pagination: null
+    volatile: false
+    domain: retrieval
+    tasks: [build-evidence-packet]
+    aliases: [packet]
+    example: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: reports.versions
+    title: Versions and package status for a report
+    kind: named_query
+    role: pipeline_agent
+    sql: select v.*, p.schema_version, p.authoring_mode, p.as_of,
+      p.predecessor_version_id from research.report_version v left
+      join research.report_package p on
+      (p.tenant_id,p.report_version_id)=(v.tenant_id,v.id) where
+      v.tenant_id=util.current_tenant_id() and v.report_id=$1::uuid order by
+      v.version desc limit 200
+    paramOrder:
+      - report_id
+    params:
+      type: object
+      required:
+        - report_id
+      properties:
+        report_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    result:
+      shape: rows
+      columns:
+        - id
+        - version
+        - schema_version
+    cost_class: cheap
+    temporal:
+      world_time: n/a
+      knowledge: n/a
+    pagination: null
+    volatile: false
+    domain: research
+    tasks:
+      - navigate-report
+    aliases:
+      - report revisions
+    example:
+      report_id: 00000000-0000-7000-8000-000000000001
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+  - name: reports.sections
+    title: Ordered sections with stable keys
+    kind: named_query
+    role: pipeline_agent
+    sql: select v.*, s.section_key from research.report_section_version v join
+      research.report_section s on
+      (s.tenant_id,s.report_id,s.id)=(v.tenant_id,v.report_id,v.section_id)
+      where v.tenant_id=util.current_tenant_id() and
+      v.report_version_id=$1::uuid order by v.ordinal limit 200
+    paramOrder:
+      - report_version_id
+    params:
+      type: object
+      required:
+        - report_version_id
+      properties:
+        report_version_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    result:
+      shape: rows
+      columns:
+        - section_id
+        - section_key
+        - ordinal
+        - heading
+        - content_pointer
+    cost_class: cheap
+    temporal:
+      world_time: n/a
+      knowledge: n/a
+    pagination: null
+    volatile: false
+    domain: research
+    tasks:
+      - navigate-report
+    aliases:
+      - report outline
+    example:
+      report_version_id: 00000000-0000-7000-8000-000000000001
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+  - name: reports.assertions
+    title: Assertions and run-qualified evidence bindings
+    kind: named_query
+    role: pipeline_agent
+    sql: select a.*, c.run_id, c.claim_key, c.claim_digest, c.claim_id,
+      c.evidence_manifest_artifact_id, c.role from research.report_assertion a
+      left join research.report_assertion_claim c on
+      (c.tenant_id,c.report_version_id,c.assertion_id)=(a.tenant_id,a.report_version_id,a.id)
+      where a.tenant_id=util.current_tenant_id() and
+      a.report_version_id=$1::uuid order by
+      a.start_utf16,a.id,c.run_id,c.claim_key,c.claim_digest,c.role limit 200
+    paramOrder:
+      - report_version_id
+    params:
+      type: object
+      required:
+        - report_version_id
+      properties:
+        report_version_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    result:
+      shape: rows
+      columns:
+        - assertion_key
+        - start_utf16
+        - end_utf16
+        - run_id
+        - claim_key
+        - claim_digest
+        - evidence_manifest_artifact_id
+    cost_class: cheap
+    temporal:
+      world_time: n/a
+      knowledge: n/a
+    pagination: null
+    volatile: false
+    domain: research
+    tasks:
+      - navigate-report
+    aliases:
+      - report evidence
+    example:
+      report_version_id: 00000000-0000-7000-8000-000000000001
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+  - name: reports.questions
+    title: Question coverage and answering sections
+    kind: named_query
+    role: pipeline_agent
+    sql: select q.*, s.section_id from research.report_question q left join
+      research.report_question_section s on
+      (s.tenant_id,s.report_version_id,s.question_key)=(q.tenant_id,q.report_version_id,q.question_key)
+      where q.tenant_id=util.current_tenant_id() and
+      q.report_version_id=$1::uuid order by q.question_key,s.section_id limit
+      200
+    paramOrder:
+      - report_version_id
+    params:
+      type: object
+      required:
+        - report_version_id
+      properties:
+        report_version_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    result:
+      shape: rows
+      columns:
+        - question_key
+        - coverage
+        - explanation
+        - resolution_evidence_needed
+        - section_id
+    cost_class: cheap
+    temporal:
+      world_time: n/a
+      knowledge: n/a
+    pagination: null
+    volatile: false
+    domain: research
+    tasks:
+      - navigate-report
+    aliases:
+      - report gaps
+    example:
+      report_version_id: 00000000-0000-7000-8000-000000000001
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+  - name: reports.dependencies
+    title: Exact section revisions needed for reuse
+    kind: named_query
+    role: pipeline_agent
+    sql: select * from research.report_section_dependency where
+      tenant_id=util.current_tenant_id() and report_version_id=$1::uuid order by
+      section_id,required_version_id,required_section_id,relation limit 200
+    paramOrder:
+      - report_version_id
+    params:
+      type: object
+      required:
+        - report_version_id
+      properties:
+        report_version_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    result:
+      shape: rows
+      columns:
+        - section_id
+        - required_version_id
+        - required_section_id
+        - relation
+    cost_class: cheap
+    temporal:
+      world_time: n/a
+      knowledge: n/a
+    pagination: null
+    volatile: false
+    domain: research
+    tasks:
+      - navigate-report
+    aliases:
+      - section reuse
+    example:
+      report_version_id: 00000000-0000-7000-8000-000000000001
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+  - name: reports.artifacts
+    title: Registered report renditions and artifact metadata
+    kind: named_query
+    role: pipeline_agent
+    sql: select r.role,a.* from research.report_artifact r join
+      orchestration.artifact a on (a.tenant_id,a.id)=(r.tenant_id,r.artifact_id)
+      where r.tenant_id=util.current_tenant_id() and
+      r.report_version_id=$1::uuid order by r.role,a.id limit 200
+    paramOrder:
+      - report_version_id
+    params:
+      type: object
+      required:
+        - report_version_id
+      properties:
+        report_version_id:
+          type: string
+          format: uuid
+      additionalProperties: false
+    result:
+      shape: rows
+      columns:
+        - role
+        - id
+        - sha256
+        - storage_bucket
+        - object_path
+    cost_class: cheap
+    temporal:
+      world_time: n/a
+      knowledge: n/a
+    pagination: null
+    volatile: false
+    domain: research
+    tasks:
+      - navigate-report
+    aliases:
+      - report renditions
+    example:
+      report_version_id: 00000000-0000-7000-8000-000000000001
+    execute: true
+    provenance: model_assisted
+    reviewed: null

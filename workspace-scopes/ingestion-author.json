@@ -1,0 +1,77 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "ingestion-author",
+  "description": "Write-side authoring: everything an agent needs to compose knowledge-ingestion-intent.v1 proposals (identities, relationships, two-clock facts, evidence, staging, the receipt ledger) without the read-only api views. Includes report packages, structure, evidence bindings, coverage and post-seal lifecycle navigation.",
+  "include": {
+    "domains": [
+      "identity",
+      "relationships",
+      "temporal-facts",
+      "evidence",
+      "staging",
+      "orchestration-ledger"
+    ],
+    "relations": [
+      "knowledge_service.operation",
+      "content.document_type",
+      "research.report*"
+    ],
+    "functions": [
+      "temporal.*",
+      "corpus.*",
+      "evidence.*",
+      "staging.*",
+      "util.current_tenant_id",
+      "api.resolve_entity",
+      "api.entity_at",
+      "api.what_changed",
+      "research.guard_report*"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "evidence.verification_*",
+      "orchestration.verification_*",
+      "orchestration.mission*",
+      "orchestration.work_item*",
+      "orchestration.agent_session"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "resolve-or-create-entity",
+    "find-entity-by-identifier",
+    "record-price-change",
+    "record-availability-change",
+    "assert-relationship",
+    "supersede-stale-fact",
+    "admit-support-for-claim",
+    "stage-uncertain-candidate",
+    "check-knowledge-head",
+    "publish-report",
+    "find-stale-facts",
+    "compose-ingestion-intent",
+    "verify-ingestion-result",
+    "navigate-report",
+    "register-report"
+  ],
+  "queries": [
+    "entity.*",
+    "facts.*",
+    "events.*",
+    "relationships.*",
+    "vocab.*",
+    "evidence.*",
+    "staging.*",
+    "receipts.*",
+    "knowledge.head",
+    "reports.*"
+  ]
+}

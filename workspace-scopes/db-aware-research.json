@@ -1,0 +1,79 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "db-aware-research",
+  "description": "Read-side exploration for research planning and ingestion authoring: identities, relationships, two-clock facts, evidence, staging, and the api surface. Includes report packages, structure, evidence bindings, coverage and post-seal lifecycle navigation.",
+  "include": {
+    "domains": [
+      "identity",
+      "relationships",
+      "temporal-facts",
+      "evidence",
+      "staging",
+      "api-surface"
+    ],
+    "relations": [
+      "orchestration.operation_intent",
+      "orchestration.operation_receipt",
+      "orchestration.artifact",
+      "orchestration.artifact_type",
+      "orchestration.intent_type",
+      "knowledge_service.operation",
+      "research.report*"
+    ],
+    "functions": [
+      "temporal.*",
+      "api.*",
+      "util.current_tenant_id",
+      "research.guard_report*"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "evidence.verification_*",
+      "orchestration.verification_*"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "what-do-we-know-about-entity",
+    "resolve-or-create-entity",
+    "find-entity-by-identifier",
+    "record-price-change",
+    "record-availability-change",
+    "assert-relationship",
+    "supersede-stale-fact",
+    "admit-support-for-claim",
+    "stage-uncertain-candidate",
+    "what-changed-since-head",
+    "check-knowledge-head",
+    "publish-report",
+    "build-evidence-packet",
+    "run-hybrid-search",
+    "find-stale-facts",
+    "compose-ingestion-intent",
+    "verify-ingestion-result",
+    "navigate-report",
+    "register-report"
+  ],
+  "queries": [
+    "entity.*",
+    "facts.*",
+    "events.*",
+    "relationships.*",
+    "vocab.*",
+    "evidence.*",
+    "staging.*",
+    "receipts.*",
+    "knowledge.head",
+    "artifacts.*",
+    "retrieval.*",
+    "reports.*"
+  ]
+}

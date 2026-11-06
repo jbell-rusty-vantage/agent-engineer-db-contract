@@ -1,0 +1,1039 @@
+format: ai-engineer-workspace-enrichment/1
+relations:
+  - relation: temporal.knowledge_head
+    domain: temporal-facts
+    aliases: [head, tenant clock]
+    summary: One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an open batch.
+    column_notes:
+      knowledge_seq: "Last sealed sequence; begin_batch compares p_expected_head to this value."
+      open_xid: "Transaction id of the open batch; null when the head is idle."
+      open_k: "Sequence that stamp_k will write; equal to knowledge_seq+1 while a batch is open."
+    examples:
+      - title: Read the current head
+        query: knowledge.head
+        params: {}
+        note: app_reader path; returns 0 when no batch has been sealed.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.knowledge_batch
+    domain: temporal-facts
+    aliases: [sealed batch]
+    summary: One sealed admission transaction with receipt, idempotency key, and input digest.
+    column_notes:
+      receipt_id: "Not null FK to orchestration.operation_receipt; required before facts can exist."
+      idempotency_key: "Unique per tenant; duplicate submits reuse this batch."
+      input_digest: "64 lowercase hex chars of the intent digest."
+    examples:
+      - title: Intent plus sealed batch
+        query: receipts.for_intent
+        params: { intent_id: "0192f000-0000-7000-8000-000000000001" }
+        note: Joins on idempotency_key because pipeline_agent cannot select operation_receipt.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.extent
+    domain: temporal-facts
+    aliases: [date extent]
+    summary: Source text for a date with precision and optional earliest/latest bounds.
+    column_notes:
+      precision: "instant, day, month, quarter, year, relative, or unknown."
+      locator_id: "Optional quote that proved the date."
+    examples:
+      - title: Facts that required an extent
+        query: entity.at
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", at: "2026-03-15T00:00:00Z", k: 0 }
+        note: explicit and carry_forward segments always have extent_id set.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.stream
+    domain: temporal-facts
+    aliases: [fact series, stream slot]
+    summary: Identity of a fact series, unique on kind, subject, and scope_key.
+    column_notes:
+      scope_key: "Distinguishes parallel series; default empty string. Not validated against any convention: a correction reuses the existing series key; a new price series defaults to the unit."
+      subject_entity_id: "Exactly one of subject_entity_id or subject_relationship_id is set."
+    examples:
+      - title: History on one stream slot
+        query: facts.history_for_stream
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", stream_kind: model_offering_price, scope_key: per_1m_input_tokens, limit: 50, offset: 0 }
+        note: Subject is the offering; scope_key is the price unit.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.segment
+    domain: temporal-facts
+    aliases: [fact, temporal fact, state segment]
+    summary: "A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to)."
+    column_notes:
+      valid_during: "World interval [), bounded below, not empty."
+      k_to: "Null means current knowledge; closure only via helpers."
+      temporal_basis: "explicit and carry_forward require extent_id."
+      replaces_segment_id: "Set by assert_state when splitting or replacing."
+      unit: "Must be in stream_kind.unit_values when that list is present."
+    examples:
+      - title: Input price in March 2026 as known at head 0
+        query: entity.at
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", at: "2026-03-15T00:00:00Z", k: 0 }
+        note: Filter result rows to stream_kind model_offering_price.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.event
+    domain: temporal-facts
+    aliases: [event identity]
+    summary: Event identity (kind, subject, optional object/relationship, dedupe_key).
+    column_notes:
+      dedupe_key: "Optional natural key so the same announcement is not inserted twice."
+    examples:
+      - title: Current occurrences for a subject
+        query: events.current_for_entity
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+        note: Joins through event_occurrence where k_to is null.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.event_occurrence
+    domain: temporal-facts
+    aliases: [occurrence]
+    summary: K-stamped occurrence of an event (actual, scheduled, or cancelled).
+    column_notes:
+      occurrence_mode: "actual, scheduled, or cancelled."
+      occurred_during: "World interval [), bounded below."
+    examples:
+      - title: Current events view
+        query: events.current_for_entity
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+        note: One current occurrence per event.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.stream_kind
+    domain: temporal-facts
+    aliases: [stream vocabulary]
+    summary: Slot rules for a fact series (subject kinds, status values, units, payload schema).
+    column_notes:
+      subject_mode: "entity or relationship."
+      unit_values: "Closed list when requires_amount is true."
+    examples:
+      - title: Price slot rules
+        query: vocab.stream_kind
+        params: { code: model_offering_price }
+        note: requires_amount true; units include per_1m_input_tokens.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: temporal.event_kind
+    domain: temporal-facts
+    aliases: [event vocabulary]
+    summary: Event vocabulary with subject and object kinds and optional start/end stream kinds.
+    column_notes:
+      starts_stream_kind: "Optional stream this event opens."
+      ends_stream_kind: "Optional stream this event closes."
+    examples:
+      - title: Price-changed event kind
+        query: vocab.event_kind
+        params: { code: price_changed }
+        note: Subject kinds include model_offering and compute_offering.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.entity
+    domain: identity
+    aliases: [entity, canonical entity, identity row]
+    summary: One row per canonical identity; typed attributes live in corpus.<kind>.
+    column_notes:
+      kind: "FK to taxonomy.entity_kind; picks the typed child table."
+      lifecycle: "active, merged, or retired. Resolve hides merged."
+      merged_into_id: "Set when lifecycle is merged."
+      display_name: "Projection of the entity_name stream, not a unique key."
+      created_by_receipt_id: "Required; executor writes the receipt first."
+    examples:
+      - title: Resolve OpenAI
+        query: entity.resolve
+        params: { text: OpenAI }
+        note: Active rows only; score combines name, alias, and identifier.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.entity_alias
+    domain: identity
+    aliases: [alias, synonym]
+    summary: Typed alternate name for one entity; unique per entity, not globally.
+    column_notes:
+      alias_kind: "synonym, acronym, former_name, handle, ticker, slug, misspelling, translation, model_alias."
+      alias_normalized: "Generated lower(btrim(alias))."
+    examples:
+      - title: Name resolve uses aliases
+        query: entity.resolve
+        params: { text: OpenAI }
+        note: Trigram match on alias as well as display_name.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.entity_identifier
+    domain: identity
+    aliases: [external id, scheme]
+    summary: Schemed external identifier; unique per tenant on (scheme, value).
+    column_notes:
+      scheme: "Closed check list (github, doi, youtube_video, other, …)."
+      value: "Exact match; resolve_entity treats an exact value as score 1.0."
+    examples:
+      - title: Lookup by GitHub repo
+        query: entity.by_identifier
+        params: { scheme: github, value: openai/openai-python }
+        note: Empty if that identifier has not been admitted.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.entity_merge
+    domain: identity
+    aliases: [merge]
+    summary: Durable merge of two entities; loser becomes lifecycle merged.
+    column_notes:
+      from_entity_id: "Loser; must differ from to_entity_id."
+      receipt_id: "Required."
+    examples:
+      - title: Card of the surviving entity
+        query: entity.card
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+        note: Follow merged_into_id if you still hold the loser id.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.relationship
+    domain: relationships
+    aliases: [edge, link]
+    summary: One edge table; kinds constrain endpoints and may be temporal.
+    column_notes:
+      qualifier: "Disambiguates parallel edges of the same kind."
+      episode: "Integer >= 1 for repeated engagements."
+      k_to: "Null means current knowledge of the edge."
+    examples:
+      - title: Current develops edges
+        query: relationships.current_by_kind
+        params: { kind: develops, entity_id: null, limit: 50 }
+        note: Temporal kinds also require an active relationship_active segment.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.organization
+    domain: identity
+    aliases: [org, company]
+    summary: Typed child of corpus.entity for kind organization.
+    column_notes:
+      legal_name: "Optional legal name; display_name stays on corpus.entity."
+      country_code: "Optional ISO country."
+    examples:
+      - title: Typed row for an organization
+        query: entity.typed_row
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", kind: organization }
+        note: typed_row is to_jsonb of this table when kind matches.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.person
+    domain: identity
+    aliases: [people]
+    summary: Typed child of corpus.entity for kind person.
+    column_notes:
+      orcid: "Optional; also store scheme orcid on entity_identifier when known."
+    examples:
+      - title: Resolve a person name
+        query: entity.resolve
+        params: { text: Sam Altman }
+        note: Then load entity.typed_row with kind person.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.model_offering
+    domain: identity
+    aliases: [offering, API SKU]
+    summary: A priced, deployable offering of an ai_model_version from a provider.
+    column_notes:
+      offering_key: "Provider-side SKU or API model id."
+      provider_entity_id: "Organization that offers it."
+    examples:
+      - title: Current prices for an offering
+        query: facts.current_by_stream
+        params: { stream_kind: model_offering_price, entity_id: "0192b000-0000-7000-8000-000000000001", limit: 50 }
+        note: Each price series is its own stream via scope_key; reuse the scope_key shown here when correcting a price.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.ai_model
+    domain: identity
+    aliases: [model family]
+    summary: Typed child for an AI model family (not a version or offering).
+    column_notes:
+      modality: "text array of modalities."
+    examples:
+      - title: Resolve a model family
+        query: entity.resolve
+        params: { text: GPT-5.6 }
+        note: Versions and offerings are separate entities linked by offered_as / version_of.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: corpus.ai_model_version
+    domain: identity
+    aliases: [model version]
+    summary: Typed child for one version of an ai_model.
+    column_notes:
+      provider_model_id: "Optional vendor version id; prefer entity_identifier for stable ids."
+    examples:
+      - title: Relationships of a version
+        query: entity.relationships
+        params: { entity_id: "0192b000-0000-7000-8000-000000000102", kind: offered_as, at: "2026-09-11T00:00:00Z", k: null, direction: outgoing }
+        note: offered_as goes from ai_model_version to model_offering.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: taxonomy.entity_kind
+    domain: identity
+    aliases: [entity vocabulary]
+    summary: Closed list of entity kinds and their canonical typed tables.
+    column_notes:
+      canonical_table: "Always a corpus table for the 36 industry kinds."
+    examples:
+      - title: Dispatch the typed row
+        query: entity.typed_row
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", kind: organization }
+        note: Join uses ek.code = entity.kind.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: taxonomy.relationship_kind
+    domain: relationships
+    aliases: [relationship vocabulary]
+    summary: Edge vocabulary with endpoint kinds, temporal flag, and property schema.
+    column_notes:
+      from_kinds: "Allowed from-entity kinds."
+      to_kinds: "Allowed to-entity kinds."
+      temporal: "When true, a relationship_active stream is required."
+    examples:
+      - title: employed_by slot
+        query: vocab.relationship_kind
+        params: { code: employed_by }
+        note: person to organization, temporal true.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.source
+    domain: evidence
+    aliases: [source, URL]
+    summary: Canonical source (URL/domain) with revisit and publisher pointers.
+    column_notes:
+      registrable_domain: "Filter key for sources_by_domain."
+      publisher_entity_id: "Optional corpus.entity of the publisher."
+      next_revisit_after: "When the crawler may fetch again."
+    examples:
+      - title: Sources on openai.com
+        query: evidence.sources_by_domain
+        params: { domain: openai.com, limit: 50 }
+        note: Empty on an unpopulated tenant.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.source_capture
+    domain: evidence
+    aliases: [capture]
+    summary: One immutable capture of a source, hashed and stored as an artifact.
+    column_notes:
+      content_sha256: "Digest of captured bytes."
+      capture_method: "FK to evidence.capture_method."
+    examples:
+      - title: Captures for one source
+        query: evidence.captures_for_source
+        params: { source_id: "0192e000-0000-7000-8000-000000000001" }
+        note: Insert-only.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.locator
+    domain: evidence
+    aliases: [quote, selector]
+    summary: Precise selection inside a capture, with selected_content_sha256.
+    column_notes:
+      selector_kind: "text_quote, table, media_timecode, and others."
+      selected_content_sha256: "Digest of the selected span, not the whole capture."
+    examples:
+      - title: Support rows carry locator_id
+        query: evidence.claim_support
+        params: { claim_id: "0192d000-0000-7000-8000-000000000001" }
+        note: admit_support requires a locator.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.claim
+    domain: evidence
+    aliases: [claim]
+    summary: Atomic statement with type, status, and creating receipt.
+    column_notes:
+      status: "Enum including proposed, verified, disputed, retracted, superseded."
+      structured: "JSONB; verification manifest digest lives under structured.verification."
+    examples:
+      - title: Claims naming an entity
+        query: evidence.claims_for_entity
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", limit: 100 }
+        note: Joins claim_subject.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.claim_subject
+    domain: evidence
+    aliases: [claim role]
+    summary: Entity participation in a claim as subject, object, or context.
+    column_notes:
+      role: "subject, object, or context."
+    examples:
+      - title: Claims for an entity
+        query: evidence.claims_for_entity
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001", limit: 100 }
+        note: Primary key includes role so the same entity can appear in more than one role.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.segment_support
+    domain: evidence
+    aliases: [support]
+    summary: K-stamped link from a claim and locator to a segment or occurrence.
+    column_notes:
+      role: "supports, challenges, or context."
+      segment_id: "Exactly one of segment_id or event_occurrence_id."
+    examples:
+      - title: Support for one claim
+        query: evidence.claim_support
+        params: { claim_id: "0192d000-0000-7000-8000-000000000001" }
+        note: Written only through temporal.admit_support.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.source_query
+    domain: evidence
+    aliases: [search query]
+    summary: One provider query issued during discovery.
+    column_notes:
+      provider_code: "FK to evidence.search_provider."
+      purpose: "Why the query was issued."
+    examples:
+      - title: Sources discovered under a domain
+        query: evidence.sources_by_domain
+        params: { domain: openai.com, limit: 50 }
+        note: Queries themselves are not in the catalog; start from the resulting sources.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: staging.candidate
+    domain: staging
+    aliases: [candidate]
+    summary: Proposed identity awaiting resolution; not a draft fact.
+    column_notes:
+      proposed_kind: "FK to taxonomy.entity_kind."
+      resolved_entity_id: "Set after a match or create decision."
+    examples:
+      - title: Unresolved candidates
+        query: staging.unresolved
+        params: { limit: 50 }
+        note: Excludes create/match/reject decisions.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: staging.identity_match
+    domain: staging
+    aliases: [match]
+    summary: Scored match between a candidate and an existing entity.
+    column_notes:
+      confidence: "0..1."
+      method: "How the match was produced."
+    examples:
+      - title: Candidates of one kind
+        query: staging.candidates_for_kind
+        params: { proposed_kind: organization, limit: 50 }
+        note: Inspect identity_match rows for those candidate ids next.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: staging.resolution_decision
+    domain: staging
+    aliases: [resolution]
+    summary: create, match, reject, or defer decision with a receipt.
+    column_notes:
+      decision: "create, match, reject, defer."
+      receipt_id: "Required."
+    examples:
+      - title: Still unresolved
+        query: staging.unresolved
+        params: { limit: 50 }
+        note: A create/match/reject row removes the candidate from this query.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: staging.vetting_decision
+    domain: staging
+    aliases: [vetting]
+    summary: admit, reject, or defer vetting decision with a receipt.
+    column_notes:
+      decision: "admit, reject, defer."
+      reason: "Required text."
+    examples:
+      - title: Candidates awaiting work
+        query: staging.unresolved
+        params: { limit: 50 }
+        note: Vetting is separate from identity resolution.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: orchestration.operation_intent
+    domain: orchestration-ledger
+    aliases: [intent]
+    summary: Durable proposed operation with unique idempotency_key.
+    column_notes:
+      intent_type: "FK to orchestration.intent_type; knowledge_ingestion is the workspace write."
+      idempotency_key: "Unique; duplicate submits return duplicate_of."
+      preconditions: "Includes expectedKnowledgeHead and snapshotDigest."
+    examples:
+      - title: One intent
+        query: receipts.for_intent
+        params: { intent_id: "0192f000-0000-7000-8000-000000000001" }
+        note: Returns the intent even when no batch has sealed.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: orchestration.operation_receipt
+    domain: orchestration-ledger
+    aliases: [receipt]
+    summary: Immutable outcome of one intent (applied, rejected, noop, partial).
+    column_notes:
+      outcome: "applied, rejected, noop, or partial."
+      intent_id: "Unique; one receipt per intent."
+    examples:
+      - title: Batch that cites the receipt id
+        query: receipts.for_intent
+        params: { intent_id: "0192f000-0000-7000-8000-000000000001" }
+        note: pipeline_agent cannot SELECT this table; the catalog query returns receipt_id from knowledge_batch.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: orchestration.artifact
+    domain: orchestration-ledger
+    aliases: [artifact]
+    summary: Content-addressed stored object typed by artifact_type.
+    column_notes:
+      sha256: "64 lowercase hex; unique with artifact_type."
+      bucket_class: "source_captures, candidate, accepted, ledger, or published."
+      storage_state: "stored or pending when the bucket write lagged the row."
+    examples:
+      - title: Ingestion receipts on disk
+        query: artifacts.by_type
+        params: { artifact_type: knowledge_ingestion_receipt, limit: 50 }
+        note: Agents read bytes through the executor, not with bucket credentials.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: orchestration.artifact_lineage
+    domain: orchestration-ledger
+    aliases: [lineage]
+    summary: Typed edge between artifacts (derived_from, supersedes, corrects, produced_by, consumed_by).
+    column_notes:
+      relation_kind: "derived_from, supersedes, corrects, produced_by, consumed_by."
+      receipt_id: "Set on edges written in the apply transaction."
+    examples:
+      - title: Artifacts of one type
+        query: artifacts.by_type
+        params: { artifact_type: knowledge_read_snapshot, limit: 50 }
+        note: Snapshot artifacts are derived_from the read intent artifact.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.vector_space
+    domain: retrieval
+    aliases: [space]
+    summary: Named embedding space (engineering_claims, entity_profiles, …).
+    column_notes:
+      slug: "Stable space name used in filters."
+    examples:
+      - title: Hybrid search needs a published version of a space
+        query: retrieval.hybrid_search
+        params: { vector_space_version_id: "0192b100-0000-7000-8000-000000000001", query_text: "OpenAI API pricing 2026", filters: {}, limit: 20 }
+        note: Catalog entry is execute false; requires embedding.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.vector_item
+    domain: retrieval
+    aliases: [vector item]
+    summary: Searchable item in a space version; child halfvec partitions are not a direct read path.
+    column_notes:
+      lifecycle: "Only active items are searchable."
+      knowledge_seq: "Upper bound filter for as-of-knowledge reads."
+    examples:
+      - title: Hybrid search ranks vector items
+        query: retrieval.hybrid_search
+        params: { vector_space_version_id: "0192b100-0000-7000-8000-000000000001", query_text: "OpenAI API pricing 2026", filters: {}, limit: 20 }
+        note: Result column vector_item_id points here.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.search_projection
+    domain: retrieval
+    aliases: [projection]
+    summary: Derived text projection that a vector item may point at.
+    column_notes:
+      projection_target_id: "Five-way target (entity, document, record, …)."
+    examples:
+      - title: Packet members cite projections
+        query: retrieval.evidence_packet
+        params: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+        note: Members may include search_projection_id.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.evidence_packet
+    domain: retrieval
+    aliases: [packet]
+    summary: Assembled evidence bundle for one question.
+    column_notes:
+      packet_sha256: "Digest of the packet JSON."
+      run_id: "Retrieval run that built it."
+    examples:
+      - title: Load one packet
+        query: retrieval.evidence_packet
+        params: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+        note: Returns null JSON when the id is unknown to the tenant.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.packet_member
+    domain: retrieval
+    aliases: [packet member]
+    summary: One member of an evidence packet, optionally tied to a document node.
+    column_notes:
+      source_document_node_id: "Joined for start_ms/end_ms in api.evidence_packet."
+      member_kind: "What kind of object this member is."
+    examples:
+      - title: Packet with members
+        query: retrieval.evidence_packet
+        params: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+        note: Members array is empty when the packet is missing.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.space_publication
+    domain: retrieval
+    aliases: [publication]
+    summary: Published vector-space version that hybrid search may read.
+    column_notes:
+      status: "Must be published for hybrid search."
+    examples:
+      - title: Search a published version
+        query: retrieval.hybrid_search
+        params: { vector_space_version_id: "0192b100-0000-7000-8000-000000000001", query_text: "OpenAI API pricing 2026", filters: {}, limit: 20 }
+        note: Unpublished versions raise insufficient_privilege.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.retrieval_chunk
+    domain: retrieval
+    aliases: [chunk]
+    summary: Chunk produced by a chunking procedure; spans point into document nodes.
+    column_notes:
+      chunk_set_id: "Parent set from the chunking procedure version."
+    examples:
+      - title: Packet members may cite chunks
+        query: retrieval.evidence_packet
+        params: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+        note: summary_evidence expands summaries to chunk_id plus locator_id.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.entities
+    domain: api-surface
+    aliases: [entities view]
+    summary: Invoker view of tenant entities plus alias array.
+    column_notes:
+      aliases: "text[] from api.entity_aliases."
+    examples:
+      - title: Prefer resolve over scanning the view
+        query: entity.resolve
+        params: { text: OpenAI }
+        note: The view is the PostgREST surface; agents should use named queries.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.current_facts
+    domain: api-surface
+    aliases: [current facts view]
+    summary: Current segments whose valid_during contains now().
+    column_notes:
+      stream_kind: "Copied from temporal.stream.kind."
+      k_to: "Always null in this view."
+    examples:
+      - title: Current prices
+        query: facts.current_by_stream
+        params: { stream_kind: model_offering_price, entity_id: null, limit: 50 }
+        note: Historical prices need entity.at.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.current_relationships
+    domain: api-surface
+    aliases: [current relationships view]
+    summary: Current relationships, hiding inactive temporal edges.
+    column_notes:
+      k_to: "Always null in this view."
+    examples:
+      - title: Current develops
+        query: relationships.current_by_kind
+        params: { kind: develops, entity_id: null, limit: 50 }
+        note: Replay a past head with entity.relationships and p_k.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.events_current
+    domain: api-surface
+    aliases: [current events view]
+    summary: Current event occurrences for the tenant.
+    column_notes:
+      occurrence_id: "temporal.event_occurrence.id."
+    examples:
+      - title: Events for one subject
+        query: events.current_for_entity
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+        note: Filters the view by subject_entity_id.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: knowledge.record
+    domain: knowledge-records
+    aliases: [engineering record]
+    summary: Identity of a typed engineering record with assurance and a creating receipt.
+    column_notes:
+      kind: "Selects the typed child table."
+      assurance_level: "FK-style code into knowledge.assurance_level."
+    examples:
+      - title: Card may mention linked records indirectly
+        query: entity.card
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+        note: Direct record search is api.technical_record_search, not a catalog query yet.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: knowledge_service.operation
+    domain: knowledge-service-runtime
+    aliases: [KS operation]
+    summary: Durable knowledge-service operation with ownership_mode and idempotency_key.
+    column_notes:
+      ownership_mode: "standalone, mission_control, or eve."
+      operation_kind: "Includes knowledge_ingestion when the executor applies an intent."
+    examples:
+      - title: Head after an operation
+        query: knowledge.head
+        params: {}
+        note: A sealed knowledge_ingestion increments knowledge_seq by one.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: research.report
+    domain: research
+    aliases: [report]
+    summary: Tenant report slug and title, optionally tied to a mission.
+    column_notes:
+      mission_id: "Optional for v1 registration; the legacy report.publish compatibility path requires a mission."
+    examples:
+      - title: Recent intents for a mission
+        query: receipts.recent_for_mission
+        params: { mission_id: "0192a000-0000-7000-8000-000000000001", limit: 20 }
+        note: Look for intent_type knowledge_ingestion after a report.publish.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.provider_result
+    domain: evidence
+    aliases: [search hit]
+    summary: One ranked hit from a source_query; query_id points at the discovery query.
+    column_notes:
+      query_id: "Parent evidence.source_query."
+      rank: "Provider rank in that result page."
+    examples:
+      - title: Sources for a domain
+        query: evidence.sources_by_domain
+        params: { domain: openai.com, limit: 50 }
+        note: Walk source_query → provider_result → source_encounter to the source row.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.source_encounter
+    domain: evidence
+    aliases: [encounter]
+    summary: When a provider result was seen as a source, optionally with a capture.
+    column_notes:
+      provider_result_id: "The search hit that produced this encounter."
+      capture_id: "Optional evidence.source_capture taken at encounter time."
+    examples:
+      - title: Captures for one source
+        query: evidence.captures_for_source
+        params: { source_id: "0192e000-0000-7000-8000-000000000001" }
+        note: Encounters may exist before a capture_id is filled.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: evidence.capture_method
+    domain: evidence
+    aliases: [capture method]
+    summary: Vocabulary of how a source_capture was taken.
+    column_notes:
+      code: "Stable method code referenced by evidence.source_capture.capture_method."
+    examples:
+      - title: Captures for one source
+        query: evidence.captures_for_source
+        params: { source_id: "0192e000-0000-7000-8000-000000000001" }
+        note: capture_method on each row is a code from this table.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.vector_space_version
+    domain: retrieval
+    aliases: [space version]
+    summary: Immutable version of a vector space, including dims and publication lifecycle.
+    column_notes:
+      dims: "Embedding width; hybrid_knowledge_search_1536 requires 1536."
+      publication_lifecycle: "Publication state of this version, distinct from space_publication.status."
+    examples:
+      - title: Search a version id
+        query: retrieval.hybrid_search
+        params: { vector_space_version_id: "0192b100-0000-7000-8000-000000000001", query_text: "OpenAI API pricing 2026", filters: {}, limit: 20 }
+        note: Pass this table's id, not vector_space.id.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.vector_store_space
+    domain: retrieval
+    aliases: [store attachment]
+    summary: Attaches a vector store to a space and names the active published version.
+    column_notes:
+      active_space_version_id: "Version hybrid search should use when a store is queried."
+      authority_class: "Which store is authoritative for the space."
+    examples:
+      - title: Search the active version
+        query: retrieval.hybrid_search
+        params: { vector_space_version_id: "0192b100-0000-7000-8000-000000000001", query_text: "OpenAI API pricing 2026", filters: {}, limit: 20 }
+        note: Unpublished active versions still fail the publication gate.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.chunk_span
+    domain: retrieval
+    aliases: [chunk span]
+    summary: Character offsets of a chunk inside a document node, optionally with a locator.
+    column_notes:
+      document_node_id: "Parent content.document_node."
+      start_offset: "Inclusive start inside the node text."
+    examples:
+      - title: Packet members may cite the node
+        query: retrieval.evidence_packet
+        params: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+        note: Timecodes come from the node, not from these offsets.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.projection_target
+    domain: retrieval
+    aliases: [projection target]
+    summary: Five-way target a search projection may point at (entity, record, chunk, claim, summary).
+    column_notes:
+      target_kind: "Which of entity_id, record_id, chunk_id, claim_id, summary_id is set."
+      entity_id: "Set when the projection is an entity profile."
+    examples:
+      - title: Hybrid search ranks items that point at targets
+        query: retrieval.hybrid_search
+        params: { vector_space_version_id: "0192b100-0000-7000-8000-000000000001", query_text: "OpenAI API pricing 2026", filters: {}, limit: 20 }
+        note: Follow search_projection.projection_target_id to this row.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: retrieval.retrieval_run
+    domain: retrieval
+    aliases: [retrieval run]
+    summary: One executed retrieval plan; packets may record the run that built them.
+    column_notes:
+      plan_id: "Parent retrieval.retrieval_plan."
+      request_sha256: "Digest of the request that produced this run."
+    examples:
+      - title: Packet built by a run
+        query: retrieval.evidence_packet
+        params: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+        note: Packet JSON may include run_id pointing here.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.library_profile
+    domain: api-surface
+    aliases: [library profile view]
+    summary: Invoker view of library identities with ecosystem and package_name.
+    column_notes:
+      ecosystem: "Package ecosystem for the library."
+      package_name: "Canonical package name in that ecosystem."
+    examples:
+      - title: Resolve the library first
+        query: entity.resolve
+        params: { text: openai }
+        note: Prefer entity.card after you have the id; this view is the PostgREST surface.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.technical_record_search
+    domain: api-surface
+    aliases: [technical records view]
+    summary: Invoker view of knowledge.record for app_reader.
+    column_notes:
+      assurance_level: "Copied from knowledge.record."
+      provenance_claim_id: "Backing claim when present."
+    examples:
+      - title: Entity overview first
+        query: entity.card
+        params: { entity_id: "0192b000-0000-7000-8000-000000000001" }
+        note: Record search is not yet a named-query catalog entry.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.review_queue
+    domain: api-surface
+    aliases: [review queue view]
+    summary: Invoker view of evaluation.review_task for app_reader.
+    column_notes:
+      task_kind: "What kind of review this is."
+      candidate_id: "Set when the task points at a staging.candidate."
+    examples:
+      - title: Unresolved identity work
+        query: staging.unresolved
+        params: { limit: 50 }
+        note: Review tasks may later point at these candidate ids.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.mission_progress
+    domain: api-surface
+    aliases: [mission progress view]
+    summary: Invoker view of mission status and work-item counts.
+    column_notes:
+      outstanding: "Work items not yet succeeded or failed."
+      cost_usd: "Recorded mission cost; not a ranking metric."
+    examples:
+      - title: Recent intents for the mission
+        query: receipts.recent_for_mission
+        params: { mission_id: "0192a000-0000-7000-8000-000000000001", limit: 20 }
+        note: Progress is operational; facts still live on temporal streams.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: research.report_version
+    domain: research
+    aliases:
+      - report revision
+      - legacy report
+    summary: Immutable revision and primary Markdown/JSON references.
+    notes: "Left join report_package when listing versions: a missing package
+      identifies a legacy revision, not a damaged v1 package."
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_package
+    domain: research
+    aliases:
+      - report package
+      - research-report.v1
+    summary: Version scope, cutoff, producer, authoring mode and predecessor.
+    notes: Incremental and post_research use the same contract. An earlier
+      predecessor belongs to the same report; a mission and producer attempt are
+      optional.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_section
+    domain: research
+    aliases:
+      - stable section
+      - section identity
+    summary: Stable section key within one report.
+    notes: Join report_section_version for the heading and content of a particular
+      revision. A stable section alone does not identify reusable bytes.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_section_version
+    domain: research
+    aliases:
+      - report outline
+      - section revision
+    summary: Ordered heading, question, conclusion, context and JSON pointer for an
+      exact revision.
+    notes: Read ordinal order. content_pointer addresses structured JSON; fetch the
+      registered structure artifact for blocks and readable content.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_section_dependency
+    domain: research
+    aliases:
+      - section reuse
+      - required context
+    summary: Exact section-revision dependencies for context, derivation and
+      supersession.
+    notes: Follow required_version_id and required_section_id together. Carry
+      required context into lessons or articles; rewritten assertions require
+      new verification.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_assertion
+    domain: research
+    aliases:
+      - report assertion
+      - UTF-16 span
+    summary: Proposition bound to an exact final Markdown span and structured block
+      pointer.
+    notes: Offsets are UTF-16 [start,end) in the final artifact, not byte offsets or
+      authoring-local block positions. Preserve Unicode and qualifiers; derived
+      statements retain premises or calculations.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_assertion_claim
+    domain: research
+    aliases:
+      - report evidence
+      - claim binding
+    summary: Run-qualified claim identity, evidence manifest, role and optional
+      canonical claim.
+    notes: Identity is (run_id, claim_key, claim_digest). A null claim_id is allowed
+      at authoring time. A binding does not prove verification or admission;
+      follow its manifest to the evidence owners.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_artifact
+    domain: research
+    aliases:
+      - report renditions
+      - report manifest
+    summary: Package artifact roles referencing the shared artifact registry.
+    notes: Resolve bytes, digest, media type and availability through
+      orchestration.artifact. Signed URLs are transient. Post-seal assessments
+      live outside the frozen package manifest.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_question
+    domain: research
+    aliases:
+      - report gaps
+      - question coverage
+    summary: Original research questions, coverage, explanations and missing evidence.
+    notes: Coverage is independent of assertion support. A sealed partial report can
+      retain unanswered questions; inspect required flags and
+      resolution_evidence_needed.
+    provenance: model_assisted
+    reviewed: null
+  - relation: research.report_question_section
+    domain: research
+    aliases:
+      - answering sections
+    summary: Question-to-section links within an exact report revision.
+    notes: Answered, partial and conflicting coverage requires answering sections
+      when sealing. Links locate answers; they do not certify correctness.
+    provenance: model_assisted
+    reviewed: null

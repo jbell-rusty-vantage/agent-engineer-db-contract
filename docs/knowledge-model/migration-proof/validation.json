@@ -1,0 +1,33 @@
+{
+  "project_ref": "wkythqbofmckbuoothhn",
+  "project_name": "supabase-blue-ocean",
+  "verified_on": "2026-09-11",
+  "migration_count": 13,
+  "migration_head": "20260912011200",
+  "entity_kinds": 36,
+  "vector_spaces": 11,
+  "embedding_partitions": 11,
+  "hnsw_indexes": 11,
+  "protected_tables_verified": 25,
+  "protected_rows_unchanged": true,
+  "research_starter_videos": 2252,
+  "research_starter_channels": 2,
+  "unsealed_heads": 0,
+  "pipeline_direct_temporal_write": false,
+  "executor_direct_relationship_write": false,
+  "executor_admission": true,
+  "typecheck": "passed",
+  "cloud_type_drift_check": "passed",
+  "disposable_pg17_tests": {
+    "knowledge_model_grants.sql": "passed",
+    "knowledge_model_import.sql": "passed",
+    "knowledge_model_invariants.sql": "passed",
+    "knowledge_model_media.sql": "passed",
+    "knowledge_model_relationship.sql": "passed",
+    "knowledge_model_repository.sql": "passed",
+    "knowledge_model_summary.sql": "passed",
+    "knowledge_model_temporal.sql": "passed"
+  },
+  "cloud_catalog_import_executed": false,
+  "local_shared_database_migrated": false
+}

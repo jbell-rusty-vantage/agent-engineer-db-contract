@@ -1,0 +1,790 @@
+{
+  "format": "ai-engineer-wipe-manifest.v1",
+  "generatedBy": "scripts/install-manifest.mjs",
+  "migrations": {
+    "files": 191,
+    "head": "20261105010300_product_api.sql",
+    "sha256": "898e39652d43a5d9cc31780d04f4f7d770e864cf1d93ccce681ac270fdc702ad"
+  },
+  "public": {
+    "relations": [
+      {
+        "name": "factory_artifact",
+        "kind": "table"
+      },
+      {
+        "name": "factory_assertion_result",
+        "kind": "table"
+      },
+      {
+        "name": "factory_canary_result",
+        "kind": "table"
+      },
+      {
+        "name": "factory_candidate",
+        "kind": "table"
+      },
+      {
+        "name": "factory_component_version",
+        "kind": "table"
+      },
+      {
+        "name": "factory_environment_version",
+        "kind": "table"
+      },
+      {
+        "name": "factory_episode",
+        "kind": "table"
+      },
+      {
+        "name": "factory_evolution_proposal",
+        "kind": "table"
+      },
+      {
+        "name": "factory_experiment",
+        "kind": "table"
+      },
+      {
+        "name": "factory_experiment_arm",
+        "kind": "table"
+      },
+      {
+        "name": "factory_failure_cluster",
+        "kind": "table"
+      },
+      {
+        "name": "factory_promotion_decision",
+        "kind": "table"
+      },
+      {
+        "name": "factory_runtime_event",
+        "kind": "table"
+      },
+      {
+        "name": "factory_score_vector",
+        "kind": "table"
+      },
+      {
+        "name": "factory_task",
+        "kind": "table"
+      },
+      {
+        "name": "factory_trace_span_ref",
+        "kind": "table"
+      },
+      {
+        "name": "research_application_domain",
+        "kind": "table"
+      },
+      {
+        "name": "research_category_definition",
+        "kind": "table"
+      },
+      {
+        "name": "research_entity_candidate",
+        "kind": "table"
+      },
+      {
+        "name": "research_evidence_anchor",
+        "kind": "table"
+      },
+      {
+        "name": "research_ingestion_intent",
+        "kind": "table"
+      },
+      {
+        "name": "research_ingestion_intent_event",
+        "kind": "table"
+      },
+      {
+        "name": "research_organization_candidate",
+        "kind": "table"
+      },
+      {
+        "name": "research_organization_domain_definition",
+        "kind": "table"
+      },
+      {
+        "name": "research_organization_source",
+        "kind": "table"
+      },
+      {
+        "name": "research_pre_research_artifact",
+        "kind": "table"
+      },
+      {
+        "name": "research_pre_research_run",
+        "kind": "table"
+      },
+      {
+        "name": "research_pre_research_session",
+        "kind": "table"
+      },
+      {
+        "name": "research_pre_research_stage_execution",
+        "kind": "table"
+      },
+      {
+        "name": "research_pre_research_video_state",
+        "kind": "table"
+      },
+      {
+        "name": "research_resource_candidate",
+        "kind": "table"
+      },
+      {
+        "name": "research_starter_channels",
+        "kind": "table"
+      },
+      {
+        "name": "research_starter_videos",
+        "kind": "table"
+      },
+      {
+        "name": "research_taxonomy_version",
+        "kind": "table"
+      },
+      {
+        "name": "research_video_analysis",
+        "kind": "table"
+      },
+      {
+        "name": "research_video_category",
+        "kind": "table"
+      },
+      {
+        "name": "research_video_domain",
+        "kind": "table"
+      },
+      {
+        "name": "research_video_initial_summary",
+        "kind": "table"
+      },
+      {
+        "name": "research_video_lifecycle",
+        "kind": "table"
+      },
+      {
+        "name": "research_video_technology_summary",
+        "kind": "table"
+      },
+      {
+        "name": "research_web_search_event",
+        "kind": "table"
+      }
+    ],
+    "functions": [
+      "protect_factory_episode_identity_and_terminal()",
+      "reject_immutable_row_change()",
+      "set_updated_at()"
+    ],
+    "types": [
+      "research_category_assignment_role",
+      "research_content_form",
+      "research_difficulty",
+      "research_engineering_category_code",
+      "research_entity_kind",
+      "research_evidence_level",
+      "research_evidence_source_kind",
+      "research_intent_event_status",
+      "research_intent_status",
+      "research_lifecycle_stage",
+      "research_organization_domain_code",
+      "research_organization_scope",
+      "research_pre_research_run_status",
+      "research_resource_type",
+      "research_taxonomy_status",
+      "research_verification_status",
+      "research_video_organization_role"
+    ]
+  },
+  "storage": {
+    "triggers": [
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "registered_storage_delete_guard"
+      }
+    ],
+    "policies": [
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "ai_engineer_cloud_bucket_tenant_insert"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "ai_engineer_cloud_bucket_tenant_select"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "ai_engineer_project_provenance_insert"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "ai_engineer_project_provenance_select"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "ai_engineer_project_provenance_update"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "ai_engineer_transcripts_select_authenticated"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "matthew_berman_transcripts_select_authenticated"
+      },
+      {
+        "schema": "storage",
+        "table": "objects",
+        "name": "product_api_reads_workspace_objects"
+      }
+    ],
+    "buckets": [
+      "ai-engineer-cloud-bucket",
+      "ai-engineer-project-provenance",
+      "ai-engineer-transcripts",
+      "aieng-workspaces",
+      "content-derivatives",
+      "matthew-berman-transcripts",
+      "research-ingestion-intents",
+      "research-reports",
+      "source-captures"
+    ]
+  },
+  "schemas": {
+    "access": {
+      "relations": [
+        "account_profile",
+        "client_grant",
+        "guardian_link",
+        "policy_version",
+        "processing_authorization",
+        "provided_credential",
+        "source_restriction"
+      ]
+    },
+    "api": {
+      "relations": [
+        "current_facts",
+        "current_relationships",
+        "entities",
+        "events_current",
+        "library_profile",
+        "mission_progress",
+        "review_queue",
+        "technical_record_search"
+      ]
+    },
+    "authoring": {
+      "relations": [
+        "asset_scope",
+        "block_type",
+        "command",
+        "deployment",
+        "distribution",
+        "distribution_member",
+        "distribution_offer",
+        "event",
+        "file_set",
+        "file_set_entry",
+        "publisher_grant",
+        "release",
+        "release_item",
+        "revision_binding",
+        "revision_block",
+        "runtime_requirement",
+        "work",
+        "work_revision",
+        "workspace",
+        "workspace_member"
+      ]
+    },
+    "content": {
+      "relations": [
+        "conversion_evaluation",
+        "conversion_finding",
+        "document",
+        "document_about_entity",
+        "document_identifier",
+        "document_node",
+        "document_node_edge",
+        "document_representation",
+        "document_summary",
+        "document_summary_source",
+        "document_type",
+        "document_version",
+        "document_version_source_capture",
+        "representation_decision",
+        "transformation_input",
+        "transformation_kind",
+        "transformation_output",
+        "transformation_run"
+      ]
+    },
+    "conversation": {
+      "relations": [
+        "context_item",
+        "context_snapshot",
+        "message",
+        "thread"
+      ]
+    },
+    "corpus": {
+      "relations": [
+        "agent_skill",
+        "ai_model",
+        "ai_model_version",
+        "ai_model_version_spec",
+        "ai_protocol",
+        "ai_protocol_feature",
+        "ai_protocol_version",
+        "benchmark",
+        "benchmark_run",
+        "case_study",
+        "compute_device",
+        "compute_offering",
+        "concept",
+        "corporate_transaction",
+        "dataset",
+        "distribution_kind",
+        "entity",
+        "entity_alias",
+        "entity_identifier",
+        "entity_merge",
+        "event_series",
+        "funding_round",
+        "industry_event",
+        "library",
+        "library_release",
+        "license",
+        "mcp_server",
+        "mcp_server_surface",
+        "media_appearance",
+        "media_channel",
+        "media_platform",
+        "media_series",
+        "media_work",
+        "model_offering",
+        "organization",
+        "paper",
+        "person",
+        "product",
+        "product_feature",
+        "product_version",
+        "registry",
+        "registry_listing",
+        "relationship",
+        "repository",
+        "repository_file",
+        "repository_module",
+        "repository_revision",
+        "security_advisory",
+        "story",
+        "talk",
+        "technique"
+      ]
+    },
+    "curriculum": {
+      "relations": [
+        "outcome",
+        "outcome_alignment",
+        "part",
+        "prerequisite",
+        "release_transition",
+        "requirement",
+        "requirement_option",
+        "requirement_transition"
+      ]
+    },
+    "dataset": {
+      "relations": [
+        "cell",
+        "field",
+        "proposal",
+        "row"
+      ]
+    },
+    "evaluation": {
+      "relations": [
+        "eval_case",
+        "eval_case_expected_filter",
+        "eval_case_provenance",
+        "eval_case_relevance",
+        "eval_dataset",
+        "eval_dataset_version",
+        "eval_label",
+        "eval_run",
+        "eval_run_case_output",
+        "eval_score",
+        "experiment",
+        "experiment_arm",
+        "gate",
+        "gate_binding",
+        "gate_result",
+        "grader",
+        "grader_version",
+        "judge_output",
+        "metric_definition",
+        "metric_observation",
+        "promotion_gate_result",
+        "promotion_gate_version",
+        "regression",
+        "regression_baseline",
+        "review_decision",
+        "review_task",
+        "verification_benchmark_arm_publication",
+        "verification_benchmark_checkpoint",
+        "verification_benchmark_comparison",
+        "verification_benchmark_run"
+      ]
+    },
+    "evidence": {
+      "relations": [
+        "attribution",
+        "capture_method",
+        "claim",
+        "claim_conflict",
+        "claim_evidence_link",
+        "claim_record",
+        "claim_subject",
+        "claim_type",
+        "conflict_reconciliation",
+        "degraded_assurance",
+        "extraction_record",
+        "extraction_run",
+        "extraction_signature",
+        "locator",
+        "provider_result",
+        "revalidation_event",
+        "revalidation_policy",
+        "search_provider",
+        "segment_support",
+        "source",
+        "source_capture",
+        "source_encounter",
+        "source_provider_attempt",
+        "source_query",
+        "source_result_selection",
+        "source_selection_revision"
+      ]
+    },
+    "inquiry": {
+      "relations": [
+        "acceptance",
+        "assertion",
+        "delivery",
+        "obligation",
+        "support",
+        "watch"
+      ]
+    },
+    "knowledge": {
+      "relations": [
+        "advanced_usage_pattern",
+        "assurance_level",
+        "benchmark_result",
+        "compatibility_constraint",
+        "failure_mode",
+        "implementation_example",
+        "operational_practice",
+        "record",
+        "record_entity_link",
+        "record_reconciliation",
+        "security_consideration",
+        "solution_pattern",
+        "technical_problem"
+      ]
+    },
+    "knowledge_service": {
+      "relations": [
+        "callback_delivery",
+        "checkpoint_artifact_reference",
+        "checkpoint_scope",
+        "eve_operation_binding",
+        "eve_operation_invocation",
+        "lease",
+        "lease_fencing_token_seq",
+        "operation",
+        "operation_event",
+        "operation_step",
+        "outbox",
+        "receipt",
+        "recovery_claim_fence",
+        "review_decision",
+        "review_subject",
+        "scoped_checkpoint",
+        "verification_component_binding"
+      ]
+    },
+    "learning": {
+      "relations": [
+        "appeal",
+        "assessment_result",
+        "attempt",
+        "credit",
+        "criterion_result",
+        "enrollment",
+        "environment_session",
+        "equivalence_request",
+        "evidence_grant",
+        "evidence_item",
+        "grading_run",
+        "mastery_decision",
+        "release_adoption",
+        "submission"
+      ]
+    },
+    "library": {
+      "relations": [
+        "connected_item",
+        "connection",
+        "passage",
+        "passage_embedding_1536",
+        "preparation",
+        "removal",
+        "resource_control"
+      ]
+    },
+    "observability": {
+      "relations": [
+        "coordinator_handoff",
+        "io_link",
+        "normalized_event",
+        "normalized_event_202610",
+        "normalized_event_202611",
+        "normalized_event_202612",
+        "normalized_event_202701",
+        "normalized_event_202702",
+        "normalized_event_202703",
+        "normalized_event_202704",
+        "normalized_event_202705",
+        "raw_event",
+        "raw_event_202610",
+        "raw_event_202611",
+        "raw_event_202612",
+        "raw_event_202701",
+        "raw_event_202702",
+        "raw_event_202703",
+        "raw_event_202704",
+        "raw_event_202705",
+        "span",
+        "span_202610",
+        "span_202611",
+        "span_202612",
+        "span_202701",
+        "span_202702",
+        "span_202703",
+        "span_202704",
+        "span_202705",
+        "trace",
+        "usage_rollup"
+      ]
+    },
+    "orchestration": {
+      "relations": [
+        "agent_session",
+        "artifact",
+        "artifact_lineage",
+        "artifact_manifest",
+        "artifact_tombstone",
+        "artifact_type",
+        "attempt",
+        "capability",
+        "capability_kind",
+        "capability_profile",
+        "capability_profile_item",
+        "capability_version",
+        "continuation_checkpoint",
+        "intent_type",
+        "mission",
+        "mission_event",
+        "mission_run_effects",
+        "operation_intent",
+        "operation_receipt",
+        "operation_receipt_target",
+        "outbox_event",
+        "outbox_event_id_seq",
+        "provider_route",
+        "verification_artifact_metadata",
+        "verification_provider_attempt",
+        "verification_provider_budget",
+        "verification_provider_reconciliation",
+        "verification_provider_response_capture",
+        "verification_semantic_response_observation",
+        "verification_structured_extraction",
+        "verification_structured_extraction_execution",
+        "verification_structured_extraction_failure",
+        "verification_structured_extraction_publication",
+        "work_item",
+        "work_item_artifact",
+        "work_item_dependency",
+        "work_item_event",
+        "work_item_kind"
+      ]
+    },
+    "product": {
+      "relations": []
+    },
+    "provenance": {
+      "relations": [
+        "binding",
+        "edge",
+        "object",
+        "revision"
+      ]
+    },
+    "ranking": {
+      "relations": [
+        "entity_group",
+        "entity_group_version",
+        "feature_definition",
+        "feature_value",
+        "group_membership",
+        "leaderboard",
+        "leaderboard_edition",
+        "membership_snapshot",
+        "metric_definition",
+        "metric_definition_version",
+        "metric_observation",
+        "ranking_policy",
+        "ranking_policy_version",
+        "ranking_result",
+        "ranking_run",
+        "selection"
+      ]
+    },
+    "research": {
+      "relations": [
+        "bundle_artifact",
+        "comparison",
+        "downstream_handoff",
+        "finding",
+        "report",
+        "report_artifact",
+        "report_assertion",
+        "report_assertion_claim",
+        "report_claim",
+        "report_package",
+        "report_question",
+        "report_question_section",
+        "report_section",
+        "report_section_dependency",
+        "report_section_version",
+        "report_v2_assertion",
+        "report_v2_ingestion",
+        "report_v2_revision",
+        "report_version",
+        "research_bundle",
+        "use_admission"
+      ]
+    },
+    "research_private": {
+      "relations": []
+    },
+    "retrieval": {
+      "relations": [
+        "authorized_publication_execution",
+        "chunk_claim_link",
+        "chunk_edge",
+        "chunk_entity_mention",
+        "chunk_relationship_evidence",
+        "chunk_set",
+        "chunk_span",
+        "chunking_procedure_version",
+        "content_promotion_decision",
+        "content_promotion_proposal",
+        "embedding_item",
+        "embedding_run",
+        "evidence_packet",
+        "packet_member",
+        "projection_procedure",
+        "projection_target",
+        "publication_switch_receipt",
+        "retrieval_candidate",
+        "retrieval_candidate_source",
+        "retrieval_chunk",
+        "retrieval_plan",
+        "retrieval_policy",
+        "retrieval_policy_version",
+        "retrieval_run",
+        "search_projection",
+        "search_projection_chunk_support",
+        "space_publication",
+        "vector_item",
+        "vector_item_embedding_1536",
+        "vector_item_embedding_1536_benchmark_intelligence",
+        "vector_item_embedding_1536_document_summaries",
+        "vector_item_embedding_1536_engineering_claims",
+        "vector_item_embedding_1536_entity_profiles",
+        "vector_item_embedding_1536_entity_timeline",
+        "vector_item_embedding_1536_implementation_examples",
+        "vector_item_embedding_1536_market_intelligence",
+        "vector_item_embedding_1536_model_capabilities",
+        "vector_item_embedding_1536_paper_case_study_knowledge",
+        "vector_item_embedding_1536_source_native_sections",
+        "vector_item_embedding_1536_tool_capabilities",
+        "vector_space",
+        "vector_space_version",
+        "vector_store",
+        "vector_store_document",
+        "vector_store_ingestion_checkpoint",
+        "vector_store_ingestion_run",
+        "vector_store_lifecycle_event",
+        "vector_store_space"
+      ]
+    },
+    "staging": {
+      "relations": [
+        "candidate",
+        "identity_match",
+        "resolution_decision",
+        "vetting_decision"
+      ]
+    },
+    "taxonomy": {
+      "relations": [
+        "assignment",
+        "assignment_review_requirement",
+        "entity_kind",
+        "facet",
+        "facet_version",
+        "relationship_kind",
+        "term",
+        "term_relation",
+        "term_target_kind"
+      ]
+    },
+    "temporal": {
+      "relations": [
+        "event",
+        "event_kind",
+        "event_occurrence",
+        "extent",
+        "knowledge_batch",
+        "knowledge_head",
+        "segment",
+        "stream",
+        "stream_kind"
+      ]
+    },
+    "util": {
+      "relations": []
+    }
+  },
+  "retained": {
+    "extensions": [
+      "btree_gist@extensions",
+      "pg_trgm@extensions",
+      "vector@extensions"
+    ]
+  }
+}

@@ -1,0 +1,782 @@
+[
+  {
+    "file": "20260814025347_research_starter_videos.sql",
+    "ok": true,
+    "ms": 273
+  },
+  {
+    "file": "20260815015402_research_pre_research_schema.sql",
+    "ok": true,
+    "ms": 434
+  },
+  {
+    "file": "20260815020333_claim_pre_research_video_by_id.sql",
+    "ok": true,
+    "ms": 265
+  },
+  {
+    "file": "20260815021906_claim_pre_research_video_digest_search_path.sql",
+    "ok": true,
+    "ms": 270
+  },
+  {
+    "file": "20260816205230_pre_research_v2_enum_values.sql",
+    "ok": true,
+    "ms": 268
+  },
+  {
+    "file": "20260816205231_pre_research_v2_schema.sql",
+    "ok": true,
+    "ms": 429
+  },
+  {
+    "file": "20260822010000_app_factory_optimization_control_plane.sql",
+    "ok": true,
+    "ms": 343
+  },
+  {
+    "file": "20260822040000_factory_runtime_event_ledger.sql",
+    "ok": true,
+    "ms": 296
+  },
+  {
+    "file": "20260822050000_factory_ledger_safety.sql",
+    "ok": true,
+    "ms": 302
+  },
+  {
+    "file": "20260822234000_allow_intent_review_reclassification.sql",
+    "ok": true,
+    "ms": 284
+  },
+  {
+    "file": "20260823182200_add_pre_research_complete.sql",
+    "ok": true,
+    "ms": 261
+  },
+  {
+    "file": "20260824011000_stateless_pre_research_stage_execution.sql",
+    "ok": true,
+    "ms": 338
+  },
+  {
+    "file": "20260825022000_pre_research_stage_dependency_guard.sql",
+    "ok": true,
+    "ms": 275
+  },
+  {
+    "file": "20260826000000_teardown_legacy_app.sql",
+    "ok": true,
+    "ms": 260
+  },
+  {
+    "file": "20260826000100_foundation.sql",
+    "ok": true,
+    "ms": 293
+  },
+  {
+    "file": "20260826000200_orchestration.sql",
+    "ok": true,
+    "ms": 352
+  },
+  {
+    "file": "20260826000300_evidence_core.sql",
+    "ok": true,
+    "ms": 314
+  },
+  {
+    "file": "20260826000400_taxonomy_core.sql",
+    "ok": true,
+    "ms": 281
+  },
+  {
+    "file": "20260826000500_corpus.sql",
+    "ok": true,
+    "ms": 469
+  },
+  {
+    "file": "20260826000600_knowledge.sql",
+    "ok": true,
+    "ms": 386
+  },
+  {
+    "file": "20260826000700_staging.sql",
+    "ok": true,
+    "ms": 444
+  },
+  {
+    "file": "20260826000800_ranking.sql",
+    "ok": true,
+    "ms": 323
+  },
+  {
+    "file": "20260826000900_research.sql",
+    "ok": true,
+    "ms": 301
+  },
+  {
+    "file": "20260826001000_retrieval.sql",
+    "ok": true,
+    "ms": 316
+  },
+  {
+    "file": "20260826001050_fix_evidence_gate_generated_column.sql",
+    "ok": true,
+    "ms": 292
+  },
+  {
+    "file": "20260826001100_evaluation.sql",
+    "ok": true,
+    "ms": 324
+  },
+  {
+    "file": "20260826001200_observability.sql",
+    "ok": true,
+    "ms": 349
+  },
+  {
+    "file": "20260826001300_curriculum.sql",
+    "ok": true,
+    "ms": 340
+  },
+  {
+    "file": "20260826001400_deferred_fks.sql",
+    "ok": true,
+    "ms": 371
+  },
+  {
+    "file": "20260826001450_wire_capability_profile_fks.sql",
+    "ok": true,
+    "ms": 272
+  },
+  {
+    "file": "20260826001500_api_and_grants.sql",
+    "ok": true,
+    "ms": 341
+  },
+  {
+    "file": "20260826001550_rls_policies.sql",
+    "ok": true,
+    "ms": 290
+  },
+  {
+    "file": "20260826001600_fix_corpus_knowledge_dag_violation.sql",
+    "ok": true,
+    "ms": 261
+  },
+  {
+    "file": "20260829012402_cloud_agent_research_operations.sql",
+    "ok": true,
+    "ms": 295
+  },
+  {
+    "file": "20260829012710_cloud_agent_research_index_advisors.sql",
+    "ok": true,
+    "ms": 286
+  },
+  {
+    "file": "20260829012824_case_study_entity_contract.sql",
+    "ok": true,
+    "ms": 343
+  },
+  {
+    "file": "20260829014222_case_study_index_advisors.sql",
+    "ok": true,
+    "ms": 284
+  },
+  {
+    "file": "20260829181815_cloud_agent_parallel_source_provenance.sql",
+    "ok": true,
+    "ms": 279
+  },
+  {
+    "file": "20260829183016_cloud_agent_source_provenance_index_advisors.sql",
+    "ok": true,
+    "ms": 267
+  },
+  {
+    "file": "20260829192855_optimize_ai_entity_taxonomy_and_relationships.sql",
+    "ok": true,
+    "ms": 383
+  },
+  {
+    "file": "20260829194024_refine_multidimensional_organization_and_person_taxonomy.sql",
+    "ok": true,
+    "ms": 295
+  },
+  {
+    "file": "20260829194310_harden_claim_extraction_and_verification_contract.sql",
+    "ok": true,
+    "ms": 280
+  },
+  {
+    "file": "20260829194743_permit_one_way_claim_evidence_finalization.sql",
+    "ok": true,
+    "ms": 260
+  },
+  {
+    "file": "20260829194915_require_direct_same_run_claim_verification.sql",
+    "ok": true,
+    "ms": 267
+  },
+  {
+    "file": "20260829194954_normalize_append_only_claim_evidence_assessments.sql",
+    "ok": true,
+    "ms": 274
+  },
+  {
+    "file": "20260829195259_lock_verification_and_attempt_identity.sql",
+    "ok": true,
+    "ms": 276
+  },
+  {
+    "file": "20260829195450_lock_claim_content_and_provenance.sql",
+    "ok": true,
+    "ms": 275
+  },
+  {
+    "file": "20260829195623_lock_typed_claim_associations.sql",
+    "ok": true,
+    "ms": 278
+  },
+  {
+    "file": "20260831201650_project_provenance.sql",
+    "ok": true,
+    "ms": 294
+  },
+  {
+    "file": "20260902010518_research_starter_channels.sql",
+    "ok": true,
+    "ms": 303
+  },
+  {
+    "file": "20260903010000_knowledge_content_contract.sql",
+    "ok": true,
+    "ms": 370
+  },
+  {
+    "file": "20260903010100_knowledge_retrieval_contract.sql",
+    "ok": true,
+    "ms": 397
+  },
+  {
+    "file": "20260903010200_knowledge_runtime_security.sql",
+    "ok": true,
+    "ms": 430
+  },
+  {
+    "file": "20260903010300_knowledge_retrieval_completeness.sql",
+    "ok": true,
+    "ms": 313
+  },
+  {
+    "file": "20260903010400_atomic_publication_and_hybrid_retrieval.sql",
+    "ok": true,
+    "ms": 290
+  },
+  {
+    "file": "20260903010500_outbox_claiming_and_packet_materialization.sql",
+    "ok": true,
+    "ms": 331
+  },
+  {
+    "file": "20260903010600_source_native_packet_members.sql",
+    "ok": true,
+    "ms": 278
+  },
+  {
+    "file": "20260903010700_packet_member_tenant_targets.sql",
+    "ok": true,
+    "ms": 275
+  },
+  {
+    "file": "20260903010800_authorized_operation_retry.sql",
+    "ok": true,
+    "ms": 271
+  },
+  {
+    "file": "20260903010900_callback_delivery_replay_ledger.sql",
+    "ok": true,
+    "ms": 271
+  },
+  {
+    "file": "20260903011000_standalone_capture_operation_provenance.sql",
+    "ok": true,
+    "ms": 288
+  },
+  {
+    "file": "20260904010000_canonical_retrieval_execution.sql",
+    "ok": true,
+    "ms": 255
+  },
+  {
+    "file": "20260904011000_governed_projection_embedding_publication.sql",
+    "ok": true,
+    "ms": 309
+  },
+  {
+    "file": "20260904012000_vector_store_operation_provenance.sql",
+    "ok": true,
+    "ms": 282
+  },
+  {
+    "file": "20260904013000_vector_store_document_operation_provenance.sql",
+    "ok": true,
+    "ms": 272
+  },
+  {
+    "file": "20260904014000_vector_store_ingestion_evidence.sql",
+    "ok": true,
+    "ms": 280
+  },
+  {
+    "file": "20260904015000_vector_store_lifecycle_control_plane.sql",
+    "ok": true,
+    "ms": 294
+  },
+  {
+    "file": "20260905010000_verification_persistence_contract.sql",
+    "ok": true,
+    "ms": 477
+  },
+  {
+    "file": "20260905011000_artifact_registration_lifecycle.sql",
+    "ok": true,
+    "ms": 324
+  },
+  {
+    "file": "20260905012000_verification_artifact_metadata.sql",
+    "ok": true,
+    "ms": 279
+  },
+  {
+    "file": "20260905013000_verification_legacy_compatibility_and_isolation.sql",
+    "ok": true,
+    "ms": 304
+  },
+  {
+    "file": "20260905014000_verification_taxonomy_and_source_identity.sql",
+    "ok": true,
+    "ms": 298
+  },
+  {
+    "file": "20260905015000_append_only_verification_judgments.sql",
+    "ok": true,
+    "ms": 290
+  },
+  {
+    "file": "20260905016000_verification_artifact_parent_order.sql",
+    "ok": true,
+    "ms": 290
+  },
+  {
+    "file": "20260905017000_verification_null_and_legacy_guards.sql",
+    "ok": true,
+    "ms": 310
+  },
+  {
+    "file": "20260905018000_verification_digest_documentation.sql",
+    "ok": true,
+    "ms": 264
+  },
+  {
+    "file": "20260905019000_verification_projection_artifact_type.sql",
+    "ok": true,
+    "ms": 273
+  },
+  {
+    "file": "20260905020000_verification_locator_selected_content.sql",
+    "ok": true,
+    "ms": 282
+  },
+  {
+    "file": "20260905021000_verification_parser_admission_artifact_types.sql",
+    "ok": true,
+    "ms": 262
+  },
+  {
+    "file": "20260905022000_verification_policy_inputs_artifact_type.sql",
+    "ok": true,
+    "ms": 249
+  },
+  {
+    "file": "20260906010000_verification_provider_budget_accounting.sql",
+    "ok": true,
+    "ms": 278
+  },
+  {
+    "file": "20260906011000_verification_provider_artifact_types.sql",
+    "ok": true,
+    "ms": 266
+  },
+  {
+    "file": "20260906012000_harden_verification_provider_accounting.sql",
+    "ok": true,
+    "ms": 289
+  },
+  {
+    "file": "20260906013000_verification_provider_dispatch_fence.sql",
+    "ok": true,
+    "ms": 266
+  },
+  {
+    "file": "20260906014000_provider_accounting_identity_overrun_rls.sql",
+    "ok": true,
+    "ms": 288
+  },
+  {
+    "file": "20260906015000_provider_response_envelope_artifact_type.sql",
+    "ok": true,
+    "ms": 296
+  },
+  {
+    "file": "20260906016000_provider_accounting_runtime_schema_usage.sql",
+    "ok": true,
+    "ms": 277
+  },
+  {
+    "file": "20260906017000_provider_cost_lookup_artifact_type.sql",
+    "ok": true,
+    "ms": 281
+  },
+  {
+    "file": "20260906018000_provider_precontext_envelope_artifact_type.sql",
+    "ok": true,
+    "ms": 275
+  },
+  {
+    "file": "20260906019000_verification_evaluation_dataset_manifest.sql",
+    "ok": true,
+    "ms": 278
+  },
+  {
+    "file": "20260906020000_verification_artifact_contract_marker.sql",
+    "ok": true,
+    "ms": 299
+  },
+  {
+    "file": "20260906021000_verification_artifact_consumer_admission.sql",
+    "ok": true,
+    "ms": 325
+  },
+  {
+    "file": "20260906022000_verification_artifact_identity_scope.sql",
+    "ok": true,
+    "ms": 297
+  },
+  {
+    "file": "20260906023000_verification_case_evidence_reads.sql",
+    "ok": true,
+    "ms": 283
+  },
+  {
+    "file": "20260906024000_verification_case_reader_schema_access.sql",
+    "ok": true,
+    "ms": 253
+  },
+  {
+    "file": "20260906025000_verification_benchmark_experiment_artifact.sql",
+    "ok": true,
+    "ms": 263
+  },
+  {
+    "file": "20260906026000_verification_benchmark_profile_artifact.sql",
+    "ok": true,
+    "ms": 280
+  },
+  {
+    "file": "20260906027000_verification_benchmark_recorded_call_artifact.sql",
+    "ok": true,
+    "ms": 273
+  },
+  {
+    "file": "20260906028000_verification_benchmark_source_import_artifacts.sql",
+    "ok": true,
+    "ms": 270
+  },
+  {
+    "file": "20260906029000_verification_benchmark_durable_run.sql",
+    "ok": true,
+    "ms": 320
+  },
+  {
+    "file": "20260906029100_verification_benchmark_checkpoint_running_only.sql",
+    "ok": true,
+    "ms": 271
+  },
+  {
+    "file": "20260906029200_verification_benchmark_remove_unmapped_eval_run.sql",
+    "ok": true,
+    "ms": 306
+  },
+  {
+    "file": "20260906029300_verification_benchmark_nullsafe_request_binding.sql",
+    "ok": true,
+    "ms": 267
+  },
+  {
+    "file": "20260906029400_verification_benchmark_checkpoint_result_binding.sql",
+    "ok": true,
+    "ms": 272
+  },
+  {
+    "file": "20260906030000_verification_benchmark_arm_publication.sql",
+    "ok": true,
+    "ms": 300
+  },
+  {
+    "file": "20260906030100_verification_benchmark_publication_artifacts.sql",
+    "ok": true,
+    "ms": 264
+  },
+  {
+    "file": "20260906030200_verification_benchmark_publication_dataset_binding.sql",
+    "ok": true,
+    "ms": 272
+  },
+  {
+    "file": "20260906030300_verification_benchmark_published_dataset_immutable.sql",
+    "ok": true,
+    "ms": 275
+  },
+  {
+    "file": "20260906030400_verification_benchmark_comparison_artifacts.sql",
+    "ok": true,
+    "ms": 271
+  },
+  {
+    "file": "20260906030500_verification_benchmark_comparison_lifecycle.sql",
+    "ok": true,
+    "ms": 281
+  },
+  {
+    "file": "20260906030600_verification_benchmark_comparison_completion_required.sql",
+    "ok": true,
+    "ms": 258
+  },
+  {
+    "file": "20260906030700_verification_benchmark_comparison_publication_type.sql",
+    "ok": true,
+    "ms": 253
+  },
+  {
+    "file": "20260906030800_verification_benchmark_comparison_custody.sql",
+    "ok": true,
+    "ms": 281
+  },
+  {
+    "file": "20260906030900_verification_benchmark_comparison_terminal_success.sql",
+    "ok": true,
+    "ms": 283
+  },
+  {
+    "file": "20260906031000_verification_benchmark_comparison_claim.sql",
+    "ok": true,
+    "ms": 304
+  },
+  {
+    "file": "20260906031100_verification_benchmark_comparison_semantic_binding.sql",
+    "ok": true,
+    "ms": 274
+  },
+  {
+    "file": "20260906031200_verification_benchmark_comparison_terminal_artifact_type.sql",
+    "ok": true,
+    "ms": 272
+  },
+  {
+    "file": "20260906031300_verification_provider_operation_scope.sql",
+    "ok": true,
+    "ms": 288
+  },
+  {
+    "file": "20260906031400_verification_provider_response_capture.sql",
+    "ok": true,
+    "ms": 302
+  },
+  {
+    "file": "20260906031500_verification_structured_extraction_candidate_artifacts.sql",
+    "ok": true,
+    "ms": 266
+  },
+  {
+    "file": "20260906031600_verification_structured_extraction_precontext.sql",
+    "ok": true,
+    "ms": 300
+  },
+  {
+    "file": "20260906031700_verification_structured_extraction_lifecycle.sql",
+    "ok": true,
+    "ms": 315
+  },
+  {
+    "file": "20260906031800_verification_structured_extraction_execution.sql",
+    "ok": true,
+    "ms": 280
+  },
+  {
+    "file": "20260906031900_verification_structured_extraction_publication.sql",
+    "ok": true,
+    "ms": 282
+  },
+  {
+    "file": "20260906032000_verification_structured_extraction_source_custody.sql",
+    "ok": true,
+    "ms": 267
+  },
+  {
+    "file": "20260906032100_verification_structured_extraction_terminal.sql",
+    "ok": true,
+    "ms": 300
+  },
+  {
+    "file": "20260906032200_verification_structured_extraction_input_custody.sql",
+    "ok": true,
+    "ms": 269
+  },
+  {
+    "file": "20260906032300_verification_structured_extraction_step_membership.sql",
+    "ok": true,
+    "ms": 260
+  },
+  {
+    "file": "20260906032400_verification_structured_extraction_owner_custody.sql",
+    "ok": true,
+    "ms": 254
+  },
+  {
+    "file": "20260906032500_verification_structured_extraction_failure.sql",
+    "ok": true,
+    "ms": 290
+  },
+  {
+    "file": "20260906032600_verification_structured_extraction_failure_terminal.sql",
+    "ok": true,
+    "ms": 279
+  },
+  {
+    "file": "20260906032700_verification_provider_reconciliation_artifact.sql",
+    "ok": true,
+    "ms": 252
+  },
+  {
+    "file": "20260906032800_verification_provider_reconciliation_ledger.sql",
+    "ok": true,
+    "ms": 287
+  },
+  {
+    "file": "20260906032900_verification_provider_reconciliation_missing_response.sql",
+    "ok": true,
+    "ms": 272
+  },
+  {
+    "file": "20260906033000_verification_provider_reconciliation_success.sql",
+    "ok": true,
+    "ms": 264
+  },
+  {
+    "file": "20260907010000_verification_claim_report_artifact_types.sql",
+    "ok": true,
+    "ms": 256
+  },
+  {
+    "file": "20260907011000_verification_audit_inspection_result_type.sql",
+    "ok": true,
+    "ms": 253
+  },
+  {
+    "file": "20260907012000_verification_adjudication_subject_ledger.sql",
+    "ok": true,
+    "ms": 289
+  },
+  {
+    "file": "20260907013000_verification_semantic_provider_observation.sql",
+    "ok": true,
+    "ms": 328
+  },
+  {
+    "file": "20260907013100_verification_runtime_principal_binding_artifact_type.sql",
+    "ok": true,
+    "ms": 273
+  },
+  {
+    "file": "20260908010000_eve_verification_binding.sql",
+    "ok": true,
+    "ms": 291
+  },
+  {
+    "file": "20260908020000_verification_adjudication_packet_review.sql",
+    "ok": true,
+    "ms": 293
+  },
+  {
+    "file": "20260908030000_verification_drift_revalidation_outbox.sql",
+    "ok": true,
+    "ms": 302
+  },
+  {
+    "file": "20260912010000_km_00_teardown.sql",
+    "ok": true,
+    "ms": 736
+  },
+  {
+    "file": "20260912010100_km_01_vocabularies.sql",
+    "ok": true,
+    "ms": 296
+  },
+  {
+    "file": "20260912010200_km_02_corpus_identity.sql",
+    "ok": true,
+    "ms": 384
+  },
+  {
+    "file": "20260912010300_km_03_relationship.sql",
+    "ok": true,
+    "ms": 290
+  },
+  {
+    "file": "20260912010400_km_04_temporal.sql",
+    "ok": true,
+    "ms": 300
+  },
+  {
+    "file": "20260912010500_km_05_evidence.sql",
+    "ok": true,
+    "ms": 324
+  },
+  {
+    "file": "20260912010600_km_06_content.sql",
+    "ok": true,
+    "ms": 280
+  },
+  {
+    "file": "20260912010700_km_07_knowledge.sql",
+    "ok": true,
+    "ms": 302
+  },
+  {
+    "file": "20260912010800_km_08_retrieval.sql",
+    "ok": true,
+    "ms": 329
+  },
+  {
+    "file": "20260912010900_km_09_ranking_staging.sql",
+    "ok": true,
+    "ms": 325
+  },
+  {
+    "file": "20260912011000_km_10_api.sql",
+    "ok": true,
+    "ms": 296
+  },
+  {
+    "file": "20260912011100_km_11_grants_rls.sql",
+    "ok": true,
+    "ms": 533
+  },
+  {
+    "file": "20260912011200_km_12_projection_workers.sql",
+    "ok": true,
+    "ms": 264
+  }
+]

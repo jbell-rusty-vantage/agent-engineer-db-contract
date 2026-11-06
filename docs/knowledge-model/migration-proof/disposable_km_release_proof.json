@@ -1,0 +1,67 @@
+[
+  {
+    "file": "20260912010000_km_00_teardown.sql",
+    "ok": true,
+    "ms": 913
+  },
+  {
+    "file": "20260912010100_km_01_vocabularies.sql",
+    "ok": true,
+    "ms": 318
+  },
+  {
+    "file": "20260912010200_km_02_corpus_identity.sql",
+    "ok": true,
+    "ms": 406
+  },
+  {
+    "file": "20260912010300_km_03_relationship.sql",
+    "ok": true,
+    "ms": 278
+  },
+  {
+    "file": "20260912010400_km_04_temporal.sql",
+    "ok": true,
+    "ms": 318
+  },
+  {
+    "file": "20260912010500_km_05_evidence.sql",
+    "ok": true,
+    "ms": 307
+  },
+  {
+    "file": "20260912010600_km_06_content.sql",
+    "ok": true,
+    "ms": 280
+  },
+  {
+    "file": "20260912010700_km_07_knowledge.sql",
+    "ok": true,
+    "ms": 311
+  },
+  {
+    "file": "20260912010800_km_08_retrieval.sql",
+    "ok": true,
+    "ms": 335
+  },
+  {
+    "file": "20260912010900_km_09_ranking_staging.sql",
+    "ok": true,
+    "ms": 376
+  },
+  {
+    "file": "20260912011000_km_10_api.sql",
+    "ok": true,
+    "ms": 274
+  },
+  {
+    "file": "20260912011100_km_11_grants_rls.sql",
+    "ok": true,
+    "ms": 545
+  },
+  {
+    "file": "20260912011200_km_12_projection_workers.sql",
+    "ok": true,
+    "ms": 270
+  }
+]

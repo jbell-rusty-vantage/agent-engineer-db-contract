@@ -1,0 +1,23 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select plan(1);
+set local app.tenant_id='00000000-0000-7000-8000-000000000001';
+do $$ declare intent uuid;receipt uuid;repo uuid;revision uuid;module uuid;file uuid;doc uuid;record uuid;
+begin
+ insert into orchestration.operation_intent(intent_type,payload,idempotency_key) values('upsert_entity','{}','km-repo:'||util.uuidv7()) returning id into intent;
+ insert into orchestration.operation_receipt(intent_id,executor_version,outcome) values(intent,'test','applied') returning id into receipt;
+ insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('repository','Repository','km-repo',receipt) returning id into repo;
+ insert into corpus.repository(id,host,owner,name) values(repo,'github.com','example','repo');
+ insert into corpus.repository_revision(repository_id,commit_sha) values(repo,repeat('a',40)) returning id into revision;
+ insert into corpus.repository_module(repository_id,path,module_kind,first_seen_revision_id) values(repo,'packages/core','package',revision) returning id into module;
+ insert into corpus.repository_file(repository_id,revision_id,path,file_role,module_id) values(repo,revision,'packages/core/index.ts','source',module) returning id into file;
+ insert into content.document(document_type_code,canonical_title,repository_file_id) values('repository_file','index.ts',file) returning id into doc;
+ insert into knowledge.record(kind,title,statement,created_by_receipt_id) values('implementation_example','Example','Pinned code',receipt) returning id into record;
+ insert into knowledge.implementation_example(id,repository_file_id,symbol,start_line,end_line) values(record,file,'main',1,5);
+ if not exists(select 1 from knowledge.implementation_example e join corpus.repository_file f on f.id=e.repository_file_id join corpus.repository_revision r on r.id=f.revision_id join content.document d on d.repository_file_id=f.id where e.id=record and r.commit_sha=repeat('a',40) and d.id=doc) then raise exception 'repository evidence round trip failed';end if;
+ set constraints all immediate;
+end $$;
+select pass('knowledge_model_repository invariants hold');
+select * from finish();
+rollback;

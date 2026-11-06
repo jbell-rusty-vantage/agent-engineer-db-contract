@@ -1,0 +1,5 @@
+# LOCAL TEST STUB of Supabase's pg_jsonschema (scripts/supabase-stub/prerequisites.sql). Validation always passes.
+comment = 'stub of pg_jsonschema for local AI Engineer chain replays; validation always passes'
+default_version = '0.0.0'
+relocatable = true
+trusted = true

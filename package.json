@@ -1,0 +1,67 @@
+{
+  "name": "@aiengineer/database-contract",
+  "version": "0.6.0",
+  "private": true,
+  "description": "Canonical Supabase migrations and generated TypeScript database contract for AI Engineer systems.",
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./api": {
+      "types": "./src/api.ts",
+      "default": "./src/api.ts"
+    },
+    "./pre-research": {
+      "types": "./src/pre-research.ts",
+      "default": "./src/pre-research.ts"
+    },
+    "./provenance": {
+      "types": "./src/provenance.ts",
+      "default": "./src/provenance.ts"
+    },
+    "./reports": {
+      "types": "./src/reports.ts",
+      "default": "./src/reports.ts"
+    }
+  },
+  "files": [
+    "src",
+    "supabase/migrations",
+    "supabase/config.toml",
+    "supabase/seed.sql",
+    "workspace",
+    "workspace-scopes",
+    "workspace.config.json"
+  ],
+  "scripts": {
+    "db:start": "supabase start",
+    "db:migrate": "supabase migration up --local",
+    "db:reset": "node scripts/reset-disposable-local.mjs",
+    "install:disposable": "node scripts/install-ai-engineer.mjs",
+    "types:generate": "node scripts/generate-types.mjs --local",
+    "types:check": "node scripts/generate-types.mjs --local --check",
+    "types:generate:native": "node scripts/generate-types.mjs --local-node",
+    "types:check:native": "node scripts/generate-types.mjs --local-node --check",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"scripts/schema-workspace/test/**/*.test.mjs\"",
+    "test:installer": "node --test scripts/install-target.test.mjs",
+    "workspace:build": "node scripts/schema-workspace/cli.mjs build",
+    "workspace:check": "node scripts/schema-workspace/cli.mjs check",
+    "workspace:validate": "node scripts/schema-workspace/cli.mjs validate",
+    "workspace:materialize": "node scripts/schema-workspace/cli.mjs materialize"
+  },
+  "devDependencies": {
+    "@supabase/postgres-meta": "0.95.2",
+    "pg": "8.16.3",
+    "supabase": "2.115.0",
+    "typescript": "5.9.3",
+    "yaml": "2.8.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

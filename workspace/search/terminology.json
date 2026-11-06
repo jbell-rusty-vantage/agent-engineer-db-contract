@@ -1,0 +1,637 @@
+{
+  "admission": {
+    "aliases": [
+      "admit",
+      "admitted"
+    ],
+    "definition": "Executor decision that a proposal becomes a canonical fact through the temporal helpers. Distinct from receipt outcome applied and from blueprint outcomes such as review_required or held.",
+    "provenance": "model_assisted",
+    "refs": [
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)",
+      "fn:temporal.commit_batch(uuid,text,text,jsonb)",
+      "rel:orchestration.operation_receipt"
+    ],
+    "reviewed": null,
+    "term": "admission"
+  },
+  "alias": {
+    "aliases": [
+      "entity alias",
+      "synonym"
+    ],
+    "definition": "A typed alternate name (synonym, acronym, former_name, handle, ticker, slug, misspelling, translation, model_alias). Unique per (entity, normalized alias, alias_kind), not globally unique across entities.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:corpus.entity_alias",
+      "q:entity.resolve"
+    ],
+    "reviewed": null,
+    "term": "alias"
+  },
+  "artifact": {
+    "aliases": [
+      "stored artifact"
+    ],
+    "definition": "Content-addressed stored object (sha256, bucket_class, storage_bucket, object_path) typed by artifact_type. Lineage edges record derived_from, supersedes, corrects, produced_by, consumed_by.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:orchestration.artifact",
+      "rel:orchestration.artifact_lineage",
+      "q:artifacts.by_type"
+    ],
+    "reviewed": null,
+    "term": "artifact"
+  },
+  "assurance": {
+    "aliases": [
+      "assurance level",
+      "assurance_rank"
+    ],
+    "definition": "How strongly a knowledge record or vector item is backed. knowledge.assurance_level is the vocabulary; retrieval filters accept a minimum assurance rank.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:knowledge.assurance_level",
+      "rel:knowledge.record",
+      "rel:retrieval.vector_item"
+    ],
+    "reviewed": null,
+    "term": "assurance"
+  },
+  "belief": {
+    "aliases": [
+      "accepted",
+      "disputed"
+    ],
+    "definition": "accepted, disputed, or unknown on a segment or occurrence. disputed does not replace an accepted current segment; the executor plans review_required.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.segment",
+      "rel:temporal.event_occurrence"
+    ],
+    "reviewed": null,
+    "term": "belief"
+  },
+  "canonical-entity": {
+    "aliases": [
+      "entity",
+      "identity row"
+    ],
+    "definition": "One row in corpus.entity. kind picks the typed child table. lifecycle is active, merged, or retired. Typed attributes live in corpus.<kind>, not on the identity row.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:corpus.entity",
+      "rel:taxonomy.entity_kind",
+      "q:entity.resolve"
+    ],
+    "reviewed": null,
+    "term": "canonical entity"
+  },
+  "claim": {
+    "aliases": [
+      "evidence claim"
+    ],
+    "definition": "An atomic statement with claim_type, status, and created_by_receipt_id. Facts may cite a claim as primary_claim_id. Subjects are attached via claim_subject roles subject, object, or context.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:evidence.claim",
+      "rel:evidence.claim_subject",
+      "q:evidence.claims_for_entity"
+    ],
+    "reviewed": null,
+    "term": "claim"
+  },
+  "cost-class": {
+    "aliases": [
+      "cheap",
+      "medium",
+      "heavy"
+    ],
+    "definition": "Catalog hint for statement_timeout and EXPLAIN gates. cheap and medium default to 15s; heavy is 60s and must not sequential-scan large relations.",
+    "provenance": "model_assisted",
+    "refs": [
+      "q:retrieval.hybrid_search"
+    ],
+    "reviewed": null,
+    "term": "cost class"
+  },
+  "domain": {
+    "aliases": [
+      "L1 domain"
+    ],
+    "definition": "A curated map of 5–15 relations that belong together (identity, temporal-facts, evidence, …). Default domain for a schema is schema_domains; a relation overlay may override it.",
+    "provenance": "model_assisted",
+    "refs": [],
+    "reviewed": null,
+    "term": "domain"
+  },
+  "entity-kind": {
+    "aliases": [
+      "kind"
+    ],
+    "definition": "taxonomy.entity_kind.code. Points at canonical_schema/canonical_table. corpus.entity.kind is a foreign key; unknown kinds cannot be inserted.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:taxonomy.entity_kind",
+      "rel:corpus.entity"
+    ],
+    "reviewed": null,
+    "term": "entity kind"
+  },
+  "evidence-packet": {
+    "aliases": [
+      "packet"
+    ],
+    "definition": "A retrieval-assembled bundle of members (chunks, records, locators, timecodes) for one question. Read with api.evidence_packet.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:retrieval.evidence_packet",
+      "rel:retrieval.packet_member",
+      "q:retrieval.evidence_packet"
+    ],
+    "reviewed": null,
+    "term": "evidence packet"
+  },
+  "extent": {
+    "aliases": [
+      "date extent",
+      "temporal extent"
+    ],
+    "definition": "Source text for a date with precision (instant, day, month, quarter, year, relative, unknown) and optional earliest/latest bounds. Required when temporal_basis is explicit or carry_forward.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.extent",
+      "fn:temporal.make_extent(text,text,uuid,timestamptz,timestamptz,text)"
+    ],
+    "reviewed": null,
+    "term": "extent"
+  },
+  "fingerprint": {
+    "aliases": [
+      "workspace fingerprint",
+      "sha256"
+    ],
+    "definition": "Digest of schema structure plus vocabularies, or of workspace plus enrichment. Artifacts also carry content sha256. Ingestion intents cite workspaceFingerprint; mismatch is WORKSPACE_STALE.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:orchestration.artifact"
+    ],
+    "reviewed": null,
+    "term": "fingerprint"
+  },
+  "hybrid-search": {
+    "aliases": [
+      "RRF",
+      "fused search"
+    ],
+    "definition": "api.hybrid_knowledge_search_1536 fuses exact, full-text, trigram, and ANN channels with reciprocal rank fusion. Requires a published vector-space version and a query embedding computed by the executor.",
+    "provenance": "model_assisted",
+    "refs": [
+      "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
+      "q:retrieval.hybrid_search"
+    ],
+    "reviewed": null,
+    "term": "hybrid search"
+  },
+  "idempotency-key": {
+    "aliases": [
+      "idempotencyKey"
+    ],
+    "definition": "Unique per tenant on operation_intent and knowledge_batch. A second submit of the same bytes returns the existing receipt as duplicate_of.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:orchestration.operation_intent",
+      "rel:temporal.knowledge_batch"
+    ],
+    "reviewed": null,
+    "term": "idempotency key"
+  },
+  "identifier": {
+    "aliases": [
+      "external id",
+      "scheme"
+    ],
+    "definition": "A schemed external identifier. scheme is a closed check-constraint vocabulary. Unique per tenant on (scheme, value), so one identifier names at most one entity.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:corpus.entity_identifier",
+      "q:entity.by_identifier"
+    ],
+    "reviewed": null,
+    "term": "identifier"
+  },
+  "intent": {
+    "aliases": [
+      "operation intent"
+    ],
+    "definition": "A durable proposed operation. knowledge-read-intent.v1 and knowledge-ingestion-intent.v1 are the workspace contracts; the ledger row is orchestration.operation_intent with an idempotency_key.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:orchestration.operation_intent",
+      "rel:orchestration.intent_type"
+    ],
+    "reviewed": null,
+    "term": "intent"
+  },
+  "knowledge-batch": {
+    "aliases": [
+      "batch",
+      "sealed batch"
+    ],
+    "definition": "One committed admission transaction. commit_batch writes a knowledge_batch row with a receipt, idempotency key, and input digest, then advances the tenant head by one.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.knowledge_batch",
+      "fn:temporal.commit_batch(uuid,text,text,jsonb)",
+      "fn:temporal.begin_batch(int8)"
+    ],
+    "reviewed": null,
+    "term": "knowledge batch"
+  },
+  "knowledge-head": {
+    "aliases": [
+      "head",
+      "knowledge_seq",
+      "K"
+    ],
+    "definition": "Per-tenant monotonic sequence of sealed knowledge batches. Every snapshot and ingestion intent cites it; begin_batch fails rebase_required when the expected head does not match.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.knowledge_head",
+      "fn:temporal.begin_batch(int8)",
+      "q:knowledge.head"
+    ],
+    "reviewed": null,
+    "term": "knowledge head"
+  },
+  "knowledge-time": {
+    "aliases": [
+      "k_from",
+      "k_to",
+      "knowledge interval"
+    ],
+    "definition": "When a fact was admitted or closed. Stamped from the open batch. Current rows have k_to null; closed rows keep history.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.segment",
+      "fn:temporal.stamp_k()",
+      "q:entity.what_changed"
+    ],
+    "reviewed": null,
+    "term": "knowledge time"
+  },
+  "locator": {
+    "aliases": [
+      "quote",
+      "selector"
+    ],
+    "definition": "A precise selection inside a capture (text_quote, table, media_timecode, …) with selected_content_sha256. Support rows require a locator.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:evidence.locator",
+      "rel:evidence.source_capture"
+    ],
+    "reviewed": null,
+    "term": "locator"
+  },
+  "mission": {
+    "aliases": [
+      "orchestration mission"
+    ],
+    "definition": "orchestration.mission is the durable work envelope. Intents and artifacts may record mission_id. Mission Control admission is out of band; this workspace only stores the id when supplied.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:orchestration.mission",
+      "rel:orchestration.operation_intent",
+      "q:receipts.recent_for_mission"
+    ],
+    "reviewed": null,
+    "term": "mission"
+  },
+  "named-query": {
+    "aliases": [
+      "catalog query"
+    ],
+    "definition": "An entry in the knowledge-query-catalog. Agents pass a name and params; they never send SQL. Build validation executes each example under the catalog role.",
+    "provenance": "model_assisted",
+    "refs": [
+      "q:entity.resolve",
+      "q:knowledge.head"
+    ],
+    "reviewed": null,
+    "term": "named query"
+  },
+  "projection": {
+    "aliases": [
+      "search projection"
+    ],
+    "definition": "A derived retrieval object (search_projection, vector_item) built from documents, records, or entities. Projection rebuilding is a governed runtime operation, not an agent write.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:retrieval.search_projection",
+      "rel:retrieval.projection_target",
+      "rel:retrieval.vector_item"
+    ],
+    "reviewed": null,
+    "term": "projection"
+  },
+  "publication": {
+    "aliases": [
+      "space publication"
+    ],
+    "definition": "A published vector-space version that hybrid search is allowed to read. Unpublished or inactive versions raise insufficient_privilege.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:retrieval.space_publication",
+      "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)"
+    ],
+    "reviewed": null,
+    "term": "publication"
+  },
+  "rebase-required": {
+    "aliases": [
+      "REBASE_REQUIRED",
+      "stale head"
+    ],
+    "definition": "Transaction failure (SQLSTATE 40001) from begin_batch when expected head does not match the locked knowledge_head. Not a per-proposal outcome.",
+    "provenance": "model_assisted",
+    "refs": [
+      "fn:temporal.begin_batch(int8)",
+      "rel:temporal.knowledge_head",
+      "q:entity.what_changed"
+    ],
+    "reviewed": null,
+    "term": "rebase_required"
+  },
+  "receipt": {
+    "aliases": [
+      "operation receipt"
+    ],
+    "definition": "Immutable orchestration.operation_receipt for one intent. Outcome is applied, rejected, noop, or partial. Facts and entities require a receipt id before they can be written.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:orchestration.operation_receipt",
+      "rel:orchestration.operation_intent",
+      "q:receipts.for_intent"
+    ],
+    "reviewed": null,
+    "term": "receipt"
+  },
+  "relationship-kind": {
+    "aliases": [
+      "rel kind"
+    ],
+    "definition": "taxonomy.relationship_kind.code with from_kinds, to_kinds, temporal flag, and property_schema. Trigger corpus.check_relationship_kinds rejects illegal endpoints.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:taxonomy.relationship_kind",
+      "rel:corpus.relationship",
+      "q:vocab.relationship_kind"
+    ],
+    "reviewed": null,
+    "term": "relationship kind"
+  },
+  "rls": {
+    "aliases": [
+      "row level security"
+    ],
+    "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Grants without a matching tenant context return no rows or fail closed.",
+    "provenance": "model_assisted",
+    "refs": [
+      "fn:util.current_tenant_id()"
+    ],
+    "reviewed": null,
+    "term": "RLS"
+  },
+  "role": {
+    "aliases": [
+      "bounded role"
+    ],
+    "definition": "NOLOGIN Postgres roles. app_reader sees api views and RPCs. pipeline_agent selects bounded schemas. executor_service alone executes temporal helpers and writes corpus facts.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:api.entities",
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)"
+    ],
+    "reviewed": null,
+    "term": "role"
+  },
+  "scope-key": {
+    "aliases": [
+      "scopeKey",
+      "scope"
+    ],
+    "definition": "Distinguishes parallel series on the same subject and stream kind (region, unit, episode). Default is the empty string. Part of the stream unique key; the database enforces no naming convention, so a correction must reuse the existing series key.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.stream",
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)"
+    ],
+    "reviewed": null,
+    "term": "scope key"
+  },
+  "segment": {
+    "aliases": [
+      "fact",
+      "temporal fact",
+      "state segment"
+    ],
+    "definition": "One assertion of a fact on a stream. Carries a world interval valid_during and a knowledge interval [k_from, k_to). Current means k_to is null.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.segment",
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)",
+      "q:facts.current_by_stream"
+    ],
+    "reviewed": null,
+    "term": "segment"
+  },
+  "staging-candidate": {
+    "aliases": [
+      "candidate"
+    ],
+    "definition": "An unresolved proposed identity. Not a staging copy of a fact. Resolution decisions are create, match, reject, or defer; vetting decisions are admit, reject, or defer.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:staging.candidate",
+      "rel:staging.resolution_decision",
+      "q:staging.unresolved"
+    ],
+    "reviewed": null,
+    "term": "staging candidate"
+  },
+  "stream": {
+    "aliases": [
+      "fact series",
+      "stream slot"
+    ],
+    "definition": "The identity of a fact series, unique on (kind, subject entity or relationship, scope_key). Segments stack on a stream; overlapping current segments are forbidden.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.stream",
+      "rel:temporal.stream_kind",
+      "q:facts.history_for_stream"
+    ],
+    "reviewed": null,
+    "term": "stream"
+  },
+  "stream-kind": {
+    "aliases": [
+      "fact kind"
+    ],
+    "definition": "temporal.stream_kind.code with subject_mode, subject_kinds, status_values, unit_values, requires_amount, and payload_schema. commit_batch validates slot rules.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.stream_kind",
+      "q:vocab.stream_kind"
+    ],
+    "reviewed": null,
+    "term": "stream kind"
+  },
+  "support": {
+    "aliases": [
+      "segment support",
+      "admitted support"
+    ],
+    "definition": "A k-stamped link from a claim and locator to a segment or event occurrence. Written only through temporal.admit_support inside an open batch.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:evidence.segment_support",
+      "fn:temporal.admit_support(uuid,uuid,uuid,uuid,text)",
+      "q:evidence.claim_support"
+    ],
+    "reviewed": null,
+    "term": "support"
+  },
+  "task": {
+    "aliases": [
+      "task page"
+    ],
+    "definition": "A question family with navigation, a read or ingestion operation, expected shape, and pitfalls. The shortest path from a natural-language question to a valid catalog query or intent.",
+    "provenance": "model_assisted",
+    "refs": [],
+    "reviewed": null,
+    "term": "task"
+  },
+  "temporal-basis": {
+    "aliases": [
+      "temporal_basis"
+    ],
+    "definition": "Why the world interval is believed. explicit and carry_forward require an extent; observation_bounded is “true at capture time”; unresolved is an admitted gap.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.segment",
+      "rel:temporal.extent"
+    ],
+    "reviewed": null,
+    "term": "temporal basis"
+  },
+  "tenant": {
+    "aliases": [
+      "tenant_id"
+    ],
+    "definition": "Isolation key read from GUC app.tenant_id by util.current_tenant_id(). Missing context fails closed. RLS policies compare tenant_id to that function.",
+    "provenance": "model_assisted",
+    "refs": [
+      "fn:util.current_tenant_id()"
+    ],
+    "reviewed": null,
+    "term": "tenant"
+  },
+  "two-clocks": {
+    "aliases": [
+      "bitemporal",
+      "two-clock"
+    ],
+    "definition": "World time and knowledge time together. entity.at(entity, T, K) answers what was true at T as we knew it at K.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.segment",
+      "q:entity.at",
+      "q:knowledge.head"
+    ],
+    "reviewed": null,
+    "term": "two clocks"
+  },
+  "unit-value": {
+    "aliases": [
+      "unit"
+    ],
+    "definition": "Allowed unit on an amount-bearing stream, listed in stream_kind.unit_values. For model_offering_price a new series defaults its scope_key to the unit so parallel price series do not collide; an existing series keeps whatever scope_key it has.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.stream_kind",
+      "rel:temporal.segment"
+    ],
+    "reviewed": null,
+    "term": "unit value"
+  },
+  "vector-space": {
+    "aliases": [
+      "space",
+      "embedding space"
+    ],
+    "definition": "A named retrieval space (engineering_claims, entity_profiles, …) with versions and publications. Agents read only published versions; unpublished embeddings are invisible to hybrid search.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:retrieval.vector_space",
+      "rel:retrieval.space_publication",
+      "rel:retrieval.vector_item"
+    ],
+    "reviewed": null,
+    "term": "vector space"
+  },
+  "verification-run": {
+    "aliases": [
+      "sealed run"
+    ],
+    "definition": "A knowledge_verification component run that must be sealed before cited claims may be materialized; the AIDB records the admitted use in research.use_admission and a verified claim names an admission-bound receipt.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:research.use_admission",
+      "rel:evidence.claim"
+    ],
+    "reviewed": null,
+    "term": "verification run"
+  },
+  "vocabulary": {
+    "aliases": [
+      "reference data",
+      "kind table"
+    ],
+    "definition": "Allowlisted code tables such as taxonomy.entity_kind, taxonomy.relationship_kind, temporal.stream_kind, and identifier schemes. Slot rules and endpoint kinds are enforced at write time.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:taxonomy.entity_kind",
+      "rel:taxonomy.relationship_kind",
+      "rel:temporal.stream_kind",
+      "q:vocab.stream_kind"
+    ],
+    "reviewed": null,
+    "term": "vocabulary"
+  },
+  "workspace": {
+    "aliases": [
+      "schema workspace"
+    ],
+    "definition": "Generated projection of schema-ir.v1 into Markdown layers, search indexes, and the named-query catalog. Agents search then read a domain or task page; they never read schema-ir.json whole.",
+    "provenance": "model_assisted",
+    "refs": [],
+    "reviewed": null,
+    "term": "workspace"
+  },
+  "world-time": {
+    "aliases": [
+      "valid_during",
+      "occurred_during",
+      "as-of date"
+    ],
+    "definition": "When the world was like this. Stored as a tstzrange bounded below with [) bounds. Distinct from when we came to know it.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:temporal.segment",
+      "q:entity.at"
+    ],
+    "reviewed": null,
+    "term": "world time"
+  }
+}

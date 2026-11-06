@@ -1,0 +1,655 @@
+format: ai-engineer-workspace-enrichment/1
+tasks:
+  - slug: what-do-we-know-about-entity
+    title: What do we already know about <name>?
+    domains: [identity, temporal-facts, relationships, evidence]
+    queries: [entity.resolve, entity.card, entity.relationships, evidence.claims_for_entity, knowledge.head]
+    aliases: [baseline, prior knowledge]
+    navigation: |
+      `domains/identity.md` → `queries/README.md` (entity.*)
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "openai-baseline",
+        "operations": [
+          { "opId": "resolve", "kind": "named_query", "query": "entity.resolve", "params": { "text": "OpenAI" } },
+          { "opId": "card", "kind": "named_query", "query": "entity.card", "params": { "entity_id": "$resolve.rows[0].entity_id" } },
+          { "opId": "rels", "kind": "named_query", "query": "entity.relationships", "params": { "entity_id": "$resolve.rows[0].entity_id", "direction": "both" } },
+          { "opId": "claims", "kind": "named_query", "query": "evidence.claims_for_entity", "params": { "entity_id": "$resolve.rows[0].entity_id", "limit": 100 } },
+          { "opId": "head", "kind": "named_query", "query": "knowledge.head" }
+        ]
+      }
+      ```
+    expected_shape: |
+      `resolve` rows: entity_id, kind, display_name, score (≤ 25, best first). `card` is one JSON object with entity, aliases, facts[], relationships[], events[], sources[]. The snapshot knowledge_seq is the value for `expectedKnowledgeHead`.
+    pitfalls: |
+      `q:entity.card` shows current facts only (valid_during contains now() via `api.entity_at` defaults). For a historical date use `q:entity.at`. Merged entities are excluded by `api.resolve_entity`; follow merged_into_id if you hold an old id.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: resolve-or-create-entity
+    title: Resolve or create an entity
+    domains: [identity, staging]
+    queries: [entity.resolve, entity.by_identifier, entity.typed_row, staging.unresolved]
+    aliases: [create entity, identity]
+    navigation: |
+      `domains/identity.md` → `domains/staging.md` → `tasks/stage-uncertain-candidate.md`
+    operation: |
+      Read first, then ingest only if resolve and identifier miss:
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "resolve-gpt-offering",
+        "operations": [
+          { "opId": "id", "kind": "named_query", "query": "entity.by_identifier", "params": { "scheme": "other", "value": "gpt-5.6-terra" } },
+          { "opId": "name", "kind": "named_query", "query": "entity.resolve", "params": { "text": "GPT-5.6 Terra" } }
+        ]
+      }
+      ```
+
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "create-gpt-5-6-terra-offering",
+        "expectedKnowledgeHead": 41,
+        "onStale": "rebase_if_disjoint",
+        "subjects": [
+          {
+            "ref": "gpt-5.6-terra-offering",
+            "mode": "new",
+            "kind": "model_offering",
+            "displayName": "GPT-5.6 Terra (API)",
+            "identifiers": [{ "scheme": "other", "value": "gpt-5.6-terra" }],
+            "onMatch": "review"
+          }
+        ],
+        "proposals": [
+          { "proposalId": "p-create", "kind": "entity.create", "subjectRef": "gpt-5.6-terra-offering", "belief": "accepted" }
+        ]
+      }
+      ```
+    expected_shape: |
+      Identifier hit: one row, score implied 1.0. Name resolve: score ≥ 0.98 means use the existing id. Otherwise a new subject becomes `corpus.entity` plus `corpus.model_offering` after a receipt.
+    pitfalls: |
+      `kind` must be a `taxonomy.entity_kind` code. Do not invent identifier schemes; `entity_identifier_scheme_check` is a closed list (use `other` when there is no native scheme). High-confidence matches without `onMatch: use_existing` become `review_required`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: record-price-change
+    title: Record a price change with world-time
+    domains: [temporal-facts]
+    queries: [vocab.stream_kind, facts.history_for_stream, entity.at, knowledge.head]
+    aliases: [price, pricing]
+    navigation: |
+      `domains/temporal-facts.md` → `vocabularies/temporal.stream_kind.md` → `q:facts.history_for_stream`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "openai-terra-input-price",
+        "expectedKnowledgeHead": 41,
+        "onStale": "rebase_if_disjoint",
+        "subjects": [{ "ref": "offering", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000001", "kind": "model_offering" }],
+        "proposals": [
+          {
+            "proposalId": "p-price",
+            "kind": "fact.assert_state",
+            "subjectRef": "offering",
+            "streamKind": "model_offering_price",
+            "scopeKey": "per_1m_input_tokens",
+            "worldInterval": { "from": "2026-08-20T00:00:00Z", "to": null, "bounds": "[)" },
+            "amount": 2.5,
+            "currency": "USD",
+            "unit": "per_1m_input_tokens",
+            "extent": { "sourceText": "August 20, 2026", "precision": "day", "earliest": "2026-08-20", "latest": "2026-08-20" },
+            "temporalBasis": "explicit",
+            "belief": "accepted"
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      One new `temporal.segment` on stream (model_offering_price, offering, per_1m_input_tokens). Re-query with `q:entity.at` at the world instant and `q:facts.history_for_stream` to see closed predecessors.
+    pitfalls: |
+      `scopeKey` names the series, and the database enforces no naming convention for it. Read `q:facts.current_by_stream` first: if the offering already has a current segment for this unit under any `scope_key` (older data uses keys such as `input_tokens`), reuse that key exactly, or the old price stays current beside the new one. Only a series that does not exist yet defaults `scopeKey` to the unit (rule price.scope_key_is_unit). unit must be in `temporal.stream_kind:model_offering_price` unit_values. Currency must be three ASCII letters. temporal_basis explicit requires an extent.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: record-availability-change
+    title: Record an availability change
+    domains: [temporal-facts]
+    queries: [vocab.stream_kind, facts.current_by_stream, entity.at]
+    aliases: [ga, deprecated, availability]
+    navigation: |
+      `domains/temporal-facts.md` → `q:facts.current_by_stream`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "offering-ga",
+        "expectedKnowledgeHead": 41,
+        "onStale": "rebase_if_disjoint",
+        "subjects": [{ "ref": "offering", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000001", "kind": "model_offering" }],
+        "proposals": [
+          {
+            "proposalId": "p-avail",
+            "kind": "fact.assert_state",
+            "subjectRef": "offering",
+            "streamKind": "model_offering_availability",
+            "worldInterval": { "from": "2026-08-20T00:00:00Z", "to": null, "bounds": "[)" },
+            "status": "ga",
+            "extent": { "sourceText": "August 20, 2026", "precision": "day", "earliest": "2026-08-20", "latest": "2026-08-20" },
+            "temporalBasis": "explicit",
+            "belief": "accepted"
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      Current row in `api.current_facts` with `stream_kind='model_offering_availability'` and `status='ga'` when `now()` is inside `valid_during`.
+    pitfalls: |
+      Status must be announced, preview, ga, deprecated, or retired. Do not move backward along that sequence without an explicit correction (rule availability.transitions_are_ordered). Product features use `temporal.stream_kind:product_feature_availability` and removed instead of retired.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: assert-relationship
+    title: Assert a relationship
+    domains: [relationships]
+    queries: [vocab.relationship_kind, entity.relationships, relationships.current_by_kind]
+    aliases: [link, graph edge]
+    navigation: |
+      `domains/relationships.md` → `q:vocab.relationship_kind`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "model-offered-as",
+        "expectedKnowledgeHead": 41,
+        "onStale": "rebase_if_disjoint",
+        "subjects": [
+          { "ref": "model", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000102", "kind": "ai_model_version" },
+          { "ref": "offering", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000001", "kind": "model_offering" }
+        ],
+        "proposals": [
+          {
+            "proposalId": "p-rel",
+            "kind": "relationship.assert",
+            "relationshipKind": "offered_as",
+            "fromRef": "model",
+            "toRef": "offering",
+            "temporalBasis": "observation_bounded",
+            "belief": "accepted"
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      One `corpus.relationship` with k_to null. Temporal kinds also get a `temporal.stream_kind:relationship_active` segment. `q:entity.relationships` returns the row when direction includes the endpoint.
+    pitfalls: |
+      Endpoint kinds must match `taxonomy.relationship_kind.from_kinds` / `to_kinds` (`offered_as` is ai_model_version → model_offering, not ai_model). Temporal kinds need `worldInterval`. Properties must satisfy `property_schema`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: supersede-stale-fact
+    title: Supersede a stale fact
+    domains: [temporal-facts]
+    queries: [facts.history_for_stream, entity.at, entity.what_changed, knowledge.head]
+    aliases: [correct, replace, stale]
+    navigation: |
+      `domains/temporal-facts.md` → `q:facts.history_for_stream`
+    operation: |
+      Supersession is not a separate proposal kind. Assert the newer fact on the same stream slot; `temporal.assert_state` closes and splits the old current segment.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "correct-input-price",
+        "expectedKnowledgeHead": 41,
+        "onStale": "fail",
+        "subjects": [{ "ref": "offering", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000001", "kind": "model_offering" }],
+        "proposals": [
+          {
+            "proposalId": "p-new",
+            "kind": "fact.assert_state",
+            "subjectRef": "offering",
+            "streamKind": "model_offering_price",
+            "scopeKey": "per_1m_input_tokens",
+            "worldInterval": { "from": "2026-09-01T00:00:00Z", "to": null, "bounds": "[)" },
+            "amount": 1.25,
+            "currency": "USD",
+            "unit": "per_1m_input_tokens",
+            "extent": { "sourceText": "September 1, 2026", "precision": "day", "earliest": "2026-09-01", "latest": "2026-09-01" },
+            "temporalBasis": "explicit",
+            "belief": "accepted"
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      Plan lists supersedes old segment ids. History shows the old row with k_to set and replaces_segment_id on fragments. `q:entity.what_changed` between the snapshot head and the new head reports opened/closed segments.
+    pitfalls: |
+      Overlapping assertions in one batch raise. Identical current values are a no-op. Do not call `temporal.close_segment` yourself.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: admit-support-for-claim
+    title: Admit support for a claim
+    domains: [evidence, temporal-facts]
+    queries: [evidence.claims_for_entity, evidence.claim_support, evidence.captures_for_source]
+    aliases: [support, quote]
+    navigation: |
+      `domains/evidence.md` → `q:evidence.claim_support`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "admit-price-support",
+        "expectedKnowledgeHead": 41,
+        "evidence": { "verificationRuns": [{ "runId": "vr_01J8Q000", "manifestDigest": "sha256:c0d0" }] },
+        "subjects": [{ "ref": "offering", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000001", "kind": "model_offering" }],
+        "proposals": [
+          {
+            "proposalId": "p-support",
+            "kind": "support.admit",
+            "targetRef": "0192b9aa-0000-7000-8000-000000000001",
+            "supportRole": "primary",
+            "belief": "accepted",
+            "evidence": [{ "runId": "vr_01J8Q000", "claimId": "c_0011", "locatorRef": "q_06", "role": "primary" }]
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      One `evidence.segment_support` row with k_to null, claim_id, locator_id, and exactly one of segment_id or event_occurrence_id. `q:evidence.claim_support` returns it.
+    pitfalls: |
+      The claim must exist (materialize first). Locator is required. Role on the table is supports, challenges, or context — the intent `supportRole` primary/corroborating/contradicting is mapped by the executor. Support is written only through `temporal.admit_support`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: stage-uncertain-candidate
+    title: Stage a candidate you are unsure about
+    domains: [staging, identity]
+    queries: [entity.resolve, staging.candidates_for_kind, staging.unresolved]
+    aliases: [defer, ambiguous identity]
+    navigation: |
+      `domains/staging.md` → `q:staging.unresolved`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "stage-openai-foundation",
+        "expectedKnowledgeHead": 41,
+        "proposals": [
+          {
+            "proposalId": "p-stage",
+            "kind": "candidate.stage",
+            "entityKind": "organization",
+            "displayName": "OpenAI Foundation",
+            "payload": { "note": "resolve_entity returned score 0.61; unclear whether distinct from OpenAI" },
+            "reason": "identity_ambiguous"
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      One `staging.candidate` with proposed_kind organization and resolved_entity_id null. It appears in `q:staging.unresolved` until a resolution_decision of create, match, or reject.
+    pitfalls: |
+      Staging is for identity, not for facts you are unsure about. Uncertain facts use `belief: disputed` or `temporal_basis: unresolved`. `proposed_kind` must be a vocabulary entity kind.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: what-changed-since-head
+    title: What changed since head K
+    domains: [temporal-facts]
+    queries: [knowledge.head, entity.what_changed]
+    aliases: [diff, rebase, delta]
+    navigation: |
+      `domains/temporal-facts.md` → `q:entity.what_changed`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "diff-since-41",
+        "operations": [
+          { "opId": "head", "kind": "named_query", "query": "knowledge.head" },
+          { "opId": "changed", "kind": "named_query", "query": "entity.what_changed", "params": { "entity_id": "0192b000-0000-7000-8000-000000000001", "k_from": 41, "k_to": 42 } }
+        ]
+      }
+      ```
+    expected_shape: |
+      Rows with `change_kind` opened or closed, `item_kind` segment, event, or relationship, `knowledge_seq`, and `details` jsonb of the row.
+    pitfalls: |
+      `what_changed` is entity-scoped (segments on the entity or its relationships, occurrences, relationship rows). Call it per subject when rebasing an intent. `k_from`/`k_to` here are knowledge heads, not world time.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: build-evidence-packet
+    title: Build an evidence packet for a question
+    domains: [retrieval, evidence]
+    queries: [retrieval.hybrid_search, retrieval.evidence_packet, evidence.sources_by_domain]
+    aliases: [packet, citations]
+    navigation: |
+      `domains/retrieval.md` → `q:retrieval.hybrid_search` → `q:retrieval.evidence_packet`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "packet-openai-pricing",
+        "operations": [
+          {
+            "opId": "search",
+            "kind": "retrieval",
+            "query": "retrieval.hybrid_search",
+            "params": { "query_text": "OpenAI API pricing 2026", "vector_space_version_id": "0192b100-0000-7000-8000-000000000001" },
+            "limit": 20
+          },
+          { "opId": "packet", "kind": "named_query", "query": "retrieval.evidence_packet", "params": { "packet_id": "0192c000-0000-7000-8000-000000000001" } }
+        ]
+      }
+      ```
+    expected_shape: |
+      Hybrid search rows: vector_item_id, search_projection_id, search_text, source_kind, fused_score, channel_scores. Packet JSON: packet plus members with optional start_ms/end_ms from `content.document_node`.
+    pitfalls: |
+      Hybrid search needs a published space version and an executor-computed embedding (`execute: false` in the catalog). Agents pass text only. Unpublished spaces raise insufficient_privilege.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: publish-report
+    title: Publish a report through the legacy compatibility proposal
+    domains: [research, orchestration-ledger]
+    queries: [artifacts.by_type, receipts.for_intent, receipts.recent_for_mission]
+    aliases: [legacy report publish, report.publish]
+    navigation: |
+      `domains/research.md` → `domains/orchestration-ledger.md`
+    operation: |
+      For v1 authoring use task:register-report. This page describes the older report.publish compatibility path; it does not create a v1 package.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "publish-openai-products-2026-09-11",
+        "context": { "tenantId": "00000000-0000-7000-8000-000000000001", "missionId": "0192a000-0000-7000-8000-000000000001", "correlationId": "exp3-a-r1", "actor": { "kind": "agent", "id": "eve:db-aware-research" } },
+        "expectedKnowledgeHead": 41,
+        "proposals": [
+          {
+            "proposalId": "p-report",
+            "kind": "report.publish",
+            "reportArtifactId": "0192c0e0-0000-7000-8000-000000000001",
+            "title": "OpenAI products as of 2026-09-11",
+            "asOf": "2026-09-11",
+            "claimIds": ["c_0007", "c_0009", "c_0011"]
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      `research.report` plus `research.report_version` (markdown artifact) and `research.report_claim` rows. Receipt lists created ids. Staged: `mission_id` is required today.
+    pitfalls: |
+      Publish only a verification-run registered report artifact. Do not insert `research.report` yourself. Claims must already be materialized.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: check-knowledge-head
+    title: Check the knowledge head before writing
+    domains: [temporal-facts]
+    queries: [knowledge.head, entity.what_changed]
+    aliases: [freshness, expected head]
+    navigation: |
+      `domains/temporal-facts.md` → `q:knowledge.head`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "read-head",
+        "operations": [
+          { "opId": "head", "kind": "named_query", "query": "knowledge.head" }
+        ]
+      }
+      ```
+
+      Put the head knowledge_seq in the snapshot and in expectedKnowledgeHead. If apply fails rebase_required, re-run `q:entity.what_changed` for every subject.
+    expected_shape: |
+      One row: `knowledge_seq` (0 when no batch has been sealed), `updated_at`.
+    pitfalls: |
+      Freshness is the integer head, not executed_at. Two open writers cannot share a batch; the second sees knowledge batch already open. Always pass expectedKnowledgeHead (rule write.expected_head_required).
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: run-hybrid-search
+    title: Run a hybrid search
+    domains: [retrieval]
+    queries: [retrieval.hybrid_search]
+    aliases: [search, rrf, vector]
+    navigation: |
+      `domains/retrieval.md` → `q:retrieval.hybrid_search`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "search-pricing",
+        "operations": [
+          {
+            "opId": "kb",
+            "kind": "retrieval",
+            "query": "retrieval.hybrid_search",
+            "params": {
+              "query_text": "OpenAI API pricing 2026",
+              "vector_space_version_id": "0192b100-0000-7000-8000-000000000001",
+              "filters": {}
+            },
+            "limit": 20
+          }
+        ]
+      }
+      ```
+    expected_shape: |
+      Up to `limit` rows fused by RRF from exact, fts, trigram, and ann channels. `channel_scores` shows per-channel rank and score.
+    pitfalls: |
+      The catalog entry is `execute: false` because it needs a halfvec embedding. Query text must be 1–4096 characters. Hard filters may only use language, visibility, classification, source_kind, authority_level, freshness_after.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: find-entity-by-identifier
+    title: Find an entity by external identifier
+    domains: [identity]
+    queries: [entity.by_identifier, entity.resolve, entity.typed_row]
+    aliases: [scheme, external id]
+    navigation: |
+      `domains/identity.md` → `q:entity.by_identifier`
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "lookup-github",
+        "operations": [
+          { "opId": "id", "kind": "named_query", "query": "entity.by_identifier", "params": { "scheme": "github", "value": "openai/openai-python" } },
+          { "opId": "typed", "kind": "named_query", "query": "entity.typed_row", "params": { "entity_id": "$id.rows[0].entity_id" } }
+        ]
+      }
+      ```
+    expected_shape: |
+      Zero or one row: entity_id, kind, display_name, lifecycle, scheme, value. `(scheme, value)` is unique per tenant.
+    pitfalls: |
+      Scheme must be in `entity_identifier_scheme_check`. There is no `openai_model_id` scheme; use `other` or a listed namespace. Prefer identifier lookup over name resolve when the source prints a stable id.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: find-stale-facts
+    title: Find facts the database still holds as current that a source contradicts
+    domains: [temporal-facts, evidence]
+    queries: [entity.resolve, facts.current_by_stream, facts.history_for_stream, entity.card, knowledge.head]
+    aliases: [stale, outdated, contradicts, gap analysis]
+    navigation: |
+      `domains/temporal-facts.md` → `q:facts.current_by_stream` → `tasks/supersede-stale-fact.md`
+    operation: |
+      Read the current segments per stream and compare each `(stream_kind, scope_key)` slot with what the source states. A fact is stale when the slot exists, its segment is current (`valid_to` null), and the source gives a different value with a later world time.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "stale-scan-codex",
+        "operations": [
+          { "opId": "resolve", "kind": "named_query", "query": "entity.resolve", "params": { "text": "Codex" } },
+          { "opId": "prices", "kind": "named_query", "query": "facts.current_by_stream", "params": { "stream_kind": "model_offering_price", "entity_id": "$resolve.rows[0].entity_id", "limit": 100 } },
+          { "opId": "history", "kind": "named_query", "query": "facts.history_for_stream", "params": { "entity_id": "$resolve.rows[0].entity_id", "stream_kind": "model_offering_price", "scope_key": "per_1m_input_tokens", "limit": 20, "offset": 0 } },
+          { "opId": "head", "kind": "named_query", "query": "knowledge.head" }
+        ]
+      }
+      ```
+    expected_shape: |
+      `prices` rows carry `scope_key`, the current value columns, `valid_from`, and `valid_to` null. Every stale slot you find becomes one `fact.assert_state` proposal on the **same** `streamKind` and `scopeKey` (see `tasks/supersede-stale-fact.md`); the snapshot head is your `expectedKnowledgeHead`.
+    pitfalls: |
+      Writing the new value under a new `scopeKey` does not fix anything: the old segment stays current and the entity now has two contradicting current facts. Reuse the existing slot's `scope_key` exactly. Facts without a world time in the source are not corrections; record them with `temporalBasis: unresolved` or stage them.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: compose-ingestion-intent
+    title: Compose a knowledge ingestion intent
+    domains: [temporal-facts, identity, relationships, evidence, staging]
+    queries: [knowledge.head, entity.resolve, vocab.stream_kind, vocab.relationship_kind, vocab.event_kind]
+    aliases: [ingestion intent, proposal, write, intent skeleton]
+    navigation: |
+      `rules/README.md` → `vocabularies/temporal.stream_kind.md` → this page → `tasks/verify-ingestion-result.md`
+    operation: |
+      One intent = one source or report, one `expectedKnowledgeHead`, subjects declared once, proposals referencing subjects by `subjectRef`. Proposal kinds: `entity.create`, `entity.alias`, `entity.identifier`, `fact.assert_state`, `relationship.assert`, `event.assert`, `claim.materialize`, `support.admit`, `candidate.stage`.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-ingestion-intent.v1",
+        "intentId": "codex-2026-09-11",
+        "expectedKnowledgeHead": 4,
+        "onStale": "rebase_if_disjoint",
+        "context": { "missionId": "0192a000-0000-7000-8000-000000000001", "correlationId": "exp3-a-r1", "actor": { "kind": "agent", "id": "eve:db-aware-research" } },
+        "evidence": { "verificationRuns": [{ "runId": "vr_codex_2026_09_11", "manifestDigest": "sha256:c0d0" }] },
+        "subjects": [
+          { "ref": "codex", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000011", "kind": "product" },
+          { "ref": "codex-cli", "mode": "new", "kind": "product", "displayName": "Codex CLI", "identifiers": [{ "scheme": "github", "value": "openai/codex" }], "onMatch": "use_existing" }
+        ],
+        "proposals": [
+          { "proposalId": "p1", "kind": "entity.create", "subjectRef": "codex-cli", "belief": "accepted" },
+          { "proposalId": "p2", "kind": "relationship.assert", "fromRef": "codex", "toRef": "codex-cli", "relationshipKind": "has_feature", "worldInterval": { "from": "2026-09-11T00:00:00Z", "to": null, "bounds": "[)" }, "temporalBasis": "explicit", "belief": "accepted" },
+          { "proposalId": "p3", "kind": "fact.assert_state", "subjectRef": "codex", "streamKind": "model_offering_price", "scopeKey": "per_1m_input_tokens", "worldInterval": { "from": "2026-09-11T00:00:00Z", "to": null, "bounds": "[)" }, "amount": 1.25, "currency": "USD", "unit": "per_1m_input_tokens", "extent": { "sourceText": "September 11, 2026", "precision": "day", "earliest": "2026-09-11", "latest": "2026-09-11" }, "temporalBasis": "explicit", "belief": "accepted", "evidence": [{ "runId": "vr_codex_2026_09_11", "claimId": "c_01", "locatorRef": "q_01", "role": "primary" }] }
+        ]
+      }
+      ```
+    expected_shape: |
+      `knowledge ingest plan` returns `knowledge-ingestion-plan.v1` with every proposal `planned`, `duplicate`, `held`, or `rejected` and the rules that fired. `knowledge ingest apply` returns `knowledge-ingestion-receipt.v1` with `receiptId`, `knowledgeHead.before/after`, and per-proposal outcomes.
+    pitfalls: |
+      Every `fact.assert_state` that may correct an existing fact must carry the `scopeKey` of the series it corrects (run `tasks/find-stale-facts.md` first); the unit is the default only for a series that does not exist yet. `streamKind`, `relationshipKind`, `eventKind`, and subject `kind` are vocabulary codes (`vocab.*` queries); a wrong code is `VOCABULARY_VIOLATION` before any transaction. `expectedKnowledgeHead` comes from the read snapshot you based the intent on; a moved head is `REBASE_REQUIRED` unless `onStale` allows a disjoint rebase. Submit an intent once; the same `intentId` again returns `duplicateOf`, never a second batch. `claim.materialize` needs `context.attemptId`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: verify-ingestion-result
+    title: Verify what an ingestion actually changed
+    domains: [temporal-facts, orchestration-ledger]
+    queries: [receipts.for_intent, knowledge.head, entity.what_changed, facts.history_for_stream, artifacts.by_type]
+    aliases: [receipt, verify write, post-ingest check]
+    navigation: |
+      `tasks/compose-ingestion-intent.md` → `q:receipts.for_intent` → `q:entity.what_changed`
+    operation: |
+      Take `knowledgeHead.before` and `knowledgeHead.after` from the receipt and diff every subject between them.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "verify-codex-2026-09-11",
+        "operations": [
+          { "opId": "receipt", "kind": "named_query", "query": "receipts.for_intent", "params": { "intent_id": "0192c000-0000-7000-8000-000000000001" } },
+          { "opId": "head", "kind": "named_query", "query": "knowledge.head" },
+          { "opId": "changed", "kind": "named_query", "query": "entity.what_changed", "params": { "entity_id": "0192b000-0000-7000-8000-000000000011", "k_from": 4, "k_to": 5 } },
+          { "opId": "price_history", "kind": "named_query", "query": "facts.history_for_stream", "params": { "entity_id": "0192b000-0000-7000-8000-000000000011", "stream_kind": "model_offering_price", "scope_key": "per_1m_input_tokens", "limit": 5, "offset": 0 } }
+        ]
+      }
+      ```
+    expected_shape: |
+      `receipt`: one row with `receipt_id`, `outcome`, `knowledge_seq`. `changed`: one `opened` row per new segment/relationship/event and one `closed` row per superseded segment. A correction shows exactly one `closed` and one `opened` on the same `scope_key`; only `opened` rows mean you created a parallel fact instead of superseding.
+    pitfalls: |
+      The receipt is the record; the agent's own log is not. Zero `closed` rows after a "stale fix" is a failed fix. Do not re-apply the intent to "make sure": the same `intentId` is `duplicateOf`. Cite `receipt_id` and `knowledgeHead.after` in the report.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: navigate-report
+    title: Navigate a report revision, evidence and coverage
+    domains:
+      - research
+      - evidence
+    queries:
+      - reports.versions
+      - reports.sections
+      - reports.assertions
+      - reports.questions
+      - reports.dependencies
+      - reports.artifacts
+    aliases:
+      - report structure
+      - report outline
+      - report gaps
+      - section reuse
+      - report evidence
+    navigation: "`domains/research.md` → choose the named query below; read only the
+      relation needed for the question."
+    operation: >-
+      Use reports.versions with report_id to choose an exact revision, including
+      legacy versions. All other reports.* queries take report_version_id.
+
+
+      Use reports.sections for the ordered outline, reports.assertions for exact
+      spans and claim bindings, reports.questions for coverage,
+      reports.dependencies for reuse context and reports.artifacts for registered
+      renditions. v1 packages are read-only history (REPORT_V1_WITHDRAWN on insert);
+      seals, assessments and ingestion receipts of current reports live in the
+      knowledge_verification component and research.report_v2_* projections.
+
+
+      For the assembled v1 package use `knowledge report get <reportVersionId>`;
+      resolve returned artifacts through `knowledge artifact get <artifactId>`.
+      Named queries execute as pipeline_agent under the caller tenant.
+    expected_shape: Bounded rows (at most 200 per query). Assertion and question
+      joins may return multiple rows per item. A null schema_version from
+      reports.versions denotes a legacy revision. Section projections carry
+      pointers; readable blocks live in the structure/Markdown artifacts.
+    pitfalls: A bounded slice is not a complete package export. Sealed does not mean
+      admitted; missing assessments are not passing verdicts. Do not treat claim
+      bindings as independent corroboration or infer an answer from coverage
+      alone.
+    provenance: model_assisted
+    reviewed: null
+  - slug: register-report
+    title: Register an immutable report package revision
+    domains:
+      - research
+      - orchestration-ledger
+    queries:
+      - reports.versions
+      - reports.artifacts
+    aliases:
+      - report registration
+      - incremental report
+      - post research report
+    navigation: "`domains/research.md` → `research.report_v2_revision` (the v1
+      `research.report_package` projection is closed for new rows)."
+    operation: >-
+      Author research-report.v1 with report/revision identity, scope, cutoff,
+      producer, ordered sections, blocks, assertions, run-qualified evidence
+      references and original-question coverage. Call `knowledge report register
+      report.json` (MCP report_register). Both incremental and post_research
+      authoring support an optional mission.
+
+
+      Register a new immutable revision for changed content. KS renders final
+      Markdown spans, verifies artifact readback and registers projections
+      transactionally. Follow `knowledge report get <reportVersionId>` to
+      inspect the result.
+    expected_shape: "Registration reports sealed or storage_pending and admission:
+      not_evaluated. A sealed revision has structure, Markdown and manifest
+      artifacts plus structural projections. Post-seal assessments and ingestion
+      links remain separate lifecycle records."
+    pitfalls: Do not insert projections directly or invent producer attempts.
+      storage_pending needs actual storage reconciliation. Registration is
+      separate from legacy report.publish and from verification/admission.
+      Attach reportBinding to normal ingestion proposals to retain receipt
+      lineage.
+    provenance: model_assisted
+    reviewed: null

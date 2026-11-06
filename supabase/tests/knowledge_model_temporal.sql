@@ -1,0 +1,50 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select plan(1);
+set local app.tenant_id = '00000000-0000-7000-8000-000000000001';
+do $$
+declare intent uuid; receipt uuid; person uuid; org uuid; model uuid; offering uuid; extent uuid; event uuid; price uuid; k bigint;
+begin
+ insert into orchestration.operation_intent(intent_type,payload,idempotency_key,approval_state) values('upsert_entity','{}','km-test:'||util.uuidv7(),'approved') returning id into intent;
+ insert into orchestration.operation_receipt(intent_id,executor_version,outcome) values(intent,'km-test','applied') returning id into receipt;
+ insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('person','Test Person','km-person',receipt) returning id into person;
+ insert into corpus.person(id) values(person);
+ insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('organization','Test Organization','km-org',receipt) returning id into org;
+ insert into corpus.organization(id) values(org);
+ insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('model_offering','Test Offering','km-offering',receipt) returning id into offering;
+ k:=temporal.begin_batch(0);
+ extent:=temporal.make_extent('2026-01-01','day',p_earliest=>'2026-01-01',p_latest=>'2026-01-02');
+ price:=temporal.assert_state(offering,'model_offering_price',tstzrange('2026-01-01','infinity','[)'),p_amount=>10,p_currency=>'USD',p_unit=>'per_hour',p_extent=>extent);
+ perform temporal.assert_relationship('employed_by',person,org,tstzrange('2026-01-01','2026-03-01','[)'),p_extent=>extent);
+ event:=temporal.assert_event('price_changed',offering,tstzrange('2026-05-01','2026-05-02','[)'),p_mode=>'scheduled',p_extent=>extent);
+ perform temporal.commit_batch(receipt,'km-test-k1',repeat('a',64));
+ perform temporal.begin_batch(1);
+ perform temporal.assert_state(offering,'model_offering_price',tstzrange('2026-03-01','infinity','[)'),p_amount=>20,p_currency=>'USD',p_unit=>'per_hour',p_extent=>extent);
+ perform temporal.assert_relationship('employed_by',person,org,tstzrange('2026-04-01','infinity','[)'),p_episode=>2,p_extent=>extent);
+ perform temporal.assert_event('price_changed',offering,tstzrange('2026-05-03','2026-05-04','[)'),p_mode=>'actual',p_extent=>extent);
+ perform temporal.commit_batch(receipt,'km-test-k2',repeat('b',64));
+ if(select amount from api.entity_at(offering,'2026-04-01',1))<>10 then raise exception 'historical K did not reproduce prior belief'; end if;
+ if(select amount from api.entity_at(offering,'2026-04-01',2))<>20 then raise exception 'new price missing'; end if;
+ if(select amount from api.entity_at(offering,'2026-02-01',2))<>10 then raise exception 'split lost left interval'; end if;
+ if(select count(*) from api.relationships(person,'employed_by','2026-04-15',2))<>1 then raise exception 'rehire relationship missing'; end if;
+ if(select count(*) from api.relationships(person,'employed_by','2026-03-15',2))<>0 then raise exception 'employment gap lost'; end if;
+ if(select count(*) from temporal.event_occurrence where k_to is null and occurrence_mode='actual')<>1 then raise exception 'scheduled-to-actual failed'; end if;
+ if not exists(select 1 from api.what_changed(offering,1,2) where change_kind='closed') then raise exception 'belief closure missing'; end if;
+ if(select count(*) from knowledge_service.outbox where topic='knowledge.batch_sealed')<>2 then raise exception 'batch outbox missing'; end if;
+ perform temporal.begin_batch(2);
+ begin
+  insert into temporal.segment(stream_id,valid_during,temporal_basis) select stream_id,tstzrange('2026-04-01','2026-04-02','[)'),'unresolved' from temporal.segment where id=price;
+  raise exception 'overlap accepted';
+ exception when exclusion_violation then null; end;
+ perform temporal.commit_batch(receipt,'km-test-k3',repeat('c',64));
+ begin
+  perform temporal.begin_batch(1); raise exception 'stale expected head accepted';
+ exception when serialization_failure then null; end;
+ perform corpus.rebuild_entity_projections();
+ perform retrieval.project_entity_timeline();
+ set constraints all immediate;
+end $$;
+select pass('knowledge_model_temporal invariants hold');
+select * from finish();
+rollback;

@@ -1,0 +1,127 @@
+[
+  {
+    "table_name": "public.research_application_domain",
+    "rows": 16,
+    "digest": "f0906b1992e446b53deed875db351217"
+  },
+  {
+    "table_name": "public.research_category_definition",
+    "rows": 17,
+    "digest": "325b269a1effc6b2c20c0dad3c8c1917"
+  },
+  {
+    "table_name": "public.research_entity_candidate",
+    "rows": 1760,
+    "digest": "f26d607e8c07ccdc26ddbc309c52f8d6"
+  },
+  {
+    "table_name": "public.research_evidence_anchor",
+    "rows": 11772,
+    "digest": "3521384306c9b60e88622a16e5738c63"
+  },
+  {
+    "table_name": "public.research_ingestion_intent",
+    "rows": 1062,
+    "digest": "fe0ef83241723ff2491f01333876f4a0"
+  },
+  {
+    "table_name": "public.research_ingestion_intent_event",
+    "rows": 12600,
+    "digest": "c926d78df43242e9fd6446b5bbd55217"
+  },
+  {
+    "table_name": "public.research_organization_candidate",
+    "rows": 1201,
+    "digest": "31ef8faf82216ccd2c32cb6d4374bcb8"
+  },
+  {
+    "table_name": "public.research_organization_domain_definition",
+    "rows": 27,
+    "digest": "59e4ccf094e58ed122f71d6e5b562a8a"
+  },
+  {
+    "table_name": "public.research_organization_source",
+    "rows": 4964,
+    "digest": "944b2d87d94f3f961a740e9d83ed76b8"
+  },
+  {
+    "table_name": "public.research_pre_research_artifact",
+    "rows": 12784,
+    "digest": "2072553704309402b6f19d1f20bab998"
+  },
+  {
+    "table_name": "public.research_pre_research_run",
+    "rows": 1109,
+    "digest": "62925d1354470ae2b1e1489cfea065de"
+  },
+  {
+    "table_name": "public.research_pre_research_session",
+    "rows": 898,
+    "digest": "649314260e28205e4f0603cd45e881d0"
+  },
+  {
+    "table_name": "public.research_pre_research_stage_execution",
+    "rows": 8928,
+    "digest": "fdfcd4fd5ca0f1d8a5df7175abfab394"
+  },
+  {
+    "table_name": "public.research_pre_research_video_state",
+    "rows": 2252,
+    "digest": "64e754ff624d52ec8d201eb9b7ea555d"
+  },
+  {
+    "table_name": "public.research_resource_candidate",
+    "rows": 7998,
+    "digest": "96d7e03a08833d5a96ef9939ba26fcbd"
+  },
+  {
+    "table_name": "public.research_starter_channels",
+    "rows": 2,
+    "digest": "250e61f589320f89c01b49e1139ec529"
+  },
+  {
+    "table_name": "public.research_starter_videos",
+    "rows": 2252,
+    "digest": "f52b9b4da465de577d0a3231c8de31ad"
+  },
+  {
+    "table_name": "public.research_taxonomy_version",
+    "rows": 1,
+    "digest": "ec13b6c0b6065aa5dede56fd8b64c83e"
+  },
+  {
+    "table_name": "public.research_video_analysis",
+    "rows": 1050,
+    "digest": "8186d88377a469865b89534a89583cb3"
+  },
+  {
+    "table_name": "public.research_video_category",
+    "rows": 1343,
+    "digest": "c0dfb4ffdf175e2bd222623d429800c2"
+  },
+  {
+    "table_name": "public.research_video_domain",
+    "rows": 1462,
+    "digest": "56a34c73173cd9f31d3f4328ef5261ca"
+  },
+  {
+    "table_name": "public.research_video_initial_summary",
+    "rows": 1050,
+    "digest": "1f7858c75443b06fb08ada4da23cb07f"
+  },
+  {
+    "table_name": "public.research_video_lifecycle",
+    "rows": 2064,
+    "digest": "92743cd456a12546fe35b7805706ba1c"
+  },
+  {
+    "table_name": "public.research_video_technology_summary",
+    "rows": 4169,
+    "digest": "7377260d58b65dabe217f0bdd10ab645"
+  },
+  {
+    "table_name": "public.research_web_search_event",
+    "rows": 6216,
+    "digest": "4c3aeb6f92274354bdf4bca747179a33"
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "error_count": 0,
+  "errors": [],
+  "examples": {
+    "executed": 88,
+    "skipped": [
+      "retrieval.hybrid_search"
+    ]
+  },
+  "files": 688,
+  "largest": {
+    "bytes": 4369955,
+    "path": "schema-ir.json"
+  },
+  "ok": true,
+  "total_bytes": 7125526,
+  "warning_count": 0,
+  "warnings": []
+}

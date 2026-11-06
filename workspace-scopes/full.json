@@ -1,0 +1,25 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "full",
+  "description": "Every relation, function, task, and query; equivalent to the committed workspace but packaged as a bundle.",
+  "include": { "relations": ["*"], "functions": ["*"] },
+  "exclude": {},
+  "closure": { "fk_targets": "stub", "vocabularies": "full", "functions_touching_included": "summary" },
+  "tasks": [
+    "admit-support-for-claim",
+    "assert-relationship",
+    "build-evidence-packet",
+    "check-knowledge-head",
+    "find-entity-by-identifier",
+    "publish-report",
+    "record-availability-change",
+    "record-price-change",
+    "resolve-or-create-entity",
+    "run-hybrid-search",
+    "stage-uncertain-candidate",
+    "supersede-stale-fact",
+    "what-changed-since-head",
+    "what-do-we-know-about-entity"
+  ],
+  "queries": ["*"]
+}

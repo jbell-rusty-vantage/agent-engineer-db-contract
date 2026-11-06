@@ -1,0 +1,1 @@
+-- Loaded after migrations on `supabase db reset`. Add dev fixtures here if needed.

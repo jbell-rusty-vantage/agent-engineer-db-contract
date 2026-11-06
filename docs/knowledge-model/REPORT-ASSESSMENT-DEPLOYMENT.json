@@ -1,0 +1,141 @@
+{
+  "projectRef": "wkythqbofmckbuoothhn",
+  "mode": "applied",
+  "pending": [
+    "20260913020000_report_assessment_links.sql"
+  ],
+  "preservation": {
+    "public.\"research_application_domain\"": {
+      "rows": "16",
+      "digest": "03718c1e888dc04563ddb5636cc6213e"
+    },
+    "public.\"research_category_definition\"": {
+      "rows": "17",
+      "digest": "82e0029bfeb20367ff12a44eedc7a474"
+    },
+    "public.\"research_entity_candidate\"": {
+      "rows": "1760",
+      "digest": "15aa905095bd8fa01f454e1ac9c2b499"
+    },
+    "public.\"research_evidence_anchor\"": {
+      "rows": "11772",
+      "digest": "f37bfd3e889d97db5c02ef0f8b511af4"
+    },
+    "public.\"research_ingestion_intent\"": {
+      "rows": "1062",
+      "digest": "5fe92d97fb7afdf71653e15d12af188d"
+    },
+    "public.\"research_ingestion_intent_event\"": {
+      "rows": "12600",
+      "digest": "89f48129112156950d41db7285efe8f9"
+    },
+    "public.\"research_organization_candidate\"": {
+      "rows": "1201",
+      "digest": "5977718d3bc23c16c4090afe7d0f63d2"
+    },
+    "public.\"research_organization_domain_definition\"": {
+      "rows": "27",
+      "digest": "8cf4869193138fbb1eddf1f63e81ad59"
+    },
+    "public.\"research_organization_source\"": {
+      "rows": "4964",
+      "digest": "216ef6e1fcc203be3912cdbd804d6f82"
+    },
+    "public.\"research_pre_research_artifact\"": {
+      "rows": "12784",
+      "digest": "44ecc4b4dfe267f87880c0a20f3a3046"
+    },
+    "public.\"research_pre_research_run\"": {
+      "rows": "1109",
+      "digest": "2c003b4fd53b74c38363916b0bf67bed"
+    },
+    "public.\"research_pre_research_session\"": {
+      "rows": "898",
+      "digest": "28b0ec10cca965d9d58431dacb3f9542"
+    },
+    "public.\"research_pre_research_stage_execution\"": {
+      "rows": "8928",
+      "digest": "515e4d64c6c5cbf06f12a3553033fccc"
+    },
+    "public.\"research_pre_research_video_state\"": {
+      "rows": "2252",
+      "digest": "086471d488dac1f24a20838c53e51f24"
+    },
+    "public.\"research_resource_candidate\"": {
+      "rows": "7998",
+      "digest": "daaebaa9ef18a24ba885c5df43ea3d5d"
+    },
+    "public.\"research_starter_channels\"": {
+      "rows": "2",
+      "digest": "1497c9ebd95385cb299df0b20e49c620"
+    },
+    "public.\"research_starter_videos\"": {
+      "rows": "2252",
+      "digest": "26256819fe0d9ea7ddfb2c6023b3abc3"
+    },
+    "public.\"research_taxonomy_version\"": {
+      "rows": "1",
+      "digest": "0ff27b3e3170321b6c13b2fdb690032a"
+    },
+    "public.\"research_video_analysis\"": {
+      "rows": "1050",
+      "digest": "0d23b50a283dfca84c040fc49f647852"
+    },
+    "public.\"research_video_category\"": {
+      "rows": "1343",
+      "digest": "114de7923037a70f88789eac2ab65bf5"
+    },
+    "public.\"research_video_domain\"": {
+      "rows": "1462",
+      "digest": "dae2a19752e7951884a9b92358974012"
+    },
+    "public.\"research_video_initial_summary\"": {
+      "rows": "1050",
+      "digest": "17051177ad7afc9f4e060cc5b1eb4eac"
+    },
+    "public.\"research_video_lifecycle\"": {
+      "rows": "2064",
+      "digest": "e042ea68f1bfc4e99454a23f47a135f3"
+    },
+    "public.\"research_video_technology_summary\"": {
+      "rows": "4169",
+      "digest": "135a752e9d4c678d013752d65ab132a9"
+    },
+    "public.\"research_web_search_event\"": {
+      "rows": "6216",
+      "digest": "6d47c0bd6b6cf30cc189bd7d5e520c1a"
+    },
+    "research.report": {
+      "rows": "2",
+      "digest": "85e6a4b02e2ccdf0de362a6cadab2846"
+    },
+    "research.report_version": {
+      "rows": "3",
+      "digest": "b1a22251db15629c1af5295d0ea8452f"
+    },
+    "research.report_claim": {
+      "rows": "35",
+      "digest": "841d7dfc42d3c0ff36943d4018e65cef"
+    }
+  },
+  "preservationMatches": true,
+  "migrations": [
+    {
+      "version": "20260913020000",
+      "name": "report_assessment_links"
+    },
+    {
+      "version": "20260913010000",
+      "name": "research_report_packages"
+    },
+    {
+      "version": "20260912040000",
+      "name": "km_15_operation_receipt_tenant_policy"
+    },
+    {
+      "version": "20260912030000",
+      "name": "km_14_executor_lineage_and_global_vocabulary_reads"
+    }
+  ],
+  "recordedAt": "2026-09-13T00:48:39.922Z"
+}

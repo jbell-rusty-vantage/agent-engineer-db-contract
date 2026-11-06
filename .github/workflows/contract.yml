@@ -1,0 +1,70 @@
+name: Database contract
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Fresh-chain verification runs only in an explicitly disposable Supabase workdir. The shared `aiengineer`
+# project identity in supabase/config.toml is never started, migrated or reset here, and the
+# reset-disposable-local.mjs guard is unchanged.
+#
+# Gate (Sprint V SV-17): the AIDB binding migration 20261024010000 refuses to apply without the common
+# knowledge_verification component, so the component is installed first by scripts/install-ai-engineer.mjs,
+# which pins its version and digest and refuses any other bytes. The component lives in the Knowledge Services
+# repository: set repository variable KS_COMPONENT_REF to the commit that carries the pinned release and secret
+# KS_READ_TOKEN to a read-only token. Without them the checkout step fails; the job never skips the gate.
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      DISPOSABLE_WORKDIR: .ci/disposable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - name: Check out the Knowledge Services component (version + digest pinned by the installer)
+        uses: actions/checkout@v4
+        with:
+          repository: Overton77/ai-engineer-knowledge-services
+          ref: ${{ vars.KS_COMPONENT_REF }}
+          token: ${{ secrets.KS_READ_TOKEN }}
+          path: .ci/knowledge-services
+      - name: Build the component CLI
+        working-directory: .ci/knowledge-services
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile --filter "@aiengineer/knowledge-db-contract..."
+          pnpm --filter @aiengineer/knowledge-db-contract build
+      - name: Start a disposable database (empty migrations folder)
+        run: |
+          mkdir -p "$DISPOSABLE_WORKDIR/supabase/migrations"
+          sed -e 's/^project_id = "aiengineer"$/project_id = "disposable-ci-aidb"/' supabase/config.toml > "$DISPOSABLE_WORKDIR/supabase/config.toml"
+          grep -q '^project_id = "disposable-ci-aidb"$' "$DISPOSABLE_WORKDIR/supabase/config.toml"
+          npx supabase db start --workdir "$DISPOSABLE_WORKDIR"
+      - name: Component, then domain migrations, then custody/grants (root installer)
+        run: >-
+          node scripts/install-ai-engineer.mjs --workdir "$DISPOSABLE_WORKDIR" --ks-root .ci/knowledge-services
+          --component-installation-id 0195f0a0-5b08-7000-8000-0000000c1a1d --skip-mission-control
+          --receipt .ci/install-receipt.json
+      - name: Repeat install applies nothing
+        run: >-
+          node scripts/install-ai-engineer.mjs --workdir "$DISPOSABLE_WORKDIR" --ks-root .ci/knowledge-services
+          --component-installation-id 0195f0a0-5b08-7000-8000-0000000c1a1d --skip-mission-control
+          --receipt .ci/install-receipt-repeat.json
+          && node -e "process.exit(JSON.parse(require('fs').readFileSync('.ci/install-receipt-repeat.json','utf8')).changed ? 1 : 0)"
+      - name: SQL suites
+        run: |
+          for t in knowledge_component_binding research_report_v2_projection legacy_verification_withdrawal; do
+            docker exec -i supabase_db_disposable-ci-aidb psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 < "supabase/tests/$t.sql"
+          done
+      - run: node scripts/generate-types.mjs --local --check --workdir="$DISPOSABLE_WORKDIR"
+      # Committed workspace must match the disposable database (structure, grants, vocabularies, generated types).
+      - run: npm run workspace:check -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      # Committed pages must re-render byte-for-byte from the committed IR, and every catalog example must execute.
+      - run: npm run workspace:validate -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres

@@ -1,0 +1,25 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select plan(1);
+set local app.tenant_id='00000000-0000-7000-8000-000000000001';
+do $$ declare i uuid;r uuid;before_hash text;after_hash text;n bigint;again bigint;
+begin
+ insert into public.research_starter_channels(channel_id,title,handle,transcript_bucket,transcript_path_prefix,uploads_playlist_id) values('km-channel','Matthew fixture','@km-fixture','test','fixture','km-playlist');
+ insert into public.research_starter_videos(video_id,title,channel_id,channel_title,transcript_status,transcript_text) values('km-import','Fixture','km-channel','Matthew fixture','stored','Preserved transcript');
+ select md5(string_agg(to_jsonb(v)::text,'' order by video_id)) into before_hash from public.research_starter_videos v;
+ insert into orchestration.operation_intent(intent_type,payload,idempotency_key) values('upsert_entity','{}','km-import-'||util.uuidv7()) returning id into i;
+ insert into orchestration.operation_receipt(intent_id,executor_version,outcome) values(i,'test','applied') returning id into r;
+ perform corpus.import_research_starter_catalog(r);
+ select count(*) into n from corpus.media_work;
+ perform corpus.import_research_starter_catalog(r);
+ select count(*) into again from corpus.media_work;
+ if n<>again then raise exception 'catalog replay duplicated works';end if;
+ if not exists(select 1 from content.document d join corpus.media_work m on m.id=d.work_entity_id where m.external_id='km-import' and d.document_type_code='video_transcript') then raise exception 'transcript document missing';end if;
+ select md5(string_agg(to_jsonb(v)::text,'' order by video_id)) into after_hash from public.research_starter_videos v;
+ if before_hash<>after_hash then raise exception 'catalog import changed starter data';end if;
+ set constraints all immediate;
+end $$;
+select pass('knowledge_model_import invariants hold');
+select * from finish();
+rollback;

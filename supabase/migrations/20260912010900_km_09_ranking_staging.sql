@@ -1,0 +1,61 @@
+-- Knowledge model v2: ranking_staging. See docs/knowledge-model/FINAL-RECOMMENDATION.md.
+begin;
+set local lock_timeout = '15s';
+-- Reattach the explicitly inventoried foreign keys after rebuilding their targets.
+
+
+create table ranking.metric_definition(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),slug text not null,name text not null,unit text,description text,unique(tenant_id,slug),unique(tenant_id,id));
+create table ranking.metric_definition_version(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),metric_definition_id uuid not null references ranking.metric_definition(id),version integer not null,definition jsonb not null default '{}',unique(tenant_id,metric_definition_id,version),unique(tenant_id,id));
+create table ranking.metric_observation(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),metric_definition_version_id uuid not null references ranking.metric_definition_version(id),subject_entity_id uuid not null references corpus.entity(id),benchmark_run_id uuid references corpus.benchmark_run(id),value numeric not null,unit text,observed_at timestamptz not null,claim_id uuid references evidence.claim(id),locator_id uuid references evidence.locator(id),unique(tenant_id,id));
+create table ranking.feature_value(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),subject_entity_id uuid not null references corpus.entity(id),feature_definition_id uuid references ranking.feature_definition(id),value numeric not null,computed_at timestamptz not null default now(),unique(tenant_id,id));
+create table ranking.ranking_result(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),subject_entity_id uuid not null references corpus.entity(id),ranking_run_id uuid references ranking.ranking_run(id),rank integer not null check(rank>0),score numeric,explanation jsonb not null default '{}',unique(tenant_id,id));
+create table staging.candidate(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),proposed_kind text not null references taxonomy.entity_kind(code),proposed_payload jsonb not null,resolved_entity_id uuid references corpus.entity(id),source_id uuid references evidence.source(id),created_at timestamptz not null default now(),unique(tenant_id,id));
+create table staging.identity_match(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),candidate_id uuid not null references staging.candidate(id),entity_id uuid not null references corpus.entity(id),confidence numeric not null check(confidence between 0 and 1),method text not null);
+create table staging.resolution_decision(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),candidate_id uuid not null references staging.candidate(id),entity_id uuid references corpus.entity(id),decision text not null check(decision in ('create','match','reject','defer')),receipt_id uuid not null references orchestration.operation_receipt(id),created_at timestamptz not null default now());
+create table staging.vetting_decision(id uuid primary key default util.uuidv7(),tenant_id uuid not null default util.current_tenant_id(),candidate_id uuid not null references staging.candidate(id),decision text not null check(decision in ('admit','reject','defer')),reason text not null,receipt_id uuid not null references orchestration.operation_receipt(id),created_at timestamptz not null default now());
+
+alter table ranking.group_membership add constraint group_membership_library_id_fkey FOREIGN KEY (library_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_repository_id_fkey FOREIGN KEY (repository_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_person_id_fkey FOREIGN KEY (person_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_paper_id_fkey FOREIGN KEY (paper_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_video_id_fkey FOREIGN KEY (video_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_ai_model_version_id_fkey FOREIGN KEY (ai_model_version_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_mcp_server_id_fkey FOREIGN KEY (mcp_server_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_agent_skill_id_fkey FOREIGN KEY (agent_skill_id) REFERENCES corpus.entity(id);
+alter table ranking.group_membership add constraint group_membership_product_id_fkey FOREIGN KEY (product_id) REFERENCES corpus.entity(id);
+alter table evaluation.review_task add constraint review_task_candidate_id_fkey FOREIGN KEY (candidate_id) REFERENCES staging.candidate(id) ON DELETE CASCADE;
+alter table evaluation.eval_run add constraint eval_run_metric_definition_version_id_fkey FOREIGN KEY (metric_definition_version_id) REFERENCES ranking.metric_definition_version(id);
+alter table evaluation.review_task add constraint review_task_entity_merge_id_fkey FOREIGN KEY (entity_merge_id) REFERENCES corpus.entity_merge(id) ON DELETE CASCADE;
+alter table evaluation.review_task add constraint review_task_ranking_result_id_fkey FOREIGN KEY (ranking_result_id) REFERENCES ranking.ranking_result(id) ON DELETE CASCADE;
+alter table curriculum.lesson_covers_concept add constraint lesson_covers_concept_concept_id_fkey FOREIGN KEY (concept_id) REFERENCES corpus.entity(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_technical_problem_id_fkey FOREIGN KEY (technical_problem_id) REFERENCES knowledge.technical_problem(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_solution_pattern_id_fkey FOREIGN KEY (solution_pattern_id) REFERENCES knowledge.solution_pattern(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_advanced_usage_pattern_id_fkey FOREIGN KEY (advanced_usage_pattern_id) REFERENCES knowledge.advanced_usage_pattern(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_implementation_example_id_fkey FOREIGN KEY (implementation_example_id) REFERENCES knowledge.implementation_example(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_failure_mode_id_fkey FOREIGN KEY (failure_mode_id) REFERENCES knowledge.failure_mode(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_benchmark_result_id_fkey FOREIGN KEY (benchmark_result_id) REFERENCES knowledge.benchmark_result(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_compatibility_constraint_id_fkey FOREIGN KEY (compatibility_constraint_id) REFERENCES knowledge.compatibility_constraint(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_operational_practice_id_fkey FOREIGN KEY (operational_practice_id) REFERENCES knowledge.operational_practice(id);
+alter table curriculum.lesson_backed_by add constraint lesson_backed_by_security_consideration_id_fkey FOREIGN KEY (security_consideration_id) REFERENCES knowledge.security_consideration(id);
+alter table curriculum.challenge_targets add constraint challenge_targets_concept_id_fkey FOREIGN KEY (concept_id) REFERENCES corpus.entity(id);
+alter table curriculum.challenge_targets add constraint challenge_targets_library_id_fkey FOREIGN KEY (library_id) REFERENCES corpus.entity(id);
+alter table curriculum.challenge_targets add constraint challenge_targets_mcp_server_id_fkey FOREIGN KEY (mcp_server_id) REFERENCES corpus.entity(id);
+alter table curriculum.challenge_targets add constraint challenge_targets_agent_skill_id_fkey FOREIGN KEY (agent_skill_id) REFERENCES corpus.entity(id);
+alter table curriculum.challenge_targets add constraint challenge_targets_solution_pattern_id_fkey FOREIGN KEY (solution_pattern_id) REFERENCES knowledge.solution_pattern(id);
+alter table curriculum.challenge_derived_from add constraint challenge_derived_from_technical_problem_id_fkey FOREIGN KEY (technical_problem_id) REFERENCES knowledge.technical_problem(id);
+alter table curriculum.challenge_derived_from add constraint challenge_derived_from_failure_mode_id_fkey FOREIGN KEY (failure_mode_id) REFERENCES knowledge.failure_mode(id);
+alter table curriculum.challenge_derived_from add constraint challenge_derived_from_implementation_example_id_fkey FOREIGN KEY (implementation_example_id) REFERENCES knowledge.implementation_example(id);
+alter table orchestration.capability add constraint capability_packages_mcp_server_version_fk FOREIGN KEY (packages_mcp_server_version_id) REFERENCES corpus.entity(id);
+alter table retrieval.search_projection add constraint search_projection_tenant_id_projection_target_id_fkey FOREIGN KEY (tenant_id, projection_target_id) REFERENCES retrieval.projection_target(tenant_id, id) ON DELETE RESTRICT;
+alter table evaluation.eval_case_relevance add constraint eval_case_relevance_tenant_id_projection_target_id_fkey FOREIGN KEY (tenant_id, projection_target_id) REFERENCES retrieval.projection_target(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_technical_problem_tenant_fk FOREIGN KEY (tenant_id, technical_problem_id) REFERENCES knowledge.technical_problem(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_solution_pattern_tenant_fk FOREIGN KEY (tenant_id, solution_pattern_id) REFERENCES knowledge.solution_pattern(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_advanced_usage_pattern_tenant_fk FOREIGN KEY (tenant_id, advanced_usage_pattern_id) REFERENCES knowledge.advanced_usage_pattern(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_implementation_example_tenant_fk FOREIGN KEY (tenant_id, implementation_example_id) REFERENCES knowledge.implementation_example(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_failure_mode_tenant_fk FOREIGN KEY (tenant_id, failure_mode_id) REFERENCES knowledge.failure_mode(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_benchmark_result_tenant_fk FOREIGN KEY (tenant_id, benchmark_result_id) REFERENCES knowledge.benchmark_result(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_compatibility_constraint_tenant_fk FOREIGN KEY (tenant_id, compatibility_constraint_id) REFERENCES knowledge.compatibility_constraint(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_operational_practice_tenant_fk FOREIGN KEY (tenant_id, operational_practice_id) REFERENCES knowledge.operational_practice(tenant_id, id) ON DELETE RESTRICT;
+alter table retrieval.packet_member add constraint packet_member_security_consideration_tenant_fk FOREIGN KEY (tenant_id, security_consideration_id) REFERENCES knowledge.security_consideration(tenant_id, id) ON DELETE RESTRICT;
+commit;

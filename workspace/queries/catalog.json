@@ -1,0 +1,1819 @@
+{
+  "catalogVersion": "sha256:d0a86e191016afa9eda24c66882d781537d1f680ce2ee2f2109848f91c160903",
+  "defaults": {
+    "limit": 200,
+    "maxLimit": 2000,
+    "role": "app_reader",
+    "statementTimeoutMs": {
+      "cheap": 15000,
+      "heavy": 60000,
+      "medium": 15000
+    }
+  },
+  "entries": [
+    {
+      "cost_class": "cheap",
+      "domain": "orchestration-ledger",
+      "embedding": null,
+      "example": {
+        "artifact_type": "knowledge_ingestion_receipt",
+        "limit": 50
+      },
+      "id": "q:artifacts.by_type",
+      "kind": "named_query",
+      "name": "artifacts.by_type",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "artifact_type",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_type": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select a.id, a.artifact_type, a.sha256, a.bucket_class, a.storage_bucket,\n       a.object_path, a.mission_id, a.created_at\nfrom orchestration.artifact a\nwhere a.tenant_id = util.current_tenant_id()\n  and ($1::text is null or a.artifact_type = $1)\norder by a.created_at desc, a.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "publish-report",
+        "build-evidence-packet"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Artifacts of one artifact_type for the current tenant",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "at": "2026-03-15T00:00:00Z",
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "k": 0
+      },
+      "id": "q:entity.at",
+      "kind": "named_query",
+      "name": "entity.at",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "at",
+        "k"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "k": {
+            "default": null,
+            "pgType": "bigint",
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "entity_id",
+          "at"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "segment_id",
+          "stream_kind",
+          "scope_key",
+          "valid_during",
+          "status",
+          "amount",
+          "currency",
+          "unit",
+          "ref_entity_id",
+          "ref_display_name",
+          "payload",
+          "belief",
+          "k_from",
+          "k_to"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.entity_at($1::uuid, $2::timestamptz, $3::bigint)",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "record-price-change"
+      ],
+      "temporal": {
+        "knowledge": "param:k",
+        "world_time": "param:at"
+      },
+      "title": "Facts for one entity at a world time as known at a knowledge seq",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "identity",
+      "embedding": null,
+      "example": {
+        "scheme": "github",
+        "value": "openai/openai-python"
+      },
+      "id": "q:entity.by_identifier",
+      "kind": "named_query",
+      "name": "entity.by_identifier",
+      "pagination": null,
+      "paramOrder": [
+        "scheme",
+        "value"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "scheme": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "value": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "scheme",
+          "value"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "entity_id",
+          "kind",
+          "display_name",
+          "lifecycle",
+          "scheme",
+          "value"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select e.id as entity_id, e.kind, e.display_name, e.lifecycle, i.scheme, i.value\nfrom corpus.entity_identifier i\njoin corpus.entity e on e.id = i.entity_id and e.tenant_id = i.tenant_id\nwhere i.tenant_id = util.current_tenant_id()\n  and i.scheme = $1\n  and i.value = $2\n",
+      "tasks": [
+        "find-entity-by-identifier",
+        "resolve-or-create-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Find a canonical entity by external identifier scheme and value",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "identity",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001"
+      },
+      "id": "q:entity.card",
+      "kind": "named_query",
+      "name": "entity.card",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "card"
+        ],
+        "shape": "single_json"
+      },
+      "role": "app_reader",
+      "sql": "select api.entity_card($1::uuid) as card",
+      "tasks": [
+        "what-do-we-know-about-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "Current overview of one entity",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "relationships",
+      "embedding": null,
+      "example": {
+        "at": "2026-09-11T00:00:00Z",
+        "direction": "both",
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "k": null,
+        "kind": null
+      },
+      "id": "q:entity.relationships",
+      "kind": "named_query",
+      "name": "entity.relationships",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "kind",
+        "at",
+        "k",
+        "direction"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "default": "2026-09-11T00:00:00Z",
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          },
+          "direction": {
+            "default": "both",
+            "enum": [
+              "both",
+              "outgoing",
+              "incoming"
+            ],
+            "type": "string"
+          },
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "k": {
+            "default": null,
+            "pgType": "bigint",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "entity_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.relationships($1::uuid, $2::text, $3::timestamptz, $4::bigint, $5::text)",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "assert-relationship"
+      ],
+      "temporal": {
+        "knowledge": "param:k",
+        "world_time": "param:at"
+      },
+      "title": "Relationships touching one entity at a world time and knowledge seq",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "identity",
+      "embedding": null,
+      "example": {
+        "text": "OpenAI"
+      },
+      "id": "q:entity.resolve",
+      "kind": "named_query",
+      "name": "entity.resolve",
+      "pagination": null,
+      "paramOrder": [
+        "text"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "entity_id",
+          "kind",
+          "display_name",
+          "score"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.resolve_entity($1::text)",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "resolve-or-create-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Find entities by name, alias, or identifier",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "from": "2025-01-01T00:00:00Z",
+        "k": null,
+        "to": "2026-09-11T00:00:00Z"
+      },
+      "id": "q:entity.timeline",
+      "kind": "named_query",
+      "name": "entity.timeline",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "from",
+        "to",
+        "k"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "from": {
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          },
+          "k": {
+            "default": null,
+            "pgType": "bigint",
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "to": {
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id",
+          "from",
+          "to"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "item_kind",
+          "item_id",
+          "world_interval",
+          "details"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.entity_timeline($1::uuid, $2::timestamptz, $3::timestamptz, $4::bigint)",
+      "tasks": [
+        "what-do-we-know-about-entity"
+      ],
+      "temporal": {
+        "knowledge": "param:k",
+        "world_time": "param:from"
+      },
+      "title": "Segments, events, and unknown gaps for one entity over a world interval",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "identity",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "kind": "organization"
+      },
+      "id": "q:entity.typed_row",
+      "kind": "named_query",
+      "name": "entity.typed_row",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "kind"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "entity_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "entity_id",
+          "kind",
+          "display_name",
+          "slug",
+          "lifecycle",
+          "summary",
+          "canonical_schema",
+          "canonical_table",
+          "typed_row"
+        ],
+        "shape": "single_row"
+      },
+      "role": "pipeline_agent",
+      "sql": "select e.id as entity_id, e.kind, e.display_name, e.slug, e.lifecycle, e.summary,\n       ek.canonical_schema, ek.canonical_table,\n       coalesce(\n         to_jsonb(t_person), to_jsonb(t_organization), to_jsonb(t_product),\n         to_jsonb(t_product_version), to_jsonb(t_product_feature), to_jsonb(t_ai_model),\n         to_jsonb(t_ai_model_version), to_jsonb(t_model_offering), to_jsonb(t_technique),\n         to_jsonb(t_dataset), to_jsonb(t_benchmark), to_jsonb(t_benchmark_run),\n         to_jsonb(t_repository), to_jsonb(t_library), to_jsonb(t_library_release),\n         to_jsonb(t_mcp_server), to_jsonb(t_agent_skill), to_jsonb(t_ai_protocol),\n         to_jsonb(t_ai_protocol_version), to_jsonb(t_ai_protocol_feature), to_jsonb(t_paper),\n         to_jsonb(t_media_channel), to_jsonb(t_media_series), to_jsonb(t_media_work),\n         to_jsonb(t_event_series), to_jsonb(t_industry_event), to_jsonb(t_talk),\n         to_jsonb(t_story), to_jsonb(t_case_study), to_jsonb(t_concept),\n         to_jsonb(t_funding_round), to_jsonb(t_corporate_transaction), to_jsonb(t_registry),\n         to_jsonb(t_security_advisory), to_jsonb(t_compute_device), to_jsonb(t_compute_offering)\n       ) as typed_row\nfrom corpus.entity e\njoin taxonomy.entity_kind ek on ek.code = e.kind\nleft join corpus.person t_person on t_person.id = e.id\nleft join corpus.organization t_organization on t_organization.id = e.id\nleft join corpus.product t_product on t_product.id = e.id\nleft join corpus.product_version t_product_version on t_product_version.id = e.id\nleft join corpus.product_feature t_product_feature on t_product_feature.id = e.id\nleft join corpus.ai_model t_ai_model on t_ai_model.id = e.id\nleft join corpus.ai_model_version t_ai_model_version on t_ai_model_version.id = e.id\nleft join corpus.model_offering t_model_offering on t_model_offering.id = e.id\nleft join corpus.technique t_technique on t_technique.id = e.id\nleft join corpus.dataset t_dataset on t_dataset.id = e.id\nleft join corpus.benchmark t_benchmark on t_benchmark.id = e.id\nleft join corpus.benchmark_run t_benchmark_run on t_benchmark_run.id = e.id\nleft join corpus.repository t_repository on t_repository.id = e.id\nleft join corpus.library t_library on t_library.id = e.id\nleft join corpus.library_release t_library_release on t_library_release.id = e.id\nleft join corpus.mcp_server t_mcp_server on t_mcp_server.id = e.id\nleft join corpus.agent_skill t_agent_skill on t_agent_skill.id = e.id\nleft join corpus.ai_protocol t_ai_protocol on t_ai_protocol.id = e.id\nleft join corpus.ai_protocol_version t_ai_protocol_version on t_ai_protocol_version.id = e.id\nleft join corpus.ai_protocol_feature t_ai_protocol_feature on t_ai_protocol_feature.id = e.id\nleft join corpus.paper t_paper on t_paper.id = e.id\nleft join corpus.media_channel t_media_channel on t_media_channel.id = e.id\nleft join corpus.media_series t_media_series on t_media_series.id = e.id\nleft join corpus.media_work t_media_work on t_media_work.id = e.id\nleft join corpus.event_series t_event_series on t_event_series.id = e.id\nleft join corpus.industry_event t_industry_event on t_industry_event.id = e.id\nleft join corpus.talk t_talk on t_talk.id = e.id\nleft join corpus.story t_story on t_story.id = e.id\nleft join corpus.case_study t_case_study on t_case_study.id = e.id\nleft join corpus.concept t_concept on t_concept.id = e.id\nleft join corpus.funding_round t_funding_round on t_funding_round.id = e.id\nleft join corpus.corporate_transaction t_corporate_transaction on t_corporate_transaction.id = e.id\nleft join corpus.registry t_registry on t_registry.id = e.id\nleft join corpus.security_advisory t_security_advisory on t_security_advisory.id = e.id\nleft join corpus.compute_device t_compute_device on t_compute_device.id = e.id\nleft join corpus.compute_offering t_compute_offering on t_compute_offering.id = e.id\nwhere e.tenant_id = util.current_tenant_id()\n  and e.id = $1\n  and ($2::text is null or e.kind = $2)\n",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "resolve-or-create-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Canonical entity plus the kind-dispatched typed child row",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "k_from": 0,
+        "k_to": 0
+      },
+      "id": "q:entity.what_changed",
+      "kind": "named_query",
+      "name": "entity.what_changed",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "k_from",
+        "k_to"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "k_from": {
+            "pgType": "bigint",
+            "type": "integer"
+          },
+          "k_to": {
+            "pgType": "bigint",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "entity_id",
+          "k_from",
+          "k_to"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "change_kind",
+          "item_kind",
+          "item_id",
+          "knowledge_seq",
+          "details"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.what_changed($1::uuid, $2::bigint, $3::bigint)",
+      "tasks": [
+        "what-changed-since-head",
+        "check-knowledge-head"
+      ],
+      "temporal": {
+        "knowledge": "param:k_to",
+        "world_time": "n/a"
+      },
+      "title": "Opened and closed items for one entity between two knowledge heads",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001"
+      },
+      "id": "q:events.current_for_entity",
+      "kind": "named_query",
+      "name": "events.current_for_entity",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select event_id, kind, subject_entity_id, object_entity_id, occurrence_id,\n       occurred_during, occurrence_mode, payload\nfrom api.events_current\nwhere subject_entity_id = $1\norder by lower(occurred_during) desc, event_id\n",
+      "tasks": [
+        "what-do-we-know-about-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Current event occurrences for one subject entity",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "evidence",
+      "embedding": null,
+      "example": {
+        "source_id": "0192e000-0000-7000-8000-000000000001"
+      },
+      "id": "q:evidence.captures_for_source",
+      "kind": "named_query",
+      "name": "evidence.captures_for_source",
+      "pagination": null,
+      "paramOrder": [
+        "source_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "source_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select sc.id, sc.source_id, sc.artifact_id, sc.content_sha256, sc.capture_method,\n       sc.captured_at, sc.request_url\nfrom evidence.source_capture sc\nwhere sc.tenant_id = util.current_tenant_id()\n  and sc.source_id = $1\norder by sc.captured_at desc, sc.id\n",
+      "tasks": [
+        "admit-support-for-claim",
+        "build-evidence-packet"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Captures registered for one source",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "evidence",
+      "embedding": null,
+      "example": {
+        "claim_id": "0192d000-0000-7000-8000-000000000001"
+      },
+      "id": "q:evidence.claim_support",
+      "kind": "named_query",
+      "name": "evidence.claim_support",
+      "pagination": null,
+      "paramOrder": [
+        "claim_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select ss.id, ss.segment_id, ss.event_occurrence_id, ss.claim_id, ss.locator_id,\n       ss.role, ss.k_from, ss.k_to\nfrom evidence.segment_support ss\nwhere ss.tenant_id = util.current_tenant_id()\n  and ss.claim_id = $1\norder by ss.k_from, ss.id\n",
+      "tasks": [
+        "admit-support-for-claim"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Segment and occurrence support rows for one claim",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "evidence",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "limit": 100
+      },
+      "id": "q:evidence.claims_for_entity",
+      "kind": "named_query",
+      "name": "evidence.claims_for_entity",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "entity_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "entity_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "id",
+          "claim_type",
+          "statement",
+          "status",
+          "created_at",
+          "role"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select c.id, c.claim_type, c.statement, c.status, c.created_at, cs.role\nfrom evidence.claim c\njoin evidence.claim_subject cs on cs.claim_id = c.id and cs.tenant_id = c.tenant_id\nwhere c.tenant_id = util.current_tenant_id()\n  and cs.entity_id = $1\norder by c.created_at desc, c.id\nlimit least(greatest(coalesce($2, 100), 1), 200)\n",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "admit-support-for-claim"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Claims that name one entity as subject, object, or context",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "evidence",
+      "embedding": null,
+      "example": {
+        "domain": "openai.com",
+        "limit": 50
+      },
+      "id": "q:evidence.sources_by_domain",
+      "kind": "named_query",
+      "name": "evidence.sources_by_domain",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "domain",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "domain": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select s.id, s.canonical_url, s.registrable_domain, s.host, s.publisher_entity_id,\n       s.last_seen_at, s.next_revisit_after\nfrom evidence.source s\nwhere s.tenant_id = util.current_tenant_id()\n  and ($1::text is null or s.registrable_domain = $1)\norder by s.last_seen_at desc nulls last, s.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "build-evidence-packet"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Sources filtered by registrable domain",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "entity_id": null,
+        "limit": 50,
+        "stream_kind": "model_offering_price"
+      },
+      "id": "q:facts.current_by_stream",
+      "kind": "named_query",
+      "name": "facts.current_by_stream",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "stream_kind",
+        "entity_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "stream_kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select id, stream_id, stream_kind, subject_entity_id, subject_relationship_id, scope_key,\n       valid_during, status, amount, currency, unit, belief, temporal_basis, k_from, k_to, payload\nfrom api.current_facts\nwhere ($1::text is null or stream_kind = $1)\n  and ($2::uuid is null or subject_entity_id = $2)\norder by stream_kind, scope_key, id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "record-price-change",
+        "record-availability-change"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "Current facts (k_to is null and valid_during contains now) by stream kind",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "limit": 50,
+        "offset": 0,
+        "scope_key": "per_1m_input_tokens",
+        "stream_kind": "model_offering_price"
+      },
+      "id": "q:facts.history_for_stream",
+      "kind": "named_query",
+      "name": "facts.history_for_stream",
+      "pagination": {
+        "kind": "offset",
+        "limitParam": "limit",
+        "offsetParam": "offset"
+      },
+      "paramOrder": [
+        "entity_id",
+        "stream_kind",
+        "scope_key",
+        "limit",
+        "offset"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "offset": {
+            "default": 0,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "scope_key": {
+            "default": "",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stream_kind": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id",
+          "stream_kind"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select s.id, s.valid_during, s.k_from, s.k_to, s.status, s.amount, s.currency, s.unit,\n       s.belief, s.temporal_basis, s.replaces_segment_id, st.scope_key\nfrom temporal.segment s\njoin temporal.stream st on st.id = s.stream_id and st.tenant_id = s.tenant_id\nwhere s.tenant_id = util.current_tenant_id()\n  and st.subject_entity_id = $1\n  and st.kind = $2\n  and st.scope_key = coalesce($3, '')\norder by s.k_from, lower(s.valid_during)\nlimit least(greatest(coalesce($4, 50), 1), 200)\noffset greatest(coalesce($5, 0), 0)\n",
+      "tasks": [
+        "supersede-stale-fact",
+        "record-price-change"
+      ],
+      "temporal": {
+        "knowledge": "all",
+        "world_time": "history"
+      },
+      "title": "All segments on one entity stream slot, including closed history",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {},
+      "id": "q:knowledge.head",
+      "kind": "named_query",
+      "name": "knowledge.head",
+      "pagination": null,
+      "paramOrder": [],
+      "params": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "knowledge_seq",
+          "updated_at"
+        ],
+        "shape": "single_row"
+      },
+      "role": "app_reader",
+      "sql": "select knowledge_seq, updated_at from api.knowledge_head()",
+      "tasks": [
+        "check-knowledge-head",
+        "what-do-we-know-about-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Current tenant knowledge sequence",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "orchestration-ledger",
+      "embedding": null,
+      "example": {
+        "intent_id": "0192f000-0000-7000-8000-000000000001"
+      },
+      "id": "q:receipts.for_intent",
+      "kind": "named_query",
+      "name": "receipts.for_intent",
+      "pagination": null,
+      "paramOrder": [
+        "intent_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "intent_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "intent_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select i.id as intent_id, i.intent_type, i.idempotency_key, i.approval_state, i.created_at,\n       i.mission_id, b.knowledge_seq, b.receipt_id, b.recorded_at, b.summary\nfrom orchestration.operation_intent i\nleft join temporal.knowledge_batch b\n  on b.tenant_id = i.tenant_id and b.idempotency_key = i.idempotency_key\nwhere i.tenant_id = util.current_tenant_id()\n  and i.id = $1\n",
+      "tasks": [
+        "publish-report",
+        "check-knowledge-head"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Intent row and sealed batch for one operation intent",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "orchestration-ledger",
+      "embedding": null,
+      "example": {
+        "limit": 20,
+        "mission_id": "0192a000-0000-7000-8000-000000000001"
+      },
+      "id": "q:receipts.recent_for_mission",
+      "kind": "named_query",
+      "name": "receipts.recent_for_mission",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "mission_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 20,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "mission_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mission_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select i.id as intent_id, i.intent_type, i.approval_state, i.created_at, i.idempotency_key,\n       b.knowledge_seq, b.receipt_id, b.recorded_at\nfrom orchestration.operation_intent i\nleft join temporal.knowledge_batch b\n  on b.tenant_id = i.tenant_id and b.idempotency_key = i.idempotency_key\nwhere i.tenant_id = util.current_tenant_id()\n  and i.mission_id = $1\norder by i.created_at desc, i.id\nlimit least(greatest(coalesce($2, 20), 1), 200)\n",
+      "tasks": [
+        "publish-report"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Recent intents and sealed batches for one mission",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "relationships",
+      "embedding": null,
+      "example": {
+        "entity_id": null,
+        "kind": "develops",
+        "limit": 50
+      },
+      "id": "q:relationships.current_by_kind",
+      "kind": "named_query",
+      "name": "relationships.current_by_kind",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "kind",
+        "entity_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select *\nfrom api.current_relationships\nwhere ($1::text is null or kind = $1)\n  and ($2::uuid is null or from_entity_id = $2 or to_entity_id = $2)\norder by kind, id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "assert-relationship"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "Current relationships, optionally filtered by kind or endpoint",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "research",
+      "embedding": null,
+      "example": {
+        "report_version_id": "00000000-0000-7000-8000-000000000001"
+      },
+      "id": "q:reports.artifacts",
+      "kind": "named_query",
+      "name": "reports.artifacts",
+      "pagination": null,
+      "paramOrder": [
+        "report_version_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "report_version_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_version_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "role",
+          "id",
+          "sha256",
+          "storage_bucket",
+          "object_path"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select r.role,a.* from research.report_artifact r join orchestration.artifact a on (a.tenant_id,a.id)=(r.tenant_id,r.artifact_id) where r.tenant_id=util.current_tenant_id() and r.report_version_id=$1::uuid order by r.role,a.id limit 200",
+      "tasks": [
+        "navigate-report"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Registered report renditions and artifact metadata",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "research",
+      "embedding": null,
+      "example": {
+        "report_version_id": "00000000-0000-7000-8000-000000000001"
+      },
+      "id": "q:reports.assertions",
+      "kind": "named_query",
+      "name": "reports.assertions",
+      "pagination": null,
+      "paramOrder": [
+        "report_version_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "report_version_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_version_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "assertion_key",
+          "start_utf16",
+          "end_utf16",
+          "run_id",
+          "claim_key",
+          "claim_digest",
+          "evidence_manifest_artifact_id"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select a.*, c.run_id, c.claim_key, c.claim_digest, c.claim_id, c.evidence_manifest_artifact_id, c.role from research.report_assertion a left join research.report_assertion_claim c on (c.tenant_id,c.report_version_id,c.assertion_id)=(a.tenant_id,a.report_version_id,a.id) where a.tenant_id=util.current_tenant_id() and a.report_version_id=$1::uuid order by a.start_utf16,a.id,c.run_id,c.claim_key,c.claim_digest,c.role limit 200",
+      "tasks": [
+        "navigate-report"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Assertions and run-qualified evidence bindings",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "research",
+      "embedding": null,
+      "example": {
+        "report_version_id": "00000000-0000-7000-8000-000000000001"
+      },
+      "id": "q:reports.dependencies",
+      "kind": "named_query",
+      "name": "reports.dependencies",
+      "pagination": null,
+      "paramOrder": [
+        "report_version_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "report_version_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_version_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "section_id",
+          "required_version_id",
+          "required_section_id",
+          "relation"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select * from research.report_section_dependency where tenant_id=util.current_tenant_id() and report_version_id=$1::uuid order by section_id,required_version_id,required_section_id,relation limit 200",
+      "tasks": [
+        "navigate-report"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Exact section revisions needed for reuse",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "research",
+      "embedding": null,
+      "example": {
+        "report_version_id": "00000000-0000-7000-8000-000000000001"
+      },
+      "id": "q:reports.questions",
+      "kind": "named_query",
+      "name": "reports.questions",
+      "pagination": null,
+      "paramOrder": [
+        "report_version_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "report_version_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_version_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "question_key",
+          "coverage",
+          "explanation",
+          "resolution_evidence_needed",
+          "section_id"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select q.*, s.section_id from research.report_question q left join research.report_question_section s on (s.tenant_id,s.report_version_id,s.question_key)=(q.tenant_id,q.report_version_id,q.question_key) where q.tenant_id=util.current_tenant_id() and q.report_version_id=$1::uuid order by q.question_key,s.section_id limit 200",
+      "tasks": [
+        "navigate-report"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Question coverage and answering sections",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "research",
+      "embedding": null,
+      "example": {
+        "report_version_id": "00000000-0000-7000-8000-000000000001"
+      },
+      "id": "q:reports.sections",
+      "kind": "named_query",
+      "name": "reports.sections",
+      "pagination": null,
+      "paramOrder": [
+        "report_version_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "report_version_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_version_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "section_id",
+          "section_key",
+          "ordinal",
+          "heading",
+          "content_pointer"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select v.*, s.section_key from research.report_section_version v join research.report_section s on (s.tenant_id,s.report_id,s.id)=(v.tenant_id,v.report_id,v.section_id) where v.tenant_id=util.current_tenant_id() and v.report_version_id=$1::uuid order by v.ordinal limit 200",
+      "tasks": [
+        "navigate-report"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Ordered sections with stable keys",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "research",
+      "embedding": null,
+      "example": {
+        "report_id": "00000000-0000-7000-8000-000000000001"
+      },
+      "id": "q:reports.versions",
+      "kind": "named_query",
+      "name": "reports.versions",
+      "pagination": null,
+      "paramOrder": [
+        "report_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "report_id": {
+            "format": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "id",
+          "version",
+          "schema_version"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select v.*, p.schema_version, p.authoring_mode, p.as_of, p.predecessor_version_id from research.report_version v left join research.report_package p on (p.tenant_id,p.report_version_id)=(v.tenant_id,v.id) where v.tenant_id=util.current_tenant_id() and v.report_id=$1::uuid order by v.version desc limit 200",
+      "tasks": [
+        "navigate-report"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Versions and package status for a report",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "retrieval",
+      "embedding": null,
+      "example": {
+        "packet_id": "0192c000-0000-7000-8000-000000000001"
+      },
+      "id": "q:retrieval.evidence_packet",
+      "kind": "named_query",
+      "name": "retrieval.evidence_packet",
+      "pagination": null,
+      "paramOrder": [
+        "packet_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "packet_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "packet_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "packet"
+        ],
+        "shape": "single_json"
+      },
+      "role": "app_reader",
+      "sql": "select api.evidence_packet($1::uuid) as packet",
+      "tasks": [
+        "build-evidence-packet"
+      ],
+      "temporal": {
+        "knowledge": "published",
+        "world_time": "n/a"
+      },
+      "title": "One evidence packet with members and node timecodes",
+      "volatile": false
+    },
+    {
+      "cost_class": "heavy",
+      "domain": "retrieval",
+      "embedding": null,
+      "example": {
+        "filters": {},
+        "limit": 20,
+        "query_text": "OpenAI API pricing 2026",
+        "vector_space_version_id": "0192b100-0000-7000-8000-000000000001"
+      },
+      "id": "q:retrieval.hybrid_search",
+      "kind": "retrieval",
+      "name": "retrieval.hybrid_search",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "$embedding",
+        "vector_space_version_id",
+        "query_text",
+        "filters",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "filters": {
+            "default": {},
+            "type": "object"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "query_text": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "vector_space_version_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "vector_space_version_id",
+          "query_text"
+        ],
+        "type": "object"
+      },
+      "pending": "requires embedding",
+      "result": {
+        "columns": [
+          "vector_item_id",
+          "search_projection_id",
+          "search_text",
+          "source_kind",
+          "fused_score",
+          "channel_scores"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.hybrid_knowledge_search_1536($2::uuid, $3::text, $1::extensions.halfvec, $4::jsonb, $5::integer)",
+      "tasks": [
+        "run-hybrid-search",
+        "build-evidence-packet"
+      ],
+      "temporal": {
+        "knowledge": "published",
+        "world_time": "n/a"
+      },
+      "title": "Hybrid search over a published 1536-d vector-space version",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "staging",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "proposed_kind": "organization"
+      },
+      "id": "q:staging.candidates_for_kind",
+      "kind": "named_query",
+      "name": "staging.candidates_for_kind",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "proposed_kind",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "proposed_kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select c.id, c.proposed_kind, c.proposed_payload, c.resolved_entity_id, c.source_id, c.created_at\nfrom staging.candidate c\nwhere c.tenant_id = util.current_tenant_id()\n  and ($1::text is null or c.proposed_kind = $1)\norder by c.created_at desc, c.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "stage-uncertain-candidate",
+        "resolve-or-create-entity"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Staging candidates of one proposed entity kind",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "staging",
+      "embedding": null,
+      "example": {
+        "limit": 50
+      },
+      "id": "q:staging.unresolved",
+      "kind": "named_query",
+      "name": "staging.unresolved",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select c.id, c.proposed_kind, c.proposed_payload, c.source_id, c.created_at\nfrom staging.candidate c\nwhere c.tenant_id = util.current_tenant_id()\n  and c.resolved_entity_id is null\n  and not exists (\n    select 1 from staging.resolution_decision d\n    where d.candidate_id = c.id and d.tenant_id = c.tenant_id\n      and d.decision in ('create', 'match', 'reject')\n  )\norder by c.created_at desc, c.id\nlimit least(greatest(coalesce($1, 50), 1), 200)\n",
+      "tasks": [
+        "stage-uncertain-candidate"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Candidates with no create, match, or reject decision",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "code": "price_changed"
+      },
+      "id": "q:vocab.event_kind",
+      "kind": "named_query",
+      "name": "vocab.event_kind",
+      "pagination": null,
+      "paramOrder": [
+        "code"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select code, subject_kinds, object_kinds, starts_stream_kind, ends_stream_kind, description\nfrom temporal.event_kind\nwhere ($1::text is null or code = $1)\norder by code\n",
+      "tasks": [
+        "what-do-we-know-about-entity"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Event-kind vocabulary",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "relationships",
+      "embedding": null,
+      "example": {
+        "code": "employed_by"
+      },
+      "id": "q:vocab.relationship_kind",
+      "kind": "named_query",
+      "name": "vocab.relationship_kind",
+      "pagination": null,
+      "paramOrder": [
+        "code"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select code, from_kinds, to_kinds, temporal, \"symmetric\", inverse_label, description, property_schema\nfrom taxonomy.relationship_kind\nwhere ($1::text is null or code = $1)\norder by code\n",
+      "tasks": [
+        "assert-relationship"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Relationship-kind vocabulary with endpoint constraints",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "code": "model_offering_price"
+      },
+      "id": "q:vocab.stream_kind",
+      "kind": "named_query",
+      "name": "vocab.stream_kind",
+      "pagination": null,
+      "paramOrder": [
+        "code"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select code, subject_mode, subject_kinds, status_values, requires_amount, unit_values,\n       requires_ref_entity, ref_entity_kinds, payload_schema, description\nfrom temporal.stream_kind\nwhere ($1::text is null or code = $1)\norder by code\n",
+      "tasks": [
+        "record-price-change",
+        "record-availability-change"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Stream-kind vocabulary and slot rules",
+      "volatile": false
+    }
+  ],
+  "migrationHead": "20261031010000",
+  "schemaVersion": "knowledge-query-catalog.v1",
+  "workspaceFingerprint": "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+}

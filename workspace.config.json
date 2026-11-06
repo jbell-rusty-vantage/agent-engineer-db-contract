@@ -1,0 +1,81 @@
+{
+  "format": "ai-engineer-schema-workspace-config/1",
+  "workspaceFormat": "ai-engineer-schema-workspace/3",
+  "irFormat": "ai-engineer-schema-ir/1",
+  "rendererVersion": "3.0.0",
+  "schemas": [
+    "public",
+    "api",
+    "util",
+    "research_private",
+    "orchestration",
+    "evidence",
+    "taxonomy",
+    "corpus",
+    "knowledge",
+    "staging",
+    "ranking",
+    "research",
+    "retrieval",
+    "evaluation",
+    "observability",
+    "curriculum",
+    "provenance",
+    "content",
+    "knowledge_service",
+    "temporal"
+  ],
+  "excludedNamespaces": [
+    "auth",
+    "storage",
+    "extensions",
+    "graphql",
+    "graphql_public",
+    "pgbouncer",
+    "realtime",
+    "supabase_functions",
+    "supabase_migrations",
+    "vault",
+    "pgsodium",
+    "net",
+    "cron",
+    "pg_catalog",
+    "information_schema"
+  ],
+  "roles": {
+    "bounded": ["executor_service", "pipeline_agent", "verifier_agent", "control_plane", "app_reader"],
+    "platform": ["anon", "authenticated", "service_role"]
+  },
+  "vocabularies": [
+    "taxonomy.entity_kind",
+    "taxonomy.relationship_kind",
+    "temporal.stream_kind",
+    "temporal.event_kind",
+    "content.document_type",
+    "orchestration.intent_type",
+    "orchestration.artifact_type",
+    "evidence.capture_method",
+    "evidence.search_provider",
+    "corpus.media_platform",
+    "corpus.license",
+    "corpus.distribution_kind"
+  ],
+  "vocabularyVolatileColumns": ["created_at", "updated_at"],
+  "budgets": {
+    "relation_main_bytes": 6144,
+    "relation_details_bytes": 16384,
+    "domain_bytes": 8192,
+    "schema_readme_bytes": 16384,
+    "task_bytes": 5120,
+    "search_index_bytes": 720896
+  },
+  "paths": {
+    "generatedTypes": "src/database.generated.ts",
+    "migrations": "supabase/migrations",
+    "enrichment": "workspace-enrichment",
+    "workspace": "workspace",
+    "scopes": "workspace-scopes"
+  },
+  "exampleTenantId": "00000000-0000-7000-8000-000000000001",
+  "exampleStatementTimeoutMs": 20000
+}
