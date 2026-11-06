@@ -9,6 +9,8 @@ This repository is the canonical contract for the shared AI Engineer Supabase da
 
 Applications consume this repository as a pinned dependency. They do not maintain independent generated copies.
 
+Repository: public [`jbell-rusty-vantage/agent-engineer-db-contract`](https://github.com/jbell-rusty-vantage/agent-engineer-db-contract), `main` only. History starts at the 2026-11-06 clean-slate baseline, so commit IDs cited below and in older documents do not resolve here ([repository history](docs/REPOSITORY-HISTORY.md)).
+
 ## Versions and where they are installed (2026-11-01)
 
 | Contract | Migration head | Committed | Installed |

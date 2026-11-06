@@ -26,7 +26,7 @@
   "sourceState": "Filesystem snapshot; may include uncommitted changes. No deployment or commit claim.",
   "inputs": {
     ".agent-docs/config.json": "b20b17592fe2a267be7aa2e91afed9ea4d0f048a88429d8c01c5b7b161b392e7",
-    "README.md": "3a836100dde88b1635c2d3055796403d30dfcdaff837dffa821a496532019dd3",
+    "README.md": "8db59ef2f33388e13c943e0658037ec23da8e51ff97eebf9d8c7b62f605c2f1b",
     "docs/SCHEMA_WORKSPACE_MATERIALIZATION_SPEC.md": "0c82a595aa6bcee0717af32261a458eb2701201aeaa5d13c8db2e76917aaba84",
     "docs/knowledge-model/MIGRATION-RESULT.md": "b236fb2423c0faf887749b03835cde6ade5b152bf851eb8527a664d6246e12e6",
     "docs/knowledge-model/SCHEMA-SUMMARY.md": "e94b40020ff3d1d3acb50406b2b18df620cb5f564854aff35816433a0526a703",
@@ -48,7 +48,7 @@
       "scripts/generate-types.mjs": "a0d8444564a042610fb590054de911c260a890235e309e32a66ac65f5a476a00",
       "scripts/install-ai-engineer.mjs": "e9aec1c86185705b1bba988ad7f201a6f0b11a73b3e68de91b364424f33d9e0b",
       "scripts/install-manifest.mjs": "d3e6ac648986899c41363b0ecc73136403f3099fc1e6b0ab4ad151bb63f8b69a",
-      "scripts/install-target.mjs": "8d4744090e2bf5eaad5ec0e8ed1bea9064d3fe0b3d9a3d4f23d63a05d419284f",
+      "scripts/install-target.mjs": "a10004ea798cc035a5a8e9f4944effe378551063c00e93d7ac07cefda4392c21",
       "scripts/install-target.test.mjs": "edcf4b820cc12c82858ebf922add07e35804ce15fa46d7dce1973de2112d84ce",
       "scripts/reset-disposable-local.mjs": "0b6e40c2557a39eeddef6909001a53eab39ead8592bc912afd39bf597bbeaa42",
       "scripts/reset-disposable-local.test.mjs": "f7b16c21749492485904ad9f7337c2c9f06255afb992157b4f5c1065992bd062",

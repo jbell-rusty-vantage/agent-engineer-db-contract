@@ -12,8 +12,10 @@ on:
 # Gate (Sprint V SV-17): the AIDB binding migration 20261024010000 refuses to apply without the common
 # knowledge_verification component, so the component is installed first by scripts/install-ai-engineer.mjs,
 # which pins its version and digest and refuses any other bytes. The component lives in the Knowledge Services
-# repository: set repository variable KS_COMPONENT_REF to the commit that carries the pinned release and secret
-# KS_READ_TOKEN to a read-only token. Without them the checkout step fails; the job never skips the gate.
+# repository, public at jbell-rusty-vantage/agent-knowledge-services (2026-11-06 clean slate; pre-move commit IDs do not
+# exist there). KS_COMPONENT_REF (repository variable) pins the commit that carries the pinned release and defaults to main;
+# KS_READ_TOKEN is optional now that the repository is public. If the ref lacks the pinned bytes the installer refuses and
+# the job fails; it never skips the gate.
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -31,9 +33,9 @@ jobs:
       - name: Check out the Knowledge Services component (version + digest pinned by the installer)
         uses: actions/checkout@v4
         with:
-          repository: Overton77/ai-engineer-knowledge-services
-          ref: ${{ vars.KS_COMPONENT_REF }}
-          token: ${{ secrets.KS_READ_TOKEN }}
+          repository: jbell-rusty-vantage/agent-knowledge-services
+          ref: ${{ vars.KS_COMPONENT_REF || 'main' }}
+          token: ${{ secrets.KS_READ_TOKEN || github.token }}
           path: .ci/knowledge-services
       - name: Build the component CLI
         working-directory: .ci/knowledge-services

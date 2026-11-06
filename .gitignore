@@ -22,3 +22,6 @@ workspace-bundles/
 .schema-workspace-failed/
 
 internal_hidden_docs/
+
+# Local scratch, evidence and history archives (never tracked)
+.scratch/
