@@ -70,6 +70,19 @@ jobs:
           done
       - run: node scripts/generate-types.mjs --local --check --workdir="$DISPOSABLE_WORKDIR"
       # Committed workspace must match the disposable database (structure, grants, vocabularies, generated types).
-      - run: npm run workspace:check -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      - id: workspace_check
+        run: npm run workspace:check -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      # On drift, render the workspace from this freshly installed database and publish it as an artifact, so a
+      # contributor without local Docker (cloud agents included) can commit the regenerated tree. The job still fails.
+      - name: Regenerate the schema workspace (drift only)
+        if: failure() && steps.workspace_check.outcome == 'failure'
+        run: npm run workspace:build -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      - name: Upload the regenerated schema workspace (drift only)
+        if: failure() && steps.workspace_check.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-workspace
+          path: workspace/
+          if-no-files-found: error
       # Committed pages must re-render byte-for-byte from the committed IR, and every catalog example must execute.
       - run: npm run workspace:validate -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
