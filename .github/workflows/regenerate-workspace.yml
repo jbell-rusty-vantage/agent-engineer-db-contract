@@ -1,0 +1,61 @@
+name: Regenerate schema workspace
+
+# Manual: install the full chain on a disposable database exactly as the contract workflow does, render workspace/
+# from it with the committed enrichment, and upload the tree as the `schema-workspace` artifact. For contributors
+# without local Docker (cloud agents included): download the artifact, replace workspace/ with it, commit. Run it
+# when a migration or an enrichment change makes `workspace:check` report drift. It never pushes.
+on:
+  workflow_dispatch:
+    inputs:
+      ks_ref:
+        description: Knowledge Services ref that carries the pinned component release
+        required: false
+        default: main
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    env:
+      DISPOSABLE_WORKDIR: .ci/disposable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check out the Knowledge Services component (version + digest pinned by the installer)
+        uses: actions/checkout@v4
+        with:
+          repository: jbell-rusty-vantage/agent-knowledge-services
+          ref: ${{ inputs.ks_ref }}
+          token: ${{ secrets.KS_READ_TOKEN || github.token }}
+          path: .ci/knowledge-services
+      - name: Build the component CLI
+        working-directory: .ci/knowledge-services
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile --filter "@aiengineer/knowledge-db-contract..."
+          pnpm --filter @aiengineer/knowledge-db-contract build
+      - name: Start a disposable database (empty migrations folder)
+        run: |
+          mkdir -p "$DISPOSABLE_WORKDIR/supabase/migrations"
+          sed -e 's/^project_id = "aiengineer"$/project_id = "disposable-ci-aidb"/' supabase/config.toml > "$DISPOSABLE_WORKDIR/supabase/config.toml"
+          grep -q '^project_id = "disposable-ci-aidb"$' "$DISPOSABLE_WORKDIR/supabase/config.toml"
+          npx supabase db start --workdir "$DISPOSABLE_WORKDIR"
+      - name: Component, then domain migrations, then custody/grants (root installer)
+        run: >-
+          node scripts/install-ai-engineer.mjs --workdir "$DISPOSABLE_WORKDIR" --ks-root .ci/knowledge-services
+          --component-installation-id 0195f0a0-5b08-7000-8000-0000000c1a1d --skip-mission-control
+          --receipt .ci/install-receipt.json
+      - run: npm run workspace:build -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      - run: npm run workspace:check -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      - run: npm run workspace:validate -- --db-url postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      - uses: actions/upload-artifact@v4
+        with:
+          name: schema-workspace
+          path: workspace/
+          if-no-files-found: error
