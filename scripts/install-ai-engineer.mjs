@@ -129,7 +129,7 @@ function lastJson(text) {
 
 function supabaseBin() {
   const bin = join(repository, "node_modules", ".bin", process.platform === "win32" ? "supabase.cmd" : "supabase");
-  if (!existsSync(bin)) throw new Refused("TOOL_MISSING", "pinned supabase CLI (npm ci)");
+  if (!existsSync(bin)) throw new Refused("TOOL_MISSING", "pinned supabase CLI (pnpm install)");
   return bin;
 }
 

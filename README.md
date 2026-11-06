@@ -201,10 +201,11 @@ The generated contract includes internal schemas for server-side consumers. This
 and fresh-install path. `db:start`, `db:migrate` and `scripts/apply-disposable-migration.mjs` remain disposable
 development tools for incremental local work; they are never a release, cutover or service-startup path.
 
-Use the pinned Supabase CLI from this repository (development only):
+Use the pinned Supabase CLI from this repository (development only). pnpm (`packageManager` in `package.json`) installs
+dependencies from `pnpm-lock.yaml`, the only lockfile; scripts run with `npm run` or `pnpm run`:
 
 ```sh
-npm install
+pnpm install
 npm run db:start
 npm run db:migrate
 npm run types:generate
