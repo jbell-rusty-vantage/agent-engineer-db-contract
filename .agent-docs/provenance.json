@@ -66,7 +66,7 @@
       "supabase/config.toml": "d08bc818a526927d776192c96919ef37eb85352088a02ebfacbdcd87bb7fd509",
       "supabase/tests/legacy_verification_withdrawal.sql": "3c0120fc9d6ab78a432938b8079dc771aac5cab3151f853bae08a87acc4285fa",
       "supabase/tests/verification_evaluation_dataset_manifest.sql": "315728d1eb025e0ca42142d1a2f87b2b7ea9929cd28c4792a6cb2a5e9cc310bb",
-      "workspace-enrichment/domains.yaml": "134bc097ec5448c2a394a89e195aa68895c3df312f0b035ab9a287106187f7ff",
+      "workspace-enrichment/domains.yaml": "66d808a7e74514ee252374ec0c7ffa7418534f448d7991416d15afad8e90dff0",
       "workspace-enrichment/queries.yaml": "2e49d32eb7bf6c75b8e8b4bbc7e4b71c6a4efa5b377ed868e740accfeae024c3",
       "workspace-enrichment/README.md": "2a1fb5898f9f55bfa17e78f4887ecc3b7d3f34895dc372e951b3046ca5ed15a1",
       "workspace-scopes/db-aware-research.json": "65b29f4fadcfe367a788b18ea688b622395778d3127ef7bf9f0fca68342af135",

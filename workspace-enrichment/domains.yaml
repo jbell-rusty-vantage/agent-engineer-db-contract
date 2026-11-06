@@ -232,8 +232,8 @@ domains:
 
       These records are not temporal segments. A price or availability fact belongs in
       `temporal.segment`. A how-to-call-the-API pattern belongs here, linked to the
-      product or library entity and backed by a claim. Curriculum lessons point at these
-      typed rows through `curriculum.lesson_backed_by`. `knowledge.record_reconciliation`
+      product or library entity and backed by a claim. Course content cites these typed
+      rows rather than restating them. `knowledge.record_reconciliation`
       remains for runtime repair of older records. Reach for this domain after
       `q:entity.card` when the question is an engineering practice rather than a dated
       world fact; then follow `knowledge.record_entity_link` to the subject entity.
@@ -523,35 +523,44 @@ domains:
     title: Curriculum
     provenance: model_assisted
     reviewed: null
-    aliases: [lessons, challenges, learning paths]
+    aliases: [course structure, learning outcomes, requirements, prerequisites, release transitions]
     schemas: [curriculum]
-    relations: [curriculum.curriculum, curriculum.track, curriculum.module, curriculum.lesson, curriculum.lesson_version, curriculum.challenge, curriculum.learning_objective, curriculum.lesson_backed_by]
+    relations: [curriculum.part, curriculum.outcome, curriculum.requirement, curriculum.requirement_option, curriculum.prerequisite, curriculum.outcome_alignment, curriculum.release_transition, curriculum.requirement_transition]
     functions: []
     tasks: [what-do-we-know-about-entity]
     queries: [entity.card]
-    summary: Learning paths that point at concepts and knowledge records.
+    summary: Structure, outcomes and requirements of authored course works, keyed to authoring revisions.
     body: |
-      Curriculum is tracks, modules, versioned lessons, challenges, and learning
-      objectives. `curriculum.lesson_covers_concept` and `curriculum.challenge_targets`
-      reference `corpus.entity` (often kind concept, library, mcp_server, agent_skill).
-      `curriculum.lesson_backed_by` points at typed knowledge records so a lesson is
-      grounded in admitted engineering knowledge.
+      Since the Build 01 product schema (2026-11-05), curriculum no longer owns lessons,
+      challenges or tracks. Courses, modules and activities are authored works in the
+      `authoring` schema; every curriculum row hangs off an `authoring.work_revision`.
+      The thirteen legacy relations (`curriculum.curriculum`, `track`, `module`,
+      `lesson`, `lesson_version`, `challenge`, `learning_objective`, …) were dropped by
+      the curriculum cutover migration.
 
-      Lessons are not claims and not temporal facts. When a lesson cites a product
-      behavior, the behavior still lives on a stream; the lesson only links. Agents
-      building official courses should resolve the concept entity first, then attach
-      backing records that already have receipts. `curriculum.lesson_prerequisite` and
-      `curriculum.challenge_derived_from` keep the graph of what a learner must already
-      know. Do not create a lesson that names a library the corpus cannot resolve.
+      `curriculum.part` places a child revision inside a parent revision at an ordinal,
+      as `recommended` or `optional`. `curriculum.outcome` states what a learner can do
+      after a revision (optional Bloom level, an `aieng.evidence-rule` for proof).
+      `curriculum.requirement` is what completion needs: an `outcome` or a
+      `mandatory_activity` (a part). `curriculum.requirement_option` lists the routes
+      that satisfy it (`standard`, `prior_work`, `test_out`, `alternative`,
+      `generated_eligible`, `learner_project`), each `proposed` until approved.
+      `curriculum.prerequisite` links revisions as `recommended` or `required`, with a
+      rationale. `curriculum.outcome_alignment` maps an outcome to a competency revision
+      by facet (`independent`, `assisted`, `agent_directed`) and coverage.
 
-      Invariant: a lesson version is immutable; edits create `curriculum.lesson_version`
-      rows. Trap: putting a product availability date on a lesson — that date belongs
-      on `temporal.stream_kind:model_offering_availability`. Start with
-      `what-do-we-know-about-entity` / `q:entity.card` for the concept, then attach
-      backing records that already have receipts. Challenges
-      (`curriculum.challenge`, `curriculum.challenge_version`) target the same
-      identities. Official courses are agent-native: they must resolve the concept
-      before they name it in prose.
+      Releases change over time: `curriculum.release_transition` maps one
+      `authoring.release` to the next (`needs_review`, `compatible`, `breaking`; a
+      compatible transition needs a reviewed event), and
+      `curriculum.requirement_transition` says per requirement whether learner progress
+      carries, needs reassessment or does not apply.
+
+      Invariants: rows are scoped by tenant and workspace and reference revisions, never
+      mutable heads; a part cannot contain itself; a requirement is exactly one kind.
+      Trap: putting a product availability date in course structure; that fact belongs
+      on `temporal.stream_kind:model_offering_availability`, cited from content. Resolve
+      a concept with `what-do-we-know-about-entity` / `q:entity.card` before course
+      content names it.
 
   - slug: observability
     title: Observability
