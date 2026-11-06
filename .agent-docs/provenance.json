@@ -56,7 +56,7 @@
       "scripts/schema-workspace/lib/ir/build-ir.mjs": "42b2675e386ed071709f8c091fb78b65ecc725176ccbd84692736158d8f94680",
       "scripts/schema-workspace/lib/pipeline.mjs": "e5864a2a332df753c67906ce988d17abfd24e7409430781572978a4d4b96eb22",
       "scripts/schema-workspace/lib/render/render-workspace.mjs": "80cd66387c95276bd80d922f5ead2f021efbd20d6888a730ef2be0c05eea39e3",
-      "scripts/schema-workspace/lib/selection.mjs": "ce0051725e9c0a8979239e8c83336786c83fa5be53cbf3993b65b1f0ca41f7c5",
+      "scripts/schema-workspace/lib/selection.mjs": "64b7e56ba563307f9a71eda111bcadeb58d8dd58100ba553d5f11e03153def19",
       "scripts/schema-workspace/lib/validate.mjs": "c3b465e3a99e8dd9368af8e236ff6dc77972cb05602e1dbe47cc1e11a4964a86",
       "scripts/schema-workspace/README.md": "06c86e77cfe01b05ac0a69d99d867e98cf8df93b8b9969e5487eca551e6feffe",
       "scripts/schema-workspace/test/helpers.test.mjs": "b29e5391f9377991b8e4de11310711c0a1f86426d990060d8a729f94728cab8a",

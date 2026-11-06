@@ -5,7 +5,7 @@ schema: taxonomy
 name: assignment
 domain: relationships
 aliases: []
-tokens: [taxonomy, assignment, taxonomy.assignment, id, tenant_id, term_id, lesson_id, method, confidence, provenance_claim_id, review_task_id, valid_from, valid_to, created_by_receipt_id, created_at, target_entity_id, target_record_id]
+tokens: [taxonomy, assignment, taxonomy.assignment, id, tenant_id, term_id, target_work_id, method, confidence, provenance_claim_id, review_task_id, valid_from, valid_to, created_by_receipt_id, created_at, target_entity_id, target_record_id]
 summary: null
 summary_basis: none
 rls: enabled
@@ -13,7 +13,7 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"assignment\"][\"Row\"]"
 defined_in: ["20260826001400_deferred_fks.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # taxonomy.assignment
 
@@ -26,7 +26,7 @@ table in domain `relationships`.
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK |
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | — |
 | 3 | `term_id` | `uuid` | no | — | FK → [`taxonomy.term`](term.md).id |
-| 21 | `lesson_id` | `uuid` | yes | — | FK → [`curriculum.lesson`](../curriculum/lesson.md).id |
+| 21 | `target_work_id` | `uuid` | yes | — | — |
 | 23 | `method` | `text` | no | — | — |
 | 24 | `confidence` | `corpus.confidence` | yes | — | — |
 | 25 | `provenance_claim_id` | `uuid` | yes | — | FK → [`evidence.claim`](../evidence/claim.md).id |
@@ -41,18 +41,18 @@ table in domain `relationships`.
 ## Constraints
 
 - PK (id)
-- check `assignment_check`: `(num_nonnulls(target_entity_id, target_record_id, lesson_id) = 1)`
 - check `assignment_method_check`: `(method = ANY (ARRAY['rule'::text, 'model'::text, 'human'::text]))`
+- check `assignment_one_target_ck`: `(num_nonnulls(target_entity_id, target_record_id, target_work_id) = 1)`
 
 ## Relationships
 
-Outbound: `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`; `lesson_id` → [`curriculum.lesson`](../curriculum/lesson.md)`.id` on delete cascade; `provenance_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id`; `review_task_id` → [`evaluation.review_task`](../evaluation/review_task.md)`.id`; `target_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id`; `target_record_id` → [`knowledge.record`](../knowledge/record.md)`.id`; `term_id` → [`taxonomy.term`](term.md)`.id` on delete cascade.
+Outbound: `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`; `provenance_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id`; `review_task_id` → [`evaluation.review_task`](../evaluation/review_task.md)`.id`; `target_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id`; `target_record_id` → [`knowledge.record`](../knowledge/record.md)`.id`; `tenant_id,target_work_id` → `authoring.work``.tenant_id,id` on delete restrict; `term_id` → [`taxonomy.term`](term.md)`.id` on delete cascade.
 Inbound: none.
-Polymorphic: exactly one of `target_entity_id`, `target_record_id`, `lesson_id` → [`corpus.entity`](../corpus/entity.md) | [`curriculum.lesson`](../curriculum/lesson.md) | [`knowledge.record`](../knowledge/record.md) — basis: check constraint assignment_check.
+Polymorphic: exactly one of `target_entity_id`, `target_record_id`, `target_work_id` → [`corpus.entity`](../corpus/entity.md) | [`knowledge.record`](../knowledge/record.md) — basis: check constraint assignment_one_target_ck.
 
 ## Indexes
 
-`assignment_current_idx` where `(valid_to IS NULL)`; `assignment_lesson_id_idx` where `(lesson_id IS NOT NULL)`; `assignment_term_idx`
+`assignment_current_idx` where `(valid_to IS NULL)`; `assignment_lesson_id_idx` where `(target_work_id IS NOT NULL)`; `assignment_target_work_ix` where `(target_work_id IS NOT NULL)`; `assignment_term_idx`
 
 ## Triggers
 

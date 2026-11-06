@@ -13,7 +13,7 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"term\"][\"Row\"]"
 defined_in: ["20260826000400_taxonomy_core.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # taxonomy.term
 
@@ -40,7 +40,7 @@ table in domain `relationships`.
 ## Relationships
 
 Outbound: `facet_version_id` → [`taxonomy.facet_version`](facet_version.md)`.id` on delete cascade; `parent_term_id` → [`taxonomy.term`](term.md)`.id`.
-Inbound: [`curriculum.module`](../curriculum/module.md).learning_level_term_id, [`taxonomy.assignment`](assignment.md).term_id, [`taxonomy.term`](term.md).parent_term_id, [`taxonomy.term_relation`](term_relation.md).from_term_id|to_term_id, [`taxonomy.term_target_kind`](term_target_kind.md).term_id.
+Inbound: [`taxonomy.assignment`](assignment.md).term_id, [`taxonomy.term`](term.md).parent_term_id, [`taxonomy.term_relation`](term_relation.md).from_term_id|to_term_id, [`taxonomy.term_target_kind`](term_target_kind.md).term_id.
 
 ## Indexes
 

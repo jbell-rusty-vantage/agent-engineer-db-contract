@@ -12,7 +12,7 @@ raises: ["LEASE_TOKEN_MISMATCH: %", "RUN_NOT_FOUND: %", "RUN_NOT_MUTABLE: % %"]
 touches: { reads: [], writes: [public.research_pre_research_run] }
 tokens: [research_private, touch_pre_research_run, research_private.touch_pre_research_run]
 defined_in: ["20260815015402_research_pre_research_schema.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # research_private.touch_pre_research_run
 

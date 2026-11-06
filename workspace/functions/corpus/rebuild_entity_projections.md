@@ -12,7 +12,7 @@ raises: [projection rebuild requires current sealed head]
 touches: { reads: [content.document, content.document_summary, content.document_version, temporal.knowledge_head], writes: [corpus.entity] }
 tokens: [corpus, rebuild_entity_projections, corpus.rebuild_entity_projections]
 defined_in: ["20260912011200_km_12_projection_workers.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # corpus.rebuild_entity_projections
 

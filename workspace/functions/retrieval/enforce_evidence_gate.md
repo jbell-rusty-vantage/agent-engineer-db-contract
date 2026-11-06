@@ -12,7 +12,7 @@ raises: ["evidence gate: % record % is below the assurance floor (rank %, floor 
 touches: { reads: [content.document_representation, evidence.claim, knowledge.assurance_level], writes: [] }
 tokens: [retrieval, enforce_evidence_gate, retrieval.enforce_evidence_gate]
 defined_in: ["20260826001000_retrieval.sql", "20260826001050_fix_evidence_gate_generated_column.sql", "20260903010600_source_native_packet_members.sql", "20260903010700_packet_member_tenant_targets.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # retrieval.enforce_evidence_gate
 

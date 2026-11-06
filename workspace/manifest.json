@@ -10,19 +10,19 @@
   "build": {
     "catalog_version": "sha256:d0a86e191016afa9eda24c66882d781537d1f680ce2ee2f2109848f91c160903",
     "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:312f71922f1bdeacc2415b372df143532efb9de444c817819cc8bed76b8a6cb2",
-    "fingerprint": "sha256:f967a9c385f8c572712f290c7198e7bc127fb7f91b723b092c43b503c3944876",
-    "generated_types_sha256": "sha256:2d6b15c1990bac0251a0c7acd500fab80866d16337a649af8f7aed0e215a50ea",
-    "migration_head": "20261031010000",
+    "enrichment_sha256": "sha256:2b2888cde6a86f1e3f415a37477185fc793c23747079d4e66362c9ae17ba4b1b",
+    "fingerprint": "sha256:6c5ceddc8384603f673be66562c9b5cfb98e657eaadb17828ff4e18d0172933c",
+    "generated_types_sha256": "sha256:1ff74176c310a9aad52ec0ee78e346ac002f911171a0878893520112d7a63506",
+    "migration_head": "20261105010300",
     "renderer_version": "3.0.0",
     "rules_version": "ingestion-rules.v1@519cea73ea54e133eab6d38d8f92a9a1e9af1e44585078ac40d9c68cef068e23",
     "volatile": {
-      "introspected_at": "2026-11-02T02:14:33.523Z",
+      "introspected_at": "2026-11-06T21:11:20.485Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+    "workspace_fingerprint": "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
   },
   "entry_points": [
     "START_HERE.md",
@@ -34,23 +34,23 @@
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
     "domains": 19,
-    "functions": 199,
+    "functions": 201,
     "queries": 33,
-    "relation_details": 37,
+    "relation_details": 36,
     "relation_stubs": 0,
-    "relations": 359,
+    "relations": 354,
     "schemas": 20,
     "tasks": 19,
-    "types": 12,
+    "types": 11,
     "vocabularies": 12
   },
   "scope": null,
   "sizes": {
-    "files": 688,
+    "files": 683,
     "largest": {
-      "bytes": 4369955,
+      "bytes": 4355352,
       "path": "schema-ir.json"
     },
-    "total_bytes": 7125526
+    "total_bytes": 7099349
   }
 }

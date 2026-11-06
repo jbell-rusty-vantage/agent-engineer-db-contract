@@ -4,7 +4,7 @@ kind: details
 schema: knowledge
 name: record
 of: "rel:knowledge.record"
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # knowledge.record — details
 
@@ -14,7 +14,7 @@ Spill-over from [the main page](record.md).
 
 Outbound: `assurance_level` → [`knowledge.assurance_level`](assurance_level.md)`.code`; `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id` (deferrable); `provenance_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant).
 Inbound: [`evidence.claim_record`](../evidence/claim_record.md).record_id, [`knowledge.advanced_usage_pattern`](advanced_usage_pattern.md).id|id,kind, [`knowledge.benchmark_result`](benchmark_result.md).id|id,kind, [`knowledge.compatibility_constraint`](compatibility_constraint.md).id|id,kind, [`knowledge.failure_mode`](failure_mode.md).id|id,kind, [`knowledge.implementation_example`](implementation_example.md).id|id,kind, [`knowledge.operational_practice`](operational_practice.md).id|id,kind, [`knowledge.record_entity_link`](record_entity_link.md).record_id, [`knowledge.security_consideration`](security_consideration.md).id|id,kind, [`knowledge.solution_pattern`](solution_pattern.md).id|id,kind, [`knowledge.technical_problem`](technical_problem.md).id|id,kind, [`retrieval.projection_target`](../retrieval/projection_target.md).record_id, [`taxonomy.assignment`](../taxonomy/assignment.md).target_record_id.
-Polymorphic target of: [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_check), [`taxonomy.assignment`](../taxonomy/assignment.md) (check constraint assignment_check).
+Polymorphic target of: [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_check), [`taxonomy.assignment`](../taxonomy/assignment.md) (check constraint assignment_one_target_ck).
 
 ## Indexes
 

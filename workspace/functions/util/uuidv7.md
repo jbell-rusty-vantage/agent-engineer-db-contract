@@ -12,7 +12,7 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, uuidv7, util.uuidv7]
 defined_in: ["20260826000100_foundation.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # util.uuidv7
 

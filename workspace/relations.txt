@@ -79,19 +79,14 @@ corpus.story
 corpus.talk
 corpus.technique
 # curriculum
-curriculum.challenge
-curriculum.challenge_derived_from
-curriculum.challenge_targets
-curriculum.challenge_version
-curriculum.curriculum
-curriculum.learning_objective
-curriculum.lesson
-curriculum.lesson_backed_by
-curriculum.lesson_covers_concept
-curriculum.lesson_prerequisite
-curriculum.lesson_version
-curriculum.module
-curriculum.track
+curriculum.outcome
+curriculum.outcome_alignment
+curriculum.part
+curriculum.prerequisite
+curriculum.release_transition
+curriculum.requirement
+curriculum.requirement_option
+curriculum.requirement_transition
 # evaluation
 evaluation.eval_case
 evaluation.eval_case_expected_filter

@@ -12,7 +12,7 @@ raises: [structured extraction bound owner and creation identity is immutable, s
 touches: { reads: [orchestration.verification_structured_extraction_execution], writes: [] }
 tokens: [orchestration, guard_structured_extraction_owner_custody, orchestration.guard_structured_extraction_owner_custody]
 defined_in: ["20260906032400_verification_structured_extraction_owner_custody.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # orchestration.guard_structured_extraction_owner_custody
 

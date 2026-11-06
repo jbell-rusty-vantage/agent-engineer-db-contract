@@ -5,7 +5,7 @@ name: content
 domains: [content]
 relations: 18
 functions: 5
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # content
 
@@ -23,7 +23,7 @@ Immutable authored-work identity, representations, structural nodes, transformat
 | [`document_representation`](../../relations/content/document_representation.md) | table | unknown | — | → `orchestration.artifact`, → `content.document_version`, → `content.transformation_run` |
 | [`document_summary`](../../relations/content/document_summary.md) | table | unknown | — | → `content.document_representation`, → `content.document_version`, → `corpus.entity`, → `content.document_node` |
 | [`document_summary_source`](../../relations/content/document_summary_source.md) | table | unknown | — | → `content.document_node`, → `content.document_summary` |
-| [`document_type`](../../relations/content/document_type.md) | table | small | — | → `taxonomy.entity_kind` |
+| [`document_type`](../../relations/content/document_type.md) | table | unknown | — | → `taxonomy.entity_kind` |
 | [`document_version`](../../relations/content/document_version.md) | table | unknown | — | → `content.document` |
 | [`document_version_source_capture`](../../relations/content/document_version_source_capture.md) | table | unknown | — | → `content.document_version`, → `evidence.source_capture` |
 | [`representation_decision`](../../relations/content/representation_decision.md) | table | unknown | — | → `knowledge_service.operation`, → `knowledge_service.review_decision`, → `content.conversion_evaluation`, → `content.document_representation` |

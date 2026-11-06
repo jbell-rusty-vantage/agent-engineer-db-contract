@@ -12,7 +12,7 @@ raises: [captured extraction failure cannot requeue, captured extraction failure
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, knowledge_service.receipt, orchestration.verification_structured_extraction, orchestration.verification_structured_extraction_failure], writes: [] }
 tokens: [orchestration, structured_extraction_failure_terminal_guard, orchestration.structured_extraction_failure_terminal_guard]
 defined_in: ["20260906032600_verification_structured_extraction_failure_terminal.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # orchestration.structured_extraction_failure_terminal_guard
 

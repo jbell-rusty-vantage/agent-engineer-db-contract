@@ -13,7 +13,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"knowledge\"][\"Tables\"][\"compatibility_constraint\"][\"Row\"]"
 defined_in: ["20260826000600_knowledge.sql", "20260912010700_km_07_knowledge.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # knowledge.compatibility_constraint
 
@@ -38,8 +38,7 @@ table in domain `knowledge-records`.
 ## Relationships
 
 Outbound: `id` → [`knowledge.record`](record.md)`.id` (+tenant); `tenant_id,id,kind` → [`knowledge.record`](record.md)`.tenant_id,id,kind` (deferrable).
-Inbound: [`curriculum.lesson_backed_by`](../curriculum/lesson_backed_by.md).compatibility_constraint_id, [`retrieval.packet_member`](../retrieval/packet_member.md).compatibility_constraint_id.
-Polymorphic target of: [`curriculum.lesson_backed_by`](../curriculum/lesson_backed_by.md) (check constraint lesson_backed_by_exactly_one).
+Inbound: [`retrieval.packet_member`](../retrieval/packet_member.md).compatibility_constraint_id.
 
 ## Indexes
 

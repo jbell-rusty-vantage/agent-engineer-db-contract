@@ -1,14 +1,14 @@
 ---
 id: start
 kind: entry
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
-migration_head: "20261031010000"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+migration_head: "20261105010300"
 contract_version: "0.6.0"
 scope: null
 ---
 # Start here
 
-This workspace describes the shared AI Engineer database at migration head `20261031010000` (contract 0.6.0). It is generated from the database catalog; blocks marked `> curated` are human guidance that was validated against the catalog but is not enforced by it.
+This workspace describes the shared AI Engineer database at migration head `20261105010300` (contract 0.6.0). It is generated from the database catalog; blocks marked `> curated` are human guidance that was validated against the catalog but is not enforced by it.
 
 ## Navigation rule (≤ 4 reads to an operation)
 

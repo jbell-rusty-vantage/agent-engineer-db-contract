@@ -6,7 +6,7 @@ name: stream_kind
 rows: 20
 rows_sha256: "sha256:226f95a38f839862a4e19948e2177451355260c8b807f3751c4fbce1319fcab5"
 codes: [compute_offering_price, engagement_role, entity_name, library_license, library_maintenance, model_offering_availability, model_offering_limit, model_offering_price, model_version_spec, organization_status, ownership_stake, product_feature_availability, protocol_feature_support, registry_listing_status, relationship_active, repository_archival, repository_location, repository_visibility, valuation, work_disposition]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # temporal.stream_kind
 

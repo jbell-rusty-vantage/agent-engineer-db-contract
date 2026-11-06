@@ -9,7 +9,7 @@ tasks: [what-do-we-know-about-entity]
 summary: "Typed engineering records linked to entities, created only with a receipt."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # Knowledge records
 
@@ -28,8 +28,8 @@ Typed engineering records linked to entities, created only with a receipt.
 > 
 > These records are not temporal segments. A price or availability fact belongs in
 > `temporal.segment`. A how-to-call-the-API pattern belongs here, linked to the
-> product or library entity and backed by a claim. Curriculum lessons point at these
-> typed rows through `curriculum.lesson_backed_by`. `knowledge.record_reconciliation`
+> product or library entity and backed by a claim. Course content cites these typed
+> rows rather than restating them. `knowledge.record_reconciliation`
 > remains for runtime repair of older records. Reach for this domain after
 > `q:entity.card` when the question is an engineering practice rather than a dated
 > world fact; then follow `knowledge.record_entity_link` to the subject entity.

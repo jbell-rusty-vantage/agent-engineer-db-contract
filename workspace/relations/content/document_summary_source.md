@@ -13,7 +13,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_summary_source\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # content.document_summary_source
 

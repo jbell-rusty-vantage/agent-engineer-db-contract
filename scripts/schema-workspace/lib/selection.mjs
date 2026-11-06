@@ -26,17 +26,19 @@ function selectByDomainOrName({ items, includedDomains, includePatterns, exclude
   return selected;
 }
 
+// Stubs are pages for in-IR relations outside the scope. A foreign key into a schema the workspace does not
+// introspect (workspace.config.json `schemas`) has no IR relation to stub, so it stays a plain reference.
 function stubTargetsOutside(ir, relationIds) {
   const stubs = new Set();
   for (const relationId of relationIds) {
     for (const fk of ir.relations[relationId].foreign_keys) {
-      if (!relationIds.has(fk.to)) stubs.add(fk.to);
+      if (!relationIds.has(fk.to) && ir.relations[fk.to]) stubs.add(fk.to);
     }
   }
   for (const item of ir.derived.polymorphic) {
     if (!relationIds.has(item.relation)) continue;
     for (const target of polymorphicTargetIds(item)) {
-      if (!relationIds.has(target)) stubs.add(target);
+      if (!relationIds.has(target) && ir.relations[target]) stubs.add(target);
     }
   }
   return stubs;

@@ -6,7 +6,7 @@ name: relationship_kind
 rows: 65
 rows_sha256: "sha256:b3e61c771146acabc263b3d88664d3c5599de8290d47affb55669a4f6c994d59"
 codes: [about, advisor_to, affected_by_advisory, announced_at, authored_by, backed_by_repository, benchmark_executed_by, benchmark_subject, benchmark_uses_dataset, board_member_of, built_on_model, case_study_uses, channel_owned_by, cites, competes_with, customer_of, depends_on, derived_from_model, develops, distributes, edition_of, employed_by, evaluated_on, feature_of_protocol, founded, hardware_requirement, has_feature, hosts, implements_protocol, implements_technique, in_series, instance_of_concept, introduces_technique, investor_in, listed_in, maintains, manufactures, offered_as, offered_by, operates, organized_by, owns_stake_in, participates_in_round, partner_of, party_to_transaction, presented_at, presented_by, provides_compute, published_by, published_on, recipient_of_round, recorded_as, records_event, runs_on, series_on_channel, sponsors, subsidiary_of, supersedes, technique_relates_to, trained_on, transaction_asset, uses_technique, variant_of, vends, version_of]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # taxonomy.relationship_kind
 

@@ -5,7 +5,7 @@ name: corpus
 domains: [identity, relationships]
 relations: 51
 functions: 6
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # corpus
 
@@ -29,7 +29,7 @@ Canonical typed entities and property-bearing relationships. Domains: [`identity
 | [`corporate_transaction`](../../relations/corpus/corporate_transaction.md) | table | unknown | — | → `corpus.entity` |
 | [`dataset`](../../relations/corpus/dataset.md) | table | unknown | — | → `corpus.entity`, → `corpus.license` |
 | [`distribution_kind`](../../relations/corpus/distribution_kind.md) | table | unknown | — | — |
-| [`entity`](../../relations/corpus/entity.md) | table | small | One row per canonical identity; typed attributes live in corpus.<kind>. | → `orchestration.operation_receipt`, → `taxonomy.entity_kind` |
+| [`entity`](../../relations/corpus/entity.md) | table | unknown | One row per canonical identity; typed attributes live in corpus.<kind>. | → `orchestration.operation_receipt`, → `taxonomy.entity_kind` |
 | [`entity_alias`](../../relations/corpus/entity_alias.md) | table | unknown | Typed alternate name for one entity; unique per entity, not globally. | → `corpus.entity`, → `evidence.claim` |
 | [`entity_identifier`](../../relations/corpus/entity_identifier.md) | table | unknown | Schemed external identifier; unique per tenant on (scheme, value). | → `corpus.entity` |
 | [`entity_merge`](../../relations/corpus/entity_merge.md) | table | unknown | Durable merge of two entities; loser becomes lifecycle merged. | → `corpus.entity`, → `orchestration.operation_receipt` |
@@ -47,7 +47,7 @@ Canonical typed entities and property-bearing relationships. Domains: [`identity
 | [`media_series`](../../relations/corpus/media_series.md) | table | unknown | — | → `corpus.entity`, → `corpus.industry_event`, → `corpus.media_platform`, → `corpus.media_channel` |
 | [`media_work`](../../relations/corpus/media_work.md) | table | unknown | — | → `corpus.media_channel`, → `corpus.entity`, → `corpus.media_platform` |
 | [`model_offering`](../../relations/corpus/model_offering.md) | table | unknown | A priced, deployable offering of an ai_model_version from a provider. | → `corpus.entity`, → `corpus.ai_model_version` |
-| [`organization`](../../relations/corpus/organization.md) | table | small | Typed child of corpus.entity for kind organization. | → `corpus.entity` |
+| [`organization`](../../relations/corpus/organization.md) | table | unknown | Typed child of corpus.entity for kind organization. | → `corpus.entity` |
 | [`paper`](../../relations/corpus/paper.md) | table | unknown | — | → `corpus.entity` |
 | [`person`](../../relations/corpus/person.md) | table | unknown | Typed child of corpus.entity for kind person. | → `corpus.entity` |
 | [`product`](../../relations/corpus/product.md) | table | unknown | — | → `corpus.entity` |

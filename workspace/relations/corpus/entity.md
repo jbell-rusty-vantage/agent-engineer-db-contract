@@ -13,7 +13,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"corpus\"][\"Tables\"][\"entity\"][\"Row\"]"
 defined_in: ["20260912010200_km_02_corpus_identity.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # corpus.entity
 
@@ -49,9 +49,9 @@ table in domain `identity`.
 ## Relationships
 
 Outbound: `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id` (deferrable); `kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `merged_into_id` → [`corpus.entity`](entity.md)`.id` (+tenant).
-Inbound: [`content.document`](../content/document.md).work_entity_id, [`content.document_about_entity`](../content/document_about_entity.md).entity_id, [`content.document_node`](../content/document_node.md).speaker_entity_id, [`content.document_summary`](../content/document_summary.md).focus_entity_id, [`corpus.agent_skill`](agent_skill.md).id|id,kind, [`corpus.ai_model`](ai_model.md).id|id,kind, [`corpus.ai_model_version`](ai_model_version.md).id|id,kind, [`corpus.ai_protocol`](ai_protocol.md).id|id,kind, [`corpus.ai_protocol_feature`](ai_protocol_feature.md).id|id,kind, [`corpus.ai_protocol_version`](ai_protocol_version.md).id|id,kind, [`corpus.benchmark`](benchmark.md).id|id,kind, [`corpus.benchmark_run`](benchmark_run.md).id|subject_entity_id|id,kind … 58 more in [details](entity.details.md).
+Inbound: [`content.document`](../content/document.md).work_entity_id, [`content.document_about_entity`](../content/document_about_entity.md).entity_id, [`content.document_node`](../content/document_node.md).speaker_entity_id, [`content.document_summary`](../content/document_summary.md).focus_entity_id, [`corpus.agent_skill`](agent_skill.md).id|id,kind, [`corpus.ai_model`](ai_model.md).id|id,kind, [`corpus.ai_model_version`](ai_model_version.md).id|id,kind, [`corpus.ai_protocol`](ai_protocol.md).id|id,kind, [`corpus.ai_protocol_feature`](ai_protocol_feature.md).id|id,kind, [`corpus.ai_protocol_version`](ai_protocol_version.md).id|id,kind, [`corpus.benchmark`](benchmark.md).id|id,kind, [`corpus.benchmark_run`](benchmark_run.md).id|subject_entity_id|id,kind … 56 more in [details](entity.details.md).
 Polymorphic: `kind` selects one of 36 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK entity_kind_fkey.
-Polymorphic target of: [`curriculum.challenge_targets`](../curriculum/challenge_targets.md) (check constraint challenge_targets_exactly_one), [`ranking.group_membership`](../ranking/group_membership.md) (check constraint group_membership_exactly_one_entity), [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_check), [`taxonomy.assignment`](../taxonomy/assignment.md) (check constraint assignment_check), [`temporal.stream`](../temporal/stream.md) (check constraint stream_check).
+Polymorphic target of: [`ranking.group_membership`](../ranking/group_membership.md) (check constraint group_membership_exactly_one_entity), [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_check), [`taxonomy.assignment`](../taxonomy/assignment.md) (check constraint assignment_one_target_ck), [`temporal.stream`](../temporal/stream.md) (check constraint stream_check).
 
 ## Indexes
 
@@ -59,7 +59,8 @@ Polymorphic target of: [`curriculum.challenge_targets`](../curriculum/challenge_
 
 ## Triggers
 
-2 triggers; see [details](entity.details.md).
+- `entity_receipt_tenant` → [`corpus.check_receipt_tenant`](../../functions/corpus/check_receipt_tenant.md) (constraint trigger)
+- `entity_requires_admission` → [`research.require_receipt_admission`](../../functions/research/require_receipt_admission.md) (constraint trigger, deferred)
 
 ## Row-level security
 

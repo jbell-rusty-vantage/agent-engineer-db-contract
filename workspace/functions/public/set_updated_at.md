@@ -12,7 +12,7 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [public, set_updated_at, public.set_updated_at]
 defined_in: ["20260814025347_research_starter_videos.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # public.set_updated_at
 

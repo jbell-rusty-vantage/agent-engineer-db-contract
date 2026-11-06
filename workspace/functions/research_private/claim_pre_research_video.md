@@ -12,7 +12,7 @@ raises: ["ACTIVE_TAXONOMY_NOT_FOUND: %", "INVALID_LEASE_SECONDS: %"]
 touches: { reads: [public.research_pre_research_video_state, public.research_starter_videos, public.research_taxonomy_version], writes: [public.research_pre_research_run] }
 tokens: [research_private, claim_pre_research_video, research_private.claim_pre_research_video]
 defined_in: ["20260815015402_research_pre_research_schema.sql", "20260815020333_claim_pre_research_video_by_id.sql", "20260816205231_pre_research_v2_schema.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # research_private.claim_pre_research_video
 

@@ -13,7 +13,7 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"observability\"][\"Tables\"][\"normalized_event\"][\"Row\"]"
 defined_in: ["20260826001200_observability.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # observability.normalized_event
 
@@ -68,7 +68,7 @@ Enabled.
 
 ## Partitions
 
-range by `RANGE (occurred_at)`; 8 children: `observability.normalized_event_202609` FOR VALUES FROM ('2026-09-01 00:00:00+00') TO ('2026-10-01 00:00:00+00'), `observability.normalized_event_202610` FOR VALUES FROM ('2026-10-01 00:00:00+00') TO ('2026-11-01 00:00:00+00'), `observability.normalized_event_202611` FOR VALUES FROM ('2026-11-01 00:00:00+00') TO ('2026-12-01 00:00:00+00'), `observability.normalized_event_202612` FOR VALUES FROM ('2026-12-01 00:00:00+00') TO ('2027-01-01 00:00:00+00'), `observability.normalized_event_202701` FOR VALUES FROM ('2027-01-01 00:00:00+00') TO ('2027-02-01 00:00:00+00'), `observability.normalized_event_202702` FOR VALUES FROM ('2027-02-01 00:00:00+00') TO ('2027-03-01 00:00:00+00'), `observability.normalized_event_202703` FOR VALUES FROM ('2027-03-01 00:00:00+00') TO ('2027-04-01 00:00:00+00'), `observability.normalized_event_202704` FOR VALUES FROM ('2027-04-01 00:00:00+00') TO ('2027-05-01 00:00:00+00').
+range by `RANGE (occurred_at)`; 8 children: `observability.normalized_event_202610` FOR VALUES FROM ('2026-10-01 00:00:00+00') TO ('2026-11-01 00:00:00+00'), `observability.normalized_event_202611` FOR VALUES FROM ('2026-11-01 00:00:00+00') TO ('2026-12-01 00:00:00+00'), `observability.normalized_event_202612` FOR VALUES FROM ('2026-12-01 00:00:00+00') TO ('2027-01-01 00:00:00+00'), `observability.normalized_event_202701` FOR VALUES FROM ('2027-01-01 00:00:00+00') TO ('2027-02-01 00:00:00+00'), `observability.normalized_event_202702` FOR VALUES FROM ('2027-02-01 00:00:00+00') TO ('2027-03-01 00:00:00+00'), `observability.normalized_event_202703` FOR VALUES FROM ('2027-03-01 00:00:00+00') TO ('2027-04-01 00:00:00+00'), `observability.normalized_event_202704` FOR VALUES FROM ('2027-04-01 00:00:00+00') TO ('2027-05-01 00:00:00+00'), `observability.normalized_event_202705` FOR VALUES FROM ('2027-05-01 00:00:00+00') TO ('2027-06-01 00:00:00+00').
 
 ## TypeScript
 

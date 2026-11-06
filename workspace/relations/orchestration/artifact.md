@@ -13,7 +13,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"artifact\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # orchestration.artifact
 
@@ -59,7 +59,7 @@ table in domain `orchestration-ledger`.
 
 ## Relationships
 
-5 outbound and 106 inbound foreign keys; full list in [details](artifact.details.md).
+5 outbound and 104 inbound foreign keys; full list in [details](artifact.details.md).
 
 ## Indexes
 
@@ -71,7 +71,7 @@ table in domain `orchestration-ledger`.
 
 ## Row-level security
 
-Enabled; 1 policies in [details](artifact.details.md).
+Enabled; 2 policies in [details](artifact.details.md).
 
 ## Grants
 

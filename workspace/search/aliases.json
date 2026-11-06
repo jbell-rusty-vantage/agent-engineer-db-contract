@@ -114,9 +114,6 @@
   "catalog query": [
     "term:named-query"
   ],
-  "challenges": [
-    "dom:curriculum"
-  ],
   "cheap": [
     "term:cost-class"
   ],
@@ -154,6 +151,9 @@
   ],
   "cost class": [
     "term:cost-class"
+  ],
+  "course structure": [
+    "dom:curriculum"
   ],
   "create entity": [
     "task:resolve-or-create-entity"
@@ -427,7 +427,7 @@
   "leaderboard": [
     "dom:ranking"
   ],
-  "learning paths": [
+  "learning outcomes": [
     "dom:curriculum"
   ],
   "leases": [
@@ -438,9 +438,6 @@
   ],
   "legacy report publish": [
     "task:publish-report"
-  ],
-  "lessons": [
-    "dom:curriculum"
   ],
   "library profile view": [
     "rel:api.library_profile"
@@ -560,6 +557,9 @@
   "pre-research": [
     "dom:research-starter-protected"
   ],
+  "prerequisites": [
+    "dom:curriculum"
+  ],
   "price": [
     "task:record-price-change"
   ],
@@ -626,6 +626,9 @@
   ],
   "relationship vocabulary": [
     "rel:taxonomy.relationship_kind"
+  ],
+  "release transitions": [
+    "dom:curriculum"
   ],
   "replace": [
     "task:supersede-stale-fact"
@@ -694,6 +697,9 @@
   ],
   "required context": [
     "rel:research.report_section_dependency"
+  ],
+  "requirements": [
+    "dom:curriculum"
   ],
   "research-report.v1": [
     "rel:research.report_package"

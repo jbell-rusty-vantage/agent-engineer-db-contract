@@ -5,7 +5,7 @@ name: knowledge_service
 domains: [knowledge-service-runtime]
 relations: 15
 functions: 10
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # knowledge_service
 
@@ -19,10 +19,10 @@ Restart-safe standalone operations, steps, events, leases, receipts, outbox and 
 | [`eve_operation_binding`](../../relations/knowledge_service/eve_operation_binding.md) | table | unknown | Immutable first-lineage binding for API-verified Eve verification requests. It grants no … | → `orchestration.attempt`, → `orchestration.mission`, → `orchestration.work_item` |
 | [`eve_operation_invocation`](../../relations/knowledge_service/eve_operation_invocation.md) | table | unknown | Append-only full public Eve attestation envelopes, including signature, for offline autho… | → `knowledge_service.eve_operation_binding` |
 | [`lease`](../../relations/knowledge_service/lease.md) | table | unknown | — | → `knowledge_service.operation_step` |
-| [`operation`](../../relations/knowledge_service/operation.md) | table | small | Durable knowledge-service operation with ownership_mode and idempotency_key. | → `orchestration.capability_version`, → `orchestration.attempt`, → `orchestration.work_item` |
-| [`operation_event`](../../relations/knowledge_service/operation_event.md) | table | small | — | → `knowledge_service.operation`, → `knowledge_service.operation_step` |
+| [`operation`](../../relations/knowledge_service/operation.md) | table | unknown | Durable knowledge-service operation with ownership_mode and idempotency_key. | → `orchestration.capability_version`, → `orchestration.attempt`, → `orchestration.work_item` |
+| [`operation_event`](../../relations/knowledge_service/operation_event.md) | table | unknown | — | → `knowledge_service.operation`, → `knowledge_service.operation_step` |
 | [`operation_step`](../../relations/knowledge_service/operation_step.md) | table | unknown | — | → `knowledge_service.operation` |
-| [`outbox`](../../relations/knowledge_service/outbox.md) | table | small | — | → `knowledge_service.operation_event`, → `knowledge_service.operation` |
+| [`outbox`](../../relations/knowledge_service/outbox.md) | table | unknown | — | → `knowledge_service.operation_event`, → `knowledge_service.operation` |
 | [`receipt`](../../relations/knowledge_service/receipt.md) | table | unknown | — | → `knowledge_service.operation`, → `knowledge_service.operation_step` |
 | [`review_decision`](../../relations/knowledge_service/review_decision.md) | table | unknown | — | → `knowledge_service.operation`, → `knowledge_service.review_subject` |
 | [`review_subject`](../../relations/knowledge_service/review_subject.md) | table | unknown | — | → `knowledge_service.operation` |

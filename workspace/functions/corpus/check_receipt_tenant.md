@@ -12,7 +12,7 @@ raises: [entity/record receipt tenant mismatch]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt], writes: [] }
 tokens: [corpus, check_receipt_tenant, corpus.check_receipt_tenant]
 defined_in: ["20260912011100_km_11_grants_rls.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # corpus.check_receipt_tenant
 

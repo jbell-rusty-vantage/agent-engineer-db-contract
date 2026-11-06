@@ -12,7 +12,7 @@ raises: [only the active vector-space pointer may change, vector store spaces ca
 touches: { reads: [], writes: [] }
 tokens: [retrieval, guard_vector_store_space_pointer, retrieval.guard_vector_store_space_pointer]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # retrieval.guard_vector_store_space_pointer
 

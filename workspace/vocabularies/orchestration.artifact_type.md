@@ -3,17 +3,18 @@ id: "voc:orchestration.artifact_type"
 kind: vocabulary
 schema: orchestration
 name: artifact_type
-rows: 92
-rows_sha256: "sha256:bc577acac6941447c85da1a8701847465a7e8490f20bb5ffaa0baf91bfdf5499"
-codes: [canonical_source_projection, checkpoint_package, claims, comparisons, content_link_intent, content_link_plan, content_link_receipt, content_summary_preparation_receipt, content_summary_text, deterministic_verification_result, eval_dataset, evaluation_arm_manifest, evaluation_case_input, evaluation_dataset_manifest, evaluation_gold_label, evidence_links, evidence_packet, execution_receipt, grader_manifest, ingestion_intent, knowledge_ingestion_plan, knowledge_ingestion_receipt, knowledge_read_intent, knowledge_read_snapshot, knowledge_report_markdown, metric_probe_report, report_json, report_markdown, research_notes, research_report_manifest, research_report_structure, research_report_verification, run_manifest, schema_workspace_manifest, source_attribution_audit, source_capture, source_query_response, timeline_summary, transcript, verification_adjudication_decision, verification_adjudication_packet, verification_audit_bundle, verification_audit_inspection_result, verification_benchmark_comparison_profile, verification_benchmark_comparison_publication, verification_benchmark_comparison_result, verification_benchmark_experiment, verification_benchmark_profile_file, verification_benchmark_provenance, verification_benchmark_recorded_call, verification_benchmark_run_manifest, verification_benchmark_source_import_manifest, verification_benchmark_source_import_payload, verification_benchmark_summary, verification_bundle, verification_canonical_projection, verification_claims_artifact, verification_component_drift_observation, verification_extraction_candidate, verification_parse_result, verification_parser_native_output, verification_policy, verification_policy_decision, verification_policy_inputs, verification_provider_cost_lookup, verification_provider_input, verification_provider_precontext, verification_provider_precontext_envelope, verification_provider_raw_response, verification_provider_reconciliation, verification_provider_request, verification_provider_response_envelope, verification_provider_transport_response, verification_report_ledger, verification_report_result, verification_run_manifest, verification_runtime_principal_binding, verification_semantic_blinded_input, verification_semantic_judge_profile, verification_semantic_response_observation, verification_signature, verification_source_authority_receipt, verification_structured_extraction_execution, verification_structured_extraction_failure, verification_structured_extraction_precontext, verification_structured_extraction_profile, verification_structured_extraction_provenance, verification_structured_extraction_publication, verification_structured_extraction_source_custody, verification_transformation_envelope, workspace_file, workspace_manifest]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+rows: 104
+rows_sha256: "sha256:8da25db39a74d8c7c7dc23e708751fb794d1108bf642a6425c3b790a81651547"
+codes: [authored_work_asset, canonical_source_projection, checkpoint_package, claims, comparisons, content_link_intent, content_link_plan, content_link_receipt, content_summary_preparation_receipt, content_summary_text, converted_document, course_release_manifest, course_source_capture, deterministic_verification_result, eval_dataset, evaluation_arm_manifest, evaluation_case_input, evaluation_dataset_manifest, evaluation_gold_label, evidence_links, evidence_packet, execution_receipt, experience_bundle, file_set_file, grader_manifest, grading_replay, ingestion_intent, knowledge_ingestion_plan, knowledge_ingestion_receipt, knowledge_read_intent, knowledge_read_snapshot, knowledge_report_markdown, media_derivative, metric_probe_report, project_bundle, report_json, report_markdown, research_notes, research_report_manifest, research_report_structure, research_report_verification, result_explanation, run_manifest, schema_workspace_manifest, source_attribution_audit, source_capture, source_query_response, submission_manifest, timeline_summary, transcript, uploaded_document, verification_adjudication_decision, verification_adjudication_packet, verification_audit_bundle, verification_audit_inspection_result, verification_benchmark_comparison_profile, verification_benchmark_comparison_publication, verification_benchmark_comparison_result, verification_benchmark_experiment, verification_benchmark_profile_file, verification_benchmark_provenance, verification_benchmark_recorded_call, verification_benchmark_run_manifest, verification_benchmark_source_import_manifest, verification_benchmark_source_import_payload, verification_benchmark_summary, verification_bundle, verification_canonical_projection, verification_claims_artifact, verification_component_drift_observation, verification_extraction_candidate, verification_parse_result, verification_parser_native_output, verification_policy, verification_policy_decision, verification_policy_inputs, verification_provider_cost_lookup, verification_provider_input, verification_provider_precontext, verification_provider_precontext_envelope, verification_provider_raw_response, verification_provider_reconciliation, verification_provider_request, verification_provider_response_envelope, verification_provider_transport_response, verification_report_ledger, verification_report_result, verification_run_manifest, verification_runtime_principal_binding, verification_semantic_blinded_input, verification_semantic_judge_profile, verification_semantic_response_observation, verification_signature, verification_source_authority_receipt, verification_structured_extraction_execution, verification_structured_extraction_failure, verification_structured_extraction_precontext, verification_structured_extraction_profile, verification_structured_extraction_provenance, verification_structured_extraction_publication, verification_structured_extraction_source_custody, verification_transformation_envelope, workspace_file, workspace_manifest]
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # orchestration.artifact_type
 
-Reference data snapshot (92 rows, digest `sha256:bc577acac6941447c85da1a8701847465a7e8490f20bb5ffaa0baf91bfdf5499`). Codes are enforced wherever a column has a foreign key to [`orchestration.artifact_type`](../relations/orchestration/artifact_type.md).
+Reference data snapshot (104 rows, digest `sha256:8da25db39a74d8c7c7dc23e708751fb794d1108bf642a6425c3b790a81651547`). Codes are enforced wherever a column has a foreign key to [`orchestration.artifact_type`](../relations/orchestration/artifact_type.md).
 
 | code | description |
 | --- | --- |
+| `authored_work_asset` | File attached to an authored work revision in a product workspace |
 | `canonical_source_projection` | Canonical source representation derived from immutable capture bytes for selector replay |
 | `checkpoint_package` | Coordinator continuation checkpoint bundle |
 | `claims` | Extracted claims payload |
@@ -23,6 +24,9 @@ Reference data snapshot (92 rows, digest `sha256:bc577acac6941447c85da1a87018474
 | `content_link_receipt` | content-link-receipt.v1: exact canonical row keys and applied, held or no-op outcomes |
 | `content_summary_preparation_receipt` | Actual deterministic summary transformation, input/output custody and pending representation receipt |
 | `content_summary_text` | Deterministic retained admitted-statement summary output awaiting independent representation review |
+| `converted_document` | Converted representation of an uploaded document |
+| `course_release_manifest` | Frozen release closure manifest |
+| `course_source_capture` | Source capture registered by a product workspace |
 | `deterministic_verification_result` | Deterministic verification result |
 | `eval_dataset` | Evaluation dataset snapshot |
 | `evaluation_arm_manifest` | Frozen evaluation variant manifest |
@@ -32,27 +36,35 @@ Reference data snapshot (92 rows, digest `sha256:bc577acac6941447c85da1a87018474
 | `evidence_links` | Claim to locator link set |
 | `evidence_packet` | Retrieval evidence packet |
 | `execution_receipt` | Executor receipt payload |
+| `experience_bundle` | Built interactive experience bundle |
+| `file_set_file` | One file of a multi-file set (site, repository snapshot, build) |
 | `grader_manifest` | Frozen grader definition manifest |
+| `grading_replay` | Grading run replay/log artifact |
 | `ingestion_intent` | Validated deterministic canonical mutation intent |
 | `knowledge_ingestion_plan` | knowledge-ingestion-plan.v1: deterministic per-proposal admission plan for one ingestion intent |
 | `knowledge_ingestion_receipt` | knowledge-ingestion-receipt.v1: outcome of applying one ingestion intent through the temporal helpers |
 | `knowledge_read_intent` | knowledge-read-intent.v1: a reproducible batch of named queries and retrieval operations |
 | `knowledge_read_snapshot` | knowledge-read-snapshot.v1: digested read results at one tenant knowledge head |
 | `knowledge_report_markdown` | Source-attributed Markdown report produced alongside a knowledge ingestion |
+| `media_derivative` | Transcript, captions, poster or other media derivative |
 | `metric_probe_report` | Source-attributed metric probe results for one entity |
+| `project_bundle` | Project source bundle or file manifest |
 | `report_json` | Rendered report, structured |
 | `report_markdown` | Rendered report, markdown |
 | `research_notes` | Intermediate research notes preserved for provenance |
 | `research_report_manifest` | Immutable report package artifact/dependency manifest |
 | `research_report_structure` | research-report.v1 structured sections, blocks and assertion references |
 | `research_report_verification` | Exact-revision report verification output; registration is not admission |
+| `result_explanation` | Assessment result explanation |
 | `run_manifest` | Manifest describing one pipeline run |
 | `schema_workspace_manifest` | Schema workspace manifest (fingerprint, migration head, scope) an agent session observed |
 | `source_attribution_audit` | Independent locator and extraction verification report |
 | `source_capture` | Raw captured source content |
 | `source_query_response` | Raw provider response for one research query |
+| `submission_manifest` | Frozen submission evidence manifest |
 | `timeline_summary` | Versioned rolling chronological summary across source videos |
 | `transcript` | Media transcript |
+| `uploaded_document` | Learner/author uploaded document |
 | `verification_adjudication_decision` | Append-only authorized reviewer decision bound to a review packet |
 | `verification_adjudication_packet` | Bounded immutable review request with original evidence custody |
 | `verification_audit_bundle` | Portable sealed verification audit bundle; must pass signature and content checks |

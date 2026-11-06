@@ -12,7 +12,7 @@ raises: [verification.v1 locator requires available marked metadata-backed captu
 touches: { reads: [], writes: [] }
 tokens: [evidence, validate_locator_capture_lineage, evidence.validate_locator_capture_lineage]
 defined_in: ["20260905013000_verification_legacy_compatibility_and_isolation.sql", "20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # evidence.validate_locator_capture_lineage
 

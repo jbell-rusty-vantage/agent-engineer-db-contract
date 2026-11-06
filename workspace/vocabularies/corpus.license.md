@@ -6,7 +6,7 @@ name: license
 rows: 3
 rows_sha256: "sha256:d8b538ce02da93058e44b21255ca0da27f12a639db92e817085855eb3a87ead4"
 codes: [Apache-2.0, MIT, unknown]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # corpus.license
 

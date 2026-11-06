@@ -12,7 +12,7 @@ raises: []
 touches: { reads: [content.document_summary, content.document_summary_source, corpus.entity, evidence.claim, evidence.claim_record, evidence.claim_subject, evidence.segment_support, knowledge.record, orchestration.operation_intent, orchestration.operation_receipt, retrieval.chunk_claim_link, retrieval.chunk_entity_mention, retrieval.chunk_set, retrieval.chunk_span, retrieval.projection_target, retrieval.retrieval_chunk, retrieval.search_projection, retrieval.search_projection_chunk_support, temporal.event_occurrence, temporal.knowledge_batch, temporal.segment], writes: [] }
 tokens: [retrieval, history_projection_matches, retrieval.history_projection_matches]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # retrieval.history_projection_matches
 

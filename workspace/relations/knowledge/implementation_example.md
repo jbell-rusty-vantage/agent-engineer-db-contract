@@ -13,7 +13,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"knowledge\"][\"Tables\"][\"implementation_example\"][\"Row\"]"
 defined_in: ["20260826000600_knowledge.sql", "20260912010700_km_07_knowledge.sql"]
-workspace_fingerprint: "sha256:4e9df120bfb6759a1ae43b1e31c9019c82c3a604e8a95e33b47ce2f5463eb5a9"
+workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
 ---
 # knowledge.implementation_example
 
@@ -42,8 +42,7 @@ table in domain `knowledge-records`.
 ## Relationships
 
 Outbound: `id` → [`knowledge.record`](record.md)`.id` (+tenant); `repository_file_id` → [`corpus.repository_file`](../corpus/repository_file.md)`.id` (+tenant); `tenant_id,id,kind` → [`knowledge.record`](record.md)`.tenant_id,id,kind` (deferrable).
-Inbound: [`curriculum.challenge_derived_from`](../curriculum/challenge_derived_from.md).implementation_example_id, [`curriculum.lesson_backed_by`](../curriculum/lesson_backed_by.md).implementation_example_id, [`retrieval.packet_member`](../retrieval/packet_member.md).implementation_example_id.
-Polymorphic target of: [`curriculum.challenge_derived_from`](../curriculum/challenge_derived_from.md) (check constraint challenge_derived_exactly_one), [`curriculum.lesson_backed_by`](../curriculum/lesson_backed_by.md) (check constraint lesson_backed_by_exactly_one).
+Inbound: [`retrieval.packet_member`](../retrieval/packet_member.md).implementation_example_id.
 
 ## Indexes
 
