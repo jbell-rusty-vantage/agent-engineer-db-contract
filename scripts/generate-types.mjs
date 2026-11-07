@@ -49,8 +49,8 @@ if (workdir) {
 if (nativeLocal && (projectId || process.argv.includes("--linked"))) {
   throw new Error("Native type generation supports local PostgreSQL only.");
 }
-if (nativeLocal && !process.env.POSTGRES_URL) {
-  throw new Error("Native local type generation requires POSTGRES_URL; no .env file is loaded.");
+if (nativeLocal && !process.env.AIENG_DB_LOCAL_DSN) {
+  throw new Error("Native local type generation requires AIENG_DB_LOCAL_DSN (a loopback DSN; the package script loads .env, the child process sees only this name).");
 }
 const connectionArgs = projectId
   ? ["--project-id", projectId]
@@ -69,7 +69,7 @@ const args = nativeLocal
   : [cliEntryPoint, "gen", "types", "typescript", ...connectionArgs];
 if (!nativeLocal) for (const schema of schemas) args.push("--schema", schema);
 if (workdir) args.push("--workdir", workdir);
-const nativeEnvironmentNames = new Set(["PATH", "PATHEXT", "SYSTEMROOT", "WINDIR", "COMSPEC", "TEMP", "TMP", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "POSTGRES_URL"]);
+const nativeEnvironmentNames = new Set(["PATH", "PATHEXT", "SYSTEMROOT", "WINDIR", "COMSPEC", "TEMP", "TMP", "USERPROFILE", "APPDATA", "LOCALAPPDATA", "AIENG_DB_LOCAL_DSN"]);
 
 const result = spawnSync(command, args, {
   cwd: repositoryRoot,

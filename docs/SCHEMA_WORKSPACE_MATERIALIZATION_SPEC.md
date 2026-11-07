@@ -405,7 +405,7 @@ Rules: included relations get full L3 pages; FK targets outside the scope get **
 | `materialize --scope workspace-scopes/<id>.json [--out <dir>] [--format tree\|tarball\|json-bundle]` | committed full workspace (never the DB) | scoped bundle + `manifest.json` with `scope`, `omitted`, `bundle_sha256`; tarball name `schema-workspace-<scope>-<fp16>.tgz` + `.sha256` | 0/1/2 |
 | `enrich --draft <relation|domain>` | IR | a YAML stub with all referenced ids pre-filled, `provenance: model_assisted`, `reviewed: null` | 0 |
 
-Configuration: `workspace.config.json` (schemas allowlist, platform namespaces to exclude, size budgets, vocabulary allowlist, renderer version). Connection via `POSTGRES_URL`/`--db-url` (same env vars as `generate-types-native.mjs`). Errors are JSON on stderr with `code` (`DB_UNREACHABLE`, `HEAD_MISMATCH`, `TYPES_OUT_OF_DATE`, `ENRICHMENT_INVALID`, `SIZE_BUDGET_EXCEEDED`, `BROKEN_LINK`, `EXAMPLE_FAILED`).
+Configuration: `workspace.config.json` (schemas allowlist, platform namespaces to exclude, size budgets, vocabulary allowlist, renderer version). Connection via `--db-url`, else `AIENG_DB_ADMIN_DSN`, else a loopback `AIENG_DB_LOCAL_DSN` (the loopback name `generate-types-native.mjs` also reads). Errors are JSON on stderr with `code` (`DB_UNREACHABLE`, `HEAD_MISMATCH`, `TYPES_OUT_OF_DATE`, `ENRICHMENT_INVALID`, `SIZE_BUDGET_EXCEEDED`, `BROKEN_LINK`, `EXAMPLE_FAILED`).
 
 Reproducible build: same IR + same enrichment + same renderer version ⇒ byte-identical tree (CI asserts by building twice). The tree is committed; PRs that change migrations must include it (`workspace:check` in CI after `db:reset`).
 

@@ -16,7 +16,7 @@ Commands
   materialize  --scope <id|file> [--out <dir>] [--format tree|json-bundle] [--workspace <dir>]
   enrich       --draft <schema.relation | domain:slug>       YAML stub with ids pre-filled
 
-Connection: --db-url or POSTGRES_URL. Errors are JSON on stderr. Exit: 0 ok, 1 domain outcome, 2 infrastructure.`;
+Connection: --db-url, else AIENG_DB_ADMIN_DSN, else a loopback AIENG_DB_LOCAL_DSN. Errors are JSON on stderr. Exit: 0 ok, 1 domain outcome, 2 infrastructure.`;
 
 const OPTIONS = {
   "db-url": { type: "string" },

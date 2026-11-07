@@ -19,7 +19,7 @@ materialize  --scope <id|file> [--out <dir>] [--format tree|json-bundle]
 enrich       --draft <schema.relation|domain:slug> YAML stub for a new enrichment entry
 ```
 
-`--db-url` defaults to `POSTGRES_URL_NON_POOLING` / `POSTGRES_URL`. Exit codes: `0` ok,
+`--db-url` defaults to `AIENG_DB_ADMIN_DSN`, then `AIENG_DB_LOCAL_DSN` (loopback only; a remote value is refused). Exit codes: `0` ok,
 `1` domain failure (drift, validation, budget, broken link, example failure), `2` infrastructure
 (unreachable DB, IO, usage). Errors are one JSON object on stderr.
 

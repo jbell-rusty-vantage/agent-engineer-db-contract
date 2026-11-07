@@ -420,7 +420,7 @@ database_host = "${t.host}"
 database_port = ${Number(t.port)}
 database_name = "${t.database}"
 database_user = "${t.user}"
-database_url_env = "MC_INSTALL_DISPOSABLE_DSN"
+database_url_env = "AIENG_DB_LOCAL_DSN"
 
 [approval]
 approved_by = "install-ai-engineer.mjs disposable proof target (container ${t.containerName})"
@@ -433,7 +433,7 @@ identity_evidence = "docker labels com.supabase.cli.project=${t.project} and com
 
 function missionDb(context, args) {
   // A remote target names its own credential variable (database_url_env), already present in this environment.
-  const env = context.remote ? {} : { MC_INSTALL_DISPOSABLE_DSN: context.target.dsn };
+  const env = context.remote ? {} : { AIENG_DB_LOCAL_DSN: context.target.dsn };
   const result = run(context.missionDb, args, { env, cwd: context.mcRoot, allowFailure: true });
   let body;
   try { body = lastJson(result.stdout); } catch { body = { raw: (result.stdout + result.stderr).slice(-600) }; }

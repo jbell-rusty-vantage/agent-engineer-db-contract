@@ -90,7 +90,7 @@ commands pass the gates in [`scripts/install-target.mjs`](scripts/install-target
    evidence proves it.
 
 ```sh
-# from this repository root, with the target's database_url_env exported (admin DSN; values never printed)
+# from this repository root, with AIENG_DB_ADMIN_DSN (the target's database_url_env) exported or in .env (values never printed)
 T=../../platform/mission-control/deployments/ai-engineer/target.toml
 node scripts/install-ai-engineer.mjs wipe --dry-run --target $T --confirm-target <ref>:<installation_id> --identity-evidence <file> [flags]
 node scripts/install-ai-engineer.mjs wipe --target $T --confirm-target <ref>:<installation_id> --identity-evidence <file> [same flags] \
@@ -222,20 +222,24 @@ npm run types:check
 ```
 
 When local PostgreSQL is available but Docker management is unavailable, use the
-pinned Node generator with an explicit `POSTGRES_URL` supplied by the local runtime:
+pinned Node generator with `AIENG_DB_LOCAL_DSN` (loopback DSN, from the environment or this repository's `.env`):
 
 ```sh
 corepack pnpm types:generate:native
 corepack pnpm types:check:native
 ```
 
-This opt-in mode accepts only `postgres` on loopback port `54322`, loads no `.env`,
-and forces read-only database sessions with bounded queries. It uses the same
+This opt-in mode accepts only `postgres` on loopback port `54322`, passes only `AIENG_DB_LOCAL_DSN`
+(never the rest of `.env`) to the generator process, and forces read-only database sessions with bounded queries. It uses the same
 canonical schema list and writes the generated file only after successful
 introspection. Linked/project targets are rejected. The pinned `postgres-meta`
 0.95.2 output is structurally equivalent to the preceding generated contract;
 formatting can differ from other CLI generator versions. The usual CLI commands
 remain available for their configured environments.
+
+## Environment
+
+Database variables are `AIENG_DB_ADMIN_DSN` (installers, schema-workspace), `AIENG_DB_LOCAL_DSN` (loopback typegen and disposable installs) and the declared-but-unread `AIENG_DB_PROJECT_REF`. Package scripts load a git-ignored `.env` through `node --env-file-if-exists=.env`; copy `.env.example`. Every name, reader and failure mode: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) and `config/env.registry.yaml`. Older names (`POSTGRES_URL*`, `MC_INSTALL_DISPOSABLE_DSN`) are no longer read.
 
 ## Consuming the contract
 

@@ -6,7 +6,7 @@ import { apply } from "@supabase/postgres-meta/dist/server/templates/typescript.
 // Parent supplies a minimal environment and the canonical schema list.
 const schemas = JSON.parse(process.argv[2]);
 assert.ok(Array.isArray(schemas) && schemas.length > 0 && schemas.every((s) => typeof s === "string"));
-const url = new URL(process.env.POSTGRES_URL ?? "");
+const url = new URL(process.env.AIENG_DB_LOCAL_DSN ?? "");
 if (!["postgres:", "postgresql:"].includes(url.protocol)
   || !["localhost", "127.0.0.1"].includes(url.hostname) || url.port !== "54322"
   || url.pathname !== "/postgres" || url.search || url.hash) {

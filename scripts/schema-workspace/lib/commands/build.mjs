@@ -2,7 +2,7 @@ import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { prettyJson } from "../canonical.mjs";
 import { loadConfig } from "../config.mjs";
-import { openPool, resolveDatabaseUrl } from "../db.mjs";
+import { openPool, optionalDatabaseUrl, resolveDatabaseUrl } from "../db.mjs";
 import { ExitCode } from "../errors.mjs";
 import { assembleWorkspace, buildFromDatabase, introspectToIr } from "../pipeline.mjs";
 import { fullSelection } from "../render/model.mjs";
@@ -59,7 +59,7 @@ export async function runBuild(values) {
 export async function runValidate(values) {
   const config = loadConfig({ workspace: values.workspace });
   const { ir, enrichment } = loadCommittedWorkspace(config);
-  const databaseUrl = values["db-url"] ?? process.env.POSTGRES_URL_NON_POOLING ?? process.env.POSTGRES_URL;
+  const databaseUrl = optionalDatabaseUrl(values["db-url"]);
   const pool = databaseUrl ? await openPool(databaseUrl) : null;
   try {
     const committed = readTree(config.paths.workspace);

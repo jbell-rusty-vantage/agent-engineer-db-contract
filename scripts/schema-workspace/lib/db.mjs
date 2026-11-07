@@ -5,10 +5,32 @@ import { ErrorCode, WorkspaceError } from "./errors.mjs";
 const { Pool } = pg;
 const MIGRATION_FILE = /^(\d{14})_.*\.sql$/;
 
-export function resolveDatabaseUrl(explicitUrl) {
-  const url = explicitUrl ?? process.env.POSTGRES_URL_NON_POOLING ?? process.env.POSTGRES_URL;
+const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "::1", "[::1]"]);
+
+/** True when the DSN addresses the machine itself; the only kind AIENG_DB_LOCAL_DSN may hold. */
+export function isLoopbackUrl(value) {
+  try { return LOOPBACK_HOSTS.has(new URL(value).hostname); } catch { return false; }
+}
+
+/**
+ * Connection precedence: --db-url, then AIENG_DB_ADMIN_DSN (the schema owner login), then AIENG_DB_LOCAL_DSN, which must be
+ * loopback (a remote value there is refused, never used). Returns null when none is set.
+ */
+export function optionalDatabaseUrl(explicitUrl, env = process.env) {
+  if (explicitUrl) return explicitUrl;
+  if (env.AIENG_DB_ADMIN_DSN) return env.AIENG_DB_ADMIN_DSN;
+  const local = env.AIENG_DB_LOCAL_DSN;
+  if (!local) return null;
+  if (!isLoopbackUrl(local)) {
+    throw new WorkspaceError(ErrorCode.DB_UNREACHABLE, "AIENG_DB_LOCAL_DSN must address a loopback host (127.0.0.1, localhost or ::1).");
+  }
+  return local;
+}
+
+export function resolveDatabaseUrl(explicitUrl, env = process.env) {
+  const url = optionalDatabaseUrl(explicitUrl, env);
   if (!url) {
-    throw new WorkspaceError(ErrorCode.DB_UNREACHABLE, "No database URL: pass --db-url or set POSTGRES_URL.");
+    throw new WorkspaceError(ErrorCode.DB_UNREACHABLE, "No database URL: pass --db-url or set AIENG_DB_ADMIN_DSN (or a loopback AIENG_DB_LOCAL_DSN).");
   }
   return url;
 }
