@@ -25,3 +25,10 @@ internal_hidden_docs/
 
 # Local scratch, evidence and history archives (never tracked)
 .scratch/
+
+# Secrets and key material (this repository is public)
+.secrets/
+*.pem
+*.key
+*.p12
+*.pfx

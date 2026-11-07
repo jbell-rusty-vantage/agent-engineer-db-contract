@@ -83,7 +83,7 @@
     },
     {
       "path": "docs/schema-workspace/EXPERIMENT_PROTOCOL.md",
-      "task": "Experiment 3 A/B/C protocol; claims no run has occurred",
+      "task": "Experiment 3 A/B/C protocol; executed 2026-09-12 in the retired research_ingestion_systems_agent (historical; its SUPABASE_DB_URL is that experiment database, not a contract variable)",
       "status": "reference",
       "modules": [
         "schema-workspace-generator"

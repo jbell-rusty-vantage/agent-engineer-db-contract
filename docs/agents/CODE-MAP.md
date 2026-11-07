@@ -35,7 +35,7 @@ Type-only Database/API/pre-research exports and provenance constants/helpers.
 **Declared internal package dependencies:** none declared
 **Other runtime dependencies:** none declared
 **Reviewed runtime/data relationships:** none declared
-**Checks:** No specific test anchor registered. Package script names: db:migrate, db:reset, db:start, install:disposable, test, test:installer, typecheck, types:check, types:check:native, types:generate, types:generate:native, workspace:build, workspace:check, workspace:materialize, workspace:validate.
+**Checks:** No specific test anchor registered. Package script names: db:migrate, db:reset, db:start, install:disposable, install:target, test, test:installer, typecheck, types:check, types:check:native, types:generate, types:generate:native, workspace:build, workspace:check, workspace:materialize, workspace:validate.
 - database.generated.ts is generated output; inspect it explicitly when needed rather than including its full contents in the map.
 
 **Architecture and detailed docs:**
@@ -152,5 +152,5 @@ Introspects pg_catalog into schema-ir.v1, merges curated enrichment, renders the
 - [reference] [`docs/schema-workspace/WORKSPACE_LAYOUT_AND_SAMPLES.md`](../../docs/schema-workspace/WORKSPACE_LAYOUT_AND_SAMPLES.md) — Workspace layout, budgets, and sample artifacts
 - [reference] [`docs/schema-workspace/INTENT_AND_EXECUTOR_CONTRACTS.md`](../../docs/schema-workspace/INTENT_AND_EXECUTOR_CONTRACTS.md) — Read, snapshot, plan, receipt, and catalog contracts
 - [reference] [`docs/schema-workspace/SKILLS.md`](../../docs/schema-workspace/SKILLS.md) — Draft skill procedures for schema-explore, knowledge-db, and knowledge-ingest
-- [reference] [`docs/schema-workspace/EXPERIMENT_PROTOCOL.md`](../../docs/schema-workspace/EXPERIMENT_PROTOCOL.md) — Experiment 3 A/B/C protocol; claims no run has occurred
+- [reference] [`docs/schema-workspace/EXPERIMENT_PROTOCOL.md`](../../docs/schema-workspace/EXPERIMENT_PROTOCOL.md) — Experiment 3 A/B/C protocol; executed 2026-09-12 in the retired research_ingestion_systems_agent (historical; its SUPABASE_DB_URL is that experiment database, not a contract variable)
 <!-- END GENERATED: semantic-map -->

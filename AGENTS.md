@@ -36,7 +36,7 @@ Read `docs/agents/CODE-MAP.md` for source entrypoints, interfaces, dependencies,
 - [reference] Workspace layout, budgets, and sample artifacts: `docs/schema-workspace/WORKSPACE_LAYOUT_AND_SAMPLES.md`
 - [reference] Read, snapshot, plan, receipt, and catalog contracts: `docs/schema-workspace/INTENT_AND_EXECUTOR_CONTRACTS.md`
 - [reference] Draft skill procedures for schema-explore, knowledge-db, and knowledge-ingest: `docs/schema-workspace/SKILLS.md`
-- [reference] Experiment 3 A/B/C protocol; claims no run has occurred: `docs/schema-workspace/EXPERIMENT_PROTOCOL.md`
+- [reference] Experiment 3 A/B/C protocol; executed 2026-09-12 in the retired research_ingestion_systems_agent (historical; its SUPABASE_DB_URL is that experiment database, not a contract variable): `docs/schema-workspace/EXPERIMENT_PROTOCOL.md`
 
 ### Validation
 
