@@ -4,19 +4,20 @@ kind: function
 schema: api
 name: entity_at
 domain: api-surface
+lens: corpus
 overloads: ["fn:api.entity_at(uuid,timestamptz,int8)"]
 security: definer
 volatility: stable
 executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
-touches: { reads: [corpus.entity, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
+touches: { reads: [catalog.entity, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, entity_at, api.entity_at]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.entity_at
 
-Domain `api-surface`.
+Domain `api-surface`, lens `corpus`.
 
 ## entity_at(uuid, timestamp with time zone, bigint) → TABLE(segment_id uuid, stream_kind text, scope_key text, valid_during tstzrange, status text, amount numeric, currency text, unit text, ref_entity_id uuid, ref_display_name text, payload jsonb, belief text, k_from bigint, k_to bigint)
 
@@ -30,7 +31,7 @@ function, stable, security definer, language sql, config `search_path=""`.
 
 Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
-Touches (best effort): reads [`corpus.entity`](../../relations/corpus/entity.md), [`temporal.knowledge_head`](../../relations/temporal/knowledge_head.md), [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
+Touches (best effort): reads [`catalog.entity`](../../relations/catalog/entity.md), [`temporal.knowledge_head`](../../relations/temporal/knowledge_head.md), [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
 
 Named queries: `q:entity.at`.
 

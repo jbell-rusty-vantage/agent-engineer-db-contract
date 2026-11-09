@@ -4,6 +4,7 @@ kind: table
 schema: staging
 name: identity_match
 domain: staging
+lens: corpus
 aliases: [match]
 tokens: [staging, identity_match, staging.identity_match, id, tenant_id, candidate_id, entity_id, confidence, method]
 summary: Scored match between a candidate and an existing entity.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"staging\"][\"Tables\"][\"identity_match\"][\"Row\"]"
 defined_in: ["20260826000700_staging.sql", "20260912010900_km_09_ranking_staging.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # staging.identity_match
 
-table in domain `staging`.
+table in domain `staging`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Scored match between a candidate and an existing entity.
 
@@ -28,7 +29,7 @@ table in domain `staging`.
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id) |
 | 3 | `candidate_id` | `uuid` | no | — | FK → [`staging.candidate`](candidate.md).id |
-| 4 | `entity_id` | `uuid` | no | — | FK → [`corpus.entity`](../corpus/entity.md).id |
+| 4 | `entity_id` | `uuid` | no | — | FK → [`catalog.entity`](../catalog/entity.md).id |
 | 5 | `confidence` | `numeric` | no | — | _curated:_ 0..1. |
 | 6 | `method` | `text` | no | — | _curated:_ How the match was produced. |
 
@@ -40,7 +41,7 @@ table in domain `staging`.
 
 ## Relationships
 
-Outbound: `candidate_id` → [`staging.candidate`](candidate.md)`.id` (+tenant); `entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant).
+Outbound: `candidate_id` → [`staging.candidate`](candidate.md)`.id` (+tenant); `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant).
 Inbound: none.
 
 ## Indexes

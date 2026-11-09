@@ -1,12 +1,13 @@
 ---
 id: "task:record-availability-change"
 kind: task
+lens: corpus
 domains: [temporal-facts]
 queries: [vocab.stream_kind, facts.current_by_stream, entity.at]
 aliases: [ga, deprecated, availability]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Record an availability change
 
@@ -43,8 +44,8 @@ Domains: [`temporal-facts`](../domains/temporal-facts.md). Queries: [`q:vocab.st
 
 ## Expected shape
 
-Current row in `api.current_facts` with `stream_kind='model_offering_availability'` and `status='ga'` when `now()` is inside `valid_during`.
+Current row in `api.current_facts` with `stream_kind='model_offering_availability'` and `status='ga'` when `now()` is inside `valid_during`; `api.model_offerings.availability` shows it.
 
 ## Pitfalls
 
-Status must be announced, preview, ga, deprecated, or retired. Do not move backward along that sequence without an explicit correction (rule availability.transitions_are_ordered). Product features use `temporal.stream_kind:product_feature_availability` and removed instead of retired.
+Status must be announced, preview, ga, deprecated, or retired. Do not move backward along that sequence without an explicit correction (rule availability.transitions_are_ordered). Product features use `temporal.stream_kind:product_feature_availability` and removed instead of retired; model versions use `temporal.stream_kind:model_availability`.

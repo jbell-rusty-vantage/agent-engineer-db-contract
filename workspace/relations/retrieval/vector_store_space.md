@@ -4,22 +4,21 @@ kind: table
 schema: retrieval
 name: vector_store_space
 domain: retrieval
-aliases: [store attachment]
+lens: corpus
+aliases: []
 tokens: [retrieval, vector_store_space, retrieval.vector_store_space, id, tenant_id, vector_store_id, vector_space_id, active_space_version_id, authority_class, created_at]
-summary: Attaches a vector store to a space and names the active published version.
-summary_basis: curated
+summary: null
+summary_basis: none
 rls: enabled
 readers: []
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_store_space\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.vector_store_space
 
-table in domain `retrieval`.
-
-> curated (model_assisted, unreviewed) — Attaches a vector store to a space and names the active published version.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 
@@ -29,8 +28,8 @@ table in domain `retrieval`.
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, id); unique (tenant_id, vector_store_id, vector_space_id) |
 | 3 | `vector_store_id` | `uuid` | no | — | unique (tenant_id, vector_store_id, vector_space_id) |
 | 4 | `vector_space_id` | `uuid` | no | — | unique (tenant_id, vector_store_id, vector_space_id) |
-| 5 | `active_space_version_id` | `uuid` | yes | — | _curated:_ Version hybrid search should use when a store is queried. |
-| 6 | `authority_class` | `text` | no | — | _curated:_ Which store is authoritative for the space. |
+| 5 | `active_space_version_id` | `uuid` | yes | — | — |
+| 6 | `authority_class` | `text` | no | — | — |
 | 7 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 
 ## Constraints
@@ -76,14 +75,5 @@ No role has privileges. None: `anon`, `app_reader`, `authenticated`, `control_pl
 ## TypeScript
 
 insert: `Database["retrieval"]["Tables"]["vector_store_space"]["Insert"]`; row: `Database["retrieval"]["Tables"]["vector_store_space"]["Row"]`; update: `Database["retrieval"]["Tables"]["vector_store_space"]["Update"]`
-
-## Examples
-
-Search the active version
-
-```bash
-knowledge db query retrieval.hybrid_search --param filters={} --param limit=20 --param query_text=OpenAI API pricing 2026 --param vector_space_version_id=0192b100-0000-7000-8000-000000000001
-```
-Unpublished active versions still fail the publication gate.
 
 Defined in: `20260903010100_knowledge_retrieval_contract.sql`.

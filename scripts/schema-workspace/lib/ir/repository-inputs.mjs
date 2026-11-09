@@ -1,15 +1,18 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { digestText } from "../canonical.mjs";
 
 const CREATE_STATEMENT =
   /create\s+(?:or\s+replace\s+)?(?:unlogged\s+|temp(?:orary)?\s+)?(?:table|view|materialized\s+view|function|procedure|foreign\s+table|type)\s+(?:if\s+not\s+exists\s+)?(?:"?([a-z_][a-z0-9_]*)"?\.)?"?([a-z_][a-z0-9_]*)"?/gi;
 
-/** Maps `schema.name` → sorted migration file names that create it (best effort, grep-based). */
-export function indexMigrations(migrationsDir) {
+/** Maps `schema.name` → sorted migration file names that create it (best effort, grep-based). Later directories are drafts. */
+export function indexMigrations(...migrationDirs) {
   const index = new Map();
-  for (const file of readdirSync(migrationsDir).filter((name) => name.endsWith(".sql")).sort()) {
-    const sql = readFileSync(path.join(migrationsDir, file), "utf8");
+  const files = migrationDirs
+    .filter((dir) => dir && existsSync(dir))
+    .flatMap((dir) => readdirSync(dir).filter((name) => name.endsWith(".sql")).sort().map((name) => ({ dir, name })));
+  for (const { dir, name: file } of files) {
+    const sql = readFileSync(path.join(dir, file), "utf8");
     for (const match of sql.matchAll(CREATE_STATEMENT)) {
       const qualified = `${(match[1] ?? "public").toLowerCase()}.${match[2].toLowerCase()}`;
       const files = index.get(qualified) ?? new Set();

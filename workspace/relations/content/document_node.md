@@ -4,20 +4,23 @@ kind: table
 schema: content
 name: document_node
 domain: content
-aliases: []
-tokens: [content, document_node, content.document_node, id, tenant_id, representation_id, parent_id, ordinal, stable_local_key, node_kind, role, inline_text, artifact_id, selector, page_number, start_offset, end_offset, bbox, language, normalized_content_sha256, created_at, start_ms, end_ms, speaker_entity_id]
-summary: null
-summary_basis: none
+lens: corpus
+aliases: [typed unit, unit, node]
+tokens: [content, document_node, content.document_node, id, tenant_id, representation_id, parent_id, ordinal, stable_local_key, unit_kind, role, inline_text, artifact_id, selector, page_number, start_offset, end_offset, bbox, language, normalized_content_sha256, created_at, start_ms, end_ms, speaker_entity_id, unit_kind_version, attributes, logical_key, grammar_version]
+summary: "A typed unit of a representation — unit_kind from the grammar, validated attributes, a logical_key stable across captures and a typed position."
+summary_basis: curated
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_node\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_node
 
-table in domain `content`.
+table in domain `content`, lens `corpus` — A typed unit of a representation: unit_kind (+version) from content.unit_kind, validated attributes, a logical_key stable across captures (grammar logical key), a stable_local_key within this representation, and typed position (offsets, page, bbox, timecodes)..
+
+> curated (model_assisted, unreviewed) — A typed unit of a representation — unit_kind from the grammar, validated attributes, a logical_key stable across captures and a typed position.
 
 ## Columns
 
@@ -28,8 +31,8 @@ table in domain `content`.
 | 3 | `representation_id` | `uuid` | no | — | unique (tenant_id, representation_id, parent_id, ordinal); unique (tenant_id, representation_id, stable_local_key); unique (tenant_id, representation_id, id) |
 | 4 | `parent_id` | `uuid` | yes | — | unique (tenant_id, representation_id, parent_id, ordinal) |
 | 5 | `ordinal` | `integer` | no | — | unique (tenant_id, representation_id, parent_id, ordinal) |
-| 6 | `stable_local_key` | `text` | no | — | unique (tenant_id, representation_id, stable_local_key) |
-| 7 | `node_kind` | `text` | no | — | — |
+| 6 | `stable_local_key` | `text` | no | — | unique (tenant_id, representation_id, stable_local_key); _curated:_ Stable within this representation. |
+| 7 | `unit_kind` | `text` | no | — | _curated:_ content.unit_kind code (+ unit_kind_version). |
 | 8 | `role` | `text` | yes | — | — |
 | 9 | `inline_text` | `text` | yes | — | — |
 | 10 | `artifact_id` | `uuid` | yes | — | — |
@@ -41,9 +44,13 @@ table in domain `content`.
 | 16 | `language` | `text` | yes | — | — |
 | 17 | `normalized_content_sha256` | `text` | no | — | — |
 | 18 | `created_at` | `timestamp with time zone` | no | `now()` | — |
-| 19 | `start_ms` | `integer` | yes | — | — |
+| 19 | `start_ms` | `integer` | yes | — | _curated:_ Timecode units (transcript_segment, media_segment): window start. |
 | 20 | `end_ms` | `integer` | yes | — | — |
-| 21 | `speaker_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id |
+| 21 | `speaker_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
+| 22 | `unit_kind_version` | `integer` | no | `1` | — |
+| 23 | `attributes` | `jsonb` | no | `'{}'::jsonb` | _curated:_ Validated by the unit kind's attributes_schema (content.validate_unit_attributes). |
+| 24 | `logical_key` | `text` | yes | — | Grammar logical key: unit_kind + the logical_key_attributes values, so the same unit can be matched across versions for diffs (price_row:gpt-6.1\|input_tokens\|standard\|global).; _curated:_ unit_kind + logical_key_attributes values, e.g. price_row:gpt-6.1\|input_tokens\|standard\|global; stable across versions for diffs. |
+| 25 | `grammar_version` | `text` | yes | — | _curated:_ Grammar (unit kind set + parser) that produced the unit; a later grammar never reinterprets old units silently. |
 
 ## Constraints
 
@@ -52,41 +59,33 @@ table in domain `content`.
 - unique (tenant_id, representation_id, parent_id, ordinal)
 - unique (tenant_id, representation_id, stable_local_key)
 - unique (tenant_id, representation_id, id)
-- check `document_node_check`: `((parent_id IS NULL) OR (parent_id <> id))`
-- check `document_node_check1`: `((end_offset IS NULL) OR ((start_offset IS NOT NULL) AND (end_offset >= start_offset)))`
-- check `document_node_check2`: `((end_ms IS NULL) OR ((start_ms IS NOT NULL) AND (end_ms >= start_ms)))`
-- check `document_node_normalized_content_sha256_check`: `(normalized_content_sha256 ~ '^[0-9a-f]{64}$'::text)`
-- check `document_node_ordinal_check`: `(ordinal >= 0)`
-- check `document_node_start_ms_check`: `((start_ms IS NULL) OR (start_ms >= 0))`
-- check `document_node_start_offset_check`: `((start_offset IS NULL) OR (start_offset >= 0))`
+- 7 check constraints; see [details](document_node.details.md)
 
 ## Relationships
 
-Outbound: `speaker_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id`; `tenant_id,artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict; `tenant_id,parent_id` → [`content.document_node`](document_node.md)`.tenant_id,id` on delete restrict; `tenant_id,representation_id` → [`content.document_representation`](document_representation.md)`.tenant_id,id` on delete restrict.
-Inbound: [`content.conversion_finding`](conversion_finding.md).node_id, [`content.document_node`](document_node.md).parent_id, [`content.document_node_edge`](document_node_edge.md).from_node_id|to_node_id, [`content.document_summary`](document_summary.md).scope_node_id, [`content.document_summary_source`](document_summary_source.md).node_id, [`retrieval.chunk_span`](../retrieval/chunk_span.md).document_node_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id,source_document_node_id.
+5 outbound and 16 inbound foreign keys; full list in [details](document_node.details.md).
 
 ## Indexes
 
-`document_node_tenant_id_id_key` unique; `document_node_tenant_id_representation_id_parent_id_ordinal_key` unique; `document_node_tenant_id_representation_id_stable_local_key_key` unique; `document_node_tenant_representation_id_uq` unique; `document_node_tree_idx`
+7 indexes; see [details](document_node.details.md).
 
 ## Triggers
 
-- `artifact_retirement_5537e2f308b0b4387c6b3799` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `document_node_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+3 triggers; see [details](document_node.details.md).
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](document_node.details.md).
 
 ## Grants
 
-`executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Read paths
 
-- Named queries: `q:retrieval.evidence_packet`.
-- Direct SELECT: `executor_service`.
+- Named queries: `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`, `q:facts.locators`, `q:retrieval.evidence_packet`.
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md).
+- Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path
 
@@ -95,5 +94,14 @@ Enabled.
 ## TypeScript
 
 insert: `Database["content"]["Tables"]["document_node"]["Insert"]`; row: `Database["content"]["Tables"]["document_node"]["Row"]`; update: `Database["content"]["Tables"]["document_node"]["Update"]`
+
+## Examples
+
+Transcript window of a talk
+
+```bash
+knowledge db query content.talk_segments --param from_ms=0 --param query=null --param talk_id=0192b000-0000-7000-8000-000000000001 --param to_ms=600000
+```
+node_id is the citation anchor.
 
 Defined in: `20260903010000_knowledge_content_contract.sql`.

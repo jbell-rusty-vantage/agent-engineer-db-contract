@@ -4,6 +4,7 @@ kind: table
 schema: content
 name: document_summary_source
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, document_summary_source, content.document_summary_source, tenant_id, summary_id, node_id, weight]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_summary_source\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_summary_source
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 

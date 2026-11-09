@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: apply_provider_reconciliation
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.apply_provider_reconciliation()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [orchestration.verification_provider_attempt, orchestration.verification_provider_budget] }
 tokens: [orchestration, apply_provider_reconciliation, orchestration.apply_provider_reconciliation]
 defined_in: ["20260906032800_verification_provider_reconciliation_ledger.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.apply_provider_reconciliation
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## apply_provider_reconciliation() → trigger
 

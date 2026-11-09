@@ -188,10 +188,8 @@ head `20260916020200` is verified on
 the guarded pre-Mission-Control disposable databases; this is not a deployment
 claim for the populated shared or cloud database.
 
-- `public` contains the existing pre-research pipeline (`public.research_*`) and preserved factory tables.
-- `api` is the application-facing Data API surface.
-- `research`, `ranking`, `curriculum`, `corpus`, `evidence`, and the other bounded schemas are internal database namespaces.
-- `research_private` contains the existing pre-research pipeline routines.
+- `api` is the application-facing Data API surface (L1 catalog views such as `api.models`, L2 functions such as `api.changes_since`, L3 `api.search_unified`).
+- `catalog`, `content`, `temporal`, `evidence`, `verification`, `acquisition`, `guidance`, `retrieval`, `ranking`, `taxonomy`, `staging` and the product schemas (`authoring`, `learning`, `access`, `library`, `inquiry`, `conversation`, `dataset`, `product`) are internal database namespaces. `public` holds no retained families any more (the pre-research `public.research_*`, the factory tables, `research`, `provenance` and `research_private` were retired by the Build 08 R2 draft; lab only until promoted).
 
 The generated contract includes internal schemas for server-side consumers. This does not expose those schemas through PostgREST; Data API exposure remains controlled by `supabase/config.toml`, grants, and RLS.
 
@@ -247,7 +245,7 @@ Install a pinned commit or release of this repository. Import only types:
 
 ```ts
 import type { Database } from "@aiengineer/database-contract";
-import type { PreResearchRun } from "@aiengineer/database-contract/pre-research";
+import type { ApiModel, ApiSearchHit } from "@aiengineer/database-contract/api";
 ```
 
 Supabase-generated types describe rows, inserts, updates, enums, and functions. They do not validate arbitrary SQL strings passed to `pg` at compile time.

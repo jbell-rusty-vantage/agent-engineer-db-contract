@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: structured_extraction_result_body
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.structured_extraction_result_body(uuid,uuid)"]
 security: invoker
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_structured_extraction, orchestration.verification_structured_extraction_execution, orchestration.verification_structured_extraction_publication], writes: [] }
 tokens: [orchestration, structured_extraction_result_body, orchestration.structured_extraction_result_body]
 defined_in: ["20260906032100_verification_structured_extraction_terminal.sql", "20260914010000_artifact_logical_custody.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.structured_extraction_result_body
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## structured_extraction_result_body(uuid, uuid) → jsonb
 

@@ -4,6 +4,7 @@ kind: table
 schema: staging
 name: vetting_decision
 domain: staging
+lens: corpus
 aliases: [vetting]
 tokens: [staging, vetting_decision, staging.vetting_decision, id, tenant_id, candidate_id, decision, reason, receipt_id, created_at]
 summary: "admit, reject, or defer vetting decision with a receipt."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"staging\"][\"Tables\"][\"vetting_decision\"][\"Row\"]"
 defined_in: ["20260826000700_staging.sql", "20260912010900_km_09_ranking_staging.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # staging.vetting_decision
 
-table in domain `staging`.
+table in domain `staging`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — admit, reject, or defer vetting decision with a receipt.
 

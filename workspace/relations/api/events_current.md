@@ -4,6 +4,7 @@ kind: view
 schema: api
 name: events_current
 domain: api-surface
+lens: corpus
 aliases: [current events view]
 tokens: [api, events_current, api.events_current, event_id, tenant_id, kind, subject_entity_id, object_entity_id, occurrence_id, occurred_during, occurrence_mode, payload]
 summary: Current event occurrences for the tenant.
@@ -13,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"events_current\"][\"Row\"]"
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.events_current
 
-view in domain `api-surface`.
+view in domain `api-surface`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Current event occurrences for the tenant.
 

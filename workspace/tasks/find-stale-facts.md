@@ -1,24 +1,25 @@
 ---
 id: "task:find-stale-facts"
 kind: task
-domains: [temporal-facts, evidence]
-queries: [entity.resolve, facts.current_by_stream, facts.history_for_stream, entity.card, knowledge.head]
+lens: corpus
+domains: [temporal-facts, evidence, content]
+queries: [entity.resolve, facts.current_by_stream, facts.price_history, content.unit_changes, knowledge.head]
 aliases: [stale, outdated, contradicts, gap analysis]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Find facts the database still holds as current that a source contradicts
 
-Domains: [`temporal-facts`](../domains/temporal-facts.md), [`evidence`](../domains/evidence.md). Queries: [`q:entity.resolve`](../queries/README.md), [`q:facts.current_by_stream`](../queries/README.md), [`q:facts.history_for_stream`](../queries/README.md), [`q:entity.card`](../queries/README.md), [`q:knowledge.head`](../queries/README.md).
+Domains: [`temporal-facts`](../domains/temporal-facts.md), [`evidence`](../domains/evidence.md), [`content`](../domains/content.md). Queries: [`q:entity.resolve`](../queries/README.md), [`q:facts.current_by_stream`](../queries/README.md), [`q:facts.price_history`](../queries/README.md), [`q:content.unit_changes`](../queries/README.md), [`q:knowledge.head`](../queries/README.md).
 
 ## Navigation
 
-`domains/temporal-facts.md` → `q:facts.current_by_stream` → `tasks/supersede-stale-fact.md`
+`domains/temporal-facts.md` → `q:facts.current_by_stream` → `tasks/supersede-stale-fact.md`; refreshed documents already list candidate contradictions in `q:content.unit_changes`.
 
 ## Operation
 
-Read the current segments per stream and compare each `(stream_kind, scope_key)` slot with what the source states. A fact is stale when the slot exists, its segment is current (`valid_to` null), and the source gives a different value with a later world time.
+Read the current segments per stream and compare each `(stream_kind, scope_key)` slot with what the source states. A fact is stale when the slot exists, its segment is current (`k_to` null), and the source gives a different value with a later world time.
 
 ```json
 {
@@ -26,8 +27,9 @@ Read the current segments per stream and compare each `(stream_kind, scope_key)`
   "intentId": "stale-scan-codex",
   "operations": [
     { "opId": "resolve", "kind": "named_query", "query": "entity.resolve", "params": { "text": "Codex" } },
-    { "opId": "prices", "kind": "named_query", "query": "facts.current_by_stream", "params": { "stream_kind": "model_offering_price", "entity_id": "$resolve.rows[0].entity_id", "limit": 100 } },
-    { "opId": "history", "kind": "named_query", "query": "facts.history_for_stream", "params": { "entity_id": "$resolve.rows[0].entity_id", "stream_kind": "model_offering_price", "scope_key": "per_1m_input_tokens", "limit": 20, "offset": 0 } },
+    { "opId": "prices", "kind": "named_query", "query": "facts.current_by_stream", "params": { "stream_kind": "offering_price", "entity_id": "$resolve.rows[0].entity_id", "limit": 100 } },
+    { "opId": "history", "kind": "named_query", "query": "facts.price_history", "params": { "offering_id": "$resolve.rows[0].entity_id", "meter": "input_tokens" } },
+    { "opId": "diffs", "kind": "named_query", "query": "content.unit_changes", "params": { "document_id": null, "since": "2026-10-01T00:00:00Z", "limit": 100 } },
     { "opId": "head", "kind": "named_query", "query": "knowledge.head" }
   ]
 }
@@ -35,7 +37,7 @@ Read the current segments per stream and compare each `(stream_kind, scope_key)`
 
 ## Expected shape
 
-`prices` rows carry `scope_key`, the current value columns, `valid_from`, and `valid_to` null. Every stale slot you find becomes one `fact.assert_state` proposal on the **same** `streamKind` and `scopeKey` (see `tasks/supersede-stale-fact.md`); the snapshot head is your `expectedKnowledgeHead`.
+`prices` rows carry `scope_key`, the current value columns, `valid_during`. Every stale slot you find becomes one `fact.assert_state` proposal on the **same** `streamKind` and `scopeKey` (see `tasks/supersede-stale-fact.md`); the snapshot head is your `expectedKnowledgeHead`. `diffs` rows with `change_kind = attribute_changed` on a `price_row` are the refresh pipeline's own stale candidates (`update_proposal_state`).
 
 ## Pitfalls
 

@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: knowledge_batch
 domain: temporal-facts
+lens: corpus
 aliases: [sealed batch]
 tokens: [temporal, knowledge_batch, temporal.knowledge_batch, tenant_id, knowledge_seq, recorded_at, receipt_id, operation_id, idempotency_key, input_digest, summary]
 summary: "One sealed admission transaction with receipt, idempotency key, and input digest."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"knowledge_batch\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.knowledge_batch
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — One sealed admission transaction with receipt, idempotency key, and input digest.
 
@@ -43,7 +44,7 @@ table in domain `temporal-facts`.
 ## Relationships
 
 Outbound: `operation_id` → [`knowledge_service.operation`](../knowledge_service/operation.md)`.id` (+tenant); `receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`.
-Inbound: none.
+Inbound: [`authoring.work_revision`](../authoring/work_revision.md).knowledge_seq.
 
 ## Indexes
 
@@ -64,7 +65,7 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:receipts.for_intent`, `q:receipts.recent_for_mission`.
+- Named queries: `q:facts.changes_since`, `q:facts.price_history`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`.
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: artifact_tombstone
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, artifact_tombstone, orchestration.artifact_tombstone, tenant_id, artifact_id, reason, retired_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"artifact_tombstone\"][\"Row\"]"
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.artifact_tombstone
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

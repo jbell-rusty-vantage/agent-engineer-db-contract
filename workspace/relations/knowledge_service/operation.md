@@ -4,6 +4,7 @@ kind: table
 schema: knowledge_service
 name: operation
 domain: knowledge-service-runtime
+lens: machinery
 aliases: [KS operation]
 tokens: [knowledge_service, operation, knowledge_service.operation, id, tenant_id, operation_kind, idempotency_key, ownership_mode, external_run_id, mission_id, work_item_id, attempt_id, correlation_id, causation_id, actor_identity, capability_version_id, request, request_sha256, status, row_version, created_at, updated_at, completed_at]
 summary: Durable knowledge-service operation with ownership_mode and idempotency_key.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"operation\"][\"Row\"]"
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.operation
 
-table in domain `knowledge-service-runtime`.
+table in domain `knowledge-service-runtime`, lens `machinery`.
 
 > curated (model_assisted, unreviewed) — Durable knowledge-service operation with ownership_mode and idempotency_key.
 

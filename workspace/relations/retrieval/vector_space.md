@@ -4,22 +4,23 @@ kind: table
 schema: retrieval
 name: vector_space
 domain: retrieval
-aliases: [space]
+lens: corpus
+aliases: [space, space slug]
 tokens: [retrieval, vector_space, retrieval.vector_space, id, tenant_id, slug, purpose, class, created_at]
-summary: "Named embedding space (engineering_claims, entity_profiles, …)."
+summary: "Named embedding space (units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, …); a facet of the one stack."
 summary_basis: curated
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_space\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.vector_space
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
-> curated (model_assisted, unreviewed) — Named embedding space (engineering_claims, entity_profiles, …).
+> curated (model_assisted, unreviewed) — Named embedding space (units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, …); a facet of the one stack.
 
 ## Columns
 
@@ -27,7 +28,7 @@ table in domain `retrieval`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, slug); unique (tenant_id, id) |
-| 3 | `slug` | `text` | no | — | unique (tenant_id, slug); _curated:_ Stable space name used in filters. |
+| 3 | `slug` | `text` | no | — | unique (tenant_id, slug); _curated:_ Stable space name used in api.search_unified p_space_slugs. |
 | 4 | `purpose` | `text` | no | — | — |
 | 5 | `class` | `retrieval.space_class` | no | `'exploratory'::retrieval.space_class` | — |
 | 6 | `created_at` | `timestamp with time zone` | no | `now()` | — |
@@ -58,12 +59,12 @@ Enabled.
 
 ## Grants
 
-`executor_service`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: SELECT; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
 
 ## Read paths
 
-- Named queries: `q:retrieval.hybrid_search`.
-- Direct SELECT: `executor_service`.
+- Named queries: `q:retrieval.hybrid_search`, `q:retrieval.search_unified`.
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
@@ -75,11 +76,11 @@ insert: `Database["retrieval"]["Tables"]["vector_space"]["Insert"]`; row: `Datab
 
 ## Examples
 
-Hybrid search needs a published version of a space
+Restrict a search to spaces
 
 ```bash
-knowledge db query retrieval.hybrid_search --param filters={} --param limit=20 --param query_text=OpenAI API pricing 2026 --param vector_space_version_id=0192b100-0000-7000-8000-000000000001
+knowledge db query retrieval.search_unified --param lenses=["corpus"] --param limit=20 --param query=pricing --param space_slugs=["units","digests"]
 ```
-Catalog entry is execute false; requires embedding.
+Spaces are facets; publication still gates what app_reader reads.
 
 Defined in: `20260826001000_retrieval.sql`.

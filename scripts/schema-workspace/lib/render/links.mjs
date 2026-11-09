@@ -16,6 +16,12 @@ export function functionLink(model, fromPage, functionId, label = null) {
   return target ? link(code(text), fromPage, target) : code(text);
 }
 
+/** Link to an operation page, or a bare code span when the operation is out of selection. */
+export function operationLink(model, fromPage, name) {
+  const target = model.operationPage(name);
+  return target ? link(code(name), fromPage, target) : code(name);
+}
+
 /** `touches.reads` stores `schema.name`; resolve it through the same relation-page rule. */
 export function relationRef(model, fromPage, qualifiedName) {
   return relationLink(model, fromPage, `rel:${qualifiedName}`);

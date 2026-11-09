@@ -4,20 +4,23 @@ kind: table
 schema: content
 name: document
 domain: content
-aliases: []
-tokens: [content, document, content.document, id, tenant_id, document_type_code, canonical_title, canonical_source_id, lifecycle, created_by_attempt_id, supersedes_id, created_at, work_entity_id, repository_file_id]
-summary: null
-summary_basis: none
+lens: corpus
+aliases: [document]
+tokens: [content, document, content.document, id, tenant_id, document_type_code, canonical_title, canonical_source_id, lifecycle, created_by_attempt_id, supersedes_id, created_at, work_entity_id, source_role_code, source_role_method, attributes]
+summary: "Identity of a captured work; typed open-world (document_type_code is the initial kind), with who speaks (source_role_code) and the work entity it belongs to."
+summary_basis: curated
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
+
+> curated (model_assisted, unreviewed) — Identity of a captured work; typed open-world (document_type_code is the initial kind), with who speaks (source_role_code) and the work entity it belongs to.
 
 ## Columns
 
@@ -25,15 +28,17 @@ table in domain `content`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, id) |
-| 3 | `document_type_code` | `text` | no | — | FK → [`content.document_type`](document_type.md).code |
+| 3 | `document_type_code` | `text` | no | — | FK → [`content.document_type`](document_type.md).code; _curated:_ Initial kind assignment; the current one is the content.document_kind_assignment with superseded_by_id null. |
 | 4 | `canonical_title` | `text` | no | — | — |
-| 5 | `canonical_source_id` | `uuid` | yes | — | — |
+| 5 | `canonical_source_id` | `uuid` | yes | — | _curated:_ evidence.source the document is captured from. |
 | 6 | `lifecycle` | `text` | no | `'active'::text` | — |
 | 7 | `created_by_attempt_id` | `uuid` | yes | — | — |
 | 8 | `supersedes_id` | `uuid` | yes | — | — |
 | 9 | `created_at` | `timestamp with time zone` | no | `now()` | — |
-| 10 | `work_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id |
-| 11 | `repository_file_id` | `uuid` | yes | — | FK → [`corpus.repository_file`](../corpus/repository_file.md).id |
+| 10 | `work_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id; _curated:_ catalog.entity of kind talk, paper, media_work, … whose content this is. |
+| 12 | `source_role_code` | `text` | yes | — | FK → [`content.source_role`](source_role.md).code; Source-role axis: who speaks (content.source_role); set by rule (URL/publisher), model or person.; _curated:_ Who speaks (content.source_role); set by rule (URL/publisher), model or person (source_role_method). |
+| 13 | `source_role_method` | `text` | yes | — | — |
+| 14 | `attributes` | `jsonb` | no | `'{}'::jsonb` | — |
 
 ## Constraints
 
@@ -41,11 +46,12 @@ table in domain `content`.
 - unique (tenant_id, id)
 - check `document_check`: `((supersedes_id IS NULL) OR (supersedes_id <> id))`
 - check `document_lifecycle_check`: `(lifecycle = ANY (ARRAY['active'::text, 'deprecated'::text, 'retracted'::text, 'deleted'::text, 'superseded'::text]))`
+- check `document_source_role_method_check`: `(source_role_method = ANY (ARRAY['rule'::text, 'model'::text, 'person'::text, 'default'::text]))`
 
 ## Relationships
 
-Outbound: `document_type_code` → [`content.document_type`](document_type.md)`.code`; `repository_file_id` → [`corpus.repository_file`](../corpus/repository_file.md)`.id`; `tenant_id,canonical_source_id` → [`evidence.source`](../evidence/source.md)`.tenant_id,id` on delete restrict; `tenant_id,created_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document`](document.md)`.tenant_id,id` on delete restrict; `work_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id`.
-Inbound: [`content.document`](document.md).supersedes_id, [`content.document_about_entity`](document_about_entity.md).document_id, [`content.document_identifier`](document_identifier.md).document_id, [`content.document_version`](document_version.md).document_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).document_id.
+Outbound: `document_type_code` → [`content.document_type`](document_type.md)`.code`; `source_role_code` → [`content.source_role`](source_role.md)`.code`; `tenant_id,canonical_source_id` → [`evidence.source`](../evidence/source.md)`.tenant_id,id` on delete restrict; `tenant_id,created_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document`](document.md)`.tenant_id,id` on delete restrict; `work_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
+Inbound: [`content.document`](document.md).supersedes_id, [`content.document_about_entity`](document_about_entity.md).document_id, [`content.document_identifier`](document_identifier.md).document_id, [`content.document_kind_assignment`](document_kind_assignment.md).document_id, [`content.document_version`](document_version.md).document_id, [`content.refresh_check`](refresh_check.md).document_id, [`content.unit_change`](unit_change.md).document_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).document_id.
 
 ## Indexes
 
@@ -64,19 +70,30 @@ Enabled.
 
 ## Grants
 
-`executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Read paths
 
-- Direct SELECT: `executor_service`.
+- Named queries: `q:catalog.talks`, `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`.
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md), [`api.talks`](../api/talks.md).
+- Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path
 
 - Direct DML: `executor_service`.
-- Via functions (best effort): [`corpus.import_research_starter_catalog`](../../functions/corpus/import_research_starter_catalog.md).
+- Via functions (best effort): [`catalog.import_research_starter_catalog`](../../functions/catalog/import_research_starter_catalog.md).
 
 ## TypeScript
 
 insert: `Database["content"]["Tables"]["document"]["Insert"]`; row: `Database["content"]["Tables"]["document"]["Row"]`; update: `Database["content"]["Tables"]["document"]["Update"]`
+
+## Examples
+
+Units of a document
+
+```bash
+knowledge db query content.document_units --param document_id=0192b000-0000-7000-8000-000000000001 --param unit_kinds=null
+```
+Newest version first.
 
 Defined in: `20260903010000_knowledge_content_contract.sql`.

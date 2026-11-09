@@ -1,20 +1,21 @@
 ---
 id: "task:run-hybrid-search"
 kind: task
+lens: corpus
 domains: [retrieval]
-queries: [retrieval.hybrid_search]
-aliases: [search, rrf, vector]
+queries: [retrieval.search_unified, retrieval.hybrid_search]
+aliases: [search, rrf, vector, semantic search]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
-# Run a hybrid search
+# Run a scoped search over the one retrieval stack
 
-Domains: [`retrieval`](../domains/retrieval.md). Queries: [`q:retrieval.hybrid_search`](../queries/README.md).
+Domains: [`retrieval`](../domains/retrieval.md). Queries: [`q:retrieval.search_unified`](../queries/README.md), [`q:retrieval.hybrid_search`](../queries/README.md).
 
 ## Navigation
 
-`domains/retrieval.md` → `q:retrieval.hybrid_search`
+`domains/retrieval.md` → `q:retrieval.search_unified`
 
 ## Operation
 
@@ -23,25 +24,17 @@ Domains: [`retrieval`](../domains/retrieval.md). Queries: [`q:retrieval.hybrid_s
   "schemaVersion": "knowledge-read-intent.v1",
   "intentId": "search-pricing",
   "operations": [
-    {
-      "opId": "kb",
-      "kind": "retrieval",
-      "query": "retrieval.hybrid_search",
-      "params": {
-        "query_text": "OpenAI API pricing 2026",
-        "vector_space_version_id": "0192b100-0000-7000-8000-000000000001",
-        "filters": {}
-      },
-      "limit": 20
-    }
+    { "opId": "kb", "kind": "named_query", "query": "retrieval.search_unified", "params": { "query": "OpenAI API pricing 2026", "lenses": ["corpus"], "tiers": [0, 1, 2], "document_types": ["pricing_page", "official_docs_page"], "limit": 20 } }
   ]
 }
 ```
 
+`q:retrieval.hybrid_search` is the older per-space-version entry; it needs an executor-computed embedding (`execute: false`).
+
 ## Expected shape
 
-Up to `limit` rows fused by RRF from exact, fts, trigram, and ann channels. `channel_scores` shows per-channel rank and score.
+Up to `limit` rows fused by RRF from full-text, trigram and (with an embedding) ANN channels, each with `lens`, `source_tier`, facets and `channel_scores`.
 
 ## Pitfalls
 
-The catalog entry is `execute: false` because it needs a halfvec embedding. Query text must be 1–4096 characters. Hard filters may only use language, visibility, classification, source_kind, authority_level, freshness_after.
+Resolve the scope first: lens, tier, space, document type, unit kind, entity, as-of, workspace. Tier is a mild boost, never a truth claim. Query text must be 1–4096 characters. Private items need `workspace_ids`.

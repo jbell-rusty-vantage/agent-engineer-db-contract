@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_provider_attempt
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_provider_attempt, orchestration.verification_provider_attempt, id, tenant_id, budget_id, request_sha256, attempt_ordinal, provider_id, model, reservation_cost_micros, state, estimated_cost_micros, actual_cost_micros, request_artifact_id, response_artifact_id, created_at, dispatched_at, reconciled_at, dispatch_fence, operation_id, operation_step_id, profile_artifact_id, profile_sha256, reserved_fencing_token, dispatch_fencing_token, semantic_request_sha256, semantic_dispatch_lease_token, semantic_dispatch_holder_identity]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_provider_attempt\"][\"Row\"]"
 defined_in: ["20260906010000_verification_provider_budget_accounting.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_attempt
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

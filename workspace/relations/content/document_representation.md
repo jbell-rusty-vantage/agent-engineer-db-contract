@@ -4,20 +4,21 @@ kind: table
 schema: content
 name: document_representation
 domain: content
+lens: corpus
 aliases: []
-tokens: [content, document_representation, content.document_representation, id, tenant_id, document_version_id, artifact_id, representation_kind, representation_class, media_type, language, content_sha256, transformation_run_id, acceptance_state, source_native_byte_identical, supersedes_id, created_at]
+tokens: [content, document_representation, content.document_representation, id, tenant_id, document_version_id, artifact_id, representation_kind, representation_class, media_type, language, content_sha256, transformation_run_id, acceptance_state, source_native_byte_identical, supersedes_id, created_at, grammar_version]
 summary: null
 summary_basis: none
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_representation\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_representation
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 
@@ -37,6 +38,7 @@ table in domain `content`.
 | 12 | `source_native_byte_identical` | `boolean` | no | `false` | — |
 | 13 | `supersedes_id` | `uuid` | yes | — | — |
 | 14 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 15 | `grammar_version` | `text` | yes | — | The grammar (unit_kind set + parser version) that produced this representation's units; a later grammar never reinterprets old units silently. |
 
 ## Constraints
 
@@ -52,7 +54,7 @@ table in domain `content`.
 ## Relationships
 
 Outbound: `tenant_id,artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict; `tenant_id,document_version_id` → [`content.document_version`](document_version.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document_representation`](document_representation.md)`.tenant_id,id` on delete restrict; `tenant_id,transformation_run_id` → [`content.transformation_run`](transformation_run.md)`.tenant_id,id` on delete restrict.
-Inbound: [`content.conversion_evaluation`](conversion_evaluation.md).representation_id, [`content.document_node`](document_node.md).representation_id, [`content.document_representation`](document_representation.md).supersedes_id, [`content.document_summary`](document_summary.md).derived_from_representation_id|representation_id, [`content.representation_decision`](representation_decision.md).representation_id, [`content.transformation_input`](transformation_input.md).representation_id, [`content.transformation_output`](transformation_output.md).representation_id, [`evidence.extraction_run`](../evidence/extraction_run.md).representation_id, [`retrieval.chunk_set`](../retrieval/chunk_set.md).representation_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).representation_id.
+Inbound: [`content.conversion_evaluation`](conversion_evaluation.md).representation_id, [`content.document_node`](document_node.md).representation_id, [`content.document_representation`](document_representation.md).supersedes_id, [`content.document_summary`](document_summary.md).derived_from_representation_id|representation_id, [`content.representation_decision`](representation_decision.md).representation_id, [`content.structure_census`](structure_census.md).representation_id, [`content.transformation_input`](transformation_input.md).representation_id, [`content.transformation_output`](transformation_output.md).representation_id, [`evidence.extraction_run`](../evidence/extraction_run.md).representation_id, [`retrieval.chunk_set`](../retrieval/chunk_set.md).representation_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).representation_id.
 
 ## Indexes
 
@@ -71,11 +73,13 @@ Enabled.
 
 ## Grants
 
-`executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Read paths
 
-- Direct SELECT: `executor_service`.
+- Named queries: `q:content.document_units`, `q:content.talk_segments`.
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md).
+- Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path
 

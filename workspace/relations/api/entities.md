@@ -4,6 +4,7 @@ kind: view
 schema: api
 name: entities
 domain: api-surface
+lens: corpus
 aliases: [entities view]
 tokens: [api, entities, api.entities, id, tenant_id, kind, display_name, slug, summary, lifecycle, merged_into_id, projection_knowledge_seq, created_by_receipt_id, created_at, updated_at, aliases]
 summary: Invoker view of tenant entities plus alias array.
@@ -13,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"entities\"][\"Row\"]"
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.entities
 
-view in domain `api-surface`.
+view in domain `api-surface`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Invoker view of tenant entities plus alias array.
 
@@ -87,6 +88,6 @@ Prefer resolve over scanning the view
 ```bash
 knowledge db query entity.resolve --param text=OpenAI
 ```
-The view is the PostgREST surface; agents should use named queries.
+The view is the PostgREST surface; agents should use named queries or the L1 views.
 
 Defined in: `20260912011000_km_10_api.sql`.

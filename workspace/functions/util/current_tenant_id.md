@@ -4,6 +4,7 @@ kind: function
 schema: util
 name: current_tenant_id
 domain: api-surface
+lens: machinery
 overloads: ["fn:util.current_tenant_id()"]
 security: invoker
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, current_tenant_id, util.current_tenant_id]
 defined_in: ["20260826001550_rls_policies.sql", "20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # util.current_tenant_id
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`. Used by views: [`api.benchmark_scores`](../../relations/api/benchmark_scores.md), [`api.claim_candidates`](../../relations/api/claim_candidates.md), [`api.claim_conflicts`](../../relations/api/claim_conflicts.md), [`api.concepts`](../../relations/api/concepts.md), [`api.events`](../../relations/api/events.md), [`api.guidance_items`](../../relations/api/guidance_items.md), [`api.organizations`](../../relations/api/organizations.md), [`api.papers`](../../relations/api/papers.md), [`api.people`](../../relations/api/people.md), [`api.software`](../../relations/api/software.md), [`api.software_releases`](../../relations/api/software_releases.md), [`api.talks`](../../relations/api/talks.md).
 
 ## current_tenant_id() → uuid
 
@@ -26,7 +27,7 @@ No arguments.
 
 Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
-Named queries: `q:artifacts.by_type`, `q:entity.by_identifier`, `q:entity.typed_row`, `q:evidence.captures_for_source`, `q:evidence.claim_support`, `q:evidence.claims_for_entity`, `q:evidence.sources_by_domain`, `q:facts.history_for_stream`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`, `q:reports.artifacts`, `q:reports.assertions`, `q:reports.dependencies`, `q:reports.questions`, `q:reports.sections`, `q:reports.versions`, `q:staging.candidates_for_kind`, `q:staging.unresolved`.
+Named queries: `q:acquisition.fetches_for_url`, `q:artifacts.by_type`, `q:content.refresh_checks`, `q:content.unit_changes`, `q:entity.attributes`, `q:entity.by_identifier`, `q:evidence.captures_for_source`, `q:evidence.claim_support`, `q:evidence.claims_for_entity`, `q:evidence.sources_by_domain`, `q:facts.history_for_stream`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`, `q:staging.candidates_for_kind`, `q:staging.unresolved`.
 
 TypeScript: `Database["util"]["Functions"]["current_tenant_id"]`.
 

@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: require_source_selection_decisions
 domain: evidence
+lens: machinery
 overloads: ["fn:evidence.require_source_selection_decisions()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [selection revision requires at least one admitted decision]
 touches: { reads: [evidence.source_result_selection], writes: [] }
 tokens: [evidence, require_source_selection_decisions, evidence.require_source_selection_decisions]
 defined_in: ["20260914010400_source_attempt_recovery.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.require_source_selection_decisions
 
-Domain `evidence`.
+Domain `evidence`, lens `machinery`.
 
 ## require_source_selection_decisions() → trigger
 

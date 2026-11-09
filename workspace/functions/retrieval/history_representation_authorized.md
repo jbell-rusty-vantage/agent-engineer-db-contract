@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: history_representation_authorized
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.history_representation_authorized(uuid)"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [content.document_representation, content.document_version, content.representation_decision, content.transformation_run, knowledge_service.operation, knowledge_service.review_decision, knowledge_service.review_subject, orchestration.artifact, orchestration.attempt], writes: [] }
 tokens: [retrieval, history_representation_authorized, retrieval.history_representation_authorized]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.history_representation_authorized
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## history_representation_authorized(uuid) → boolean
 

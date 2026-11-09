@@ -4,6 +4,7 @@ kind: function
 schema: api
 name: summary_evidence
 domain: api-surface
+lens: corpus
 overloads: ["fn:api.summary_evidence(uuid)"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [content.document_node, content.document_summary_source, retrieval.chunk_span], writes: [] }
 tokens: [api, summary_evidence, api.summary_evidence]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.summary_evidence
 
-Domain `api-surface`.
+Domain `api-surface`, lens `corpus`.
 
 ## summary_evidence(uuid) → TABLE(node_id uuid, chunk_id uuid, locator_id uuid, start_ms integer, end_ms integer)
 

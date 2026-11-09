@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_provider_budget
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_provider_budget, orchestration.verification_provider_budget, id, tenant_id, budget_key, ceiling_cost_micros, reserved_cost_micros, settled_cost_micros, created_at, updated_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_provider_budget\"][\"Row\"]"
 defined_in: ["20260906010000_verification_provider_budget_accounting.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_budget
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

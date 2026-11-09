@@ -4,6 +4,7 @@ kind: table
 schema: content
 name: transformation_input
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, transformation_input, content.transformation_input, tenant_id, transformation_run_id, ordinal, role, artifact_id, representation_id, source_capture_id, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"transformation_input\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.transformation_input
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 

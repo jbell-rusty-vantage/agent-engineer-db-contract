@@ -2,14 +2,15 @@
 id: "sch:observability"
 kind: schema
 name: observability
+lens: machinery
 domains: [observability]
 relations: 7
 functions: 0
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # observability
 
-Trace index, spans, raw/normalized events, I/O links, handoffs. Domains: [`observability`](../../domains/observability.md).
+Trace index, spans, raw/normalized events, I/O links, handoffs. Lens `machinery`. Domains: [`observability`](../../domains/observability.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |

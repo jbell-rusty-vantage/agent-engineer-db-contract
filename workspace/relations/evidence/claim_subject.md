@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: claim_subject
 domain: evidence
+lens: evidence
 aliases: [claim role]
 tokens: [evidence, claim_subject, evidence.claim_subject, tenant_id, claim_id, entity_id, role]
 summary: "Entity participation in a claim as subject, object, or context."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim_subject\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.claim_subject
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 > curated (model_assisted, unreviewed) — Entity participation in a claim as subject, object, or context.
 
@@ -27,7 +28,7 @@ table in domain `evidence`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | PK |
 | 2 | `claim_id` | `uuid` | no | — | PK; FK → [`evidence.claim`](claim.md).id |
-| 3 | `entity_id` | `uuid` | no | — | PK; FK → [`corpus.entity`](../corpus/entity.md).id |
+| 3 | `entity_id` | `uuid` | no | — | PK; FK → [`catalog.entity`](../catalog/entity.md).id |
 | 4 | `role` | `text` | no | — | PK; _curated:_ subject, object, or context. |
 
 ## Constraints
@@ -37,7 +38,7 @@ table in domain `evidence`.
 
 ## Relationships
 
-Outbound: `claim_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant).
+Outbound: `claim_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant).
 Inbound: none.
 
 ## Indexes
@@ -60,6 +61,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:evidence.claims_for_entity`.
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: guard_verification_structured_extraction_execution
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.guard_verification_structured_extraction_execution()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [structured extraction dirty source artifact inadmissible, structured ex
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt], writes: [] }
 tokens: [orchestration, guard_verification_structured_extraction_execution, orchestration.guard_verification_structured_extraction_execution]
 defined_in: ["20260906031800_verification_structured_extraction_execution.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.guard_verification_structured_extraction_execution
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## guard_verification_structured_extraction_execution() → trigger
 

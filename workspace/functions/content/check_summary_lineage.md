@@ -4,6 +4,7 @@ kind: function
 schema: content
 name: check_summary_lineage
 domain: content
+lens: machinery
 overloads: ["fn:content.check_summary_lineage()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [summary representation lineage mismatch, summary requires faithful sour
 touches: { reads: [content.document_node, content.document_representation, content.document_summary, content.document_summary_source, content.transformation_run], writes: [] }
 tokens: [content, check_summary_lineage, content.check_summary_lineage]
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.check_summary_lineage
 
-Domain `content`.
+Domain `content`, lens `machinery`.
 
 ## check_summary_lineage() → trigger
 

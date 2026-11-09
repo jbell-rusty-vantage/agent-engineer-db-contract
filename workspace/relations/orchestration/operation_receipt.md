@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: operation_receipt
 domain: orchestration-ledger
+lens: machinery
 aliases: [receipt]
 tokens: [orchestration, operation_receipt, orchestration.operation_receipt, id, intent_id, executor_version, precondition_results, outcome, changes_summary, affected_refs, applied_at, requires_admission, use_decision_id, bound_effect_digest, origin_digest]
 summary: "Immutable outcome of one intent (applied, rejected, noop, partial)."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_receipt\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.operation_receipt
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 > curated (model_assisted, unreviewed) — Immutable outcome of one intent (applied, rejected, noop, partial).
 
@@ -51,7 +52,7 @@ table in domain `orchestration-ledger`.
 ## Relationships
 
 Outbound: `intent_id` → [`orchestration.operation_intent`](operation_intent.md)`.id`.
-Inbound: [`corpus.entity`](../corpus/entity.md).created_by_receipt_id, [`corpus.entity_merge`](../corpus/entity_merge.md).receipt_id, [`evidence.claim`](../evidence/claim.md).created_by_receipt_id, [`evidence.source_encounter`](../evidence/source_encounter.md).receipt_id, [`knowledge.record`](../knowledge/record.md).created_by_receipt_id, [`knowledge.record_reconciliation`](../knowledge/record_reconciliation.md).created_by_receipt_id, [`orchestration.artifact_lineage`](artifact_lineage.md).receipt_id, [`orchestration.operation_receipt_target`](operation_receipt_target.md).receipt_id, [`research.report_v2_ingestion`](../research/report_v2_ingestion.md).receipt_id, [`retrieval.vector_item`](../retrieval/vector_item.md).receipt_id, [`staging.resolution_decision`](../staging/resolution_decision.md).receipt_id, [`staging.vetting_decision`](../staging/vetting_decision.md).receipt_id … 2 more in [details](operation_receipt.details.md).
+Inbound: [`catalog.entity`](../catalog/entity.md).created_by_receipt_id, [`catalog.entity_merge`](../catalog/entity_merge.md).receipt_id, [`evidence.claim`](../evidence/claim.md).created_by_receipt_id, [`evidence.source_encounter`](../evidence/source_encounter.md).receipt_id, [`guidance.item`](../guidance/item.md).created_by_receipt_id, [`orchestration.artifact_lineage`](artifact_lineage.md).receipt_id, [`orchestration.operation_receipt_target`](operation_receipt_target.md).receipt_id, [`retrieval.vector_item`](../retrieval/vector_item.md).receipt_id, [`staging.resolution_decision`](../staging/resolution_decision.md).receipt_id, [`staging.vetting_decision`](../staging/vetting_decision.md).receipt_id, [`taxonomy.assignment`](../taxonomy/assignment.md).created_by_receipt_id, [`temporal.knowledge_batch`](../temporal/knowledge_batch.md).receipt_id.
 
 ## Indexes
 
@@ -60,7 +61,7 @@ Inbound: [`corpus.entity`](../corpus/entity.md).created_by_receipt_id, [`corpus.
 ## Triggers
 
 - `operation_receipt_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
-- `receipt_requires_admission` → [`research.require_receipt_admission`](../../functions/research/require_receipt_admission.md) (constraint trigger, deferred)
+- `receipt_requires_admission` → [`verification.require_receipt_admission`](../../functions/verification/require_receipt_admission.md) (constraint trigger, deferred)
 
 ## Row-level security
 

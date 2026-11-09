@@ -4,20 +4,21 @@ kind: table
 schema: content
 name: document_type
 domain: content
+lens: corpus
 aliases: []
-tokens: [content, document_type, content.document_type, code, family, description, is_primary_source, default_chunking_slug, default_extraction_kinds, default_spaces, default_summary_kinds, work_entity_kind, published_at_is_world_time]
+tokens: [content, document_type, content.document_type, code, family, description, is_primary_source, default_chunking_slug, default_extraction_kinds, default_spaces, default_summary_kinds, work_entity_kind, published_at_is_world_time, status, axis_note, promoted_from_census]
 summary: null
 summary_basis: none
 rls: disabled
-readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_type\"][\"Row\"]"
 defined_in: ["20260912010100_km_01_vocabularies.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_type
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 
@@ -33,16 +34,20 @@ table in domain `content`.
 | 8 | `default_summary_kinds` | `text[]` | no | `'{abstract}'::text[]` | — |
 | 9 | `work_entity_kind` | `text` | yes | — | FK → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md).code |
 | 10 | `published_at_is_world_time` | `boolean` | no | `true` | — |
+| 11 | `status` | `text` | no | `'active'::text` | Open-world kinds: candidate (seen in census, grammar not settled), active, retired. unclassified is always valid. |
+| 12 | `axis_note` | `text` | yes | — | — |
+| 13 | `promoted_from_census` | `boolean` | no | `false` | — |
 
 ## Constraints
 
 - PK (code)
 - check `document_type_family_check`: `(family = ANY (ARRAY['regulatory_filing'::text, 'research'::text, 'vendor'::text, 'code'::text, 'media_transcript'::text, 'editorial'::text…`
+- check `document_type_status_check`: `(status = ANY (ARRAY['candidate'::text, 'active'::text, 'retired'::text]))`
 
 ## Relationships
 
 Outbound: `work_entity_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`.
-Inbound: [`content.document`](document.md).document_type_code, [`retrieval.vector_item`](../retrieval/vector_item.md).document_type_code.
+Inbound: [`content.document`](document.md).document_type_code, [`content.document_kind_assignment`](document_kind_assignment.md).document_type_code, [`content.unit_assertion_mapping`](unit_assertion_mapping.md).document_type_code, [`retrieval.vector_item`](../retrieval/vector_item.md).document_type_code.
 Polymorphic: `work_entity_kind` selects one of 36 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK document_type_work_entity_kind_fkey.
 
 ## Indexes
@@ -59,11 +64,11 @@ Disabled.
 
 ## Grants
 
-`control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `app_reader`, `authenticated`.
+`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
 
 ## Read paths
 
-- Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 

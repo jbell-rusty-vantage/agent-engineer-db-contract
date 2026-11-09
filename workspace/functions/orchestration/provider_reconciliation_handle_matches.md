@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: provider_reconciliation_handle_matches
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.provider_reconciliation_handle_matches(uuid,jsonb)"]
 security: invoker
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, provider_reconciliation_handle_matches, orchestration.provider_reconciliation_handle_matches]
 defined_in: ["20260906032800_verification_provider_reconciliation_ledger.sql", "20260914010000_artifact_logical_custody.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.provider_reconciliation_handle_matches
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## provider_reconciliation_handle_matches(uuid, jsonb) → boolean
 

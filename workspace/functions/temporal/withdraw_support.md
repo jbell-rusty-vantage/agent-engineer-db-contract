@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: withdraw_support
 domain: evidence
+lens: corpus
 overloads: ["fn:temporal.withdraw_support(uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [support not found]
 touches: { reads: [], writes: [evidence.segment_support] }
 tokens: [temporal, withdraw_support, temporal.withdraw_support]
 defined_in: ["20260912011100_km_11_grants_rls.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.withdraw_support
 
-Domain `evidence`.
+Domain `evidence`, lens `corpus`.
 
 ## withdraw_support(uuid) → void
 

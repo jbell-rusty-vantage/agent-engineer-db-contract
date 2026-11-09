@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: guard_space_publication
 domain: retrieval
+lens: machinery
 overloads: ["fn:retrieval.guard_space_publication()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["publication gate failed (dims %, precision %, decision %, gate %, embe
 touches: { reads: [evaluation.promotion_gate_result, retrieval.content_promotion_decision, retrieval.vector_item_embedding_1536, retrieval.vector_space_version], writes: [] }
 tokens: [retrieval, guard_space_publication, retrieval.guard_space_publication]
 defined_in: ["20260903010200_knowledge_runtime_security.sql", "20260903010400_atomic_publication_and_hybrid_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.guard_space_publication
 
-Domain `retrieval`.
+Domain `retrieval`, lens `machinery`.
 
 ## guard_space_publication() → trigger
 

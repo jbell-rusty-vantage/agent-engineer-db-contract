@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: source_query
 domain: evidence
+lens: evidence
 aliases: [search query]
 tokens: [evidence, source_query, evidence.source_query, id, tenant_id, provider_code, query_text, purpose, parameters, response_artifact_id, attempt_id, queried_at]
 summary: One provider query issued during discovery.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_query\"][\"Row\"]"
 defined_in: ["20260829181815_cloud_agent_parallel_source_provenance.sql", "20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.source_query
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 > curated (model_assisted, unreviewed) — One provider query issued during discovery.
 

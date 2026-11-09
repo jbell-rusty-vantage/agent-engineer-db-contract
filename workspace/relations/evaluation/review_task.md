@@ -4,8 +4,9 @@ kind: table
 schema: evaluation
 name: review_task
 domain: evaluation
+lens: machinery
 aliases: []
-tokens: [evaluation, review_task, evaluation.review_task, id, tenant_id, task_kind, state, priority, assignee, quorum_required, summary, detail, candidate_id, claim_id, claim_conflict_id, entity_merge_id, record_reconciliation_id, ranking_result_id, operation_intent_id, report_version_id, capability_version_id, vector_space_version_id, subject_kind, created_at, updated_at]
+tokens: [evaluation, review_task, evaluation.review_task, id, tenant_id, task_kind, state, priority, assignee, quorum_required, summary, detail, candidate_id, claim_id, claim_conflict_id, entity_merge_id, operation_intent_id, capability_version_id, vector_space_version_id, created_at, updated_at, subject_kind]
 summary: null
 summary_basis: none
 rls: enabled
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"review_task\"][\"Row\"]"
 defined_in: ["20260826001100_evaluation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.review_task
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 
@@ -35,30 +36,27 @@ table in domain `evaluation`.
 | 10 | `candidate_id` | `uuid` | yes | — | FK → [`staging.candidate`](../staging/candidate.md).id |
 | 11 | `claim_id` | `uuid` | yes | — | FK → [`evidence.claim`](../evidence/claim.md).id |
 | 12 | `claim_conflict_id` | `uuid` | yes | — | FK → [`evidence.claim_conflict`](../evidence/claim_conflict.md).id |
-| 13 | `entity_merge_id` | `uuid` | yes | — | FK → [`corpus.entity_merge`](../corpus/entity_merge.md).id |
-| 14 | `record_reconciliation_id` | `uuid` | yes | — | FK → [`knowledge.record_reconciliation`](../knowledge/record_reconciliation.md).id |
-| 15 | `ranking_result_id` | `uuid` | yes | — | FK → [`ranking.ranking_result`](../ranking/ranking_result.md).id |
+| 13 | `entity_merge_id` | `uuid` | yes | — | FK → [`catalog.entity_merge`](../catalog/entity_merge.md).id |
 | 16 | `operation_intent_id` | `uuid` | yes | — | FK → [`orchestration.operation_intent`](../orchestration/operation_intent.md).id |
-| 17 | `report_version_id` | `uuid` | yes | — | FK → [`research.report_version`](../research/report_version.md).id |
 | 18 | `capability_version_id` | `uuid` | yes | — | FK → [`orchestration.capability_version`](../orchestration/capability_version.md).id |
 | 19 | `vector_space_version_id` | `uuid` | yes | — | FK → [`retrieval.vector_space_version`](../retrieval/vector_space_version.md).id |
-| 20 | `subject_kind` | `text` | yes | — | generated: ` CASE     WHEN (candidate_id IS NOT NULL) THEN 'candidate'::text     WHEN (claim_id IS NOT NULL) THEN 'claim'::text     WHEN (claim_conflict_id IS NOT NULL) THEN 'claim_conflict'::text     WHEN (entity_merge_id IS NOT NULL) THEN 'entity_merge'::text     WHEN (record_reconciliation_id IS NOT NULL) THEN 'record_reconciliation'::text     WHEN (ranking_result_id IS NOT NULL) THEN 'ranking_result'::text     WHEN (operation_intent_id IS NOT NULL) THEN 'operation_intent'::text     WHEN (report_version_id IS NOT NULL) THEN 'report_version'::text     WHEN (capability_version_id IS NOT NULL) THEN 'capability_version'::text     WHEN (vector_space_version_id IS NOT NULL) THEN 'vector_space_version'::text     ELSE NULL::text END` |
 | 21 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 | 22 | `updated_at` | `timestamp with time zone` | no | `now()` | — |
+| 23 | `subject_kind` | `text` | yes | — | generated: ` CASE     WHEN (candidate_id IS NOT NULL) THEN 'candidate'::text     WHEN (claim_id IS NOT NULL) THEN 'claim'::text     WHEN (claim_conflict_id IS NOT NULL) THEN 'claim_conflict'::text     WHEN (entity_merge_id IS NOT NULL) THEN 'entity_merge'::text     WHEN (operation_intent_id IS NOT NULL) THEN 'operation_intent'::text     WHEN (capability_version_id IS NOT NULL) THEN 'capability_version'::text     WHEN (vector_space_version_id IS NOT NULL) THEN 'vector_space_version'::text     ELSE NULL::text END` |
 
 ## Constraints
 
 - PK (id)
-- check `review_task_exactly_one_subject`: `(num_nonnulls(candidate_id, claim_id, claim_conflict_id, entity_merge_id, record_reconciliation_id, ranking_result_id, operation_intent_id,…`
+- check `review_task_exactly_one_subject`: `(num_nonnulls(candidate_id, claim_id, claim_conflict_id, entity_merge_id, operation_intent_id, capability_version_id, vector_space_version_…`
 - check `review_task_task_kind_check`: `(task_kind = ANY (ARRAY['identity'::text, 'merge'::text, 'claim_support'::text, 'conflict'::text, 'extraction_failure'::text, 'ranking_anom…`
 
 ## Relationships
 
-10 outbound and 5 inbound foreign keys; full list in [details](review_task.details.md).
+7 outbound and 5 inbound foreign keys; full list in [details](review_task.details.md).
 
 ## Indexes
 
-12 indexes; see [details](review_task.details.md).
+8 indexes; see [details](review_task.details.md).
 
 ## Triggers
 

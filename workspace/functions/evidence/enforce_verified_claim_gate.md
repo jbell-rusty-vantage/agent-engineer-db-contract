@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: enforce_verified_claim_gate
 domain: evidence
+lens: machinery
 overloads: ["fn:evidence.enforce_verified_claim_gate()"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [VERIFIED_CLAIM_REQUIRES_ADMITTED_USE]
 touches: { reads: [orchestration.operation_receipt], writes: [] }
 tokens: [evidence, enforce_verified_claim_gate, evidence.enforce_verified_claim_gate]
 defined_in: ["20260829194310_harden_claim_extraction_and_verification_contract.sql", "20260829194915_require_direct_same_run_claim_verification.sql", "20260829194954_normalize_append_only_claim_evidence_assessments.sql", "20260915010000_official_claim_verification.sql", "20261025010000_withdraw_legacy_verification_truth.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.enforce_verified_claim_gate
 
-Domain `evidence`.
+Domain `evidence`, lens `machinery`.
 
 ## enforce_verified_claim_gate() → trigger
 

@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: attribution
 domain: evidence
+lens: evidence
 aliases: []
 tokens: [evidence, attribution, evidence.attribution, id, tenant_id, source_id, claim_id, entity_id, role, locator_id, extraction_record_id]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"attribution\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.attribution
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 
@@ -27,7 +28,7 @@ table in domain `evidence`.
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id) |
 | 3 | `source_id` | `uuid` | yes | — | FK → [`evidence.source`](source.md).id |
 | 4 | `claim_id` | `uuid` | yes | — | FK → [`evidence.claim`](claim.md).id |
-| 5 | `entity_id` | `uuid` | no | — | FK → [`corpus.entity`](../corpus/entity.md).id |
+| 5 | `entity_id` | `uuid` | no | — | FK → [`catalog.entity`](../catalog/entity.md).id |
 | 6 | `role` | `text` | no | — | — |
 | 7 | `locator_id` | `uuid` | yes | — | FK → [`evidence.locator`](locator.md).id |
 | 8 | `extraction_record_id` | `uuid` | yes | — | FK → [`evidence.extraction_record`](extraction_record.md).id |
@@ -40,7 +41,7 @@ table in domain `evidence`.
 
 ## Relationships
 
-Outbound: `claim_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `extraction_record_id` → [`evidence.extraction_record`](extraction_record.md)`.id` (+tenant); `locator_id` → [`evidence.locator`](locator.md)`.id` (+tenant); `source_id` → [`evidence.source`](source.md)`.id` (+tenant).
+Outbound: `claim_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `extraction_record_id` → [`evidence.extraction_record`](extraction_record.md)`.id` (+tenant); `locator_id` → [`evidence.locator`](locator.md)`.id` (+tenant); `source_id` → [`evidence.source`](source.md)`.id` (+tenant).
 Inbound: none.
 
 ## Indexes

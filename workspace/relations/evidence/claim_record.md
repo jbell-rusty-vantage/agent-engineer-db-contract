@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: claim_record
 domain: evidence
+lens: evidence
 aliases: []
 tokens: [evidence, claim_record, evidence.claim_record, tenant_id, claim_id, record_id]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim_record\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.claim_record
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 
@@ -25,7 +26,7 @@ table in domain `evidence`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | PK |
 | 2 | `claim_id` | `uuid` | no | — | PK; FK → [`evidence.claim`](claim.md).id |
-| 3 | `record_id` | `uuid` | no | — | PK; FK → [`knowledge.record`](../knowledge/record.md).id |
+| 3 | `record_id` | `uuid` | no | — | PK; FK → [`guidance.item`](../guidance/item.md).id |
 
 ## Constraints
 
@@ -33,7 +34,7 @@ table in domain `evidence`.
 
 ## Relationships
 
-Outbound: `claim_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `record_id` → [`knowledge.record`](../knowledge/record.md)`.id` (+tenant).
+Outbound: `claim_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `record_id` → [`guidance.item`](../guidance/item.md)`.id` (+tenant).
 Inbound: none.
 
 ## Indexes

@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import pg from "pg";
 import { ErrorCode, WorkspaceError } from "./errors.mjs";
 
@@ -58,17 +58,23 @@ export async function databaseMigrationHead(pool) {
   return rows[0]?.version ?? null;
 }
 
-export function repositoryMigrationHead(migrationsDir) {
-  const versions = readdirSync(migrationsDir)
-    .map((name) => name.match(MIGRATION_FILE)?.[1])
+/** Highest ordered migration version across the given directories (a missing directory contributes nothing). */
+export function repositoryMigrationHead(...migrationDirs) {
+  const versions = migrationDirs
+    .filter((dir) => dir && existsSync(dir))
+    .flatMap((dir) => readdirSync(dir).map((name) => name.match(MIGRATION_FILE)?.[1]))
     .filter(Boolean)
     .sort();
   return versions.at(-1) ?? null;
 }
 
-/** Fails when the connected database is not at the repository's latest migration. */
-export async function assertHeadMatches(pool, migrationsDir) {
-  const [database, repository] = [await databaseMigrationHead(pool), repositoryMigrationHead(migrationsDir)];
+/**
+ * Fails when the connected database is not at the repository's latest migration. `draftDirs` are
+ * lab draft directories (workspace.config.json `paths.draftMigrations`) whose ordered files count as
+ * repository migrations, so a disposable lab at a draft head can be described.
+ */
+export async function assertHeadMatches(pool, migrationsDir, draftDirs = []) {
+  const [database, repository] = [await databaseMigrationHead(pool), repositoryMigrationHead(migrationsDir, ...draftDirs)];
   if (database !== repository) {
     throw new WorkspaceError(ErrorCode.HEAD_MISMATCH, "Database head differs from repository migrations.", {
       database,

@@ -5,6 +5,7 @@ defaults:
   maxLimit: 2000
   statementTimeoutMs: { cheap: 15000, medium: 15000, heavy: 60000 }
 queries:
+  # ---------------------------------------------------------------- identity
   - name: entity.resolve
     title: Find entities by name, alias, or identifier
     kind: named_query
@@ -23,7 +24,7 @@ queries:
     pagination: null
     volatile: false
     domain: identity
-    tasks: [what-do-we-know-about-entity, resolve-or-create-entity]
+    tasks: [what-do-we-know-about-entity, resolve-or-create-entity, compare-models, price-with-locator]
     aliases: [resolve, lookup]
     example: { text: OpenAI }
     execute: true
@@ -55,6 +56,522 @@ queries:
     provenance: model_assisted
     reviewed: null
 
+  - name: entity.by_identifier
+    title: Find a canonical entity by external identifier scheme and value
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select e.id as entity_id, e.kind, e.display_name, e.lifecycle, i.scheme, i.value
+      from catalog.entity_identifier i
+      join catalog.entity e on e.id = i.entity_id and e.tenant_id = i.tenant_id
+      where i.tenant_id = util.current_tenant_id()
+        and i.scheme = $1
+        and i.value = $2
+    paramOrder: [scheme, value]
+    params:
+      type: object
+      required: [scheme, value]
+      properties:
+        scheme: { type: string, minLength: 1 }
+        value: { type: string, minLength: 1 }
+      additionalProperties: false
+    result: { shape: rows, columns: [entity_id, kind, display_name, lifecycle, scheme, value] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: identity
+    tasks: [find-entity-by-identifier, resolve-or-create-entity]
+    aliases: [identifier, scheme lookup]
+    example: { scheme: github, value: openai/openai-python }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: entity.attributes
+    title: Canonical entity row with its kind-validated attributes and the kind's attribute schema
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select e.id as entity_id, e.kind, e.display_name, e.slug, e.lifecycle, e.summary, e.attributes,
+             ek.parent_kind, ek.is_work, ek.attributes_schema
+      from catalog.entity e
+      join taxonomy.entity_kind ek on ek.code = e.kind
+      where e.tenant_id = util.current_tenant_id()
+        and e.id = $1
+        and ($2::text is null or e.kind = $2)
+    paramOrder: [entity_id, kind]
+    params:
+      type: object
+      required: [entity_id]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        kind: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: single_row, columns: [entity_id, kind, display_name, slug, lifecycle, summary, attributes, parent_kind, is_work, attributes_schema] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: identity
+    tasks: [what-do-we-know-about-entity, resolve-or-create-entity, find-entity-by-identifier]
+    aliases: [attributes, typed row, kind row]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001", kind: organization }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- L1 catalog views
+  - name: catalog.models
+    title: L1 models (one row per model version) with developer, capabilities, availability and minimum current price
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.models
+      where ($1::text is null or model ilike '%' || $1 || '%' or developer ilike '%' || $1 || '%' or model_family ilike '%' || $1 || '%')
+        and ($2::text is null or availability = $2)
+      order by released_on desc nulls last, model
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [text, availability, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        availability: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [model_version_id, model, developer, released_on, context_tokens, max_output_tokens, modalities, tool_use, structured_output, reasoning, vision, open_weights, knowledge_cutoff, availability, min_input_usd_per_1m, min_output_usd_per_1m, offering_count, as_of_knowledge_seq] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [compare-models, cheapest-qualified-model]
+    aliases: [models, compare models, model table]
+    example: { text: null, availability: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.model_offerings
+    title: L1 offerings (model as sold by a provider) with normalized USD per 1M tokens and the price claim/locator
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.model_offerings
+      where ($1::uuid is null or model_version_id = $1)
+        and ($2::text is null or provider ilike '%' || $2 || '%' or model ilike '%' || $2 || '%' or offering ilike '%' || $2 || '%')
+      order by input_usd_per_1m nulls last, offering
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [model_version_id, text, limit]
+    params:
+      type: object
+      properties:
+        model_version_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [offering_id, offering, offering_key, model_version_id, model, provider, region, tier, input_usd_per_1m, output_usd_per_1m, cached_input_usd_per_1m, batch_input_usd_per_1m, availability, pricing_url, price_valid_from, price_observed_at, price_claim_id, price_locator_id] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [price-with-locator, cheapest-qualified-model]
+    aliases: [offerings, prices, price table]
+    example: { model_version_id: null, text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.models_at
+    title: The models table as it stood at a world time (L2 replay of L1)
+    kind: named_query
+    role: app_reader
+    sql: select * from api.models_at($1::timestamptz) order by released_on desc nulls last, model limit 200
+    paramOrder: [at]
+    params:
+      type: object
+      required: [at]
+      properties:
+        at: { type: string, format: date-time, pgType: timestamptz }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: medium
+    temporal: { world_time: param:at, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: api-surface
+    tasks: [compare-models, what-changed-since]
+    aliases: [models as of]
+    example: { at: "2026-06-01T00:00:00Z" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.model_offerings_at
+    title: The offerings table as it stood at a world time (L2 replay of L1)
+    kind: named_query
+    role: app_reader
+    sql: select * from api.model_offerings_at($1::timestamptz) order by input_usd_per_1m nulls last, offering limit 200
+    paramOrder: [at]
+    params:
+      type: object
+      required: [at]
+      properties:
+        at: { type: string, format: date-time, pgType: timestamptz }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: medium
+    temporal: { world_time: param:at, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: api-surface
+    tasks: [cheapest-qualified-model, what-changed-since]
+    aliases: [offerings as of, prices as of]
+    example: { at: "2026-06-01T00:00:00Z" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.organizations
+    title: L1 organizations with kind, site, country, founding date and counts
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.organizations
+      where ($1::text is null or organization ilike '%' || $1 || '%')
+        and ($2::text is null or org_kind = $2)
+      order by organization
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [text, org_kind, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        org_kind: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [organization_id, organization, slug, org_kind, website_url, country_code, founded_on, developed_count, offering_count, people_count, headcount] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [what-do-we-know-about-entity]
+    aliases: [organizations, companies, labs]
+    example: { text: null, org_kind: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.people
+    title: L1 people with current affiliations and talk/work counts
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.people
+      where ($1::text is null or person ilike '%' || $1 || '%' or affiliations::text ilike '%' || $1 || '%')
+      order by talk_count desc nulls last, person
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [text, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [person_id, person, slug, title, profile_url, affiliations, talk_count, work_count] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [talks-on-topic]
+    aliases: [people, speakers, authors]
+    example: { text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.software
+    title: L1 software (libraries, repositories, MCP servers, agent skills, products, protocols) in one table
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.software
+      where ($1::text is null or kind = $1)
+        and ($2::text is null or software ilike '%' || $2 || '%' or package_name ilike '%' || $2 || '%' or concepts::text ilike '%' || $2 || '%')
+      order by stars desc nulls last, software
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [kind, text, limit]
+    params:
+      type: object
+      properties:
+        kind: { type: ["string", "null"], enum: [library, repository, mcp_server, agent_skill, product, ai_protocol, null], default: null }
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [software_id, kind, software, ecosystem, package_name, category, docs_url, repository_url, developers, latest_release, latest_release_on, license, stars, downloads, mcp_hosting, mcp_auth, mcp_is_official, protocols, concepts] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [release-history, talk-to-repo-to-paper, modules-covering-concept]
+    aliases: [software, libraries, mcp servers, repositories, skills]
+    example: { kind: null, text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.software_releases
+    title: Releases of a software thing, newest first, with breaking flag and the knowledge seq they were learned at
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.software_releases
+      where ($1::uuid is null or software_id = $1)
+        and ($2::text is null or software ilike '%' || $2 || '%')
+      order by released_at desc nulls last, release
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [software_id, text, limit]
+    params:
+      type: object
+      properties:
+        software_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [release_id, release, software_id, software, software_kind, version_label, released_at, breaking, highlights, release_url, learned_k, observed_at] }
+    cost_class: medium
+    temporal: { world_time: history, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [release-history, modules-affected-by-release]
+    aliases: [releases, release history, changelog]
+    example: { software_id: null, text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.talks
+    title: L1 talks with event, speakers, topics, linked repositories and recording links
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.talks
+      where ($1::text is null or title ilike '%' || $1 || '%' or topics::text ilike '%' || $1 || '%' or speakers::text ilike '%' || $1 || '%')
+        and ($2::uuid is null or event_id = $2)
+      order by event_starts_on desc nulls last, title
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [text, event_id, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        event_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [talk_id, title, talk_kind, track, level, event, event_id, event_starts_on, speakers, speaker_affiliations, topics, repositories, recorded_at, duration_ms, video_url, slides_url, document_count] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [talks-on-topic, talk-passage-at-timecode, talk-to-repo-to-paper]
+    aliases: [talks, sessions, conference talks]
+    example: { text: null, event_id: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.events
+    title: L1 industry events (conference editions) with dates, place, organizers, tracks and talk counts
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.events
+      where ($1::text is null or event ilike '%' || $1 || '%' or series::text ilike '%' || $1 || '%')
+      order by starts_on desc nulls last, event
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [text, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [event_id, event, slug, edition_label, starts_on, ends_on, city, country, website_url, series, organizers, talk_count, tracks] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [talks-on-topic]
+    aliases: [events, conferences]
+    example: { text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.concepts
+    title: L1 concepts and techniques with how many works, software, guidance items and our modules cover them
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.concepts
+      where ($1::text is null or concept ilike '%' || $1 || '%' or description ilike '%' || $1 || '%')
+      order by modules_covering desc nulls last, works_about desc nulls last, concept
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [text, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [concept_id, kind, concept, slug, component, level, description, works_about, instances, implementations, guidance_items, modules_covering] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [modules-covering-concept, talks-on-topic]
+    aliases: [concepts, techniques, topics]
+    example: { text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.papers
+    title: L1 papers with identifiers, authors, code repositories, techniques and the talks that discuss them
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.papers
+      where ($1::text is null or title ilike '%' || $1 || '%' or arxiv_id = $1 or doi = $1 or authors::text ilike '%' || $1 || '%')
+      order by published_at desc nulls last, title
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [text, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [paper_id, title, arxiv_id, doi, published_at, canonical_url, authors, publishers, repositories, techniques, talks_about, citations] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [talk-to-repo-to-paper]
+    aliases: [papers, arxiv]
+    example: { text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: catalog.benchmark_scores
+    title: L1 benchmark results as facts (one home for numbers) by subject or benchmark
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.benchmark_scores
+      where ($1::uuid is null or subject_id = $1)
+        and ($2::text is null or benchmark ilike '%' || $2 || '%')
+      order by benchmark, score desc nulls last
+      limit least(greatest(coalesce($3, 100), 1), 200)
+    paramOrder: [subject_id, benchmark, limit]
+    params:
+      type: object
+      properties:
+        subject_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        benchmark: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 100 }
+      additionalProperties: false
+    result: { shape: rows, columns: [segment_id, subject_id, subject, subject_kind, benchmark_id, benchmark, score, unit, setting, source_kind, valid_from, learned_k, observed_at, claim_id, belief] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: api-surface
+    tasks: [compare-models, cheapest-qualified-model]
+    aliases: [benchmarks, scores, evals]
+    example: { subject_id: null, benchmark: null, limit: 100 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: ours.works_authored
+    title: Our courses, modules, lessons, activities, reports and templates at head revision (lens ours, tier 1)
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.works_authored
+      where ($1::text is null or kind = $1)
+        and ($2::boolean is null or released = $2)
+        and ($3::text is null or title ilike '%' || $3 || '%' or covers_concepts::text ilike '%' || $3 || '%' or uses_software::text ilike '%' || $3 || '%')
+      order by created_at desc, slug
+      limit least(greatest(coalesce($4, 50), 1), 200)
+    paramOrder: [kind, released, text, limit]
+    params:
+      type: object
+      properties:
+        kind: { type: ["string", "null"], default: null }
+        released: { type: ["boolean", "null"], pgType: boolean, default: null }
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [work_id, kind, slug, title, head_revision_id, revision_no, workspace_id, workspace_kind, released, covers_concepts, uses_software, runtime_requirements, knowledge_seq, source_tier] }
+    cost_class: medium
+    temporal: { world_time: now(), knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: authoring
+    tasks: [modules-covering-concept, modules-affected-by-release]
+    aliases: [our works, courses, modules, reports]
+    example: { kind: null, released: null, text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: guidance.items
+    title: Expert guidance items (problems, solution patterns, failure modes, …) with their subject entities
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.guidance_items
+      where ($1::text is null or kind = $1)
+        and ($2::uuid is null or subject_entity_ids @> array[$2::uuid])
+        and ($3::text is null or title ilike '%' || $3 || '%' or statement ilike '%' || $3 || '%')
+      order by created_at desc, id
+      limit least(greatest(coalesce($4, 50), 1), 200)
+    paramOrder: [kind, entity_id, text, limit]
+    params:
+      type: object
+      properties:
+        kind: { type: ["string", "null"], default: null }
+        entity_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [id, kind, title, statement, scope, assurance_level, payload, provenance_claim_id, created_at, subject_entity_ids] }
+    cost_class: medium
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: guidance
+    tasks: [what-do-we-know-about-entity, modules-covering-concept]
+    aliases: [guidance, engineering records, failure modes, solution patterns]
+    example: { kind: null, entity_id: null, text: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- L2 facts and time
   - name: entity.at
     title: Facts for one entity at a world time as known at a knowledge seq
     kind: named_query
@@ -94,7 +611,7 @@ queries:
       properties:
         entity_id: { type: string, format: uuid, pgType: uuid }
         kind: { type: ["string", "null"], default: null }
-        at: { type: string, format: date-time, pgType: timestamptz, default: "2026-09-11T00:00:00Z" }
+        at: { type: string, format: date-time, pgType: timestamptz, default: "2026-11-08T00:00:00Z" }
         k: { type: ["integer", "null"], pgType: bigint, default: null }
         direction: { type: string, enum: [both, outgoing, incoming], default: both }
       additionalProperties: false
@@ -104,12 +621,12 @@ queries:
     pagination: null
     volatile: false
     domain: relationships
-    tasks: [what-do-we-know-about-entity, assert-relationship]
+    tasks: [what-do-we-know-about-entity, assert-relationship, talk-to-repo-to-paper]
     aliases: [graph, links]
     example:
       entity_id: "0192b000-0000-7000-8000-000000000001"
       kind: null
-      at: "2026-09-11T00:00:00Z"
+      at: "2026-11-08T00:00:00Z"
       k: null
       direction: both
     execute: true
@@ -142,7 +659,7 @@ queries:
     example:
       entity_id: "0192b000-0000-7000-8000-000000000001"
       from: "2025-01-01T00:00:00Z"
-      to: "2026-09-11T00:00:00Z"
+      to: "2026-11-08T00:00:00Z"
       k: null
     execute: true
     provenance: model_assisted
@@ -178,117 +695,108 @@ queries:
     provenance: model_assisted
     reviewed: null
 
-  - name: entity.by_identifier
-    title: Find a canonical entity by external identifier scheme and value
+  - name: facts.changes_since
+    title: What changed since a date, on both clocks (facts opened/replaced, events, unit-level document diffs)
     kind: named_query
-    role: pipeline_agent
-    sql: |
-      select e.id as entity_id, e.kind, e.display_name, e.lifecycle, i.scheme, i.value
-      from corpus.entity_identifier i
-      join corpus.entity e on e.id = i.entity_id and e.tenant_id = i.tenant_id
-      where i.tenant_id = util.current_tenant_id()
-        and i.scheme = $1
-        and i.value = $2
-    paramOrder: [scheme, value]
+    role: app_reader
+    sql: select * from api.changes_since($1::timestamptz, $2::text[], $3::text[], $4::text[]) order by learned_at desc, change_source, subject limit 200
+    paramOrder: [since, stream_kinds, entity_kinds, document_types]
     params:
       type: object
-      required: [scheme, value]
+      required: [since]
       properties:
-        scheme: { type: string, minLength: 1 }
-        value: { type: string, minLength: 1 }
+        since: { type: string, format: date-time, pgType: timestamptz }
+        stream_kinds: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        entity_kinds: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        document_types: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
       additionalProperties: false
-    result: { shape: rows, columns: [entity_id, kind, display_name, lifecycle, scheme, value] }
-    cost_class: cheap
-    temporal: { world_time: n/a, knowledge: head }
+    result: { shape: rows, columns: [change_source, change_kind, learned_at, knowledge_seq, world_from, subject_entity_id, subject, stream_kind, scope_key, old_value, new_value, document_id, document_title, logical_key, unit_kind, changed_attributes, claim_id] }
+    cost_class: medium
+    temporal: { world_time: param:since, knowledge: head }
     pagination: null
     volatile: false
-    domain: identity
-    tasks: [find-entity-by-identifier, resolve-or-create-entity]
-    aliases: [identifier, scheme lookup]
-    example: { scheme: github, value: openai/openai-python }
+    domain: temporal-facts
+    tasks: [what-changed-since, release-history]
+    aliases: [changes since, what changed, recent changes, delta since date]
+    example: { since: "2026-10-01T00:00:00Z", stream_kinds: null, entity_kinds: null, document_types: null }
     execute: true
     provenance: model_assisted
     reviewed: null
 
-  - name: entity.typed_row
-    title: Canonical entity plus the kind-dispatched typed child row
+  - name: facts.price_history
+    title: Every price segment of an offering and meter with both clocks, including superseded beliefs
     kind: named_query
-    role: pipeline_agent
-    sql: |
-      select e.id as entity_id, e.kind, e.display_name, e.slug, e.lifecycle, e.summary,
-             ek.canonical_schema, ek.canonical_table,
-             coalesce(
-               to_jsonb(t_person), to_jsonb(t_organization), to_jsonb(t_product),
-               to_jsonb(t_product_version), to_jsonb(t_product_feature), to_jsonb(t_ai_model),
-               to_jsonb(t_ai_model_version), to_jsonb(t_model_offering), to_jsonb(t_technique),
-               to_jsonb(t_dataset), to_jsonb(t_benchmark), to_jsonb(t_benchmark_run),
-               to_jsonb(t_repository), to_jsonb(t_library), to_jsonb(t_library_release),
-               to_jsonb(t_mcp_server), to_jsonb(t_agent_skill), to_jsonb(t_ai_protocol),
-               to_jsonb(t_ai_protocol_version), to_jsonb(t_ai_protocol_feature), to_jsonb(t_paper),
-               to_jsonb(t_media_channel), to_jsonb(t_media_series), to_jsonb(t_media_work),
-               to_jsonb(t_event_series), to_jsonb(t_industry_event), to_jsonb(t_talk),
-               to_jsonb(t_story), to_jsonb(t_case_study), to_jsonb(t_concept),
-               to_jsonb(t_funding_round), to_jsonb(t_corporate_transaction), to_jsonb(t_registry),
-               to_jsonb(t_security_advisory), to_jsonb(t_compute_device), to_jsonb(t_compute_offering)
-             ) as typed_row
-      from corpus.entity e
-      join taxonomy.entity_kind ek on ek.code = e.kind
-      left join corpus.person t_person on t_person.id = e.id
-      left join corpus.organization t_organization on t_organization.id = e.id
-      left join corpus.product t_product on t_product.id = e.id
-      left join corpus.product_version t_product_version on t_product_version.id = e.id
-      left join corpus.product_feature t_product_feature on t_product_feature.id = e.id
-      left join corpus.ai_model t_ai_model on t_ai_model.id = e.id
-      left join corpus.ai_model_version t_ai_model_version on t_ai_model_version.id = e.id
-      left join corpus.model_offering t_model_offering on t_model_offering.id = e.id
-      left join corpus.technique t_technique on t_technique.id = e.id
-      left join corpus.dataset t_dataset on t_dataset.id = e.id
-      left join corpus.benchmark t_benchmark on t_benchmark.id = e.id
-      left join corpus.benchmark_run t_benchmark_run on t_benchmark_run.id = e.id
-      left join corpus.repository t_repository on t_repository.id = e.id
-      left join corpus.library t_library on t_library.id = e.id
-      left join corpus.library_release t_library_release on t_library_release.id = e.id
-      left join corpus.mcp_server t_mcp_server on t_mcp_server.id = e.id
-      left join corpus.agent_skill t_agent_skill on t_agent_skill.id = e.id
-      left join corpus.ai_protocol t_ai_protocol on t_ai_protocol.id = e.id
-      left join corpus.ai_protocol_version t_ai_protocol_version on t_ai_protocol_version.id = e.id
-      left join corpus.ai_protocol_feature t_ai_protocol_feature on t_ai_protocol_feature.id = e.id
-      left join corpus.paper t_paper on t_paper.id = e.id
-      left join corpus.media_channel t_media_channel on t_media_channel.id = e.id
-      left join corpus.media_series t_media_series on t_media_series.id = e.id
-      left join corpus.media_work t_media_work on t_media_work.id = e.id
-      left join corpus.event_series t_event_series on t_event_series.id = e.id
-      left join corpus.industry_event t_industry_event on t_industry_event.id = e.id
-      left join corpus.talk t_talk on t_talk.id = e.id
-      left join corpus.story t_story on t_story.id = e.id
-      left join corpus.case_study t_case_study on t_case_study.id = e.id
-      left join corpus.concept t_concept on t_concept.id = e.id
-      left join corpus.funding_round t_funding_round on t_funding_round.id = e.id
-      left join corpus.corporate_transaction t_corporate_transaction on t_corporate_transaction.id = e.id
-      left join corpus.registry t_registry on t_registry.id = e.id
-      left join corpus.security_advisory t_security_advisory on t_security_advisory.id = e.id
-      left join corpus.compute_device t_compute_device on t_compute_device.id = e.id
-      left join corpus.compute_offering t_compute_offering on t_compute_offering.id = e.id
-      where e.tenant_id = util.current_tenant_id()
-        and e.id = $1
-        and ($2::text is null or e.kind = $2)
-    paramOrder: [entity_id, kind]
+    role: app_reader
+    sql: select * from api.price_history($1::uuid, $2::text)
+    paramOrder: [offering_id, meter]
     params:
       type: object
-      required: [entity_id]
+      required: [offering_id]
       properties:
-        entity_id: { type: string, format: uuid, pgType: uuid }
-        kind: { type: ["string", "null"], default: null }
+        offering_id: { type: string, format: uuid, pgType: uuid }
+        meter: { type: string, default: input_tokens, enum: [input_tokens, output_tokens, cached_input_tokens, batch_input_tokens, batch_output_tokens] }
       additionalProperties: false
-    result: { shape: single_row, columns: [entity_id, kind, display_name, slug, lifecycle, summary, canonical_schema, canonical_table, typed_row] }
+    result: { shape: rows, columns: [segment_id, meter, tier, region, amount, currency, unit, valid_during, belief, temporal_basis, k_from, k_to, learned_at, retracted_at, claim_id, replaces_segment_id] }
     cost_class: cheap
-    temporal: { world_time: n/a, knowledge: head }
+    temporal: { world_time: history, knowledge: all }
     pagination: null
     volatile: false
-    domain: identity
-    tasks: [what-do-we-know-about-entity, resolve-or-create-entity]
-    aliases: [typed row, kind row]
-    example: { entity_id: "0192b000-0000-7000-8000-000000000001", kind: organization }
+    domain: temporal-facts
+    tasks: [price-with-locator, supersede-stale-fact, record-price-change, find-stale-facts]
+    aliases: [price history, price timeline]
+    example: { offering_id: "0192b000-0000-7000-8000-000000000001", meter: input_tokens }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: facts.locators
+    title: A current fact with its claim, exact locator, capture and the typed unit it was read from
+    kind: named_query
+    role: app_reader
+    sql: select * from api.fact_locators($1::uuid, $2::text, $3::text)
+    paramOrder: [entity_id, stream_kind, scope_key]
+    params:
+      type: object
+      required: [entity_id, stream_kind]
+      properties:
+        entity_id: { type: string, format: uuid, pgType: uuid }
+        stream_kind: { type: string, minLength: 1 }
+        scope_key: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [segment_id, scope_key, amount, currency, unit, status, payload, valid_during, claim_id, claim_statement, locator_id, selector_kind, selector, normalized_value, capture_id, captured_at, request_url, source_url, document_node_id, unit_kind, logical_key] }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: head }
+    pagination: null
+    volatile: false
+    domain: evidence
+    tasks: [price-with-locator, admit-support-for-claim]
+    aliases: [locator, where was it read, citation for a fact, provenance of a number]
+    example: { entity_id: "0192b000-0000-7000-8000-000000000001", stream_kind: offering_price, scope_key: null }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: ours.modules_affected_by_release
+    title: Our head revisions that bind or require the software a release belongs to and were authored before it
+    kind: named_query
+    role: app_reader
+    sql: select * from api.modules_affected_by_release($1::uuid)
+    paramOrder: [release_id]
+    params:
+      type: object
+      required: [release_id]
+      properties:
+        release_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows, columns: [work_id, work_kind, work_slug, revision_id, revision_title, revision_created_at, software, release, released_at, breaking, binding, version_spec] }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: head }
+    pagination: null
+    volatile: false
+    domain: authoring
+    tasks: [modules-affected-by-release]
+    aliases: [affected modules, flywheel, release impact]
+    example: { release_id: "0192b000-0000-7000-8000-000000000001" }
     execute: true
     provenance: model_assisted
     reviewed: null
@@ -319,9 +827,9 @@ queries:
     pagination: { kind: limit, limitParam: limit }
     volatile: false
     domain: temporal-facts
-    tasks: [record-price-change, record-availability-change]
+    tasks: [record-price-change, record-availability-change, find-stale-facts]
     aliases: [current facts]
-    example: { stream_kind: model_offering_price, entity_id: null, limit: 50 }
+    example: { stream_kind: offering_price, entity_id: null, limit: 50 }
     execute: true
     provenance: model_assisted
     reviewed: null
@@ -363,8 +871,8 @@ queries:
     aliases: [stream history]
     example:
       entity_id: "0192b000-0000-7000-8000-000000000001"
-      stream_kind: model_offering_price
-      scope_key: per_1m_input_tokens
+      stream_kind: offering_price
+      scope_key: "input_tokens||"
       limit: 50
       offset: 0
     execute: true
@@ -394,7 +902,7 @@ queries:
     pagination: null
     volatile: false
     domain: temporal-facts
-    tasks: [what-do-we-know-about-entity]
+    tasks: [what-do-we-know-about-entity, release-history]
     aliases: [events]
     example: { entity_id: "0192b000-0000-7000-8000-000000000001" }
     execute: true
@@ -426,13 +934,40 @@ queries:
     pagination: { kind: limit, limitParam: limit }
     volatile: false
     domain: relationships
-    tasks: [assert-relationship]
+    tasks: [assert-relationship, talk-to-repo-to-paper]
     aliases: [current relationships]
     example: { kind: develops, entity_id: null, limit: 50 }
     execute: true
     provenance: model_assisted
     reviewed: null
 
+  - name: ranking.leaderboard
+    title: Latest published edition of a named leaderboard (ranked entities with the fact segments behind each score)
+    kind: named_query
+    role: app_reader
+    sql: select * from api.leaderboard($1::text, $2::integer)
+    paramOrder: [slug, limit]
+    params:
+      type: object
+      required: [slug]
+      properties:
+        slug: { type: string, minLength: 1 }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
+      additionalProperties: false
+    result: { shape: rows, columns: [rank, entity_id, display_name, score, unit, explanation, edition_no, published_at] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: edition }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: ranking
+    tasks: [compare-models]
+    aliases: [leaderboard, ranking]
+    example: { slug: cheapest-frontier-input, limit: 20 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- vocabularies
   - name: vocab.stream_kind
     title: Stream-kind vocabulary and slot rules
     kind: named_query
@@ -457,7 +992,7 @@ queries:
     domain: temporal-facts
     tasks: [record-price-change, record-availability-change]
     aliases: [stream kinds]
-    example: { code: model_offering_price }
+    example: { code: offering_price }
     execute: true
     provenance: model_assisted
     reviewed: null
@@ -518,6 +1053,214 @@ queries:
     provenance: model_assisted
     reviewed: null
 
+  - name: vocab.unit_kind
+    title: Unit-kind grammar (typed units, logical-key attributes, locator kind, retrieval role, entity roles)
+    kind: named_query
+    role: app_reader
+    sql: |
+      select code, version, status, description, is_universal, applicable_document_types, parent_kinds,
+             logical_key_attributes, selector_kind, retrieval_role, entity_roles, attributes_schema
+      from content.unit_kind
+      where ($1::text is null or code = $1)
+        and ($2::text is null or $2 = any(applicable_document_types) or is_universal)
+      order by code
+    paramOrder: [code, document_type]
+    params:
+      type: object
+      properties:
+        code: { type: ["string", "null"], default: null }
+        document_type: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: null
+    volatile: false
+    domain: content
+    tasks: [talk-passage-at-timecode, price-with-locator]
+    aliases: [unit kinds, grammar]
+    example: { code: null, document_type: pricing_page }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- L3 content and retrieval
+  - name: content.talk_segments
+    title: Transcript segments and slides of a talk inside a timecode window, optionally filtered by text
+    kind: named_query
+    role: app_reader
+    sql: select * from api.talk_segments($1::uuid, $2::integer, $3::integer, $4::text) limit 200
+    paramOrder: [talk_id, from_ms, to_ms, query]
+    params:
+      type: object
+      required: [talk_id]
+      properties:
+        talk_id: { type: string, format: uuid, pgType: uuid }
+        from_ms: { type: ["integer", "null"], default: null }
+        to_ms: { type: ["integer", "null"], default: null }
+        query: { type: ["string", "null"], default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [node_id, unit_kind, start_ms, end_ms, slide_n, text, document_id, representation_id, logical_key] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: content
+    tasks: [talk-passage-at-timecode, talks-on-topic]
+    aliases: [transcript, timecode, talk passage, slides]
+    example: { talk_id: "0192b000-0000-7000-8000-000000000001", from_ms: 0, to_ms: 600000, query: null }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: content.document_units
+    title: Typed units of a document across its versions (newest first)
+    kind: named_query
+    role: app_reader
+    sql: select * from api.document_units($1::uuid, $2::text[]) limit 200
+    paramOrder: [document_id, unit_kinds]
+    params:
+      type: object
+      required: [document_id]
+      properties:
+        document_id: { type: string, format: uuid, pgType: uuid }
+        unit_kinds: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [node_id, version_label, unit_kind, logical_key, attributes, inline_text, page_number, start_ms, end_ms, stable_local_key] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: content
+    tasks: [price-with-locator, talk-passage-at-timecode]
+    aliases: [units, document structure, typed units]
+    example: { document_id: "0192b000-0000-7000-8000-000000000001", unit_kinds: null }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: content.document_digest
+    title: Structured digest of a document's newest version (key points, entity roles, assertions, changes, open questions)
+    kind: named_query
+    role: app_reader
+    sql: select * from api.document_digest($1::uuid) limit 200
+    paramOrder: [document_id]
+    params:
+      type: object
+      required: [document_id]
+      properties:
+        document_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows, columns: [digest_id, version_label, scope, producer_kind, ordinal, item_kind, text, payload, entity, node_ids, claim_id, confidence] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: content
+    tasks: [talks-on-topic, what-changed-since]
+    aliases: [digest, summary with anchors]
+    example: { document_id: "0192b000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: retrieval.search_unified
+    title: L3 scoped semantic search over the one stack (lexical channels; the executor adds the ANN channel when it embeds)
+    kind: named_query
+    role: app_reader
+    sql: |
+      select * from api.search_unified($1::text, null, $2::text[], $3::smallint[], $4::text[], $5::text[], $6::text[], $7::uuid[],
+                                       $8::timestamptz, $9::uuid[], $10::text[], $11::text[], least(greatest(coalesce($12, 20), 1), 200))
+    paramOrder: [query, lenses, tiers, space_slugs, document_types, unit_kinds, entity_ids, as_of, workspace_ids, source_roles, content_kinds, limit]
+    params:
+      type: object
+      required: [query]
+      properties:
+        query: { type: string, minLength: 1, maxLength: 4096 }
+        lenses: { type: array, items: { type: string, enum: [corpus, ours, private, evidence] }, pgType: "text[]", default: [corpus, ours] }
+        tiers: { type: ["array", "null"], items: { type: integer, minimum: 0, maximum: 4 }, pgType: "smallint[]", default: null }
+        space_slugs: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        document_types: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        unit_kinds: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        entity_ids: { type: ["array", "null"], items: { type: string, format: uuid }, pgType: "uuid[]", default: null }
+        as_of: { type: ["string", "null"], format: date-time, pgType: timestamptz, default: null }
+        workspace_ids: { type: ["array", "null"], items: { type: string, format: uuid }, pgType: "uuid[]", default: null }
+        source_roles: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        content_kinds: { type: ["array", "null"], items: { type: string }, pgType: "text[]", default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
+      additionalProperties: false
+    result: { shape: rows, columns: [vector_item_id, lens, source_tier, content_kind, document_type_code, unit_kind, entity_id, document_id, document_version_id, target_kind, target_id, workspace_id, snippet, start_ms, end_ms, observed_at, valid_during, space_slug, fused_score, channel_scores] }
+    cost_class: heavy
+    temporal: { world_time: param:as_of, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: retrieval
+    tasks: [talks-on-topic, search-my-notes, modules-covering-concept, run-hybrid-search]
+    aliases: [search, unified search, semantic search, scoped search]
+    example: { query: context engineering, lenses: [corpus, ours], tiers: null, space_slugs: null, document_types: null, unit_kinds: null, entity_ids: null, as_of: null, workspace_ids: null, source_roles: null, content_kinds: null, limit: 20 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: retrieval.hybrid_search
+    title: Hybrid search over a published 1536-d vector-space version (legacy per-space entry; prefer retrieval.search_unified)
+    kind: retrieval
+    role: app_reader
+    sql: select * from api.hybrid_knowledge_search_1536($2::uuid, $3::text, $1::extensions.halfvec, $4::jsonb, $5::integer)
+    paramOrder: ["$embedding", vector_space_version_id, query_text, filters, limit]
+    params:
+      type: object
+      required: [vector_space_version_id, query_text]
+      properties:
+        vector_space_version_id: { type: string, format: uuid, pgType: uuid }
+        query_text: { type: string, minLength: 1, maxLength: 4096 }
+        filters: { type: object, default: {} }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
+      additionalProperties: false
+    result: { shape: rows, columns: [vector_item_id, search_projection_id, search_text, source_kind, fused_score, channel_scores] }
+    cost_class: heavy
+    temporal: { world_time: n/a, knowledge: published }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: retrieval
+    tasks: [run-hybrid-search, build-evidence-packet]
+    aliases: [hybrid search, vector search]
+    example:
+      vector_space_version_id: "0192b100-0000-7000-8000-000000000001"
+      query_text: OpenAI API pricing 2026
+      filters: {}
+      limit: 20
+    execute: false
+    reason: requires embedding
+    provenance: model_assisted
+    reviewed: null
+
+  - name: retrieval.evidence_packet
+    title: One evidence packet with members and node timecodes
+    kind: named_query
+    role: app_reader
+    sql: select api.evidence_packet($1::uuid) as packet
+    paramOrder: [packet_id]
+    params:
+      type: object
+      required: [packet_id]
+      properties:
+        packet_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: single_json, columns: [packet] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: published }
+    pagination: null
+    volatile: false
+    domain: retrieval
+    tasks: [build-evidence-packet]
+    aliases: [packet]
+    example: { packet_id: "0192c000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- evidence
   - name: evidence.claims_for_entity
     title: Claims that name one entity as subject, object, or context
     kind: named_query
@@ -583,12 +1326,12 @@ queries:
     reviewed: null
 
   - name: evidence.captures_for_source
-    title: Captures registered for one source
+    title: Captures registered for one source, with the acquisition fetch that produced them
     kind: named_query
     role: pipeline_agent
     sql: |
       select sc.id, sc.source_id, sc.artifact_id, sc.content_sha256, sc.capture_method,
-             sc.captured_at, sc.request_url
+             sc.captured_at, sc.request_url, sc.acquisition_fetch_id
       from evidence.source_capture sc
       where sc.tenant_id = util.current_tenant_id()
         and sc.source_id = $1
@@ -645,6 +1388,108 @@ queries:
     provenance: model_assisted
     reviewed: null
 
+  # ---------------------------------------------------------------- acquisition and refresh
+  - name: acquisition.fetches_for_url
+    title: Fetch ledger rows for a URL (who fetched, with what tool, outcome, hash, spend)
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select f.id, f.origin_kind, f.origin_label, f.tool, f.tool_version, f.request_url, f.final_url,
+             f.requested_at, f.completed_at, f.http_status, f.outcome, f.content_sha256, f.media_type,
+             f.size_bytes, f.credits_used, f.cost_usd, f.failure_class, f.prior_capture_id
+      from acquisition.fetch f
+      where f.tenant_id = util.current_tenant_id()
+        and ($1::text is null or f.request_url = $1 or f.final_url = $1)
+      order by f.requested_at desc, f.id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [url, limit]
+    params:
+      type: object
+      properties:
+        url: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: acquisition
+    tasks: [what-changed-since]
+    aliases: [fetches, fetch ledger, spend]
+    example: { url: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: content.refresh_checks
+    title: Refresh outcomes for a document (unchanged, changed, failed) and the version each created
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select r.id, r.document_id, r.prior_version_id, r.fetch_id, r.checked_at, r.outcome, r.content_sha256, r.new_version_id
+      from content.refresh_check r
+      where r.tenant_id = util.current_tenant_id()
+        and ($1::uuid is null or r.document_id = $1)
+        and ($2::text is null or r.outcome = $2)
+      order by r.checked_at desc, r.id
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [document_id, outcome, limit]
+    params:
+      type: object
+      properties:
+        document_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        outcome: { type: ["string", "null"], enum: [unchanged, changed, failed, null], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: content
+    tasks: [what-changed-since]
+    aliases: [refresh, daily refresh, unchanged]
+    example: { document_id: null, outcome: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: content.unit_changes
+    title: Unit-level diffs between document versions, matched by logical key
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select c.id, c.document_id, c.logical_key, c.unit_kind, c.from_version_id, c.to_version_id, c.change_kind,
+             c.changed_attributes, c.detected_at, c.update_proposal_state
+      from content.unit_change c
+      where c.tenant_id = util.current_tenant_id()
+        and ($1::uuid is null or c.document_id = $1)
+        and ($2::timestamptz is null or c.detected_at >= $2)
+      order by c.detected_at desc, c.id
+      limit least(greatest(coalesce($3, 100), 1), 200)
+    paramOrder: [document_id, since, limit]
+    params:
+      type: object
+      properties:
+        document_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        since: { type: ["string", "null"], format: date-time, pgType: timestamptz, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 100 }
+      additionalProperties: false
+    result: { shape: rows }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: content
+    tasks: [what-changed-since]
+    aliases: [unit diff, document diff, changed units]
+    example: { document_id: null, since: "2026-10-01T00:00:00Z", limit: 100 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- staging, ledger
   - name: staging.candidates_for_kind
     title: Staging candidates of one proposed entity kind
     kind: named_query
@@ -759,7 +1604,7 @@ queries:
     pagination: null
     volatile: false
     domain: orchestration-ledger
-    tasks: [publish-report, check-knowledge-head]
+    tasks: [verify-ingestion-result, check-knowledge-head]
     aliases: [receipt]
     example: { intent_id: "0192f000-0000-7000-8000-000000000001" }
     execute: true
@@ -794,7 +1639,7 @@ queries:
     pagination: { kind: limit, limitParam: limit }
     volatile: true
     domain: orchestration-ledger
-    tasks: [publish-report]
+    tasks: [verify-ingestion-result]
     aliases: [mission receipts]
     example: { mission_id: "0192a000-0000-7000-8000-000000000001", limit: 20 }
     execute: true
@@ -826,332 +1671,9 @@ queries:
     pagination: { kind: limit, limitParam: limit }
     volatile: true
     domain: orchestration-ledger
-    tasks: [publish-report, build-evidence-packet]
+    tasks: [verify-ingestion-result, build-evidence-packet]
     aliases: [artifacts]
     example: { artifact_type: knowledge_ingestion_receipt, limit: 50 }
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-
-  - name: retrieval.hybrid_search
-    title: Hybrid search over a published 1536-d vector-space version
-    kind: retrieval
-    role: app_reader
-    sql: select * from api.hybrid_knowledge_search_1536($2::uuid, $3::text, $1::extensions.halfvec, $4::jsonb, $5::integer)
-    paramOrder: ["$embedding", vector_space_version_id, query_text, filters, limit]
-    params:
-      type: object
-      required: [vector_space_version_id, query_text]
-      properties:
-        vector_space_version_id: { type: string, format: uuid, pgType: uuid }
-        query_text: { type: string, minLength: 1, maxLength: 4096 }
-        filters: { type: object, default: {} }
-        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
-      additionalProperties: false
-    result: { shape: rows, columns: [vector_item_id, search_projection_id, search_text, source_kind, fused_score, channel_scores] }
-    cost_class: heavy
-    temporal: { world_time: n/a, knowledge: published }
-    pagination: { kind: limit, limitParam: limit }
-    volatile: false
-    domain: retrieval
-    tasks: [run-hybrid-search, build-evidence-packet]
-    aliases: [hybrid search, vector search]
-    example:
-      vector_space_version_id: "0192b100-0000-7000-8000-000000000001"
-      query_text: OpenAI API pricing 2026
-      filters: {}
-      limit: 20
-    execute: false
-    reason: requires embedding
-    provenance: model_assisted
-    reviewed: null
-
-  - name: retrieval.evidence_packet
-    title: One evidence packet with members and node timecodes
-    kind: named_query
-    role: app_reader
-    sql: select api.evidence_packet($1::uuid) as packet
-    paramOrder: [packet_id]
-    params:
-      type: object
-      required: [packet_id]
-      properties:
-        packet_id: { type: string, format: uuid, pgType: uuid }
-      additionalProperties: false
-    result: { shape: single_json, columns: [packet] }
-    cost_class: cheap
-    temporal: { world_time: n/a, knowledge: published }
-    pagination: null
-    volatile: false
-    domain: retrieval
-    tasks: [build-evidence-packet]
-    aliases: [packet]
-    example: { packet_id: "0192c000-0000-7000-8000-000000000001" }
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-
-  - name: reports.versions
-    title: Versions and package status for a report
-    kind: named_query
-    role: pipeline_agent
-    sql: select v.*, p.schema_version, p.authoring_mode, p.as_of,
-      p.predecessor_version_id from research.report_version v left
-      join research.report_package p on
-      (p.tenant_id,p.report_version_id)=(v.tenant_id,v.id) where
-      v.tenant_id=util.current_tenant_id() and v.report_id=$1::uuid order by
-      v.version desc limit 200
-    paramOrder:
-      - report_id
-    params:
-      type: object
-      required:
-        - report_id
-      properties:
-        report_id:
-          type: string
-          format: uuid
-      additionalProperties: false
-    result:
-      shape: rows
-      columns:
-        - id
-        - version
-        - schema_version
-    cost_class: cheap
-    temporal:
-      world_time: n/a
-      knowledge: n/a
-    pagination: null
-    volatile: false
-    domain: research
-    tasks:
-      - navigate-report
-    aliases:
-      - report revisions
-    example:
-      report_id: 00000000-0000-7000-8000-000000000001
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-  - name: reports.sections
-    title: Ordered sections with stable keys
-    kind: named_query
-    role: pipeline_agent
-    sql: select v.*, s.section_key from research.report_section_version v join
-      research.report_section s on
-      (s.tenant_id,s.report_id,s.id)=(v.tenant_id,v.report_id,v.section_id)
-      where v.tenant_id=util.current_tenant_id() and
-      v.report_version_id=$1::uuid order by v.ordinal limit 200
-    paramOrder:
-      - report_version_id
-    params:
-      type: object
-      required:
-        - report_version_id
-      properties:
-        report_version_id:
-          type: string
-          format: uuid
-      additionalProperties: false
-    result:
-      shape: rows
-      columns:
-        - section_id
-        - section_key
-        - ordinal
-        - heading
-        - content_pointer
-    cost_class: cheap
-    temporal:
-      world_time: n/a
-      knowledge: n/a
-    pagination: null
-    volatile: false
-    domain: research
-    tasks:
-      - navigate-report
-    aliases:
-      - report outline
-    example:
-      report_version_id: 00000000-0000-7000-8000-000000000001
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-  - name: reports.assertions
-    title: Assertions and run-qualified evidence bindings
-    kind: named_query
-    role: pipeline_agent
-    sql: select a.*, c.run_id, c.claim_key, c.claim_digest, c.claim_id,
-      c.evidence_manifest_artifact_id, c.role from research.report_assertion a
-      left join research.report_assertion_claim c on
-      (c.tenant_id,c.report_version_id,c.assertion_id)=(a.tenant_id,a.report_version_id,a.id)
-      where a.tenant_id=util.current_tenant_id() and
-      a.report_version_id=$1::uuid order by
-      a.start_utf16,a.id,c.run_id,c.claim_key,c.claim_digest,c.role limit 200
-    paramOrder:
-      - report_version_id
-    params:
-      type: object
-      required:
-        - report_version_id
-      properties:
-        report_version_id:
-          type: string
-          format: uuid
-      additionalProperties: false
-    result:
-      shape: rows
-      columns:
-        - assertion_key
-        - start_utf16
-        - end_utf16
-        - run_id
-        - claim_key
-        - claim_digest
-        - evidence_manifest_artifact_id
-    cost_class: cheap
-    temporal:
-      world_time: n/a
-      knowledge: n/a
-    pagination: null
-    volatile: false
-    domain: research
-    tasks:
-      - navigate-report
-    aliases:
-      - report evidence
-    example:
-      report_version_id: 00000000-0000-7000-8000-000000000001
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-  - name: reports.questions
-    title: Question coverage and answering sections
-    kind: named_query
-    role: pipeline_agent
-    sql: select q.*, s.section_id from research.report_question q left join
-      research.report_question_section s on
-      (s.tenant_id,s.report_version_id,s.question_key)=(q.tenant_id,q.report_version_id,q.question_key)
-      where q.tenant_id=util.current_tenant_id() and
-      q.report_version_id=$1::uuid order by q.question_key,s.section_id limit
-      200
-    paramOrder:
-      - report_version_id
-    params:
-      type: object
-      required:
-        - report_version_id
-      properties:
-        report_version_id:
-          type: string
-          format: uuid
-      additionalProperties: false
-    result:
-      shape: rows
-      columns:
-        - question_key
-        - coverage
-        - explanation
-        - resolution_evidence_needed
-        - section_id
-    cost_class: cheap
-    temporal:
-      world_time: n/a
-      knowledge: n/a
-    pagination: null
-    volatile: false
-    domain: research
-    tasks:
-      - navigate-report
-    aliases:
-      - report gaps
-    example:
-      report_version_id: 00000000-0000-7000-8000-000000000001
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-  - name: reports.dependencies
-    title: Exact section revisions needed for reuse
-    kind: named_query
-    role: pipeline_agent
-    sql: select * from research.report_section_dependency where
-      tenant_id=util.current_tenant_id() and report_version_id=$1::uuid order by
-      section_id,required_version_id,required_section_id,relation limit 200
-    paramOrder:
-      - report_version_id
-    params:
-      type: object
-      required:
-        - report_version_id
-      properties:
-        report_version_id:
-          type: string
-          format: uuid
-      additionalProperties: false
-    result:
-      shape: rows
-      columns:
-        - section_id
-        - required_version_id
-        - required_section_id
-        - relation
-    cost_class: cheap
-    temporal:
-      world_time: n/a
-      knowledge: n/a
-    pagination: null
-    volatile: false
-    domain: research
-    tasks:
-      - navigate-report
-    aliases:
-      - section reuse
-    example:
-      report_version_id: 00000000-0000-7000-8000-000000000001
-    execute: true
-    provenance: model_assisted
-    reviewed: null
-  - name: reports.artifacts
-    title: Registered report renditions and artifact metadata
-    kind: named_query
-    role: pipeline_agent
-    sql: select r.role,a.* from research.report_artifact r join
-      orchestration.artifact a on (a.tenant_id,a.id)=(r.tenant_id,r.artifact_id)
-      where r.tenant_id=util.current_tenant_id() and
-      r.report_version_id=$1::uuid order by r.role,a.id limit 200
-    paramOrder:
-      - report_version_id
-    params:
-      type: object
-      required:
-        - report_version_id
-      properties:
-        report_version_id:
-          type: string
-          format: uuid
-      additionalProperties: false
-    result:
-      shape: rows
-      columns:
-        - role
-        - id
-        - sha256
-        - storage_bucket
-        - object_path
-    cost_class: cheap
-    temporal:
-      world_time: n/a
-      knowledge: n/a
-    pagination: null
-    volatile: false
-    domain: research
-    tasks:
-      - navigate-report
-    aliases:
-      - report renditions
-    example:
-      report_version_id: 00000000-0000-7000-8000-000000000001
     execute: true
     provenance: model_assisted
     reviewed: null

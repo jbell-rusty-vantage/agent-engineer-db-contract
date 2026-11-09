@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: guard_structured_extraction_terminal_commit
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.guard_structured_extraction_terminal_commit()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [structured extraction terminal transaction requires exact receipt and o
 touches: { reads: [knowledge_service.operation, knowledge_service.receipt], writes: [] }
 tokens: [orchestration, guard_structured_extraction_terminal_commit, orchestration.guard_structured_extraction_terminal_commit]
 defined_in: ["20260906032100_verification_structured_extraction_terminal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.guard_structured_extraction_terminal_commit
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## guard_structured_extraction_terminal_commit() → trigger
 

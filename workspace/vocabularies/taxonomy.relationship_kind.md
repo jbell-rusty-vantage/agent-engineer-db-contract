@@ -3,18 +3,18 @@ id: "voc:taxonomy.relationship_kind"
 kind: vocabulary
 schema: taxonomy
 name: relationship_kind
-rows: 65
-rows_sha256: "sha256:b3e61c771146acabc263b3d88664d3c5599de8290d47affb55669a4f6c994d59"
-codes: [about, advisor_to, affected_by_advisory, announced_at, authored_by, backed_by_repository, benchmark_executed_by, benchmark_subject, benchmark_uses_dataset, board_member_of, built_on_model, case_study_uses, channel_owned_by, cites, competes_with, customer_of, depends_on, derived_from_model, develops, distributes, edition_of, employed_by, evaluated_on, feature_of_protocol, founded, hardware_requirement, has_feature, hosts, implements_protocol, implements_technique, in_series, instance_of_concept, introduces_technique, investor_in, listed_in, maintains, manufactures, offered_as, offered_by, operates, organized_by, owns_stake_in, participates_in_round, partner_of, party_to_transaction, presented_at, presented_by, provides_compute, published_by, published_on, recipient_of_round, recorded_as, records_event, runs_on, series_on_channel, sponsors, subsidiary_of, supersedes, technique_relates_to, trained_on, transaction_asset, uses_technique, variant_of, vends, version_of]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+rows: 69
+rows_sha256: "sha256:c02d807579f86c7e5a88dc4369b25f22e0c64199e33ae263d1c9f51775b59aae"
+codes: [about, advisor_to, affected_by_advisory, announced_at, authored_by, backed_by_repository, benchmark_executed_by, benchmark_subject, benchmark_uses_dataset, board_member_of, built_on_model, case_study_uses, channel_owned_by, cites, compatible_with, competes_with, customer_of, depends_on, derived_from_model, develops, distributes, edition_of, employed_by, evaluated_on, feature_of_protocol, founded, hardware_requirement, has_code, has_feature, hosts, implements_protocol, implements_technique, in_series, instance_of_concept, integrates_with, introduces_technique, investor_in, listed_in, maintains, manufactures, offered_as, offered_by, operates, organized_by, owns_stake_in, participates_in_round, partner_of, party_to_transaction, presented_at, presented_by, provides_compute, published_by, published_in, published_on, recipient_of_round, recorded_as, records_event, runs_on, series_on_channel, sponsors, subsidiary_of, supersedes, technique_relates_to, trained_on, transaction_asset, uses_technique, variant_of, vends, version_of]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # taxonomy.relationship_kind
 
-Reference data snapshot (65 rows, digest `sha256:b3e61c771146acabc263b3d88664d3c5599de8290d47affb55669a4f6c994d59`). Codes are enforced wherever a column has a foreign key to [`taxonomy.relationship_kind`](../relations/taxonomy/relationship_kind.md).
+Reference data snapshot (69 rows, digest `sha256:c02d807579f86c7e5a88dc4369b25f22e0c64199e33ae263d1c9f51775b59aae`). Codes are enforced wherever a column has a foreign key to [`taxonomy.relationship_kind`](../relations/taxonomy/relationship_kind.md).
 
 | code | description | from_kinds | inverse_label | property_schema | symmetric | temporal | to_kinds |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `about` | about | story, case_study | — | `{}` | no | no | person, organization, product, product_version, product_feature, ai_model, ai_model_version, model_offering, technique, dataset, benchmark, benchmark_run, repository, library, library_release, mcp_server, agent_skill, ai_protocol, ai_protocol_version, ai_protocol_feature, paper, media_channel, media_series, media_work, event_series, industry_event, talk, story, case_study, concept, funding_round, corporate_transaction, registry, security_advisory, compute_device, compute_offering |
+| `about` | about | story, case_study, talk, paper, media_work | — | `{}` | no | no | person, organization, product, product_version, product_feature, ai_model, ai_model_version, model_offering, technique, dataset, benchmark, benchmark_run, repository, library, library_release, mcp_server, agent_skill, ai_protocol, ai_protocol_version, ai_protocol_feature, paper, media_channel, media_series, media_work, event_series, industry_event, talk, story, case_study, concept, funding_round, corporate_transaction, registry, security_advisory, compute_device, compute_offering |
 | `advisor_to` | advisor to | person | — | `{}` | no | yes | organization |
 | `affected_by_advisory` | affected by advisory | library, mcp_server, product, ai_model | — | `{}` | no | no | security_advisory |
 | `announced_at` | announced at | product_version, ai_model_version, product | — | `{}` | no | no | industry_event |
@@ -28,6 +28,7 @@ Reference data snapshot (65 rows, digest `sha256:b3e61c771146acabc263b3d88664d3c
 | `case_study_uses` | case study uses | case_study | — | `{}` | no | no | product, ai_model_version, library, technique |
 | `channel_owned_by` | channel owned by | media_channel | — | `{}` | no | yes | organization, person |
 | `cites` | cites | paper | — | `{}` | no | no | paper |
+| `compatible_with` | A stated compatibility between versions (constraint in properties) | library_release, product_version, ai_model_version, mcp_server | compatible_with | `{"properties":{"constraint":{"type":"string"},"stated_by":{"type":"string"}},"t…` | no | no | library_release, product_version, ai_model_version, ai_protocol_version |
 | `competes_with` | competes with | product, ai_model | — | `{}` | yes | no | product, ai_model |
 | `customer_of` | customer of | organization | — | `{}` | no | yes | product, ai_model, library, mcp_server, agent_skill |
 | `depends_on` | depends on | library_release, product_version | — | `{}` | no | no | library |
@@ -40,12 +41,14 @@ Reference data snapshot (65 rows, digest `sha256:b3e61c771146acabc263b3d88664d3c
 | `feature_of_protocol` | feature of protocol | ai_protocol_feature | — | `{}` | no | no | ai_protocol |
 | `founded` | founded | person | — | `{}` | no | no | organization |
 | `hardware_requirement` | hardware requirement | ai_model_version | — | `{}` | no | no | compute_device |
+| `has_code` | A work points at the repository that holds its code | talk, paper, media_work, story, case_study | code_for | `{"type":"object"}` | no | no | repository, talk, paper |
 | `has_feature` | has feature | product | — | `{}` | no | no | product_feature |
 | `hosts` | hosts | person | — | `{}` | no | yes | media_channel, media_series |
 | `implements_protocol` | implements protocol | product, library, mcp_server | — | `{}` | no | yes | ai_protocol_version, ai_protocol_feature |
 | `implements_technique` | implements technique | product, library, mcp_server, agent_skill | — | `{}` | no | no | technique |
 | `in_series` | in series | media_work | — | `{}` | no | no | media_series |
 | `instance_of_concept` | instance of concept | person, organization, product, product_version, product_feature, ai_model, ai_model_version, model_offering, technique, dataset, benchmark, benchmark_run, repository, library, library_release, mcp_server, agent_skill, ai_protocol, ai_protocol_version, ai_protocol_feature, paper, media_channel, media_series, media_work, event_series, industry_event, talk, story, case_study, concept, funding_round, corporate_transaction, registry, security_advisory, compute_device, compute_offering | — | `{}` | no | no | concept |
+| `integrates_with` | A documented integration between software things | library, product, mcp_server, agent_skill | integrated_by | `{"properties":{"kind":{"type":"string"}},"type":"object"}` | no | yes | library, product, mcp_server, ai_model, ai_protocol |
 | `introduces_technique` | introduces technique | paper | — | `{}` | no | no | technique |
 | `investor_in` | investor in | person | — | `{}` | no | yes | organization |
 | `listed_in` | listed in | library, mcp_server, agent_skill, ai_model, dataset | — | `{}` | no | yes | registry |
@@ -63,6 +66,7 @@ Reference data snapshot (65 rows, digest `sha256:b3e61c771146acabc263b3d88664d3c
 | `presented_by` | presented by | talk | — | `{}` | no | no | person |
 | `provides_compute` | provides compute | organization | — | `{}` | no | no | compute_offering |
 | `published_by` | published by | paper, story, media_work | — | `{}` | no | no | organization |
+| `published_in` | Venue of a paper | paper | published | `{"type":"object"}` | no | no | industry_event, media_channel, organization |
 | `published_on` | published on | media_work | — | `{}` | no | no | media_channel |
 | `recipient_of_round` | recipient of round | organization | — | `{}` | no | no | funding_round |
 | `recorded_as` | recorded as | talk | — | `{}` | no | no | media_work |

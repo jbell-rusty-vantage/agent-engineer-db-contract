@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: history_publication_authorized
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.history_publication_authorized(uuid,uuid)"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [evaluation.promotion_gate_result, knowledge_service.operation, knowledge_service.review_decision, knowledge_service.review_subject, retrieval.authorized_publication_execution, retrieval.content_promotion_decision, retrieval.content_promotion_proposal, retrieval.embedding_item, retrieval.embedding_run, retrieval.publication_switch_receipt, retrieval.space_publication, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space_version, retrieval.vector_store, retrieval.vector_store_space], writes: [] }
 tokens: [retrieval, history_publication_authorized, retrieval.history_publication_authorized]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.history_publication_authorized
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## history_publication_authorized(uuid, uuid) → uuid
 

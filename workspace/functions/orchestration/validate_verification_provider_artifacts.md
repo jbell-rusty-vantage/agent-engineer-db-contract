@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: validate_verification_provider_artifacts
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.validate_verification_provider_artifacts()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [verification provider attempt requires an admitted request and exact re
 touches: { reads: [], writes: [] }
 tokens: [orchestration, validate_verification_provider_artifacts, orchestration.validate_verification_provider_artifacts]
 defined_in: ["20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.validate_verification_provider_artifacts
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## validate_verification_provider_artifacts() → trigger
 

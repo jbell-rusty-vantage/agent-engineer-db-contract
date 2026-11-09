@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: attempt
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, attempt, orchestration.attempt, id, tenant_id, work_item_id, attempt_no, agent_deployment_id, agent_session_id, eve_turn_ids, remote_child_ids, outcome, cost_usd, latency_ms, token_input, token_output, started_at, ended_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"attempt\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.attempt
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 
@@ -48,7 +49,8 @@ table in domain `orchestration-ledger`.
 ## Relationships
 
 Outbound: `agent_session_id` → [`orchestration.agent_session`](agent_session.md)`.id`; `work_item_id` → [`orchestration.work_item`](work_item.md)`.id` on delete cascade.
-Inbound: [`content.document`](../content/document.md).created_by_attempt_id, [`content.transformation_run`](../content/transformation_run.md).attempt_id, [`evaluation.eval_run`](../evaluation/eval_run.md).attempt_id, [`evidence.claim`](../evidence/claim.md).producer_attempt_id, [`evidence.extraction_run`](../evidence/extraction_run.md).attempt_id, [`evidence.extraction_signature`](../evidence/extraction_signature.md).produced_by_attempt_id, [`evidence.source_capture`](../evidence/source_capture.md).produced_by_attempt_id, [`evidence.source_query`](../evidence/source_query.md).attempt_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).attempt_id, [`knowledge_service.operation`](../knowledge_service/operation.md).attempt_id, [`observability.trace`](../observability/trace.md).attempt_id, [`orchestration.artifact`](artifact.md).producer_attempt_id … 8 more in [details](attempt.details.md).
+Inbound: [`content.document`](../content/document.md).created_by_attempt_id, [`content.transformation_run`](../content/transformation_run.md).attempt_id, [`evaluation.eval_run`](../evaluation/eval_run.md).attempt_id, [`evidence.claim`](../evidence/claim.md).producer_attempt_id, [`evidence.extraction_run`](../evidence/extraction_run.md).attempt_id, [`evidence.extraction_signature`](../evidence/extraction_signature.md).produced_by_attempt_id, [`evidence.source_capture`](../evidence/source_capture.md).produced_by_attempt_id, [`evidence.source_query`](../evidence/source_query.md).attempt_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).attempt_id, [`knowledge_service.operation`](../knowledge_service/operation.md).attempt_id, [`observability.trace`](../observability/trace.md).attempt_id, [`orchestration.artifact`](artifact.md).producer_attempt_id … 7 more in [details](attempt.details.md).
+Polymorphic target of: [`evidence.source_capture`](../evidence/source_capture.md) (check constraint source_capture_exactly_one_producer_ck).
 
 ## Indexes
 

@@ -3,14 +3,14 @@ id: "voc:evidence.capture_method"
 kind: vocabulary
 schema: evidence
 name: capture_method
-rows: 13
-rows_sha256: "sha256:58bd6539cc490c3e087b66ff91ebaec368dc6ddcddcb97944f94db5d4751ae9e"
-codes: [api, apify_actor, browser, firecrawl, http, https_acquire, manual, other, repository, whisper_upload, youtube_captions, youtube_transcript, yt_dlp]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+rows: 14
+rows_sha256: "sha256:dd2cc7352956d9510e44a461e36198da4a216c8c3745d22096f8d9c672d851ea"
+codes: [api, apify_actor, browser, firecrawl, http, https_acquire, manual, native_harness_http, other, repository, whisper_upload, youtube_captions, youtube_transcript, yt_dlp]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.capture_method
 
-Reference data snapshot (13 rows, digest `sha256:58bd6539cc490c3e087b66ff91ebaec368dc6ddcddcb97944f94db5d4751ae9e`). Codes are enforced wherever a column has a foreign key to [`evidence.capture_method`](../relations/evidence/capture_method.md).
+Reference data snapshot (14 rows, digest `sha256:dd2cc7352956d9510e44a461e36198da4a216c8c3745d22096f8d9c672d851ea`). Codes are enforced wherever a column has a foreign key to [`evidence.capture_method`](../relations/evidence/capture_method.md).
 
 | code | description |
 | --- | --- |
@@ -21,6 +21,7 @@ Reference data snapshot (13 rows, digest `sha256:58bd6539cc490c3e087b66ff91ebaec
 | `http` | http |
 | `https_acquire` | Trusted exact HTTPS acquisition through an admitted source grant |
 | `manual` | manual |
+| `native_harness_http` | Fetched by a coding-harness agent over plain HTTPS; provenance in acquisition.fetch |
 | `other` | other |
 | `repository` | repository |
 | `whisper_upload` | whisper_upload |

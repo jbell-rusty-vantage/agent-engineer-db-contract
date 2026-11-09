@@ -1,24 +1,25 @@
 ---
-id: "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)"
+id: "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
 kind: function
 schema: temporal
 name: assert_state
 domain: temporal-facts
-overloads: ["fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)"]
+lens: corpus
+overloads: ["fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"]
 security: definer
 volatility: volatile
-executors: [executor_service, service_role]
+executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: [entity stream cannot target relationship, no open knowledge batch, relationship stream cannot target entity, stream does not admit entity kind, stream does not admit relationship kind]
-touches: { reads: [corpus.entity, corpus.relationship, taxonomy.relationship_kind, temporal.stream_kind], writes: [temporal.segment, temporal.stream] }
+touches: { reads: [catalog.entity, catalog.relationship, taxonomy.relationship_kind, temporal.stream_kind], writes: [temporal.segment, temporal.stream] }
 tokens: [temporal, assert_state, temporal.assert_state]
-defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+defined_in: ["20260912010400_km_04_temporal.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.assert_state
 
-Domain `temporal-facts`.
+Domain `temporal-facts`, lens `corpus`.
 
-## assert_state(uuid, text, tstzrange, text, text, numeric, text, text, uuid, jsonb, uuid, uuid, text, uuid, text, uuid) → uuid
+## assert_state(uuid, text, tstzrange, text, text, numeric, text, text, uuid, jsonb, uuid, uuid, text, uuid, text) → uuid
 
 function, volatile, security definer, language plpgsql, config `search_path=""`.
 
@@ -39,14 +40,13 @@ function, volatile, security definer, language plpgsql, config `search_path=""`.
 | `p_temporal_basis` | `text` | `'explicit'::text` | — |
 | `p_relationship` | `uuid` | `NULL::uuid` | — |
 | `p_belief` | `text` | `'accepted'::text` | — |
-| `p_specification` | `uuid` | `NULL::uuid` | — |
 
-Execute: `executor_service`, `service_role`.
+Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Raises (mechanically extracted): `entity stream cannot target relationship`; `no open knowledge batch`; `relationship stream cannot target entity`; `stream does not admit entity kind`; `stream does not admit relationship kind`.
 
-Touches (best effort): reads [`corpus.entity`](../../relations/corpus/entity.md), [`corpus.relationship`](../../relations/corpus/relationship.md), [`taxonomy.relationship_kind`](../../relations/taxonomy/relationship_kind.md), [`temporal.stream_kind`](../../relations/temporal/stream_kind.md); writes [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); calls [`temporal.close_segment`](close_segment.md), [`temporal.current_k`](current_k.md), [`util.current_tenant_id`](../util/current_tenant_id.md).
+Touches (best effort): reads [`catalog.entity`](../../relations/catalog/entity.md), [`catalog.relationship`](../../relations/catalog/relationship.md), [`taxonomy.relationship_kind`](../../relations/taxonomy/relationship_kind.md), [`temporal.stream_kind`](../../relations/temporal/stream_kind.md); writes [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); calls [`temporal.close_segment`](close_segment.md), [`temporal.current_k`](current_k.md), [`util.current_tenant_id`](../util/current_tenant_id.md).
 
 TypeScript: `Database["temporal"]["Functions"]["assert_state"]`.
 
-Defined in: `20260912010400_km_04_temporal.sql`.
+Defined in: `20260912010400_km_04_temporal.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `part1_renames.sql`.

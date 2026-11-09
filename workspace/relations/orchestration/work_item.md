@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: work_item
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, work_item, orchestration.work_item, id, tenant_id, mission_id, kind, spec, status, capability_profile_id, budget_cost_usd, budget_wall_seconds, max_attempts, attempt_count, terminal_evidence, created_at, updated_at, idempotency_key, lease_owner, lease_expires_at, heartbeat_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"work_item\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.work_item
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 
@@ -52,7 +53,7 @@ table in domain `orchestration-ledger`.
 ## Relationships
 
 Outbound: `capability_profile_id` → [`orchestration.capability_profile`](capability_profile.md)`.id`; `kind` → [`orchestration.work_item_kind`](work_item_kind.md)`.code`; `mission_id` → [`orchestration.mission`](mission.md)`.id` on delete cascade.
-Inbound: [`evaluation.eval_run`](../evaluation/eval_run.md).work_item_id, [`evaluation.gate_result`](../evaluation/gate_result.md).spawned_work_item_id, [`evidence.revalidation_event`](../evidence/revalidation_event.md).work_item_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).work_item_id, [`knowledge_service.operation`](../knowledge_service/operation.md).work_item_id, [`observability.trace`](../observability/trace.md).work_item_id, [`orchestration.artifact_manifest`](artifact_manifest.md).work_item_id, [`orchestration.attempt`](attempt.md).work_item_id, [`orchestration.work_item_artifact`](work_item_artifact.md).work_item_id, [`orchestration.work_item_dependency`](work_item_dependency.md).depends_on_id|work_item_id, [`orchestration.work_item_event`](work_item_event.md).work_item_id, [`ranking.ranking_run`](../ranking/ranking_run.md).work_item_id … 1 more in [details](work_item.details.md).
+Inbound: [`evaluation.eval_run`](../evaluation/eval_run.md).work_item_id, [`evaluation.gate_result`](../evaluation/gate_result.md).spawned_work_item_id, [`evidence.revalidation_event`](../evidence/revalidation_event.md).work_item_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).work_item_id, [`knowledge_service.operation`](../knowledge_service/operation.md).work_item_id, [`observability.trace`](../observability/trace.md).work_item_id, [`orchestration.artifact_manifest`](artifact_manifest.md).work_item_id, [`orchestration.attempt`](attempt.md).work_item_id, [`orchestration.work_item_artifact`](work_item_artifact.md).work_item_id, [`orchestration.work_item_dependency`](work_item_dependency.md).depends_on_id|work_item_id, [`orchestration.work_item_event`](work_item_event.md).work_item_id.
 
 ## Indexes
 

@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: prevent_artifact_resurrection
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.prevent_artifact_resurrection()"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [retired artifact cannot regain custody]
 touches: { reads: [orchestration.artifact_tombstone], writes: [] }
 tokens: [orchestration, prevent_artifact_resurrection, orchestration.prevent_artifact_resurrection]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.prevent_artifact_resurrection
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## prevent_artifact_resurrection() → trigger
 

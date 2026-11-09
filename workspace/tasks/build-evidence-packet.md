@@ -1,20 +1,21 @@
 ---
 id: "task:build-evidence-packet"
 kind: task
-domains: [retrieval, evidence]
-queries: [retrieval.hybrid_search, retrieval.evidence_packet, evidence.sources_by_domain]
+lens: corpus
+domains: [retrieval, evidence, content]
+queries: [retrieval.search_unified, retrieval.evidence_packet, evidence.sources_by_domain, content.document_units]
 aliases: [packet, citations]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Build an evidence packet for a question
 
-Domains: [`retrieval`](../domains/retrieval.md), [`evidence`](../domains/evidence.md). Queries: [`q:retrieval.hybrid_search`](../queries/README.md), [`q:retrieval.evidence_packet`](../queries/README.md), [`q:evidence.sources_by_domain`](../queries/README.md).
+Domains: [`retrieval`](../domains/retrieval.md), [`evidence`](../domains/evidence.md), [`content`](../domains/content.md). Queries: [`q:retrieval.search_unified`](../queries/README.md), [`q:retrieval.evidence_packet`](../queries/README.md), [`q:evidence.sources_by_domain`](../queries/README.md), [`q:content.document_units`](../queries/README.md).
 
 ## Navigation
 
-`domains/retrieval.md` → `q:retrieval.hybrid_search` → `q:retrieval.evidence_packet`
+`domains/retrieval.md` → `q:retrieval.search_unified` → `q:retrieval.evidence_packet`
 
 ## Operation
 
@@ -23,13 +24,8 @@ Domains: [`retrieval`](../domains/retrieval.md), [`evidence`](../domains/evidenc
   "schemaVersion": "knowledge-read-intent.v1",
   "intentId": "packet-openai-pricing",
   "operations": [
-    {
-      "opId": "search",
-      "kind": "retrieval",
-      "query": "retrieval.hybrid_search",
-      "params": { "query_text": "OpenAI API pricing 2026", "vector_space_version_id": "0192b100-0000-7000-8000-000000000001" },
-      "limit": 20
-    },
+    { "opId": "search", "kind": "named_query", "query": "retrieval.search_unified", "params": { "query": "OpenAI API pricing 2026", "lenses": ["corpus", "evidence"], "document_types": ["pricing_page"], "limit": 20 } },
+    { "opId": "units", "kind": "named_query", "query": "content.document_units", "params": { "document_id": "$search.rows[0].document_id", "unit_kinds": ["price_row"] } },
     { "opId": "packet", "kind": "named_query", "query": "retrieval.evidence_packet", "params": { "packet_id": "0192c000-0000-7000-8000-000000000001" } }
   ]
 }
@@ -37,8 +33,8 @@ Domains: [`retrieval`](../domains/retrieval.md), [`evidence`](../domains/evidenc
 
 ## Expected shape
 
-Hybrid search rows: vector_item_id, search_projection_id, search_text, source_kind, fused_score, channel_scores. Packet JSON: packet plus members with optional start_ms/end_ms from `content.document_node`.
+Search rows: `vector_item_id`, `lens`, `source_tier`, `unit_kind`, `document_id`, `target_kind`, `snippet`, `fused_score`, `channel_scores`. Units: the typed rows (`logical_key`, `attributes`) you can cite as locators. Packet JSON: packet plus members (verified claims, guidance items, source-faithful representations) with optional start_ms/end_ms from `content.document_node`.
 
 ## Pitfalls
 
-Hybrid search needs a published space version and an executor-computed embedding (`execute: false` in the catalog). Agents pass text only. Unpublished spaces raise insufficient_privilege.
+Without an embedding `search_unified` is lexical; the executor adds the ANN channel when it embeds. Packets are built by retrieval runs, not by this read; pass an existing `packet_id`. A snippet is not a citation — cite the unit (`node_id`) or a locator.

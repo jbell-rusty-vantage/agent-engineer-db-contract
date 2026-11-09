@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: validate_chunk_projection_target
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.validate_chunk_projection_target(uuid,uuid)"]
 security: invoker
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [content.document_representation, content.representation_decision, retrieval.chunk_set, retrieval.retrieval_chunk], writes: [] }
 tokens: [retrieval, validate_chunk_projection_target, retrieval.validate_chunk_projection_target]
 defined_in: ["20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.validate_chunk_projection_target
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## validate_chunk_projection_target(uuid, uuid) → boolean
 

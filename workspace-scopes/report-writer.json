@@ -1,0 +1,120 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "report-writer",
+  "description": "Report writer mission (L4): run a budgeted loop over L1-L3, file the result as a report revision, support every assertion with locators, claims, dataset cells or decisions, and deliver it against an accepted brief. No machinery.",
+  "include": {
+    "domains": [
+      "inquiry",
+      "identity",
+      "temporal-facts",
+      "evidence",
+      "api-surface",
+      "content",
+      "guidance",
+      "retrieval"
+    ],
+    "relations": [
+      "authoring.work",
+      "authoring.work_revision",
+      "authoring.revision_block",
+      "authoring.event",
+      "authoring.command",
+      "authoring.workspace"
+    ],
+    "functions": [
+      "api.*",
+      "product.proposal_problems",
+      "product.support_counts",
+      "product.support_detail",
+      "product.dataset_commit",
+      "product.dataset_snapshot",
+      "product.dataset_edit",
+      "product.check_cell_value",
+      "product.insert_revision",
+      "util.current_tenant_id"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "knowledge_service.*",
+      "orchestration.*",
+      "util.*",
+      "curriculum.*",
+      "api.mission_progress",
+      "api.review_queue"
+    ],
+    "functions": [
+      "api.submit_intent",
+      "api.product_worker",
+      "api.hybrid_knowledge_search_history_1536",
+      "api.search_knowledge_1536"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "compare-models",
+    "price-with-locator",
+    "what-changed-since",
+    "cheapest-qualified-model",
+    "release-history",
+    "talks-on-topic",
+    "talk-passage-at-timecode",
+    "talk-to-repo-to-paper",
+    "modules-covering-concept",
+    "modules-affected-by-release",
+    "what-do-we-know-about-entity",
+    "build-evidence-packet",
+    "check-knowledge-head"
+  ],
+  "queries": [
+    "catalog.*",
+    "ours.works_authored",
+    "guidance.items",
+    "facts.*",
+    "entity.*",
+    "events.*",
+    "relationships.*",
+    "vocab.*",
+    "knowledge.head",
+    "content.*",
+    "retrieval.*",
+    "evidence.*",
+    "ranking.*"
+  ],
+  "operations": [
+    "ensure_personal_workspace",
+    "create_work",
+    "revise_work",
+    "get_revision",
+    "list_works",
+    "propose_research",
+    "accept_research",
+    "set_acceptance_state",
+    "withdraw_acceptance",
+    "deliver_output",
+    "decide_delivery",
+    "add_support",
+    "get_acceptance",
+    "get_support",
+    "get_report",
+    "trace_assertion",
+    "trace_reverse",
+    "create_dataset",
+    "edit_dataset",
+    "commit_dataset_revision",
+    "propose_dataset_change",
+    "decide_dataset_change",
+    "get_dataset",
+    "get_dataset_diff",
+    "create_watch",
+    "set_watch_state",
+    "list_watches"
+  ]
+}

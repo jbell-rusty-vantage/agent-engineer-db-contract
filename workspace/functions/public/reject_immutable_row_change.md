@@ -3,7 +3,8 @@ id: "fn:public.reject_immutable_row_change()"
 kind: function
 schema: public
 name: reject_immutable_row_change
-domain: research-starter-protected
+domain: legacy
+lens: machinery
 overloads: ["fn:public.reject_immutable_row_change()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["% rows are append-only"]
 touches: { reads: [], writes: [] }
 tokens: [public, reject_immutable_row_change, public.reject_immutable_row_change]
 defined_in: ["20260822050000_factory_ledger_safety.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # public.reject_immutable_row_change
 
-Domain `research-starter-protected`.
+Domain `legacy`, lens `machinery`.
 
 ## reject_immutable_row_change() → trigger
 

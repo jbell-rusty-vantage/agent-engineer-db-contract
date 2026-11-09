@@ -4,6 +4,7 @@ kind: function
 schema: util
 name: default_tenant_id
 domain: api-surface
+lens: machinery
 overloads: ["fn:util.default_tenant_id()"]
 security: invoker
 volatility: immutable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, default_tenant_id, util.default_tenant_id]
 defined_in: ["20260826000100_foundation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # util.default_tenant_id
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`. Used by views: [`api.works_authored`](../../relations/api/works_authored.md).
 
 ## default_tenant_id() → uuid
 

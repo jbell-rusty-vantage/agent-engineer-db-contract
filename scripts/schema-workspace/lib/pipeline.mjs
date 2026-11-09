@@ -11,9 +11,9 @@ import { validateWorkspace } from "./validate.mjs";
 
 /** Introspects the connected database into the derived IR. Caller owns the pool. */
 export async function introspectToIr(pool, config, databaseUrl) {
-  const migrationHead = await assertHeadMatches(pool, config.paths.migrations);
+  const migrationHead = await assertHeadMatches(pool, config.paths.migrations, config.paths.draftMigrations);
   const raw = await introspect(pool, config);
-  const migrationIndex = indexMigrations(config.paths.migrations);
+  const migrationIndex = indexMigrations(config.paths.migrations, ...config.paths.draftMigrations);
   const generatedTypes = indexGeneratedTypes(config.paths.generatedTypes);
   const build = {
     contract_version: config.contractVersion,
@@ -56,6 +56,7 @@ function layerCounts(files) {
     types: count((file) => file.startsWith("types/")),
     vocabularies: count((file) => file.startsWith("vocabularies/")),
     tasks: count((file) => file.startsWith("tasks/")),
+    operations: count((file) => file.startsWith("ops/")),
   };
 }
 
@@ -78,7 +79,7 @@ function manifestFor({ files, buildInfo, selection, validation, config, enrichme
     layers: { ...layerCounts(files), queries: selection.queryNames.size },
     sizes: { total_bytes: validation.total_bytes, files: validation.files, largest: validation.largest },
     budgets: config.budgets,
-    entry_points: [pages.start, pages.index, pages.relationsList, pages.queriesReadme, pages.rulesReadme],
+    entry_points: [pages.start, pages.map, pages.index, pages.relationsList, pages.queriesReadme, pages.rulesReadme],
   };
 }
 
@@ -89,7 +90,7 @@ function manifestFor({ files, buildInfo, selection, validation, config, enrichme
  */
 export async function assembleWorkspace({ ir, enrichment, selection, config, pool = null, typescriptIssues = [], introspectedAt = null }) {
   const buildInfo = buildInfoFor(ir, enrichment, config);
-  const { files, model } = renderWorkspace({ ir, enrichment, selection, buildInfo, budgets: config.budgets });
+  const { files, model } = renderWorkspace({ ir, enrichment, selection, buildInfo, budgets: config.budgets, lenses: config.lenses });
   const validation = await validateWorkspace({ files, model, config, pool, typescriptIssues });
   const manifest = manifestFor({ files, buildInfo, selection, validation, config, enrichment, introspectedAt });
   files.set(pages.fingerprint, prettyJson({

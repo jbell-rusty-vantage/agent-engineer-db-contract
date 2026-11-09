@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_structured_extraction_execution
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_structured_extraction_execution, orchestration.verification_structured_extraction_execution, tenant_id, operation_id, operation_step_id, producer_attempt_id, request_sha256, step_input_sha256, profile_artifact_id, profile_sha256, execution_artifact_id, execution_sha256, runtime_sha256, execution_mode, dirty_artifact_id, dirty_sha256, execution_created_at, bound_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_structured_extraction_execution\"][\"Row\"]"
 defined_in: ["20260906031800_verification_structured_extraction_execution.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_structured_extraction_execution
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 
@@ -63,11 +64,7 @@ Inbound: [`orchestration.verification_structured_extraction_failure`](verificati
 
 ## Triggers
 
-- `artifact_retirement_03dfe7d63ead38cf6b8b527f` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `artifact_retirement_0951a2f767de80a2cb3c8b32` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `artifact_retirement_16fbe6fa517b63b7940dff78` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `verification_structured_extraction_execution_guard` → [`orchestration.guard_verification_structured_extraction_execution`](../../functions/orchestration/guard_verification_structured_extraction_execution.md)
-- `verification_structured_extraction_execution_source_guard` → [`orchestration.guard_structured_extraction_source_custody`](../../functions/orchestration/guard_structured_extraction_source_custody.md)
+5 triggers; see [details](verification_structured_extraction_execution.details.md).
 
 ## Row-level security
 

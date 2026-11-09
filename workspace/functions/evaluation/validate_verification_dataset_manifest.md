@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: validate_verification_dataset_manifest
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.validate_verification_dataset_manifest()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [verification dataset version requires an available marked metadata-back
 touches: { reads: [], writes: [] }
 tokens: [evaluation, validate_verification_dataset_manifest, evaluation.validate_verification_dataset_manifest]
 defined_in: ["20260906019000_verification_evaluation_dataset_manifest.sql", "20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.validate_verification_dataset_manifest
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## validate_verification_dataset_manifest() → trigger
 

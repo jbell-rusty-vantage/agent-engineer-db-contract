@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: reject_vector_store_document_identity_mutation
 domain: retrieval
+lens: machinery
 overloads: ["fn:retrieval.reject_vector_store_document_identity_mutation()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [vector store document identity is immutable]
 touches: { reads: [], writes: [] }
 tokens: [retrieval, reject_vector_store_document_identity_mutation, retrieval.reject_vector_store_document_identity_mutation]
 defined_in: ["20260904013000_vector_store_document_operation_provenance.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.reject_vector_store_document_identity_mutation
 
-Domain `retrieval`.
+Domain `retrieval`, lens `machinery`.
 
 ## reject_vector_store_document_identity_mutation() → trigger
 

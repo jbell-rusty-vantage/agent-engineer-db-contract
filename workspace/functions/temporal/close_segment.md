@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: close_segment
 domain: temporal-facts
+lens: corpus
 overloads: ["fn:temporal.close_segment(uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [current segment not found]
 touches: { reads: [], writes: [temporal.segment] }
 tokens: [temporal, close_segment, temporal.close_segment]
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.close_segment
 
-Domain `temporal-facts`.
+Domain `temporal-facts`, lens `corpus`.
 
 ## close_segment(uuid) → void
 

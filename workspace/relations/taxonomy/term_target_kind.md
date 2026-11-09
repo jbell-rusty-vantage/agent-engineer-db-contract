@@ -4,6 +4,7 @@ kind: table
 schema: taxonomy
 name: term_target_kind
 domain: relationships
+lens: corpus
 aliases: []
 tokens: [taxonomy, term_target_kind, taxonomy.term_target_kind, term_id, entity_kind_code, created_at]
 summary: Restricts secondary taxonomy terms to compatible primary entity kinds.
@@ -13,11 +14,11 @@ readers: [app_reader, executor_service, pipeline_agent, service_role, verifier_a
 writers: [executor_service, service_role]
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"term_target_kind\"][\"Row\"]"
 defined_in: ["20260829192855_optimize_ai_entity_taxonomy_and_relationships.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # taxonomy.term_target_kind
 
-table in domain `relationships` — Restricts secondary taxonomy terms to compatible primary entity kinds..
+table in domain `relationships`, lens `corpus` — Restricts secondary taxonomy terms to compatible primary entity kinds..
 
 ## Columns
 

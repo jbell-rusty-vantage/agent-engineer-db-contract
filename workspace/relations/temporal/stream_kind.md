@@ -4,22 +4,23 @@ kind: table
 schema: temporal
 name: stream_kind
 domain: temporal-facts
+lens: corpus
 aliases: [stream vocabulary]
 tokens: [temporal, stream_kind, temporal.stream_kind, code, subject_mode, subject_kinds, status_values, requires_amount, unit_values, requires_ref_entity, ref_entity_kinds, payload_schema, description]
-summary: "Slot rules for a fact series (subject kinds, status values, units, payload schema)."
+summary: "Slot rules for a fact series (subject kinds, status values, units, payload schema); offering_price and benchmark_score are the one home for numbers."
 summary_basis: curated
 rls: disabled
 readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"stream_kind\"][\"Row\"]"
 defined_in: ["20260912010100_km_01_vocabularies.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.stream_kind
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
-> curated (model_assisted, unreviewed) — Slot rules for a fact series (subject kinds, status values, units, payload schema).
+> curated (model_assisted, unreviewed) — Slot rules for a fact series (subject kinds, status values, units, payload schema); offering_price and benchmark_score are the one home for numbers.
 
 ## Columns
 
@@ -33,7 +34,7 @@ table in domain `temporal-facts`.
 | 6 | `unit_values` | `text[]` | yes | — | _curated:_ Closed list when requires_amount is true. |
 | 7 | `requires_ref_entity` | `boolean` | no | `false` | — |
 | 8 | `ref_entity_kinds` | `text[]` | yes | — | — |
-| 9 | `payload_schema` | `jsonb` | no | `'{}'::jsonb` | — |
+| 9 | `payload_schema` | `jsonb` | no | `'{}'::jsonb` | _curated:_ JSON Schema for segment.payload (offering_price requires meter; tier, region, condition optional). |
 | 10 | `description` | `text` | no | — | — |
 
 ## Constraints
@@ -44,7 +45,7 @@ table in domain `temporal-facts`.
 ## Relationships
 
 Outbound: none.
-Inbound: [`temporal.event_kind`](event_kind.md).ends_stream_kind|starts_stream_kind, [`temporal.stream`](stream.md).kind.
+Inbound: [`content.unit_assertion_mapping`](../content/unit_assertion_mapping.md).stream_kind, [`temporal.event_kind`](event_kind.md).ends_stream_kind|starts_stream_kind, [`temporal.stream`](stream.md).kind.
 
 ## Indexes
 
@@ -81,8 +82,8 @@ insert: `Database["temporal"]["Tables"]["stream_kind"]["Insert"]`; row: `Databas
 Price slot rules
 
 ```bash
-knowledge db query vocab.stream_kind --param code=model_offering_price
+knowledge db query vocab.stream_kind --param code=offering_price
 ```
-requires_amount true; units include per_1m_input_tokens.
+requires_amount true; payload.meter required.
 
 Defined in: `20260912010100_km_01_vocabularies.sql`.

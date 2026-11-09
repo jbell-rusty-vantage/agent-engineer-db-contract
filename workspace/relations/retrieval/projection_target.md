@@ -4,65 +4,52 @@ kind: table
 schema: retrieval
 name: projection_target
 domain: retrieval
+lens: corpus
 aliases: [projection target]
-tokens: [retrieval, projection_target, retrieval.projection_target, id, tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, admitted_at, retired_at]
-summary: "Five-way target a search projection may point at (entity, record, chunk, claim, summary)."
+tokens: [retrieval, projection_target, retrieval.projection_target, id, tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, admitted_at, retired_at, document_node_id, digest_id, authored_revision_id, passage_id]
+summary: "What a search projection is about — exactly one of entity, guidance item, chunk, claim, summary, typed unit, digest, authored revision or private passage."
 summary_basis: curated
 rls: enabled
 readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"projection_target\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql", "20260912010800_km_08_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.projection_target
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus` — What a search projection is about: an entity card, a guidance item, a chunk, a claim, a summary, a typed unit, a digest, one of our authored revisions or a private passage. Exactly one target per row..
 
-> curated (model_assisted, unreviewed) — Five-way target a search projection may point at (entity, record, chunk, claim, summary).
+> curated (model_assisted, unreviewed) — What a search projection is about — exactly one of entity, guidance item, chunk, claim, summary, typed unit, digest, authored revision or private passage.
 
 ## Columns
 
-| # | Column | Type | Null | Default | Notes |
-| ---: | --- | --- | --- | --- | --- |
-| 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
-| 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id); unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id) |
-| 3 | `target_kind` | `text` | no | — | unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id); _curated:_ Which of entity_id, record_id, chunk_id, claim_id, summary_id is set. |
-| 4 | `entity_id` | `uuid` | yes | — | unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id); FK → [`corpus.entity`](../corpus/entity.md).id; _curated:_ Set when the projection is an entity profile. |
-| 5 | `record_id` | `uuid` | yes | — | unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id); FK → [`knowledge.record`](../knowledge/record.md).id |
-| 6 | `chunk_id` | `uuid` | yes | — | unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id); FK → [`retrieval.retrieval_chunk`](retrieval_chunk.md).id |
-| 7 | `claim_id` | `uuid` | yes | — | unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id); FK → [`evidence.claim`](../evidence/claim.md).id |
-| 8 | `summary_id` | `uuid` | yes | — | unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id); FK → [`content.document_summary`](../content/document_summary.md).id |
-| 9 | `admitted_at` | `timestamp with time zone` | no | `now()` | — |
-| 10 | `retired_at` | `timestamp with time zone` | yes | — | — |
+`id` uuid not null, `tenant_id` uuid not null, `target_kind` text not null, `entity_id` uuid, `record_id` uuid, `chunk_id` uuid, `claim_id` uuid, `summary_id` uuid, `admitted_at` timestamp with time zone not null, `retired_at` timestamp with time zone, `document_node_id` uuid, `digest_id` uuid, `authored_revision_id` uuid, `passage_id` uuid
+
+Full column table: [details](projection_target.details.md).
 
 ## Constraints
 
 - PK (id)
+- unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id)
 - unique (tenant_id, id)
-- unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id)
-- check `projection_target_check`: `(num_nonnulls(entity_id, record_id, chunk_id, claim_id, summary_id) = 1)`
-- check `projection_target_check1`: `(((target_kind = 'entity'::text) AND (entity_id IS NOT NULL)) OR ((target_kind = 'record'::text) AND (record_id IS NOT NULL)) OR ((target_k…`
-- check `projection_target_target_kind_check`: `(target_kind = ANY (ARRAY['entity'::text, 'record'::text, 'chunk'::text, 'claim'::text, 'summary'::text]))`
+- 3 check constraints; see [details](projection_target.details.md)
 
 ## Relationships
 
-Outbound: `chunk_id` → [`retrieval.retrieval_chunk`](retrieval_chunk.md)`.id` (+tenant); `claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant); `entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `record_id` → [`knowledge.record`](../knowledge/record.md)`.id` (+tenant); `summary_id` → [`content.document_summary`](../content/document_summary.md)`.id` (+tenant).
-Inbound: [`evaluation.eval_case_relevance`](../evaluation/eval_case_relevance.md).projection_target_id, [`retrieval.search_projection`](search_projection.md).projection_target_id, [`retrieval.vector_item`](vector_item.md).projection_target_id.
-Polymorphic: exactly one of `entity_id`, `record_id`, `chunk_id`, `claim_id`, `summary_id` → [`content.document_summary`](../content/document_summary.md) | [`corpus.entity`](../corpus/entity.md) | [`evidence.claim`](../evidence/claim.md) | [`knowledge.record`](../knowledge/record.md) | [`retrieval.retrieval_chunk`](retrieval_chunk.md) — basis: check constraint projection_target_check.
+13 outbound and 3 inbound foreign keys; full list in [details](projection_target.details.md).
 
 ## Indexes
 
-`projection_target_tenant_id_id_key` unique; `projection_target_tenant_id_target_kind_entity_id_record_id_key` unique
+2 indexes; see [details](projection_target.details.md).
 
 ## Triggers
 
-_None._
+0 triggers; see [details](projection_target.details.md).
 
 ## Row-level security
 
-Enabled.
-- `km_tenant_access` (ALL) for `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 2 policies in [details](projection_target.details.md).
 
 ## Grants
 
@@ -70,12 +57,13 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:retrieval.search_unified`.
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
 - Direct DML: `executor_service`, `pipeline_agent`.
-- Via functions (best effort): [`retrieval.project_entity_timeline`](../../functions/retrieval/project_entity_timeline.md).
+- Via functions (best effort): [`retrieval.index_text_item`](../../functions/retrieval/index_text_item.md), [`retrieval.project_entity_timeline`](../../functions/retrieval/project_entity_timeline.md).
 
 ## TypeScript
 
@@ -83,11 +71,11 @@ insert: `Database["retrieval"]["Tables"]["projection_target"]["Insert"]`; row: `
 
 ## Examples
 
-Hybrid search ranks items that point at targets
+Search results carry target_kind and target_id
 
 ```bash
-knowledge db query retrieval.hybrid_search --param filters={} --param limit=20 --param query_text=OpenAI API pricing 2026 --param vector_space_version_id=0192b100-0000-7000-8000-000000000001
+knowledge db query retrieval.search_unified --param lenses=["corpus"] --param limit=20 --param query=pricing
 ```
-Follow search_projection.projection_target_id to this row.
+target_kind passage rows resolve to library.passage; unit rows to content.document_node.
 
 Defined in: `20260903010100_knowledge_retrieval_contract.sql`, `20260912010800_km_08_retrieval.sql`.

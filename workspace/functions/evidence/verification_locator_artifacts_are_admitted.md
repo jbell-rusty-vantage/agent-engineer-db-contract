@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: verification_locator_artifacts_are_admitted
 domain: evidence
+lens: evidence
 overloads: ["fn:evidence.verification_locator_artifacts_are_admitted(uuid,uuid,uuid)"]
 security: invoker
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [evidence.source_capture, orchestration.artifact_lineage, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [evidence, verification_locator_artifacts_are_admitted, evidence.verification_locator_artifacts_are_admitted]
 defined_in: ["20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.verification_locator_artifacts_are_admitted
 
-Domain `evidence`.
+Domain `evidence`, lens `evidence`.
 
 ## verification_locator_artifacts_are_admitted(uuid, uuid, uuid) → boolean
 

@@ -23,11 +23,10 @@
       "path": "src",
       "kind": "module",
       "state": "implemented",
-      "summary": "Type-only Database/API/pre-research exports and provenance constants/helpers.",
+      "summary": "Type-only Database export plus the api view/function row types (L1 catalog views, L2/L3 functions).",
       "entrypoints": [
         "src/index.ts",
-        "src/api.ts",
-        "src/pre-research.ts"
+        "src/api.ts"
       ],
       "interface": [
         "Package exports for pinned database consumers."

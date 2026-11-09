@@ -15,7 +15,7 @@ Paths below are repository-relative. Use the task routes, then search the module
 
 | Module | Source | Responsibility | State |
 |---|---|---|---|
-| [type-contract](#type-contract) | src | Type-only Database/API/pre-research exports and provenance constants/helpers. | implemented |
+| [type-contract](#type-contract) | src | Type-only Database export plus the api view/function row types (L1 catalog views, L2/L3 functions). | implemented |
 | [schema](#schema) | supabase | Shared Supabase configuration and ordered migration authority. | implemented |
 | [type-generation](#type-generation) | scripts | Supabase/native type generation and drift checking. | implemented |
 | [reset-guard](#reset-guard) | scripts | Allows reset only for explicitly disposable databases. | implemented |
@@ -26,12 +26,12 @@ Paths below are repository-relative. Use the task routes, then search the module
 
 **src** · module · implemented
 
-Type-only Database/API/pre-research exports and provenance constants/helpers.
+Type-only Database export plus the api view/function row types (L1 catalog views, L2/L3 functions).
 
-**Enter:** [`src/index.ts`](../../src/index.ts), [`src/api.ts`](../../src/api.ts), [`src/pre-research.ts`](../../src/pre-research.ts)
+**Enter:** [`src/index.ts`](../../src/index.ts), [`src/api.ts`](../../src/api.ts)
 **Interface:** Package exports for pinned database consumers.
 **Package:** @aiengineer/database-contract ([`package.json`](../../package.json))
-**Export subpaths:** ., ./api, ./pre-research, ./provenance, ./reports. Declared metadata; build outputs are not read.
+**Export subpaths:** ., ./api. Declared metadata; build outputs are not read.
 **Declared internal package dependencies:** none declared
 **Other runtime dependencies:** none declared
 **Reviewed runtime/data relationships:** none declared

@@ -4,6 +4,7 @@ kind: view
 schema: api
 name: current_relationships
 domain: api-surface
+lens: corpus
 aliases: [current relationships view]
 tokens: [api, current_relationships, api.current_relationships, id, tenant_id, kind, from_entity_id, to_entity_id, qualifier, episode, properties, primary_claim_id, k_from, k_to, created_at]
 summary: "Current relationships, hiding inactive temporal edges."
@@ -13,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"current_relationships\"][\"Row\"]"
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.current_relationships
 
-view in domain `api-surface`.
+view in domain `api-surface`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Current relationships, hiding inactive temporal edges.
 

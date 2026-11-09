@@ -1,7 +1,7 @@
 {
   "format": "ai-engineer-schema-scope/1",
   "id": "db-aware-research",
-  "description": "Read-side exploration for research planning and ingestion authoring: identities, relationships, two-clock facts, evidence, staging, and the api surface. Includes report packages, structure, evidence bindings, coverage and post-seal lifecycle navigation.",
+  "description": "Read-side exploration for research planning and ingestion authoring: identities, relationships, two-clock facts, evidence, staging, and the api surface (L1 views, L2 time, L3 search).",
   "include": {
     "domains": [
       "identity",
@@ -9,7 +9,8 @@
       "temporal-facts",
       "evidence",
       "staging",
-      "api-surface"
+      "api-surface",
+      "guidance"
     ],
     "relations": [
       "orchestration.operation_intent",
@@ -18,13 +19,14 @@
       "orchestration.artifact_type",
       "orchestration.intent_type",
       "knowledge_service.operation",
-      "research.report*"
+      "content.document",
+      "content.document_node",
+      "content.unit_kind"
     ],
     "functions": [
       "temporal.*",
       "api.*",
-      "util.current_tenant_id",
-      "research.guard_report*"
+      "util.current_tenant_id"
     ]
   },
   "exclude": {
@@ -34,6 +36,10 @@
       "observability.*",
       "evidence.verification_*",
       "orchestration.verification_*"
+    ],
+    "functions": [
+      "api.product_*",
+      "api.submit_intent"
     ]
   },
   "closure": {
@@ -52,15 +58,15 @@
     "admit-support-for-claim",
     "stage-uncertain-candidate",
     "what-changed-since-head",
+    "what-changed-since",
     "check-knowledge-head",
-    "publish-report",
     "build-evidence-packet",
     "run-hybrid-search",
     "find-stale-facts",
     "compose-ingestion-intent",
     "verify-ingestion-result",
-    "navigate-report",
-    "register-report"
+    "compare-models",
+    "price-with-locator"
   ],
   "queries": [
     "entity.*",
@@ -74,6 +80,9 @@
     "knowledge.head",
     "artifacts.*",
     "retrieval.*",
-    "reports.*"
-  ]
+    "catalog.*",
+    "guidance.items",
+    "content.*"
+  ],
+  "operations": []
 }

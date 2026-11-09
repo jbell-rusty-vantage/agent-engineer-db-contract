@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: publish_vector_space
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.publish_vector_space(uuid,text,text,text,text)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [guarded publication digest changed, publication must exist and be appro
 touches: { reads: [retrieval.content_promotion_decision], writes: [retrieval.publication_switch_receipt, retrieval.space_publication, retrieval.vector_space_version, retrieval.vector_store_space] }
 tokens: [retrieval, publish_vector_space, retrieval.publish_vector_space]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.publish_vector_space
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## publish_vector_space(uuid, text, text, text, text) → uuid
 

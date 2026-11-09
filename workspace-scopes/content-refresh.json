@@ -1,0 +1,74 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "content-refresh",
+  "description": "Content refresh mission: fetch ledger, refresh checks, typed units, unit diffs, digests and the fact changes they drive; evidence captures and the acquisition axis. No product or machinery pages.",
+  "include": {
+    "domains": [
+      "acquisition",
+      "content",
+      "temporal-facts"
+    ],
+    "relations": [
+      "evidence.source",
+      "evidence.source_capture",
+      "evidence.locator",
+      "evidence.extraction_record",
+      "catalog.entity",
+      "catalog.work",
+      "taxonomy.entity_kind"
+    ],
+    "functions": [
+      "api.changes_since",
+      "api.document_units",
+      "api.document_digest",
+      "api.talk_segments",
+      "api.fact_locators",
+      "api.summary_evidence",
+      "content.*",
+      "util.current_tenant_id"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "knowledge_service.*",
+      "orchestration.*",
+      "util.*",
+      "curriculum.*",
+      "api.mission_progress",
+      "api.review_queue",
+      "content.conversion_*"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "what-changed-since",
+    "release-history",
+    "find-stale-facts",
+    "talk-passage-at-timecode",
+    "price-with-locator"
+  ],
+  "queries": [
+    "content.*",
+    "acquisition.*",
+    "facts.changes_since",
+    "facts.locators",
+    "facts.current_by_stream",
+    "facts.price_history",
+    "vocab.unit_kind",
+    "vocab.stream_kind",
+    "evidence.captures_for_source",
+    "evidence.sources_by_domain",
+    "knowledge.head"
+  ],
+  "operations": [
+    "restrict_source",
+    "index_passages"
+  ]
+}

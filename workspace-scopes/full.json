@@ -1,25 +1,54 @@
 {
   "format": "ai-engineer-schema-scope/1",
   "id": "full",
-  "description": "Every relation, function, task, and query; equivalent to the committed workspace but packaged as a bundle.",
-  "include": { "relations": ["*"], "functions": ["*"] },
+  "description": "Every relation, function, operation, task, and query; equivalent to the committed workspace but packaged as a bundle.",
+  "include": {
+    "relations": [
+      "*"
+    ],
+    "functions": [
+      "*"
+    ]
+  },
   "exclude": {},
-  "closure": { "fk_targets": "stub", "vocabularies": "full", "functions_touching_included": "summary" },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
   "tasks": [
     "admit-support-for-claim",
     "assert-relationship",
     "build-evidence-packet",
+    "cheapest-qualified-model",
     "check-knowledge-head",
+    "compare-models",
+    "compose-ingestion-intent",
     "find-entity-by-identifier",
-    "publish-report",
+    "find-stale-facts",
+    "modules-affected-by-release",
+    "modules-covering-concept",
+    "price-with-locator",
     "record-availability-change",
     "record-price-change",
+    "release-history",
     "resolve-or-create-entity",
     "run-hybrid-search",
+    "search-my-notes",
     "stage-uncertain-candidate",
     "supersede-stale-fact",
+    "talk-passage-at-timecode",
+    "talk-to-repo-to-paper",
+    "talks-on-topic",
+    "verify-ingestion-result",
+    "what-changed-since",
     "what-changed-since-head",
     "what-do-we-know-about-entity"
   ],
-  "queries": ["*"]
+  "queries": [
+    "*"
+  ],
+  "operations": [
+    "*"
+  ]
 }

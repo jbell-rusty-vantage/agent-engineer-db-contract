@@ -4,20 +4,21 @@ kind: table
 schema: retrieval
 name: vector_space_version
 domain: retrieval
+lens: corpus
 aliases: [space version]
 tokens: [retrieval, vector_space_version, retrieval.vector_space_version, id, vector_space_id, version, embedding_model, dims, projection_procedure_id, backend, promotion_gate_eval_id, promoted, created_at, tenant_id, precision, distance_operator, normalization, index_configuration, provider_routing_policy, publication_lifecycle, publication_decision_id]
 summary: "Immutable version of a vector space, including dims and publication lifecycle."
 summary_basis: curated
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_space_version\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.vector_space_version
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Immutable version of a vector space, including dims and publication lifecycle.
 
@@ -29,7 +30,7 @@ table in domain `retrieval`.
 | 2 | `vector_space_id` | `uuid` | no | — | unique (vector_space_id, version); FK → [`retrieval.vector_space`](vector_space.md).id |
 | 3 | `version` | `integer` | no | — | unique (vector_space_id, version) |
 | 4 | `embedding_model` | `text` | no | — | — |
-| 5 | `dims` | `integer` | no | — | _curated:_ Embedding width; hybrid_knowledge_search_1536 requires 1536. |
+| 5 | `dims` | `integer` | no | — | _curated:_ Embedding width; the 1536 partitions hold the vectors. |
 | 6 | `projection_procedure_id` | `uuid` | yes | — | FK → [`retrieval.projection_procedure`](projection_procedure.md).id |
 | 7 | `backend` | `retrieval.backend_kind` | no | — | — |
 | 8 | `promotion_gate_eval_id` | `uuid` | yes | — | FK → [`evaluation.eval_run`](../evaluation/eval_run.md).id |
@@ -62,7 +63,7 @@ Polymorphic target of: [`evaluation.eval_run`](../evaluation/eval_run.md) (check
 
 ## Indexes
 
-`vector_space_version_tenant_id_uq` unique; `vector_space_version_vector_space_id_version_key` unique
+2 indexes; see [details](vector_space_version.details.md).
 
 ## Triggers
 
@@ -70,17 +71,16 @@ _None._
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](vector_space_version.details.md).
 
 ## Grants
 
-`executor_service`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: SELECT; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
 
 ## Read paths
 
-- Named queries: `q:retrieval.hybrid_search`.
-- Direct SELECT: `executor_service`.
+- Named queries: `q:retrieval.hybrid_search`, `q:retrieval.search_unified`.
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
@@ -93,11 +93,11 @@ insert: `Database["retrieval"]["Tables"]["vector_space_version"]["Insert"]`; row
 
 ## Examples
 
-Search a version id
+Legacy per-version search
 
 ```bash
 knowledge db query retrieval.hybrid_search --param filters={} --param limit=20 --param query_text=OpenAI API pricing 2026 --param vector_space_version_id=0192b100-0000-7000-8000-000000000001
 ```
-Pass this table's id, not vector_space.id.
+Pass this table's id, not vector_space.id; prefer retrieval.search_unified.
 
 Defined in: `20260826001000_retrieval.sql`.

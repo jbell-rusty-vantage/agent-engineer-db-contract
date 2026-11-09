@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: validate_verification_artifact_consumer
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.validate_verification_artifact_consumer()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["verification artifact consumer trigger attached to unsupported table %
 touches: { reads: [], writes: [] }
 tokens: [evaluation, validate_verification_artifact_consumer, evaluation.validate_verification_artifact_consumer]
 defined_in: ["20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.validate_verification_artifact_consumer
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## validate_verification_artifact_consumer() → trigger
 

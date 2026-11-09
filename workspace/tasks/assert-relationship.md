@@ -1,12 +1,13 @@
 ---
 id: "task:assert-relationship"
 kind: task
+lens: corpus
 domains: [relationships]
 queries: [vocab.relationship_kind, entity.relationships, relationships.current_by_kind]
 aliases: [link, graph edge]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Assert a relationship
 
@@ -44,7 +45,7 @@ Domains: [`relationships`](../domains/relationships.md). Queries: [`q:vocab.rela
 
 ## Expected shape
 
-One `corpus.relationship` with k_to null. Temporal kinds also get a `temporal.stream_kind:relationship_active` segment. `q:entity.relationships` returns the row when direction includes the endpoint.
+One `catalog.relationship` with k_to null. Temporal kinds also get a `temporal.stream_kind:relationship_active` segment. `q:entity.relationships` returns the row when direction includes the endpoint; the L1 views fold it into a column (`api.model_offerings.model`).
 
 ## Pitfalls
 

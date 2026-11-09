@@ -4,20 +4,21 @@ kind: view
 schema: api
 name: current_facts
 domain: api-surface
+lens: corpus
 aliases: [current facts view]
-tokens: [api, current_facts, api.current_facts, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, specification_id, stream_kind, subject_entity_id, subject_relationship_id, scope_key]
+tokens: [api, current_facts, api.current_facts, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, stream_kind, subject_entity_id, subject_relationship_id, scope_key]
 summary: Current segments whose valid_during contains now().
 summary_basis: curated
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"current_facts\"][\"Row\"]"
-defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+defined_in: ["20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.current_facts
 
-view in domain `api-surface`.
+view in domain `api-surface`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Current segments whose valid_during contains now().
 
@@ -44,11 +45,10 @@ view in domain `api-surface`.
 | 17 | `k_from` | `bigint` | yes | — | — |
 | 18 | `k_to` | `bigint` | yes | — | _curated:_ Always null in this view. |
 | 19 | `created_at` | `timestamp with time zone` | yes | — | — |
-| 20 | `specification_id` | `uuid` | yes | — | — |
-| 21 | `stream_kind` | `text` | yes | — | _curated:_ Copied from temporal.stream.kind. |
-| 22 | `subject_entity_id` | `uuid` | yes | — | — |
-| 23 | `subject_relationship_id` | `uuid` | yes | — | — |
-| 24 | `scope_key` | `text` | yes | — | — |
+| 20 | `stream_kind` | `text` | yes | — | _curated:_ Copied from temporal.stream.kind. |
+| 21 | `subject_entity_id` | `uuid` | yes | — | — |
+| 22 | `subject_relationship_id` | `uuid` | yes | — | — |
+| 23 | `scope_key` | `text` | yes | — | — |
 
 ## Constraints
 
@@ -97,8 +97,8 @@ row: `Database["api"]["Views"]["current_facts"]["Row"]`
 Current prices
 
 ```bash
-knowledge db query facts.current_by_stream --param entity_id=null --param limit=50 --param stream_kind=model_offering_price
+knowledge db query facts.current_by_stream --param entity_id=null --param limit=50 --param stream_kind=offering_price
 ```
-Historical prices need entity.at.
+Historical prices need entity.at or facts.price_history.
 
-Defined in: `20260912011000_km_10_api.sql`.
+Defined in: `20260912011000_km_10_api.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `part1_renames.sql`.

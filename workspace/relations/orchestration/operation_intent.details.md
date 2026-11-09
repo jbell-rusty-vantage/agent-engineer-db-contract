@@ -4,7 +4,7 @@ kind: details
 schema: orchestration
 name: operation_intent
 of: "rel:orchestration.operation_intent"
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.operation_intent — details
 
@@ -13,7 +13,7 @@ Spill-over from [the main page](operation_intent.md).
 ## Relationships
 
 Outbound: `intent_type` → [`orchestration.intent_type`](intent_type.md)`.code`; `mission_id` → [`orchestration.mission`](mission.md)`.id` on delete set null; `proposed_by_attempt` → [`orchestration.attempt`](attempt.md)`.id`.
-Inbound: [`evaluation.review_task`](../evaluation/review_task.md).operation_intent_id, [`orchestration.operation_receipt`](operation_receipt.md).intent_id, [`research.report_v2_ingestion`](../research/report_v2_ingestion.md).intent_id.
+Inbound: [`evaluation.review_task`](../evaluation/review_task.md).operation_intent_id, [`orchestration.operation_receipt`](operation_receipt.md).intent_id.
 Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject).
 
 ## Indexes

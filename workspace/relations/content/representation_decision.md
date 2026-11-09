@@ -4,6 +4,7 @@ kind: table
 schema: content
 name: representation_decision
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, representation_decision, content.representation_decision, id, tenant_id, representation_id, conversion_evaluation_id, guarded_sha256, decision, reviewer_identity, policy_version, rationale, expires_at, created_at, knowledge_review_decision_id, decision_operation_id, legacy_provenance]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"representation_decision\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.representation_decision
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 

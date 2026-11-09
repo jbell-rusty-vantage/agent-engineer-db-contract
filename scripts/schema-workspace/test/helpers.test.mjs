@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { canonical, canonicalJson, digest } from "../lib/canonical.mjs";
 import { pgArray, rowCountClass } from "../lib/ir/pg-values.mjs";
 import { extractRaises, extractTouches, parseArguments } from "../lib/ir/function-body.mjs";
+import { extractCaseBranches, tokenizeBody } from "../lib/ir/case-branches.mjs";
 import { functionQualifiedName, idTail, isPolymorphicTarget, polymorphicTargetIds } from "../lib/ir/ids.mjs";
 import { isViewKind } from "../lib/render/model.mjs";
 import { foldTenantScopedForeignKeys } from "../lib/render/relation-page.mjs";
@@ -48,18 +49,44 @@ test("extractRaises prefers message = literal and unescapes quotes", () => {
 
 test("extractTouches separates writes, reads, and calls", () => {
   const body = `
-    insert into corpus.entity (id) select id from staging.candidate;
+    insert into catalog.entity (id) select id from staging.candidate;
     perform util.current_tenant_id();
     select util.some_value;`;
   const known = {
-    relationNames: ["corpus.entity", "staging.candidate", "corpus.entity_alias"],
+    relationNames: ["catalog.entity", "staging.candidate", "catalog.entity_alias"],
     functionNames: ["util.current_tenant_id", "util.some_value"],
   };
   assert.deepEqual(extractTouches(body, known), {
     reads: ["staging.candidate"],
-    writes: ["corpus.entity"],
+    writes: ["catalog.entity"],
     calls: ["util.current_tenant_id"],
   });
+});
+
+test("extractCaseBranches splits a dispatcher body into top-level arms and skips nested case/if/else", () => {
+  const body = `
+    declare x int;
+    begin
+      case op
+      when 'create_work' then
+        insert into authoring.work (id) values (1); -- when 'nope' then
+        if pl ? 'x' then x := 1; else x := 2; end if;
+        return jsonb_build_object('k', case when x = 1 then 'ours' else 'private' end);
+      when 'get_revision', 'get_rev' then
+        select * from authoring.work_revision where id = (pl ->> 'id')::uuid;
+        for r in select 1 loop null; end loop;
+      else
+        return product.dispatch_research_command(op);
+      end case;
+    end`;
+  const parsed = extractCaseBranches(body);
+  assert.equal(parsed.variable, "op");
+  assert.deepEqual(parsed.branches.map((branch) => branch.operations), [["create_work"], ["get_revision", "get_rev"]]);
+  assert.match(parsed.branches[0].text, /insert into authoring\.work/);
+  assert.ok(!parsed.branches[0].text.includes("authoring.work_revision"));
+  assert.match(parsed.fallthrough, /dispatch_research_command/);
+  assert.equal(extractCaseBranches("begin return 1; end"), null);
+  assert.deepEqual(tokenizeBody("a 'it''s' -- c\n b").map((token) => token.value), ["a", "it's", "b"]);
 });
 
 test("parseArguments handles modes, defaults, and unnamed multi-word types", () => {
@@ -73,8 +100,8 @@ test("parseArguments handles modes, defaults, and unnamed multi-word types", () 
 });
 
 test("foldTenantScopedForeignKeys folds the tenant twin into the plain edge without mutating input", () => {
-  const plain = { to: "corpus.entity", columns: ["entity_id"] };
-  const twin = { to: "corpus.entity", columns: ["tenant_id", "entity_id"] };
+  const plain = { to: "catalog.entity", columns: ["entity_id"] };
+  const twin = { to: "catalog.entity", columns: ["tenant_id", "entity_id"] };
   const lone = { to: "orchestration.mission", columns: ["tenant_id", "mission_id"] };
   const folded = foldTenantScopedForeignKeys([plain, twin, lone]);
   assert.deepEqual(folded, [
@@ -85,8 +112,9 @@ test("foldTenantScopedForeignKeys folds the tenant twin into the plain edge with
 });
 
 test("idTail and functionQualifiedName strip IR prefixes", () => {
-  assert.equal(idTail("rel:corpus.entity"), "corpus.entity");
-  assert.equal(idTail("voc:knowledge.entity_kind"), "knowledge.entity_kind");
+  assert.equal(idTail("rel:catalog.entity"), "catalog.entity");
+  assert.equal(idTail("voc:taxonomy.entity_kind"), "taxonomy.entity_kind");
+  assert.equal(idTail("op:create_work"), "create_work");
   assert.equal(functionQualifiedName("fn:temporal.begin_batch(uuid,text)"), "temporal.begin_batch");
 });
 
@@ -104,8 +132,8 @@ test("isViewKind covers views and materialized views only", () => {
 });
 
 test("matchesAny treats * as a glob and dots as literals", () => {
-  assert.equal(matchesAny("corpus.entity", ["corpus.*"]), true);
-  assert.equal(matchesAny("corpus_entity", ["corpus.*"]), false);
+  assert.equal(matchesAny("catalog.entity", ["catalog.*"]), true);
+  assert.equal(matchesAny("catalog_entity", ["catalog.*"]), false);
   assert.equal(matchesAny("list_claims", ["list_*", "get_*"]), true);
   assert.equal(matchesAny("other", []), false);
 });

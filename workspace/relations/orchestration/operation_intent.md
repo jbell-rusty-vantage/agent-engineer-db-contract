@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: operation_intent
 domain: orchestration-ledger
+lens: machinery
 aliases: [intent]
 tokens: [orchestration, operation_intent, orchestration.operation_intent, id, tenant_id, intent_type, schema_version, payload, preconditions, idempotency_key, proposed_by_attempt, mission_id, approval_state, policy_decision, created_at, origin_digest, origin_kind, mc_mission_id, mc_run_id, mc_activation_id, mc_operation_id, mc_operation_attempt, mc_execution_generation, mc_lane]
 summary: Durable proposed operation with unique idempotency_key.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, pipeline_agent, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_intent\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.operation_intent
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 > curated (model_assisted, unreviewed) — Durable proposed operation with unique idempotency_key.
 
@@ -62,7 +63,7 @@ table in domain `orchestration-ledger`.
 
 ## Relationships
 
-3 outbound and 3 inbound foreign keys; full list in [details](operation_intent.details.md).
+3 outbound and 2 inbound foreign keys; full list in [details](operation_intent.details.md).
 
 ## Indexes
 

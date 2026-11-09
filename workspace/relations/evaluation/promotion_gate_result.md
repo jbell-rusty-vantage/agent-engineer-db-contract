@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: promotion_gate_result
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, promotion_gate_result, evaluation.promotion_gate_result, id, tenant_id, gate_version_id, eval_run_id, passed, false_acceptance_count, observations, result_sha256, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: []
 writers: []
 typescript: "Database[\"evaluation\"][\"Tables\"][\"promotion_gate_result\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.promotion_gate_result
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

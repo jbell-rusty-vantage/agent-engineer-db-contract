@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: eval_dataset_version
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, eval_dataset_version, evaluation.eval_dataset_version, id, tenant_id, dataset_id, version, manifest_sha256, manifest, created_at, contract_version, manifest_artifact_id, frozen_at, label_provenance, case_count]
 summary: Immutable dataset version; verification.v1 rows require a frozen artifact-backed manifest and explicit label provenance.
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"eval_dataset_version\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.eval_dataset_version
 
-table in domain `evaluation` — Immutable dataset version; verification.v1 rows require a frozen artifact-backed manifest and explicit label provenance..
+table in domain `evaluation`, lens `machinery` — Immutable dataset version; verification.v1 rows require a frozen artifact-backed manifest and explicit label provenance..
 
 ## Columns
 

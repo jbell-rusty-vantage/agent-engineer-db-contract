@@ -4,22 +4,23 @@ kind: table
 schema: evidence
 name: source_capture
 domain: evidence
+lens: evidence
 aliases: [capture]
-tokens: [evidence, source_capture, evidence.source_capture, id, tenant_id, source_id, artifact_id, content_sha256, media_type, captured_at, capture_method, capture_method_version, request_url, http_status, http_headers, context, produced_by_attempt_id, knowledge_operation_id]
-summary: "One immutable capture of a source, hashed and stored as an artifact."
+tokens: [evidence, source_capture, evidence.source_capture, id, tenant_id, source_id, artifact_id, content_sha256, media_type, captured_at, capture_method, capture_method_version, request_url, http_status, http_headers, context, produced_by_attempt_id, knowledge_operation_id, acquisition_fetch_id]
+summary: "One immutable capture of a source, hashed and stored as an artifact; points at the acquisition fetch that produced it."
 summary_basis: curated
 rls: enabled
 readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_capture\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.source_capture
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
-> curated (model_assisted, unreviewed) — One immutable capture of a source, hashed and stored as an artifact.
+> curated (model_assisted, unreviewed) — One immutable capture of a source, hashed and stored as an artifact; points at the acquisition fetch that produced it.
 
 ## Columns
 
@@ -40,34 +41,30 @@ table in domain `evidence`.
 | 13 | `context` | `jsonb` | no | `'{}'::jsonb` | — |
 | 14 | `produced_by_attempt_id` | `uuid` | yes | — | FK → [`orchestration.attempt`](../orchestration/attempt.md).id |
 | 15 | `knowledge_operation_id` | `uuid` | yes | — | Standalone knowledge-service producer. Mutually exclusive with produced_by_attempt_id; Mission Control operations retain attempt lineage through knowledge_service.operation. |
+| 16 | `acquisition_fetch_id` | `uuid` | yes | — | FK → [`acquisition.fetch`](../acquisition/fetch.md).id; Producer when the bytes came from a product/harness fetch (acquisition.fetch) rather than a mission attempt or a KS operation.; _curated:_ Producer when the bytes came from a product/harness fetch (acquisition.fetch) rather than a mission attempt or a KS operation. |
 
 ## Constraints
 
 - PK (id)
 - unique (tenant_id, id)
 - check `source_capture_content_sha256_check`: `(content_sha256 ~ '^[0-9a-f]{64}$'::text)`
-- check `source_capture_exactly_one_producer_ck`: `(num_nonnulls(produced_by_attempt_id, knowledge_operation_id) = 1)`
+- check `source_capture_exactly_one_producer_ck`: `(num_nonnulls(produced_by_attempt_id, knowledge_operation_id, acquisition_fetch_id) = 1)`
 
 ## Relationships
 
-Outbound: `artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.id` (+tenant); `capture_method` → [`evidence.capture_method`](capture_method.md)`.code`; `tenant_id,knowledge_operation_id` → [`knowledge_service.operation`](../knowledge_service/operation.md)`.tenant_id,id` on delete restrict; `produced_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.id` (+tenant); `source_id` → [`evidence.source`](source.md)`.id` (+tenant).
-Inbound: [`content.document_version_source_capture`](../content/document_version_source_capture.md).source_capture_id, [`content.transformation_input`](../content/transformation_input.md).source_capture_id, [`corpus.repository_file`](../corpus/repository_file.md).capture_id, [`corpus.repository_revision`](../corpus/repository_revision.md).capture_id, [`evaluation.eval_case_provenance`](../evaluation/eval_case_provenance.md).source_capture_id, [`evidence.locator`](locator.md).capture_id, [`evidence.source`](source.md).last_capture_id, [`evidence.source_encounter`](source_encounter.md).capture_id, [`orchestration.verification_structured_extraction`](../orchestration/verification_structured_extraction.md).capture_id.
+9 outbound and 15 inbound foreign keys; full list in [details](source_capture.details.md).
 
 ## Indexes
 
-`source_capture_artifact_uq` unique; `source_capture_knowledge_operation_idx` where `(knowledge_operation_id IS NOT NULL)`; `source_capture_sha_idx`; `source_capture_source_idx`; `source_capture_tenant_id_uq` unique
+5 indexes; see [details](source_capture.details.md).
 
 ## Triggers
 
-- `artifact_retirement_c08714869d5afff48b340d4a` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `artifact_retirement_f3374d238fdcd1b81b8410c2` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `source_capture_artifact_binding` → [`evidence.validate_capture_artifact`](../../functions/evidence/validate_capture_artifact.md)
-- `source_capture_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+4 triggers; see [details](source_capture.details.md).
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](source_capture.details.md).
 
 ## Grants
 
@@ -75,7 +72,7 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:evidence.captures_for_source`.
+- Named queries: `q:evidence.captures_for_source`, `q:facts.locators`.
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

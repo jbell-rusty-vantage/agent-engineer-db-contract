@@ -4,8 +4,9 @@ kind: table
 schema: evaluation
 name: eval_run
 domain: evaluation
+lens: machinery
 aliases: []
-tokens: [evaluation, eval_run, evaluation.eval_run, id, tenant_id, dataset_id, grader_version_id, capability_version_id, space_version_id, ranking_policy_version_id, metric_definition_version_id, target_code_ref, target_kind, config, code_ref, executed_at, verification_contract_version, dataset_version_id, experiment_arm_id, mission_id, work_item_id, attempt_id, run_manifest_artifact_id, policy_artifact_id, status, started_at, ended_at]
+tokens: [evaluation, eval_run, evaluation.eval_run, id, tenant_id, dataset_id, grader_version_id, capability_version_id, space_version_id, target_code_ref, config, code_ref, executed_at, verification_contract_version, dataset_version_id, experiment_arm_id, mission_id, work_item_id, attempt_id, run_manifest_artifact_id, policy_artifact_id, status, started_at, ended_at, target_kind]
 summary: null
 summary_basis: none
 rls: enabled
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"eval_run\"][\"Row\"]"
 defined_in: ["20260826001100_evaluation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.eval_run
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 
@@ -29,10 +30,7 @@ table in domain `evaluation`.
 | 4 | `grader_version_id` | `uuid` | yes | — | FK → [`evaluation.grader_version`](grader_version.md).id |
 | 5 | `capability_version_id` | `uuid` | yes | — | FK → [`orchestration.capability_version`](../orchestration/capability_version.md).id |
 | 6 | `space_version_id` | `uuid` | yes | — | FK → [`retrieval.vector_space_version`](../retrieval/vector_space_version.md).id |
-| 7 | `ranking_policy_version_id` | `uuid` | yes | — | FK → [`ranking.ranking_policy_version`](../ranking/ranking_policy_version.md).id |
-| 8 | `metric_definition_version_id` | `uuid` | yes | — | FK → [`ranking.metric_definition_version`](../ranking/metric_definition_version.md).id |
 | 9 | `target_code_ref` | `text` | yes | — | — |
-| 10 | `target_kind` | `text` | yes | — | generated: ` CASE     WHEN (capability_version_id IS NOT NULL) THEN 'capability_version'::text     WHEN (space_version_id IS NOT NULL) THEN 'vector_space_version'::text     WHEN (ranking_policy_version_id IS NOT NULL) THEN 'ranking_policy_version'::text     WHEN (metric_definition_version_id IS NOT NULL) THEN 'metric_definition_version'::text     WHEN (target_code_ref IS NOT NULL) THEN 'code_ref'::text     ELSE NULL::text END` |
 | 11 | `config` | `jsonb` | no | `'{}'::jsonb` | — |
 | 12 | `code_ref` | `text` | yes | — | — |
 | 13 | `executed_at` | `timestamp with time zone` | no | `now()` | — |
@@ -47,23 +45,24 @@ table in domain `evaluation`.
 | 22 | `status` | `text` | yes | — | — |
 | 23 | `started_at` | `timestamp with time zone` | yes | — | — |
 | 24 | `ended_at` | `timestamp with time zone` | yes | — | — |
+| 25 | `target_kind` | `text` | yes | — | generated: ` CASE     WHEN (capability_version_id IS NOT NULL) THEN 'capability_version'::text     WHEN (space_version_id IS NOT NULL) THEN 'vector_space_version'::text     WHEN (target_code_ref IS NOT NULL) THEN 'code_ref'::text     ELSE NULL::text END` |
 
 ## Constraints
 
 - PK (id)
 - unique (tenant_id, id)
-- check `eval_run_exactly_one_target`: `(num_nonnulls(capability_version_id, space_version_id, ranking_policy_version_id, metric_definition_version_id, target_code_ref) = 1)`
+- check `eval_run_exactly_one_target`: `(num_nonnulls(capability_version_id, space_version_id, target_code_ref) = 1)`
 - check `eval_run_status_check`: `((status IS NULL) OR (status = ANY (ARRAY['running'::text, 'succeeded'::text, 'failed'::text, 'review'::text, 'abstained'::text, 'cancelled…`
 - check `eval_run_verification_binding_ck`: `((verification_contract_version IS NULL) OR ((dataset_version_id IS NOT NULL) AND (experiment_arm_id IS NOT NULL) AND (attempt_id IS NOT NU…`
 - check `eval_run_verification_contract_version_check`: `((verification_contract_version IS NULL) OR (verification_contract_version = 'verification.v1'::text))`
 
 ## Relationships
 
-13 outbound and 12 inbound foreign keys; full list in [details](eval_run.details.md).
+11 outbound and 11 inbound foreign keys; full list in [details](eval_run.details.md).
 
 ## Indexes
 
-3 indexes; see [details](eval_run.details.md).
+2 indexes; see [details](eval_run.details.md).
 
 ## Triggers
 

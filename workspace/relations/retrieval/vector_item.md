@@ -4,77 +4,43 @@ kind: table
 schema: retrieval
 name: vector_item
 domain: retrieval
-aliases: [vector item]
-tokens: [retrieval, vector_item, retrieval.vector_item, id, tenant_id, space_version_id, source_version_hash, content_sha256, chunk_index, backend_location, generation_run_id, receipt_id, verification_state, superseded_by_id, created_at, search_projection_id, embedding_item_id, language, visibility, classification, lifecycle, authority_level, freshness_at, search_text, search_tsv, retrieval_chunk_id, projection_target_id, entity_id, entity_kind, secondary_entity_ids, document_type_code, content_kind, valid_during, knowledge_seq, assurance_rank, start_ms, end_ms]
-summary: Searchable item in a space version; child halfvec partitions are not a direct read path.
+lens: corpus
+aliases: [vector item, searchable item]
+tokens: [retrieval, vector_item, retrieval.vector_item, id, tenant_id, space_version_id, source_version_hash, content_sha256, chunk_index, backend_location, generation_run_id, receipt_id, verification_state, superseded_by_id, created_at, search_projection_id, embedding_item_id, language, visibility, classification, lifecycle, authority_level, freshness_at, search_text, search_tsv, retrieval_chunk_id, projection_target_id, entity_id, entity_kind, secondary_entity_ids, document_type_code, content_kind, valid_during, knowledge_seq, assurance_rank, start_ms, end_ms, lens, source_tier, workspace_id, unit_kind, document_id, document_version_id, source_role_code, observed_at, search_tsv_en]
+summary: "One searchable item in one space version with lens, source tier and facets; the one thing api.search_unified ranks."
 summary_basis: curated
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_item\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.vector_item
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus` — One searchable item in one vector space version: the text, its lens/tier/facets (document kind, unit kind, entity, time, assurance) and lifecycle. Embeddings live in vector_item_embedding_1536 partitions..
 
-> curated (model_assisted, unreviewed) — Searchable item in a space version; child halfvec partitions are not a direct read path.
+> curated (model_assisted, unreviewed) — One searchable item in one space version with lens, source tier and facets; the one thing api.search_unified ranks.
 
 ## Columns
 
-| # | Column | Type | Null | Default | Notes |
-| ---: | --- | --- | --- | --- | --- |
-| 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
-| 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, id) |
-| 3 | `space_version_id` | `uuid` | no | — | FK → [`retrieval.vector_space_version`](vector_space_version.md).id |
-| 18 | `source_version_hash` | `text` | yes | — | — |
-| 19 | `content_sha256` | `text` | no | — | — |
-| 20 | `chunk_index` | `integer` | no | `0` | — |
-| 21 | `backend_location` | `text` | yes | — | — |
-| 23 | `generation_run_id` | `uuid` | yes | — | FK → [`evaluation.eval_run`](../evaluation/eval_run.md).id |
-| 24 | `receipt_id` | `uuid` | yes | — | FK → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md).id |
-| 25 | `verification_state` | `text` | no | `'pending'::text` | — |
-| 26 | `superseded_by_id` | `uuid` | yes | — | FK → [`retrieval.vector_item`](vector_item.md).id |
-| 27 | `created_at` | `timestamp with time zone` | no | `now()` | — |
-| 28 | `search_projection_id` | `uuid` | yes | — | — |
-| 29 | `embedding_item_id` | `uuid` | yes | — | — |
-| 30 | `language` | `text` | yes | — | — |
-| 31 | `visibility` | `text` | yes | — | — |
-| 32 | `classification` | `text` | yes | — | — |
-| 33 | `lifecycle` | `text` | no | `'active'::text` | _curated:_ Only active items are searchable. |
-| 34 | `authority_level` | `text` | yes | — | — |
-| 35 | `freshness_at` | `timestamp with time zone` | yes | — | — |
-| 36 | `search_text` | `text` | yes | — | — |
-| 37 | `search_tsv` | `tsvector` | yes | — | generated: `to_tsvector('simple'::regconfig, COALESCE(search_text, ''::text))` |
-| 38 | `retrieval_chunk_id` | `uuid` | yes | — | — |
-| 40 | `projection_target_id` | `uuid` | yes | — | FK → [`retrieval.projection_target`](projection_target.md).id |
-| 41 | `entity_id` | `uuid` | yes | — | — |
-| 42 | `entity_kind` | `text` | yes | — | — |
-| 43 | `secondary_entity_ids` | `uuid[]` | no | `'{}'::uuid[]` | — |
-| 44 | `document_type_code` | `text` | yes | — | FK → [`content.document_type`](../content/document_type.md).code |
-| 45 | `content_kind` | `text` | no | `'chunk'::text` | — |
-| 46 | `valid_during` | `tstzrange` | yes | — | — |
-| 47 | `knowledge_seq` | `bigint` | yes | — | _curated:_ Upper bound filter for as-of-knowledge reads. |
-| 48 | `assurance_rank` | `smallint` | yes | — | — |
-| 49 | `start_ms` | `integer` | yes | — | — |
-| 50 | `end_ms` | `integer` | yes | — | — |
+`id` uuid not null, `tenant_id` uuid not null, `space_version_id` uuid not null, `source_version_hash` text, `content_sha256` text not null, `chunk_index` integer not null, `backend_location` text, `generation_run_id` uuid, `receipt_id` uuid, `verification_state` text not null, `superseded_by_id` uuid, `created_at` timestamp with time zone not null, `search_projection_id` uuid, `embedding_item_id` uuid, `language` text, `visibility` text, `classification` text, `lifecycle` text not null, `authority_level` text, `freshness_at` timestamp with time zone, `search_text` text, `search_tsv` tsvector, `retrieval_chunk_id` uuid, `projection_target_id` uuid, `entity_id` uuid, `entity_kind` text, `secondary_entity_ids` uuid[] not null, `document_type_code` text, `content_kind` text not null, `valid_during` tstzrange, `knowledge_seq` bigint, `assurance_rank` smallint, `start_ms` integer, `end_ms` integer, `lens` text not null, `source_tier` smallint, `workspace_id` uuid, `unit_kind` text, `document_id` uuid, `document_version_id` uuid, `source_role_code` text, `observed_at` timestamp with time zone, `search_tsv_en` tsvector
+
+Full column table: [details](vector_item.details.md).
 
 ## Constraints
 
 - PK (id)
 - unique (tenant_id, id)
-- check `vector_item_content_kind_check`: `(content_kind = ANY (ARRAY['chunk'::text, 'summary'::text, 'claim'::text, 'record'::text, 'profile'::text, 'timeline'::text, 'measurement':…`
-- check `vector_item_content_sha256_check`: `(content_sha256 ~ '^[0-9a-f]{64}$'::text)`
-- check `vector_item_verification_state_check`: `(verification_state = ANY (ARRAY['pending'::text, 'verified'::text, 'failed'::text]))`
+- 6 check constraints; see [details](vector_item.details.md)
 
 ## Relationships
 
-12 outbound and 6 inbound foreign keys; full list in [details](vector_item.details.md).
+13 outbound and 6 inbound foreign keys; full list in [details](vector_item.details.md).
 
 ## Indexes
 
-9 indexes; see [details](vector_item.details.md).
+13 indexes; see [details](vector_item.details.md).
 
 ## Triggers
 
@@ -82,20 +48,21 @@ table in domain `retrieval`.
 
 ## Row-level security
 
-Enabled; 1 policies in [details](vector_item.details.md).
+Enabled; 2 policies in [details](vector_item.details.md).
 
 ## Grants
 
-`executor_service`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: SELECT; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
 
 ## Read paths
 
-- Named queries: `q:retrieval.hybrid_search`.
-- Direct SELECT: `executor_service`.
+- Named queries: `q:retrieval.hybrid_search`, `q:retrieval.search_unified`.
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
 - Direct DML: `executor_service`.
+- Via functions (best effort): [`retrieval.index_text_item`](../../functions/retrieval/index_text_item.md), [`retrieval.retire_items_for_passages`](../../functions/retrieval/retire_items_for_passages.md).
 
 ## TypeScript
 
@@ -103,11 +70,11 @@ insert: `Database["retrieval"]["Tables"]["vector_item"]["Insert"]`; row: `Databa
 
 ## Examples
 
-Hybrid search ranks vector items
+Scoped lexical search
 
 ```bash
-knowledge db query retrieval.hybrid_search --param filters={} --param limit=20 --param query_text=OpenAI API pricing 2026 --param vector_space_version_id=0192b100-0000-7000-8000-000000000001
+knowledge db query retrieval.search_unified --param lenses=["corpus","ours"] --param limit=20 --param query=context engineering
 ```
-Result column vector_item_id points here.
+Result column vector_item_id points here; lens and source_tier are echoed per row.
 
 Defined in: `20260826001000_retrieval.sql`.

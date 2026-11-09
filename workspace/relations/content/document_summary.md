@@ -4,20 +4,23 @@ kind: table
 schema: content
 name: document_summary
 domain: content
-aliases: []
-tokens: [content, document_summary, content.document_summary, id, tenant_id, document_version_id, representation_id, derived_from_representation_id, transformation_run_id, summary_kind, scope, scope_node_id, focus_entity_id, audience, text, language, token_count, content_sha256, coverage_ratio, lifecycle, supersedes_id, created_at]
-summary: null
-summary_basis: none
+lens: corpus
+aliases: [summary, prose summary]
+tokens: [content, document_summary, content.document_summary, id, tenant_id, document_version_id, representation_id, derived_from_representation_id, transformation_run_id, summary_kind, scope, scope_node_id, focus_entity_id, audience, text, language, token_count, content_sha256, coverage_ratio, lifecycle, supersedes_id, created_at, digest_id]
+summary: Prose rendering of a digest for an audience; never evidence by itself.
+summary_basis: curated
 rls: enabled
 readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_summary\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_summary
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
+
+> curated (model_assisted, unreviewed) — Prose rendering of a digest for an audience; never evidence by itself.
 
 ## Columns
 
@@ -32,8 +35,8 @@ table in domain `content`.
 | 7 | `summary_kind` | `text` | no | — | — |
 | 8 | `scope` | `text` | no | — | — |
 | 9 | `scope_node_id` | `uuid` | yes | — | FK → [`content.document_node`](document_node.md).id |
-| 10 | `focus_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id |
-| 11 | `audience` | `text` | no | `'general'::text` | — |
+| 10 | `focus_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
+| 11 | `audience` | `text` | no | `'general'::text` | _curated:_ Who the rendering is for. |
 | 12 | `text` | `text` | no | — | — |
 | 13 | `language` | `text` | yes | — | — |
 | 14 | `token_count` | `integer` | no | — | — |
@@ -42,6 +45,7 @@ table in domain `content`.
 | 17 | `lifecycle` | `text` | no | `'active'::text` | — |
 | 18 | `supersedes_id` | `uuid` | yes | — | FK → [`content.document_summary`](document_summary.md).id |
 | 19 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 20 | `digest_id` | `uuid` | yes | — | FK → [`content.document_digest`](document_digest.md).id; The structured digest this prose summary renders; prose without a digest is not evidence.; _curated:_ The structured digest this prose renders; prose without a digest is not evidence. |
 
 ## Constraints
 
@@ -59,24 +63,19 @@ table in domain `content`.
 
 ## Relationships
 
-Outbound: `derived_from_representation_id` → [`content.document_representation`](document_representation.md)`.id` (+tenant); `document_version_id` → [`content.document_version`](document_version.md)`.id` (+tenant); `focus_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `representation_id` → [`content.document_representation`](document_representation.md)`.id` (+tenant); `scope_node_id` → [`content.document_node`](document_node.md)`.id` (+tenant); `supersedes_id` → [`content.document_summary`](document_summary.md)`.id` (+tenant); `transformation_run_id` → [`content.transformation_run`](transformation_run.md)`.id` (+tenant).
-Inbound: [`content.document_summary`](document_summary.md).supersedes_id, [`content.document_summary_source`](document_summary_source.md).summary_id, [`retrieval.projection_target`](../retrieval/projection_target.md).summary_id.
-Polymorphic target of: [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_check).
+15 outbound and 6 inbound foreign keys; full list in [details](document_summary.details.md).
 
 ## Indexes
 
-`document_summary_active_uq` unique where `(lifecycle = 'active'::text)`; `document_summary_tenant_id_id_key` unique
+2 indexes; see [details](document_summary.details.md).
 
 ## Triggers
 
-- `summary_content_immutable` → [`content.guard_summary_content`](../../functions/content/guard_summary_content.md)
-- `summary_lineage` → [`content.check_summary_lineage`](../../functions/content/check_summary_lineage.md) (constraint trigger, deferred)
-- `summary_sources_integrity` → [`content.check_summary_sources`](../../functions/content/check_summary_sources.md) (constraint trigger, deferred)
+3 triggers; see [details](document_summary.details.md).
 
 ## Row-level security
 
-Enabled.
-- `km_tenant_access` (ALL) for `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](document_summary.details.md).
 
 ## Grants
 
@@ -93,5 +92,14 @@ Enabled.
 ## TypeScript
 
 insert: `Database["content"]["Tables"]["document_summary"]["Insert"]`; row: `Database["content"]["Tables"]["document_summary"]["Row"]`; update: `Database["content"]["Tables"]["document_summary"]["Update"]`
+
+## Examples
+
+Read the digest instead
+
+```bash
+knowledge db query content.document_digest --param document_id=0192b000-0000-7000-8000-000000000001
+```
+api.summary_evidence expands a summary into faithful nodes and locators.
 
 Defined in: `20260912010600_km_06_content.sql`.

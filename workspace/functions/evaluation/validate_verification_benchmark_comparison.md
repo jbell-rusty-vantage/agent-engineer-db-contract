@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: validate_verification_benchmark_comparison
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.validate_verification_benchmark_comparison()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [benchmark comparison canonical operation binding mismatch, benchmark co
 touches: { reads: [evaluation.verification_benchmark_arm_publication, evaluation.verification_benchmark_run, knowledge_service.operation, knowledge_service.operation_step, knowledge_service.receipt], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_comparison, evaluation.validate_verification_benchmark_comparison]
 defined_in: ["20260906030500_verification_benchmark_comparison_lifecycle.sql", "20260906030700_verification_benchmark_comparison_publication_type.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.validate_verification_benchmark_comparison
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## validate_verification_benchmark_comparison() → trigger
 

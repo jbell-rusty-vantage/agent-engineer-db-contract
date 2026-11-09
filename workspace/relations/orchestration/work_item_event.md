@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: work_item_event
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, work_item_event, orchestration.work_item_event, id, tenant_id, work_item_id, attempt_id, event_type, actor, message, payload, occurred_at]
 summary: Append-only cross-agent progress ledger. Lease state remains on work_item; every transition and checkpoint is recorded here.
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"work_item_event\"][\"Row\"]"
 defined_in: ["20260829012402_cloud_agent_research_operations.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.work_item_event
 
-table in domain `orchestration-ledger` — Append-only cross-agent progress ledger. Lease state remains on work_item; every transition and checkpoint is recorded here..
+table in domain `orchestration-ledger`, lens `machinery` — Append-only cross-agent progress ledger. Lease state remains on work_item; every transition and checkpoint is recorded here..
 
 ## Columns
 

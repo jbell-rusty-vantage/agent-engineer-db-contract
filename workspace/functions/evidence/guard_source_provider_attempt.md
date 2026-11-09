@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: guard_source_provider_attempt
 domain: evidence
+lens: machinery
 overloads: ["fn:evidence.guard_source_provider_attempt()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [original source dispatch is immutable, source provider attempt identity
 touches: { reads: [], writes: [] }
 tokens: [evidence, guard_source_provider_attempt, evidence.guard_source_provider_attempt]
 defined_in: ["20260914010200_source_attempt_accounting.sql", "20260914010400_source_attempt_recovery.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.guard_source_provider_attempt
 
-Domain `evidence`.
+Domain `evidence`, lens `machinery`.
 
 ## guard_source_provider_attempt() → trigger
 

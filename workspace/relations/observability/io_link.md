@@ -4,6 +4,7 @@ kind: table
 schema: observability
 name: io_link
 domain: observability
+lens: machinery
 aliases: []
 tokens: [observability, io_link, observability.io_link, id, trace_id, span_id, artifact_id, direction, encrypted, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"observability\"][\"Tables\"][\"io_link\"][\"Row\"]"
 defined_in: ["20260826001200_observability.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # observability.io_link
 
-table in domain `observability`.
+table in domain `observability`, lens `machinery`.
 
 ## Columns
 

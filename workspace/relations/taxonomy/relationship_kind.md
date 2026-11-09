@@ -4,6 +4,7 @@ kind: table
 schema: taxonomy
 name: relationship_kind
 domain: relationships
+lens: corpus
 aliases: [relationship vocabulary]
 tokens: [taxonomy, relationship_kind, taxonomy.relationship_kind, code, from_kinds, to_kinds, temporal, symmetric, inverse_label, description, property_schema]
 summary: "Edge vocabulary with endpoint kinds, temporal flag, and property schema."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"relationship_kind\"][\"Row\"]"
 defined_in: ["20260912010100_km_01_vocabularies.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # taxonomy.relationship_kind
 
-table in domain `relationships`.
+table in domain `relationships`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Edge vocabulary with endpoint kinds, temporal flag, and property schema.
 
@@ -41,7 +42,7 @@ table in domain `relationships`.
 ## Relationships
 
 Outbound: none.
-Inbound: [`corpus.relationship`](../corpus/relationship.md).kind.
+Inbound: [`catalog.relationship`](../catalog/relationship.md).kind, [`content.unit_assertion_mapping`](../content/unit_assertion_mapping.md).relationship_kind.
 
 ## Indexes
 
@@ -61,8 +62,8 @@ Disabled.
 
 ## Read paths
 
-- Named queries: `q:entity.relationships`, `q:relationships.current_by_kind`, `q:vocab.relationship_kind`.
-- Exposed through: [`api.current_relationships`](../api/current_relationships.md).
+- Named queries: `q:catalog.concepts`, `q:catalog.events`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.talks`, `q:entity.relationships`, `q:relationships.current_by_kind`, `q:vocab.relationship_kind`.
+- Exposed through: [`api.concepts`](../api/concepts.md), [`api.current_relationships`](../api/current_relationships.md), [`api.events`](../api/events.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.software`](../api/software.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

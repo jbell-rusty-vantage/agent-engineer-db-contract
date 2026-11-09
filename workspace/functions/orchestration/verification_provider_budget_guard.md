@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: verification_provider_budget_guard
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.verification_provider_budget_guard()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [verification provider budget immutable identity, verification provider 
 touches: { reads: [], writes: [] }
 tokens: [orchestration, verification_provider_budget_guard, orchestration.verification_provider_budget_guard]
 defined_in: ["20260906012000_harden_verification_provider_accounting.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_budget_guard
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## verification_provider_budget_guard() → trigger
 

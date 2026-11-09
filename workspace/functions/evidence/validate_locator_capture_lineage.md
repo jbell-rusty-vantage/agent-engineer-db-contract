@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: validate_locator_capture_lineage
 domain: evidence
+lens: machinery
 overloads: ["fn:evidence.validate_locator_capture_lineage()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [verification.v1 locator requires available marked metadata-backed captu
 touches: { reads: [], writes: [] }
 tokens: [evidence, validate_locator_capture_lineage, evidence.validate_locator_capture_lineage]
 defined_in: ["20260905013000_verification_legacy_compatibility_and_isolation.sql", "20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.validate_locator_capture_lineage
 
-Domain `evidence`.
+Domain `evidence`, lens `machinery`.
 
 ## validate_locator_capture_lineage() → trigger
 

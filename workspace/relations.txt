@@ -1,18 +1,79 @@
-# api (views)
+# access  lens=ours
+access.account_profile
+access.client_grant
+access.guardian_link
+access.policy_version
+access.processing_authorization
+access.provided_credential
+access.source_restriction
+# acquisition  lens=corpus
+acquisition.fetch
+# api (views)  lens=corpus
+api.agent_skills  # view
+api.benchmark_scores  # view
+api.claim_candidates  # view
+api.claim_conflicts  # view
+api.concepts  # view
 api.current_facts  # view
 api.current_relationships  # view
 api.entities  # view
+api.events  # view
 api.events_current  # view
-api.library_profile  # view
+api.guidance_items  # view
+api.libraries  # view
+api.mcp_servers  # view
 api.mission_progress  # view
+api.model_offerings  # view
+api.models  # view
+api.organizations  # view
+api.papers  # view
+api.people  # view
+api.repositories  # view
 api.review_queue  # view
-api.technical_record_search  # view
-# content
+api.software  # view
+api.software_releases  # view
+api.talks  # view
+api.works_authored  # view
+# authoring  lens=ours
+authoring.asset_scope
+authoring.block_type
+authoring.command
+authoring.deployment
+authoring.distribution
+authoring.distribution_member
+authoring.distribution_offer
+authoring.event
+authoring.file_set
+authoring.file_set_entry
+authoring.publisher_grant
+authoring.release
+authoring.release_item
+authoring.revision_binding
+authoring.revision_block
+authoring.runtime_requirement
+authoring.work
+authoring.work_revision
+authoring.workspace
+authoring.workspace_member
+# catalog  lens=corpus
+catalog.distribution_kind
+catalog.entity
+catalog.entity_alias
+catalog.entity_identifier
+catalog.entity_merge
+catalog.license
+catalog.media_platform
+catalog.relationship
+catalog.work
+# content  lens=corpus
 content.conversion_evaluation
 content.conversion_finding
+content.digest_item
 content.document
 content.document_about_entity
+content.document_digest
 content.document_identifier
+content.document_kind_assignment
 content.document_node
 content.document_node_edge
 content.document_representation
@@ -21,64 +82,25 @@ content.document_summary_source
 content.document_type
 content.document_version
 content.document_version_source_capture
+content.format
+content.refresh_check
 content.representation_decision
+content.source_role
+content.structure_census
 content.transformation_input
 content.transformation_kind
 content.transformation_output
 content.transformation_run
-# corpus
-corpus.agent_skill
-corpus.ai_model
-corpus.ai_model_version
-corpus.ai_model_version_spec
-corpus.ai_protocol
-corpus.ai_protocol_feature
-corpus.ai_protocol_version
-corpus.benchmark
-corpus.benchmark_run
-corpus.case_study
-corpus.compute_device
-corpus.compute_offering
-corpus.concept
-corpus.corporate_transaction
-corpus.dataset
-corpus.distribution_kind
-corpus.entity
-corpus.entity_alias
-corpus.entity_identifier
-corpus.entity_merge
-corpus.event_series
-corpus.funding_round
-corpus.industry_event
-corpus.library
-corpus.library_release
-corpus.license
-corpus.mcp_server
-corpus.mcp_server_surface
-corpus.media_appearance
-corpus.media_channel
-corpus.media_platform
-corpus.media_series
-corpus.media_work
-corpus.model_offering
-corpus.organization
-corpus.paper
-corpus.person
-corpus.product
-corpus.product_feature
-corpus.product_version
-corpus.registry
-corpus.registry_listing
-corpus.relationship
-corpus.repository
-corpus.repository_file
-corpus.repository_module
-corpus.repository_revision
-corpus.security_advisory
-corpus.story
-corpus.talk
-corpus.technique
-# curriculum
+content.unit_assertion_mapping
+content.unit_change
+content.unit_entity_role
+content.unit_kind
+# conversation  lens=private
+conversation.context_item
+conversation.context_snapshot
+conversation.message
+conversation.thread
+# curriculum  lens=machinery
 curriculum.outcome
 curriculum.outcome_alignment
 curriculum.part
@@ -87,7 +109,12 @@ curriculum.release_transition
 curriculum.requirement
 curriculum.requirement_option
 curriculum.requirement_transition
-# evaluation
+# dataset  lens=ours
+dataset.cell
+dataset.field
+dataset.proposal
+dataset.row
+# evaluation  lens=machinery
 evaluation.eval_case
 evaluation.eval_case_expected_filter
 evaluation.eval_case_provenance
@@ -118,7 +145,7 @@ evaluation.verification_benchmark_arm_publication
 evaluation.verification_benchmark_checkpoint
 evaluation.verification_benchmark_comparison
 evaluation.verification_benchmark_run
-# evidence
+# evidence  lens=evidence
 evidence.attribution
 evidence.capture_method
 evidence.claim
@@ -145,21 +172,19 @@ evidence.source_provider_attempt
 evidence.source_query
 evidence.source_result_selection
 evidence.source_selection_revision
-# knowledge
-knowledge.advanced_usage_pattern
-knowledge.assurance_level
-knowledge.benchmark_result
-knowledge.compatibility_constraint
-knowledge.failure_mode
-knowledge.implementation_example
-knowledge.operational_practice
-knowledge.record
-knowledge.record_entity_link
-knowledge.record_reconciliation
-knowledge.security_consideration
-knowledge.solution_pattern
-knowledge.technical_problem
-# knowledge_service
+# guidance  lens=corpus
+guidance.assurance_level
+guidance.item
+guidance.item_kind
+guidance.item_subject
+# inquiry  lens=ours
+inquiry.acceptance
+inquiry.assertion
+inquiry.delivery
+inquiry.obligation
+inquiry.support
+inquiry.watch
+# knowledge_service  lens=machinery
 knowledge_service.callback_delivery
 knowledge_service.checkpoint_artifact_reference
 knowledge_service.checkpoint_scope
@@ -175,7 +200,29 @@ knowledge_service.review_decision
 knowledge_service.review_subject
 knowledge_service.scoped_checkpoint
 knowledge_service.verification_component_binding
-# observability
+# learning  lens=ours
+learning.appeal
+learning.assessment_result
+learning.attempt
+learning.credit
+learning.criterion_result
+learning.enrollment
+learning.environment_session
+learning.equivalence_request
+learning.evidence_grant
+learning.evidence_item
+learning.grading_run
+learning.mastery_decision
+learning.release_adoption
+learning.submission
+# library  lens=ours
+library.connected_item
+library.connection
+library.passage
+library.preparation
+library.removal
+library.resource_control
+# observability  lens=machinery
 observability.coordinator_handoff
 observability.io_link
 observability.normalized_event
@@ -183,7 +230,7 @@ observability.raw_event
 observability.span
 observability.trace
 observability.usage_rollup
-# orchestration
+# orchestration  lens=machinery
 orchestration.agent_session
 orchestration.artifact
 orchestration.artifact_lineage
@@ -221,93 +268,11 @@ orchestration.work_item_artifact
 orchestration.work_item_dependency
 orchestration.work_item_event
 orchestration.work_item_kind
-# provenance
-provenance.binding
-provenance.edge
-provenance.object
-provenance.revision
-# public
-public.factory_artifact
-public.factory_assertion_result
-public.factory_canary_result
-public.factory_candidate
-public.factory_component_version
-public.factory_environment_version
-public.factory_episode
-public.factory_evolution_proposal
-public.factory_experiment
-public.factory_experiment_arm
-public.factory_failure_cluster
-public.factory_promotion_decision
-public.factory_runtime_event
-public.factory_score_vector
-public.factory_task
-public.factory_trace_span_ref
-public.research_application_domain
-public.research_category_definition
-public.research_entity_candidate
-public.research_evidence_anchor
-public.research_ingestion_intent
-public.research_ingestion_intent_event
-public.research_organization_candidate
-public.research_organization_domain_definition
-public.research_organization_source
-public.research_pre_research_artifact
-public.research_pre_research_run
-public.research_pre_research_session
-public.research_pre_research_stage_execution
-public.research_pre_research_video_state
-public.research_resource_candidate
-public.research_starter_channels
-public.research_starter_videos
-public.research_taxonomy_version
-public.research_video_analysis
-public.research_video_category
-public.research_video_domain
-public.research_video_initial_summary
-public.research_video_lifecycle
-public.research_video_technology_summary
-public.research_web_search_event
-# ranking
-ranking.entity_group
-ranking.entity_group_version
-ranking.feature_definition
-ranking.feature_value
-ranking.group_membership
+# ranking  lens=corpus
 ranking.leaderboard
 ranking.leaderboard_edition
-ranking.membership_snapshot
-ranking.metric_definition
-ranking.metric_definition_version
-ranking.metric_observation
-ranking.ranking_policy
-ranking.ranking_policy_version
-ranking.ranking_result
-ranking.ranking_run
-ranking.selection
-# research
-research.bundle_artifact
-research.comparison
-research.downstream_handoff
-research.finding
-research.report
-research.report_artifact
-research.report_assertion
-research.report_assertion_claim
-research.report_claim
-research.report_package
-research.report_question
-research.report_question_section
-research.report_section
-research.report_section_dependency
-research.report_section_version
-research.report_v2_assertion
-research.report_v2_ingestion
-research.report_v2_revision
-research.report_version
-research.research_bundle
-research.use_admission
-# retrieval
+ranking.leaderboard_entry
+# retrieval  lens=corpus
 retrieval.authorized_publication_execution
 retrieval.chunk_claim_link
 retrieval.chunk_edge
@@ -345,12 +310,12 @@ retrieval.vector_store_ingestion_checkpoint
 retrieval.vector_store_ingestion_run
 retrieval.vector_store_lifecycle_event
 retrieval.vector_store_space
-# staging
+# staging  lens=corpus
 staging.candidate
 staging.identity_match
 staging.resolution_decision
 staging.vetting_decision
-# taxonomy
+# taxonomy  lens=corpus
 taxonomy.assignment
 taxonomy.assignment_review_requirement
 taxonomy.entity_kind
@@ -360,7 +325,7 @@ taxonomy.relationship_kind
 taxonomy.term
 taxonomy.term_relation
 taxonomy.term_target_kind
-# temporal
+# temporal  lens=corpus
 temporal.event
 temporal.event_kind
 temporal.event_occurrence
@@ -370,3 +335,5 @@ temporal.knowledge_head
 temporal.segment
 temporal.stream
 temporal.stream_kind
+# verification  lens=evidence
+verification.use_admission

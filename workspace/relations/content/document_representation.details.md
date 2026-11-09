@@ -4,7 +4,7 @@ kind: details
 schema: content
 name: document_representation
 of: "rel:content.document_representation"
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_representation — details
 
@@ -13,7 +13,7 @@ Spill-over from [the main page](document_representation.md).
 ## Relationships
 
 Outbound: `tenant_id,artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict; `tenant_id,document_version_id` → [`content.document_version`](document_version.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document_representation`](document_representation.md)`.tenant_id,id` on delete restrict; `tenant_id,transformation_run_id` → [`content.transformation_run`](transformation_run.md)`.tenant_id,id` on delete restrict.
-Inbound: [`content.conversion_evaluation`](conversion_evaluation.md).representation_id, [`content.document_node`](document_node.md).representation_id, [`content.document_representation`](document_representation.md).supersedes_id, [`content.document_summary`](document_summary.md).derived_from_representation_id|representation_id, [`content.representation_decision`](representation_decision.md).representation_id, [`content.transformation_input`](transformation_input.md).representation_id, [`content.transformation_output`](transformation_output.md).representation_id, [`evidence.extraction_run`](../evidence/extraction_run.md).representation_id, [`retrieval.chunk_set`](../retrieval/chunk_set.md).representation_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).representation_id.
+Inbound: [`content.conversion_evaluation`](conversion_evaluation.md).representation_id, [`content.document_node`](document_node.md).representation_id, [`content.document_representation`](document_representation.md).supersedes_id, [`content.document_summary`](document_summary.md).derived_from_representation_id|representation_id, [`content.representation_decision`](representation_decision.md).representation_id, [`content.structure_census`](structure_census.md).representation_id, [`content.transformation_input`](transformation_input.md).representation_id, [`content.transformation_output`](transformation_output.md).representation_id, [`evidence.extraction_run`](../evidence/extraction_run.md).representation_id, [`retrieval.chunk_set`](../retrieval/chunk_set.md).representation_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).representation_id.
 
 ## Indexes
 

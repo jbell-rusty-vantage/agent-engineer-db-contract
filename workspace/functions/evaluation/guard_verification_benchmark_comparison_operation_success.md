@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: guard_verification_benchmark_comparison_operation_success
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.guard_verification_benchmark_comparison_operation_success()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [benchmark comparison operation success requires one exact sealed receip
 touches: { reads: [evaluation.verification_benchmark_comparison, knowledge_service.operation_step, knowledge_service.receipt], writes: [] }
 tokens: [evaluation, guard_verification_benchmark_comparison_operation_success, evaluation.guard_verification_benchmark_comparison_operation_success]
 defined_in: ["20260906030900_verification_benchmark_comparison_terminal_success.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.guard_verification_benchmark_comparison_operation_success
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## guard_verification_benchmark_comparison_operation_success() → trigger
 

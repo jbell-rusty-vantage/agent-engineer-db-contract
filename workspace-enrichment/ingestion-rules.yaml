@@ -1,23 +1,23 @@
 format: ai-engineer-workspace-enrichment/1
 version: ingestion-rules.v1
 rules:
-  - id: price.scope_key_is_unit
-    title: A new price series defaults its scope_key to the unit; an existing series keeps its key
+  - id: price.scope_key_is_meter
+    title: A price series is keyed by meter (and tier, region); an existing series keeps its key
     basis: curated
-    applies_to: { proposal_kind: fact.assert_state, stream_kind: model_offering_price }
+    applies_to: { proposal_kind: fact.assert_state, stream_kind: offering_price }
     action: rewrite
     detail: |
-      Two `model_offering_price` facts on the same subject and world interval do not collide
-      only when `scope_key` distinguishes them, so a **new** series with no `scopeKey` is
-      rewritten to the proposal `unit` (for example `per_1m_input_tokens`); the exclusion
+      Two `offering_price` facts on the same subject and world interval do not collide only when
+      `scope_key` distinguishes them, so a **new** series with no `scopeKey` is rewritten to
+      `meter|tier|region` from the payload (for example `input_tokens||`); the exclusion
       constraint `segment_stream_id_valid_during_excl` would otherwise reject the second
       current segment. The database does not enforce any naming convention for `scope_key`:
-      a series that already exists for the same subject, stream, and unit keeps whatever
-      `scope_key` it was created with (older data uses keys such as `input_tokens`). Read
-      `q:facts.current_by_stream` first; if a current segment with the same unit exists under
-      another `scope_key`, name that key explicitly, or the stale segment stays current beside
-      your new one. Allowed units are the unit_values on `temporal.stream_kind:model_offering_price`.
-    refs: [temporal.stream_kind:model_offering_price, temporal.segment, temporal.stream]
+      a series that already exists for the same subject, stream and meter keeps whatever
+      `scope_key` it was created with. Read `q:facts.price_history` first; if a current segment
+      with the same meter exists under another `scope_key`, name that key explicitly, or the
+      stale segment stays current beside your new one. The payload `meter` is required by the
+      `temporal.stream_kind:offering_price` payload schema.
+    refs: [temporal.stream_kind:offering_price, temporal.segment, temporal.stream]
     provenance: model_assisted
     reviewed: null
 
@@ -37,16 +37,18 @@ rules:
     reviewed: null
 
   - id: entity.kind_in_vocabulary
-    title: Entity kind must be in vocabulary
+    title: Entity kind must be in vocabulary and attributes must validate
     basis: enforced
     applies_to: { proposal_kind: entity.create }
     action: reject
     detail: |
-      `corpus.entity.kind` references `taxonomy.entity_kind(code)` via `entity_kind_fkey`.
-      A `new` subject whose kind is not a vocabulary code is rejected before a batch opens
-      (`VOCABULARY_VIOLATION`). Typed payloads must use columns of that kind's
-      `canonical_table`.
-    refs: [corpus.entity, taxonomy.entity_kind]
+      `catalog.entity.kind` references `taxonomy.entity_kind(code)`. A `new` subject whose kind
+      is not a vocabulary code is rejected before a batch opens (`VOCABULARY_VIOLATION`).
+      Kind-specific attributes go into `catalog.entity.attributes` and are validated by trigger
+      `catalog.validate_entity_attributes` against `taxonomy.entity_kind.attributes_schema`
+      (for example `model_offering` requires `offering_key`, `ai_model_version` requires
+      `version_label`). Numbers that change over time are fact streams, never attributes.
+    refs: [catalog.entity, taxonomy.entity_kind, catalog.validate_entity_attributes]
     provenance: model_assisted
     reviewed: null
 
@@ -56,11 +58,12 @@ rules:
     applies_to: { proposal_kind: relationship.assert }
     action: reject
     detail: |
-      Trigger `relationship_kinds` on `corpus.relationship` runs
-      `corpus.check_relationship_kinds` and raises if the from/to entity kinds are not in
+      Trigger `relationship_kinds` on `catalog.relationship` runs
+      `catalog.check_relationship_kinds` and raises if the from/to entity kinds are not in
       `taxonomy.relationship_kind.from_kinds` / `to_kinds`. `version_of` additionally requires
-      a matching pair (product_version/product, ai_model_version/ai_model, …).
-    refs: [corpus.relationship, taxonomy.relationship_kind, temporal.assert_relationship]
+      a matching pair (product_version/product, ai_model_version/ai_model, …); the parent kind
+      is also recorded on `taxonomy.entity_kind.parent_kind`.
+    refs: [catalog.relationship, taxonomy.relationship_kind, temporal.assert_relationship]
     provenance: model_assisted
     reviewed: null
 
@@ -143,11 +146,11 @@ rules:
     applies_to: { proposal_kind: entity.alias }
     action: reject
     detail: |
-      `entity_alias_tenant_id_entity_id_alias_normalized_alias_kin_key` is unique per entity,
-      not globally. The same alias string may exist on two entities. The executor rejects an
-      alias that `api.resolve_entity` matches to a different active canonical entity at
-      score ≥ 0.98, so agents do not silently attach a well-known name to the wrong id.
-    refs: [corpus.entity_alias, corpus.entity, api.resolve_entity]
+      The alias unique key is per entity, not global. The same alias string may exist on two
+      entities. The executor rejects an alias that `api.resolve_entity` matches to a different
+      active canonical entity at score ≥ 0.98, so agents do not silently attach a well-known
+      name to the wrong id.
+    refs: [catalog.entity_alias, catalog.entity, api.resolve_entity]
     provenance: model_assisted
     reviewed: null
 
@@ -161,9 +164,8 @@ rules:
       (wikidata, ror, orcid, github, huggingface, npm, pypi, crates, go_module, doi, arxiv,
       openreview, mcp_registry, cve, ghsa, spdx, crunchbase, pitchbook, linkedin, x,
       youtube_channel, youtube_playlist, youtube_video, spotify, apple_podcasts, domain,
-      sec_cik, lei, isin, other). `entity_identifier_tenant_id_scheme_value_key` makes
-      `(scheme, value)` unique per tenant.
-    refs: [corpus.entity_identifier]
+      sec_cik, lei, isin, other). `(scheme, value)` is unique per tenant.
+    refs: [catalog.entity_identifier]
     provenance: model_assisted
     reviewed: null
 
@@ -185,12 +187,28 @@ rules:
   - id: price.currency_iso4217
     title: Monetary streams require ISO-4217 currency
     basis: enforced
-    applies_to: { proposal_kind: fact.assert_state, stream_kind: model_offering_price }
+    applies_to: { proposal_kind: fact.assert_state, stream_kind: offering_price }
     action: reject
     detail: |
       `temporal.commit_batch` requires `currency ~ '^[A-Z]{3}$'` for
-      `model_offering_price`, `compute_offering_price`, and `valuation`. Amount and a
+      `offering_price`, `compute_offering_price`, and `valuation`. Amount and a
       unit from `unit_values` are also required (`requires_amount`).
-    refs: [temporal.stream_kind:model_offering_price, temporal.commit_batch, temporal.segment]
+    refs: [temporal.stream_kind:offering_price, temporal.commit_batch, temporal.segment]
+    provenance: model_assisted
+    reviewed: null
+
+  - id: unit.mapping_before_assertion
+    title: Typed units become assertions only through a declared mapping
+    basis: curated
+    applies_to: { proposal_kind: fact.assert_state }
+    action: hold
+    detail: |
+      A fact read from a document unit (`content.document_node`) must name the
+      `content.unit_assertion_mapping` that interprets the unit kind into a stream, relationship
+      or event. Deterministic mappings on first-party structured units (`content.unit_kind:price_row`
+      on a `content.document_type:pricing_page`) take the cheap path; other mappings carry a
+      `risk_floor` and are held for Knowledge Services verification. The locator of the fact is the
+      unit's position, so `api.fact_locators` can show the exact row later.
+    refs: [content.unit_assertion_mapping, content.document_node, content.unit_kind, evidence.extraction_record]
     provenance: model_assisted
     reviewed: null

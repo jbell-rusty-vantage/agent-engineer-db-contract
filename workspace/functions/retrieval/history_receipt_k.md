@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: history_receipt_k
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.history_receipt_k(uuid)"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt, temporal.knowledge_batch], writes: [] }
 tokens: [retrieval, history_receipt_k, retrieval.history_receipt_k]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.history_receipt_k
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## history_receipt_k(uuid) → bigint
 

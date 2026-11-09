@@ -1,4 +1,5 @@
 import { canonical, canonicalJson, digest, digestText, sortBy } from "../canonical.mjs";
+import { extractCaseBranches } from "./case-branches.mjs";
 import { extractRaises, extractTouches, parseArguments } from "./function-body.mjs";
 import { ids } from "./ids.mjs";
 import { pgArray, rowCountClass } from "./pg-values.mjs";
@@ -435,6 +436,41 @@ function deriveTriggerFunctions(relations, functionIdsByName) {
 }
 
 /**
+ * Product operations: one entry per `when '<op>' then` arm of the configured dispatcher functions
+ * (`workspace.config.json -> operations.dispatchers`). Relations and helper calls come from the arm
+ * text with the same best-effort scan used for function bodies.
+ */
+function deriveOperations(raw, context, known, functionIdsByName) {
+  const dispatchers = context.config.operations?.dispatchers ?? [];
+  const bodies = new Map(raw.functions.map((row) => [`${row.schema}.${row.name}`, row.body ?? ""]));
+  const operations = [];
+  for (const dispatcher of dispatchers) {
+    const body = bodies.get(dispatcher.function);
+    if (body === undefined) continue;
+    const parsed = extractCaseBranches(body);
+    for (const branch of parsed?.branches ?? []) {
+      const touches = extractTouches(branch.text, known);
+      for (const name of branch.operations) {
+        operations.push({
+          id: ids.operation(name),
+          name,
+          dispatcher: dispatcher.dispatcher,
+          function: dispatcher.function,
+          function_id: functionIdsByName.get(dispatcher.function)?.[0] ?? null,
+          call: dispatcher.call,
+          call_function_id: functionIdsByName.get(dispatcher.call)?.[0] ?? null,
+          reads: touches.reads,
+          writes: touches.writes,
+          calls: touches.calls,
+          basis: "best_effort",
+        });
+      }
+    }
+  }
+  return sortBy(operations, (operation) => `${operation.name}|${operation.dispatcher}`);
+}
+
+/**
  * Builds the derived part of schema-ir.v1 (no enrichment, no fingerprint yet).
  * @param raw output of `introspect`
  * @param context `{ config, migrationIndex, typePaths, build }`
@@ -450,6 +486,8 @@ export function buildIr(raw, context) {
   }
   const types = buildTypes(raw, context.typePaths);
   const vocabularies = buildVocabularies(raw);
+  const functionNames = [...functionIdsByName.keys()].sort();
+  const operations = deriveOperations(raw, context, { relationNames, functionNames }, functionIdsByName);
   // Canonical key order in memory so rendering from a fresh IR and from the committed JSON agree byte for byte.
   const ir = canonical({
     format: context.config.irFormat,
@@ -468,6 +506,7 @@ export function buildIr(raw, context) {
       view_sources: deriveViewSources(raw, functionIdsByName),
       trigger_functions: deriveTriggerFunctions(relations, functionIdsByName),
       function_ids_by_name: Object.fromEntries([...functionIdsByName].sort()),
+      operations,
     },
     enrichment: null,
     volatile: { row_count_class: volatileRowClass },

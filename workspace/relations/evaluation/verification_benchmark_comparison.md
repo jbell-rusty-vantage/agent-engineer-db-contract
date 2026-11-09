@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: verification_benchmark_comparison
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, verification_benchmark_comparison, evaluation.verification_benchmark_comparison, id, tenant_id, operation_id, baseline_run_id, candidate_run_id, baseline_publication_artifact_id, baseline_publication_sha256, baseline_payload_sha256, candidate_publication_artifact_id, candidate_publication_sha256, candidate_payload_sha256, profile_id, profile_artifact_id, profile_sha256, runtime, runtime_sha256, status, started_at, completed_at, result_artifact_id, result_sha256, result_digest_sha256, engineering_gate_outcome, publication_artifact_id, publication_sha256, publication_payload_sha256]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"verification_benchmark_comparison\"][\"Row\"]"
 defined_in: ["20260906030500_verification_benchmark_comparison_lifecycle.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.verification_benchmark_comparison
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

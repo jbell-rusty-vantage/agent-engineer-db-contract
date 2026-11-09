@@ -786,7 +786,9 @@ def main():
     pid = run_sql(f"select id from library.passage where revision_id='{cnote['revisionId']}'")
     vec = "[" + ",".join("0.01" for _ in range(1536)) + "]"
     ok(worker("record_embeddings", {"workspace_id": cws, "principal_id": child.id, "processor_key": "openai", "space_version_id": vsv, "items": [{"passage_id": pid, "embedding": vec}]}))
-    record("J5 embedding stored only with semantic opt-in and guardian-backed authorization", run_sql(f"select count(*) from library.passage_embedding_1536 where passage_id='{pid}'") == "1")
+    # Build 08: embeddings live in the one retrieval stack (partition learner_notes of retrieval.vector_item_embedding_1536), never in a product-only table
+    record("J5 embedding stored only with semantic opt-in and guardian-backed authorization",
+           run_sql(f"select count(*) from retrieval.vector_item_embedding_1536 e join retrieval.vector_item vi on vi.id = e.vector_item_id join retrieval.projection_target pt on pt.id = vi.projection_target_id where pt.passage_id='{pid}' and vi.lens='private'") == "1")
     rg = ok(learner.cmd(None, "create_client_grant", {"client_kind": "mcp", "label": "read-only", "scopes": ["read"], "ttl_hours": 1}))
     learner.client_token = rg["token"]
     record("J5 read-only client grant cannot run a command", err(learner.cmd(lws, "create_thread", {"title": "x", "purpose": "general"}, client=True)) == "CLIENT_SCOPE_DENIED")

@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: embedding_run
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, embedding_run, retrieval.embedding_run, id, tenant_id, vector_space_version_id, operation_id, adapter_version, gateway_model_slug, provider_route_policy, expected_dimensions, input_manifest_sha256, output_manifest_sha256, idempotency_key, status, request_id, observed_provider_route, usage, latency_ms, retry_history, cost_usd, receipt, failure_class, created_at, completed_at, promotion_decision_id, legacy_provenance]
 summary: null
@@ -13,11 +14,11 @@ readers: []
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"embedding_run\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.embedding_run
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

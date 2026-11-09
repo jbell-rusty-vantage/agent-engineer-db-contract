@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: verify_sealed_benchmark_arm_publications
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.verify_sealed_benchmark_arm_publications()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [sealed benchmark requires one publication for each planned arm]
 touches: { reads: [evaluation.verification_benchmark_arm_publication], writes: [] }
 tokens: [evaluation, verify_sealed_benchmark_arm_publications, evaluation.verify_sealed_benchmark_arm_publications]
 defined_in: ["20260906030000_verification_benchmark_arm_publication.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.verify_sealed_benchmark_arm_publications
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## verify_sealed_benchmark_arm_publications() → trigger
 

@@ -4,20 +4,21 @@ kind: table
 schema: content
 name: document_about_entity
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, document_about_entity, content.document_about_entity, tenant_id, document_id, entity_id, role, method, confidence]
 summary: null
 summary_basis: none
 rls: enabled
-readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_about_entity\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_about_entity
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 
@@ -25,7 +26,7 @@ table in domain `content`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | PK |
 | 2 | `document_id` | `uuid` | no | — | PK; FK → [`content.document`](document.md).id |
-| 3 | `entity_id` | `uuid` | no | — | PK; FK → [`corpus.entity`](../corpus/entity.md).id |
+| 3 | `entity_id` | `uuid` | no | — | PK; FK → [`catalog.entity`](../catalog/entity.md).id |
 | 4 | `role` | `text` | no | — | — |
 | 5 | `method` | `text` | no | — | — |
 | 6 | `confidence` | `numeric(5,4)` | yes | — | — |
@@ -38,7 +39,7 @@ table in domain `content`.
 
 ## Relationships
 
-Outbound: `document_id` → [`content.document`](document.md)`.id` (+tenant); `entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant).
+Outbound: `document_id` → [`content.document`](document.md)`.id` (+tenant); `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant).
 Inbound: none.
 
 ## Indexes
@@ -56,11 +57,13 @@ Enabled.
 
 ## Grants
 
-`control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `app_reader`, `authenticated`.
+`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
 
 ## Read paths
 
-- Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
+- Named queries: `q:catalog.talks`, `q:content.talk_segments`.
+- Exposed through: [`api.talks`](../api/talks.md).
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 

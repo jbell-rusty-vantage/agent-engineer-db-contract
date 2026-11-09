@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: validate_vector_store_ingestion_operation
 domain: retrieval
+lens: machinery
 overloads: ["fn:retrieval.validate_vector_store_ingestion_operation()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [active vector_store_ingestion operation with matching actor is required
 touches: { reads: [knowledge_service.operation], writes: [] }
 tokens: [retrieval, validate_vector_store_ingestion_operation, retrieval.validate_vector_store_ingestion_operation]
 defined_in: ["20260904014000_vector_store_ingestion_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.validate_vector_store_ingestion_operation
 
-Domain `retrieval`.
+Domain `retrieval`, lens `machinery`.
 
 ## validate_vector_store_ingestion_operation() → trigger
 

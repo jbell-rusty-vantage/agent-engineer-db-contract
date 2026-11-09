@@ -4,22 +4,21 @@ kind: table
 schema: evidence
 name: provider_result
 domain: evidence
-aliases: [search hit]
+lens: evidence
+aliases: []
 tokens: [evidence, provider_result, evidence.provider_result, id, tenant_id, query_id, rank, source_id, url, title, snippet, payload, artifact_id, created_at, source_provider_attempt_id, provider_native_result_id, disposition]
-summary: One ranked hit from a source_query; query_id points at the discovery query.
-summary_basis: curated
+summary: null
+summary_basis: none
 rls: enabled
 readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"provider_result\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.provider_result
 
-table in domain `evidence`.
-
-> curated (model_assisted, unreviewed) — One ranked hit from a source_query; query_id points at the discovery query.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 
@@ -27,8 +26,8 @@ table in domain `evidence`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id) |
-| 3 | `query_id` | `uuid` | no | — | FK → [`evidence.source_query`](source_query.md).id; _curated:_ Parent evidence.source_query. |
-| 4 | `rank` | `integer` | no | — | _curated:_ Provider rank in that result page. |
+| 3 | `query_id` | `uuid` | no | — | FK → [`evidence.source_query`](source_query.md).id |
+| 4 | `rank` | `integer` | no | — | — |
 | 5 | `source_id` | `uuid` | yes | — | FK → [`evidence.source`](source.md).id |
 | 6 | `url` | `text` | yes | — | — |
 | 7 | `title` | `text` | yes | — | — |
@@ -82,14 +81,5 @@ Enabled.
 ## TypeScript
 
 insert: `Database["evidence"]["Tables"]["provider_result"]["Insert"]`; row: `Database["evidence"]["Tables"]["provider_result"]["Row"]`; update: `Database["evidence"]["Tables"]["provider_result"]["Update"]`
-
-## Examples
-
-Sources for a domain
-
-```bash
-knowledge db query evidence.sources_by_domain --param domain=openai.com --param limit=50
-```
-Walk source_query → provider_result → source_encounter to the source row.
 
 Defined in: `20260912010500_km_05_evidence.sql`.

@@ -1,16 +1,17 @@
 ---
 id: "task:admit-support-for-claim"
 kind: task
+lens: evidence
 domains: [evidence, temporal-facts]
-queries: [evidence.claims_for_entity, evidence.claim_support, evidence.captures_for_source]
+queries: [evidence.claims_for_entity, evidence.claim_support, evidence.captures_for_source, facts.locators]
 aliases: [support, quote]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Admit support for a claim
 
-Domains: [`evidence`](../domains/evidence.md), [`temporal-facts`](../domains/temporal-facts.md). Queries: [`q:evidence.claims_for_entity`](../queries/README.md), [`q:evidence.claim_support`](../queries/README.md), [`q:evidence.captures_for_source`](../queries/README.md).
+Domains: [`evidence`](../domains/evidence.md), [`temporal-facts`](../domains/temporal-facts.md). Queries: [`q:evidence.claims_for_entity`](../queries/README.md), [`q:evidence.claim_support`](../queries/README.md), [`q:evidence.captures_for_source`](../queries/README.md), [`q:facts.locators`](../queries/README.md).
 
 ## Navigation
 
@@ -40,8 +41,8 @@ Domains: [`evidence`](../domains/evidence.md), [`temporal-facts`](../domains/tem
 
 ## Expected shape
 
-One `evidence.segment_support` row with k_to null, claim_id, locator_id, and exactly one of segment_id or event_occurrence_id. `q:evidence.claim_support` returns it.
+One `evidence.segment_support` row with k_to null, claim_id, locator_id, and exactly one of segment_id or event_occurrence_id. `q:evidence.claim_support` returns it; `q:facts.locators` then shows the locator behind the fact.
 
 ## Pitfalls
 
-The claim must exist (materialize first). Locator is required. Role on the table is supports, challenges, or context — the intent `supportRole` primary/corroborating/contradicting is mapped by the executor. Support is written only through `temporal.admit_support`.
+The claim must exist (materialize first). Locator is required. Role on the table is supports, challenges, or context — the intent `supportRole` primary/corroborating/contradicting is mapped by the executor. Support is written only through `temporal.admit_support`. A verified claim needs an admitted use decision (`verification.use_admission`).

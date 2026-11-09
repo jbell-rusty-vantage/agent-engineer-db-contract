@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "sha256:d0a86e191016afa9eda24c66882d781537d1f680ce2ee2f2109848f91c160903",
+  "catalogVersion": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
   "defaults": {
     "limit": 200,
     "maxLimit": 2000,
@@ -11,6 +11,59 @@
     }
   },
   "entries": [
+    {
+      "cost_class": "cheap",
+      "domain": "acquisition",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "url": null
+      },
+      "id": "q:acquisition.fetches_for_url",
+      "kind": "named_query",
+      "name": "acquisition.fetches_for_url",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "url",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "url": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select f.id, f.origin_kind, f.origin_label, f.tool, f.tool_version, f.request_url, f.final_url,\n       f.requested_at, f.completed_at, f.http_status, f.outcome, f.content_sha256, f.media_type,\n       f.size_bytes, f.credits_used, f.cost_usd, f.failure_class, f.prior_capture_id\nfrom acquisition.fetch f\nwhere f.tenant_id = util.current_tenant_id()\n  and ($1::text is null or f.request_url = $1 or f.final_url = $1)\norder by f.requested_at desc, f.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "what-changed-since"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Fetch ledger rows for a URL (who fetched, with what tool, outcome, hash, spend)",
+      "volatile": true
+    },
     {
       "cost_class": "cheap",
       "domain": "orchestration-ledger",
@@ -55,7 +108,7 @@
       "role": "pipeline_agent",
       "sql": "select a.id, a.artifact_type, a.sha256, a.bucket_class, a.storage_bucket,\n       a.object_path, a.mission_id, a.created_at\nfrom orchestration.artifact a\nwhere a.tenant_id = util.current_tenant_id()\n  and ($1::text is null or a.artifact_type = $1)\norder by a.created_at desc, a.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
       "tasks": [
-        "publish-report",
+        "verify-ingestion-result",
         "build-evidence-packet"
       ],
       "temporal": {
@@ -63,6 +116,1288 @@
         "world_time": "n/a"
       },
       "title": "Artifacts of one artifact_type for the current tenant",
+      "volatile": true
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "benchmark": null,
+        "limit": 100,
+        "subject_id": null
+      },
+      "id": "q:catalog.benchmark_scores",
+      "kind": "named_query",
+      "name": "catalog.benchmark_scores",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "subject_id",
+        "benchmark",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "benchmark": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "subject_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "segment_id",
+          "subject_id",
+          "subject",
+          "subject_kind",
+          "benchmark_id",
+          "benchmark",
+          "score",
+          "unit",
+          "setting",
+          "source_kind",
+          "valid_from",
+          "learned_k",
+          "observed_at",
+          "claim_id",
+          "belief"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.benchmark_scores\nwhere ($1::uuid is null or subject_id = $1)\n  and ($2::text is null or benchmark ilike '%' || $2 || '%')\norder by benchmark, score desc nulls last\nlimit least(greatest(coalesce($3, 100), 1), 200)\n",
+      "tasks": [
+        "compare-models",
+        "cheapest-qualified-model"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 benchmark results as facts (one home for numbers) by subject or benchmark",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.concepts",
+      "kind": "named_query",
+      "name": "catalog.concepts",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "concept_id",
+          "kind",
+          "concept",
+          "slug",
+          "component",
+          "level",
+          "description",
+          "works_about",
+          "instances",
+          "implementations",
+          "guidance_items",
+          "modules_covering"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.concepts\nwhere ($1::text is null or concept ilike '%' || $1 || '%' or description ilike '%' || $1 || '%')\norder by modules_covering desc nulls last, works_about desc nulls last, concept\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "modules-covering-concept",
+        "talks-on-topic"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 concepts and techniques with how many works, software, guidance items and our modules cover them",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.events",
+      "kind": "named_query",
+      "name": "catalog.events",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "event_id",
+          "event",
+          "slug",
+          "edition_label",
+          "starts_on",
+          "ends_on",
+          "city",
+          "country",
+          "website_url",
+          "series",
+          "organizers",
+          "talk_count",
+          "tracks"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.events\nwhere ($1::text is null or event ilike '%' || $1 || '%' or series::text ilike '%' || $1 || '%')\norder by starts_on desc nulls last, event\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "talks-on-topic"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 industry events (conference editions) with dates, place, organizers, tracks and talk counts",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "model_version_id": null,
+        "text": null
+      },
+      "id": "q:catalog.model_offerings",
+      "kind": "named_query",
+      "name": "catalog.model_offerings",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "model_version_id",
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "model_version_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "offering_id",
+          "offering",
+          "offering_key",
+          "model_version_id",
+          "model",
+          "provider",
+          "region",
+          "tier",
+          "input_usd_per_1m",
+          "output_usd_per_1m",
+          "cached_input_usd_per_1m",
+          "batch_input_usd_per_1m",
+          "availability",
+          "pricing_url",
+          "price_valid_from",
+          "price_observed_at",
+          "price_claim_id",
+          "price_locator_id"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.model_offerings\nwhere ($1::uuid is null or model_version_id = $1)\n  and ($2::text is null or provider ilike '%' || $2 || '%' or model ilike '%' || $2 || '%' or offering ilike '%' || $2 || '%')\norder by input_usd_per_1m nulls last, offering\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "price-with-locator",
+        "cheapest-qualified-model"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 offerings (model as sold by a provider) with normalized USD per 1M tokens and the price claim/locator",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "at": "2026-06-01T00:00:00Z"
+      },
+      "id": "q:catalog.model_offerings_at",
+      "kind": "named_query",
+      "name": "catalog.model_offerings_at",
+      "pagination": null,
+      "paramOrder": [
+        "at"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.model_offerings_at($1::timestamptz) order by input_usd_per_1m nulls last, offering limit 200",
+      "tasks": [
+        "cheapest-qualified-model",
+        "what-changed-since"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "param:at"
+      },
+      "title": "The offerings table as it stood at a world time (L2 replay of L1)",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "availability": null,
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.models",
+      "kind": "named_query",
+      "name": "catalog.models",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "availability",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "availability": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "model_version_id",
+          "model",
+          "developer",
+          "released_on",
+          "context_tokens",
+          "max_output_tokens",
+          "modalities",
+          "tool_use",
+          "structured_output",
+          "reasoning",
+          "vision",
+          "open_weights",
+          "knowledge_cutoff",
+          "availability",
+          "min_input_usd_per_1m",
+          "min_output_usd_per_1m",
+          "offering_count",
+          "as_of_knowledge_seq"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.models\nwhere ($1::text is null or model ilike '%' || $1 || '%' or developer ilike '%' || $1 || '%' or model_family ilike '%' || $1 || '%')\n  and ($2::text is null or availability = $2)\norder by released_on desc nulls last, model\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "compare-models",
+        "cheapest-qualified-model"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 models (one row per model version) with developer, capabilities, availability and minimum current price",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "at": "2026-06-01T00:00:00Z"
+      },
+      "id": "q:catalog.models_at",
+      "kind": "named_query",
+      "name": "catalog.models_at",
+      "pagination": null,
+      "paramOrder": [
+        "at"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "at": {
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          }
+        },
+        "required": [
+          "at"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.models_at($1::timestamptz) order by released_on desc nulls last, model limit 200",
+      "tasks": [
+        "compare-models",
+        "what-changed-since"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "param:at"
+      },
+      "title": "The models table as it stood at a world time (L2 replay of L1)",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "org_kind": null,
+        "text": null
+      },
+      "id": "q:catalog.organizations",
+      "kind": "named_query",
+      "name": "catalog.organizations",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "org_kind",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "org_kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "organization_id",
+          "organization",
+          "slug",
+          "org_kind",
+          "website_url",
+          "country_code",
+          "founded_on",
+          "developed_count",
+          "offering_count",
+          "people_count",
+          "headcount"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.organizations\nwhere ($1::text is null or organization ilike '%' || $1 || '%')\n  and ($2::text is null or org_kind = $2)\norder by organization\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "what-do-we-know-about-entity"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 organizations with kind, site, country, founding date and counts",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.papers",
+      "kind": "named_query",
+      "name": "catalog.papers",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "paper_id",
+          "title",
+          "arxiv_id",
+          "doi",
+          "published_at",
+          "canonical_url",
+          "authors",
+          "publishers",
+          "repositories",
+          "techniques",
+          "talks_about",
+          "citations"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.papers\nwhere ($1::text is null or title ilike '%' || $1 || '%' or arxiv_id = $1 or doi = $1 or authors::text ilike '%' || $1 || '%')\norder by published_at desc nulls last, title\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "talk-to-repo-to-paper"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 papers with identifiers, authors, code repositories, techniques and the talks that discuss them",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.people",
+      "kind": "named_query",
+      "name": "catalog.people",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "person_id",
+          "person",
+          "slug",
+          "title",
+          "profile_url",
+          "affiliations",
+          "talk_count",
+          "work_count"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.people\nwhere ($1::text is null or person ilike '%' || $1 || '%' or affiliations::text ilike '%' || $1 || '%')\norder by talk_count desc nulls last, person\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "talks-on-topic"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 people with current affiliations and talk/work counts",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "kind": null,
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.software",
+      "kind": "named_query",
+      "name": "catalog.software",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "kind",
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "default": null,
+            "enum": [
+              "library",
+              "repository",
+              "mcp_server",
+              "agent_skill",
+              "product",
+              "ai_protocol",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "software_id",
+          "kind",
+          "software",
+          "ecosystem",
+          "package_name",
+          "category",
+          "docs_url",
+          "repository_url",
+          "developers",
+          "latest_release",
+          "latest_release_on",
+          "license",
+          "stars",
+          "downloads",
+          "mcp_hosting",
+          "mcp_auth",
+          "mcp_is_official",
+          "protocols",
+          "concepts"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.software\nwhere ($1::text is null or kind = $1)\n  and ($2::text is null or software ilike '%' || $2 || '%' or package_name ilike '%' || $2 || '%' or concepts::text ilike '%' || $2 || '%')\norder by stars desc nulls last, software\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "release-history",
+        "talk-to-repo-to-paper",
+        "modules-covering-concept"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 software (libraries, repositories, MCP servers, agent skills, products, protocols) in one table",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "software_id": null,
+        "text": null
+      },
+      "id": "q:catalog.software_releases",
+      "kind": "named_query",
+      "name": "catalog.software_releases",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "software_id",
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "software_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "release_id",
+          "release",
+          "software_id",
+          "software",
+          "software_kind",
+          "version_label",
+          "released_at",
+          "breaking",
+          "highlights",
+          "release_url",
+          "learned_k",
+          "observed_at"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.software_releases\nwhere ($1::uuid is null or software_id = $1)\n  and ($2::text is null or software ilike '%' || $2 || '%')\norder by released_at desc nulls last, release\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "release-history",
+        "modules-affected-by-release"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "history"
+      },
+      "title": "Releases of a software thing, newest first, with breaking flag and the knowledge seq they were learned at",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "api-surface",
+      "embedding": null,
+      "example": {
+        "event_id": null,
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:catalog.talks",
+      "kind": "named_query",
+      "name": "catalog.talks",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "event_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "event_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "talk_id",
+          "title",
+          "talk_kind",
+          "track",
+          "level",
+          "event",
+          "event_id",
+          "event_starts_on",
+          "speakers",
+          "speaker_affiliations",
+          "topics",
+          "repositories",
+          "recorded_at",
+          "duration_ms",
+          "video_url",
+          "slides_url",
+          "document_count"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.talks\nwhere ($1::text is null or title ilike '%' || $1 || '%' or topics::text ilike '%' || $1 || '%' or speakers::text ilike '%' || $1 || '%')\n  and ($2::uuid is null or event_id = $2)\norder by event_starts_on desc nulls last, title\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "talks-on-topic",
+        "talk-passage-at-timecode",
+        "talk-to-repo-to-paper"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "L1 talks with event, speakers, topics, linked repositories and recording links",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "content",
+      "embedding": null,
+      "example": {
+        "document_id": "0192b000-0000-7000-8000-000000000001"
+      },
+      "id": "q:content.document_digest",
+      "kind": "named_query",
+      "name": "content.document_digest",
+      "pagination": null,
+      "paramOrder": [
+        "document_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "digest_id",
+          "version_label",
+          "scope",
+          "producer_kind",
+          "ordinal",
+          "item_kind",
+          "text",
+          "payload",
+          "entity",
+          "node_ids",
+          "claim_id",
+          "confidence"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.document_digest($1::uuid) limit 200",
+      "tasks": [
+        "talks-on-topic",
+        "what-changed-since"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Structured digest of a document's newest version (key points, entity roles, assertions, changes, open questions)",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "content",
+      "embedding": null,
+      "example": {
+        "document_id": "0192b000-0000-7000-8000-000000000001",
+        "unit_kinds": null
+      },
+      "id": "q:content.document_units",
+      "kind": "named_query",
+      "name": "content.document_units",
+      "pagination": null,
+      "paramOrder": [
+        "document_id",
+        "unit_kinds"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "unit_kinds": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "node_id",
+          "version_label",
+          "unit_kind",
+          "logical_key",
+          "attributes",
+          "inline_text",
+          "page_number",
+          "start_ms",
+          "end_ms",
+          "stable_local_key"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.document_units($1::uuid, $2::text[]) limit 200",
+      "tasks": [
+        "price-with-locator",
+        "talk-passage-at-timecode"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Typed units of a document across its versions (newest first)",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "content",
+      "embedding": null,
+      "example": {
+        "document_id": null,
+        "limit": 50,
+        "outcome": null
+      },
+      "id": "q:content.refresh_checks",
+      "kind": "named_query",
+      "name": "content.refresh_checks",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "document_id",
+        "outcome",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "outcome": {
+            "default": null,
+            "enum": [
+              "unchanged",
+              "changed",
+              "failed",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select r.id, r.document_id, r.prior_version_id, r.fetch_id, r.checked_at, r.outcome, r.content_sha256, r.new_version_id\nfrom content.refresh_check r\nwhere r.tenant_id = util.current_tenant_id()\n  and ($1::uuid is null or r.document_id = $1)\n  and ($2::text is null or r.outcome = $2)\norder by r.checked_at desc, r.id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "what-changed-since"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Refresh outcomes for a document (unchanged, changed, failed) and the version each created",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "content",
+      "embedding": null,
+      "example": {
+        "from_ms": 0,
+        "query": null,
+        "talk_id": "0192b000-0000-7000-8000-000000000001",
+        "to_ms": 600000
+      },
+      "id": "q:content.talk_segments",
+      "kind": "named_query",
+      "name": "content.talk_segments",
+      "pagination": null,
+      "paramOrder": [
+        "talk_id",
+        "from_ms",
+        "to_ms",
+        "query"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "from_ms": {
+            "default": null,
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "query": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "talk_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "to_ms": {
+            "default": null,
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "talk_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "node_id",
+          "unit_kind",
+          "start_ms",
+          "end_ms",
+          "slide_n",
+          "text",
+          "document_id",
+          "representation_id",
+          "logical_key"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.talk_segments($1::uuid, $2::integer, $3::integer, $4::text) limit 200",
+      "tasks": [
+        "talk-passage-at-timecode",
+        "talks-on-topic"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Transcript segments and slides of a talk inside a timecode window, optionally filtered by text",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "content",
+      "embedding": null,
+      "example": {
+        "document_id": null,
+        "limit": 100,
+        "since": "2026-10-01T00:00:00Z"
+      },
+      "id": "q:content.unit_changes",
+      "kind": "named_query",
+      "name": "content.unit_changes",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "document_id",
+        "since",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 100,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "since": {
+            "default": null,
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select c.id, c.document_id, c.logical_key, c.unit_kind, c.from_version_id, c.to_version_id, c.change_kind,\n       c.changed_attributes, c.detected_at, c.update_proposal_state\nfrom content.unit_change c\nwhere c.tenant_id = util.current_tenant_id()\n  and ($1::uuid is null or c.document_id = $1)\n  and ($2::timestamptz is null or c.detected_at >= $2)\norder by c.detected_at desc, c.id\nlimit least(greatest(coalesce($3, 100), 1), 200)\n",
+      "tasks": [
+        "what-changed-since"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Unit-level diffs between document versions, matched by logical key",
       "volatile": true
     },
     {
@@ -148,6 +1483,72 @@
       "domain": "identity",
       "embedding": null,
       "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "kind": "organization"
+      },
+      "id": "q:entity.attributes",
+      "kind": "named_query",
+      "name": "entity.attributes",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "kind"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "entity_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "entity_id",
+          "kind",
+          "display_name",
+          "slug",
+          "lifecycle",
+          "summary",
+          "attributes",
+          "parent_kind",
+          "is_work",
+          "attributes_schema"
+        ],
+        "shape": "single_row"
+      },
+      "role": "pipeline_agent",
+      "sql": "select e.id as entity_id, e.kind, e.display_name, e.slug, e.lifecycle, e.summary, e.attributes,\n       ek.parent_kind, ek.is_work, ek.attributes_schema\nfrom catalog.entity e\njoin taxonomy.entity_kind ek on ek.code = e.kind\nwhere e.tenant_id = util.current_tenant_id()\n  and e.id = $1\n  and ($2::text is null or e.kind = $2)\n",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "resolve-or-create-entity",
+        "find-entity-by-identifier"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Canonical entity row with its kind-validated attributes and the kind's attribute schema",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "identity",
+      "embedding": null,
+      "example": {
         "scheme": "github",
         "value": "openai/openai-python"
       },
@@ -189,7 +1590,7 @@
         "shape": "rows"
       },
       "role": "pipeline_agent",
-      "sql": "select e.id as entity_id, e.kind, e.display_name, e.lifecycle, i.scheme, i.value\nfrom corpus.entity_identifier i\njoin corpus.entity e on e.id = i.entity_id and e.tenant_id = i.tenant_id\nwhere i.tenant_id = util.current_tenant_id()\n  and i.scheme = $1\n  and i.value = $2\n",
+      "sql": "select e.id as entity_id, e.kind, e.display_name, e.lifecycle, i.scheme, i.value\nfrom catalog.entity_identifier i\njoin catalog.entity e on e.id = i.entity_id and e.tenant_id = i.tenant_id\nwhere i.tenant_id = util.current_tenant_id()\n  and i.scheme = $1\n  and i.value = $2\n",
       "tasks": [
         "find-entity-by-identifier",
         "resolve-or-create-entity"
@@ -252,7 +1653,7 @@
       "domain": "relationships",
       "embedding": null,
       "example": {
-        "at": "2026-09-11T00:00:00Z",
+        "at": "2026-11-08T00:00:00Z",
         "direction": "both",
         "entity_id": "0192b000-0000-7000-8000-000000000001",
         "k": null,
@@ -273,7 +1674,7 @@
         "additionalProperties": false,
         "properties": {
           "at": {
-            "default": "2026-09-11T00:00:00Z",
+            "default": "2026-11-08T00:00:00Z",
             "format": "date-time",
             "pgType": "timestamptz",
             "type": "string"
@@ -320,7 +1721,8 @@
       "sql": "select * from api.relationships($1::uuid, $2::text, $3::timestamptz, $4::bigint, $5::text)",
       "tasks": [
         "what-do-we-know-about-entity",
-        "assert-relationship"
+        "assert-relationship",
+        "talk-to-repo-to-paper"
       ],
       "temporal": {
         "knowledge": "param:k",
@@ -369,7 +1771,9 @@
       "sql": "select * from api.resolve_entity($1::text)",
       "tasks": [
         "what-do-we-know-about-entity",
-        "resolve-or-create-entity"
+        "resolve-or-create-entity",
+        "compare-models",
+        "price-with-locator"
       ],
       "temporal": {
         "knowledge": "head",
@@ -386,7 +1790,7 @@
         "entity_id": "0192b000-0000-7000-8000-000000000001",
         "from": "2025-01-01T00:00:00Z",
         "k": null,
-        "to": "2026-09-11T00:00:00Z"
+        "to": "2026-11-08T00:00:00Z"
       },
       "id": "q:entity.timeline",
       "kind": "named_query",
@@ -451,70 +1855,6 @@
         "world_time": "param:from"
       },
       "title": "Segments, events, and unknown gaps for one entity over a world interval",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "identity",
-      "embedding": null,
-      "example": {
-        "entity_id": "0192b000-0000-7000-8000-000000000001",
-        "kind": "organization"
-      },
-      "id": "q:entity.typed_row",
-      "kind": "named_query",
-      "name": "entity.typed_row",
-      "pagination": null,
-      "paramOrder": [
-        "entity_id",
-        "kind"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "entity_id": {
-            "format": "uuid",
-            "pgType": "uuid",
-            "type": "string"
-          },
-          "kind": {
-            "default": null,
-            "type": [
-              "string",
-              "null"
-            ]
-          }
-        },
-        "required": [
-          "entity_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "entity_id",
-          "kind",
-          "display_name",
-          "slug",
-          "lifecycle",
-          "summary",
-          "canonical_schema",
-          "canonical_table",
-          "typed_row"
-        ],
-        "shape": "single_row"
-      },
-      "role": "pipeline_agent",
-      "sql": "select e.id as entity_id, e.kind, e.display_name, e.slug, e.lifecycle, e.summary,\n       ek.canonical_schema, ek.canonical_table,\n       coalesce(\n         to_jsonb(t_person), to_jsonb(t_organization), to_jsonb(t_product),\n         to_jsonb(t_product_version), to_jsonb(t_product_feature), to_jsonb(t_ai_model),\n         to_jsonb(t_ai_model_version), to_jsonb(t_model_offering), to_jsonb(t_technique),\n         to_jsonb(t_dataset), to_jsonb(t_benchmark), to_jsonb(t_benchmark_run),\n         to_jsonb(t_repository), to_jsonb(t_library), to_jsonb(t_library_release),\n         to_jsonb(t_mcp_server), to_jsonb(t_agent_skill), to_jsonb(t_ai_protocol),\n         to_jsonb(t_ai_protocol_version), to_jsonb(t_ai_protocol_feature), to_jsonb(t_paper),\n         to_jsonb(t_media_channel), to_jsonb(t_media_series), to_jsonb(t_media_work),\n         to_jsonb(t_event_series), to_jsonb(t_industry_event), to_jsonb(t_talk),\n         to_jsonb(t_story), to_jsonb(t_case_study), to_jsonb(t_concept),\n         to_jsonb(t_funding_round), to_jsonb(t_corporate_transaction), to_jsonb(t_registry),\n         to_jsonb(t_security_advisory), to_jsonb(t_compute_device), to_jsonb(t_compute_offering)\n       ) as typed_row\nfrom corpus.entity e\njoin taxonomy.entity_kind ek on ek.code = e.kind\nleft join corpus.person t_person on t_person.id = e.id\nleft join corpus.organization t_organization on t_organization.id = e.id\nleft join corpus.product t_product on t_product.id = e.id\nleft join corpus.product_version t_product_version on t_product_version.id = e.id\nleft join corpus.product_feature t_product_feature on t_product_feature.id = e.id\nleft join corpus.ai_model t_ai_model on t_ai_model.id = e.id\nleft join corpus.ai_model_version t_ai_model_version on t_ai_model_version.id = e.id\nleft join corpus.model_offering t_model_offering on t_model_offering.id = e.id\nleft join corpus.technique t_technique on t_technique.id = e.id\nleft join corpus.dataset t_dataset on t_dataset.id = e.id\nleft join corpus.benchmark t_benchmark on t_benchmark.id = e.id\nleft join corpus.benchmark_run t_benchmark_run on t_benchmark_run.id = e.id\nleft join corpus.repository t_repository on t_repository.id = e.id\nleft join corpus.library t_library on t_library.id = e.id\nleft join corpus.library_release t_library_release on t_library_release.id = e.id\nleft join corpus.mcp_server t_mcp_server on t_mcp_server.id = e.id\nleft join corpus.agent_skill t_agent_skill on t_agent_skill.id = e.id\nleft join corpus.ai_protocol t_ai_protocol on t_ai_protocol.id = e.id\nleft join corpus.ai_protocol_version t_ai_protocol_version on t_ai_protocol_version.id = e.id\nleft join corpus.ai_protocol_feature t_ai_protocol_feature on t_ai_protocol_feature.id = e.id\nleft join corpus.paper t_paper on t_paper.id = e.id\nleft join corpus.media_channel t_media_channel on t_media_channel.id = e.id\nleft join corpus.media_series t_media_series on t_media_series.id = e.id\nleft join corpus.media_work t_media_work on t_media_work.id = e.id\nleft join corpus.event_series t_event_series on t_event_series.id = e.id\nleft join corpus.industry_event t_industry_event on t_industry_event.id = e.id\nleft join corpus.talk t_talk on t_talk.id = e.id\nleft join corpus.story t_story on t_story.id = e.id\nleft join corpus.case_study t_case_study on t_case_study.id = e.id\nleft join corpus.concept t_concept on t_concept.id = e.id\nleft join corpus.funding_round t_funding_round on t_funding_round.id = e.id\nleft join corpus.corporate_transaction t_corporate_transaction on t_corporate_transaction.id = e.id\nleft join corpus.registry t_registry on t_registry.id = e.id\nleft join corpus.security_advisory t_security_advisory on t_security_advisory.id = e.id\nleft join corpus.compute_device t_compute_device on t_compute_device.id = e.id\nleft join corpus.compute_offering t_compute_offering on t_compute_offering.id = e.id\nwhere e.tenant_id = util.current_tenant_id()\n  and e.id = $1\n  and ($2::text is null or e.kind = $2)\n",
-      "tasks": [
-        "what-do-we-know-about-entity",
-        "resolve-or-create-entity"
-      ],
-      "temporal": {
-        "knowledge": "head",
-        "world_time": "n/a"
-      },
-      "title": "Canonical entity plus the kind-dispatched typed child row",
       "volatile": false
     },
     {
@@ -616,7 +1956,8 @@
       "role": "app_reader",
       "sql": "select event_id, kind, subject_entity_id, object_entity_id, occurrence_id,\n       occurred_during, occurrence_mode, payload\nfrom api.events_current\nwhere subject_entity_id = $1\norder by lower(occurred_during) desc, event_id\n",
       "tasks": [
-        "what-do-we-know-about-entity"
+        "what-do-we-know-about-entity",
+        "release-history"
       ],
       "temporal": {
         "knowledge": "head",
@@ -657,7 +1998,7 @@
         "shape": "rows"
       },
       "role": "pipeline_agent",
-      "sql": "select sc.id, sc.source_id, sc.artifact_id, sc.content_sha256, sc.capture_method,\n       sc.captured_at, sc.request_url\nfrom evidence.source_capture sc\nwhere sc.tenant_id = util.current_tenant_id()\n  and sc.source_id = $1\norder by sc.captured_at desc, sc.id\n",
+      "sql": "select sc.id, sc.source_id, sc.artifact_id, sc.content_sha256, sc.capture_method,\n       sc.captured_at, sc.request_url, sc.acquisition_fetch_id\nfrom evidence.source_capture sc\nwhere sc.tenant_id = util.current_tenant_id()\n  and sc.source_id = $1\norder by sc.captured_at desc, sc.id\n",
       "tasks": [
         "admit-support-for-claim",
         "build-evidence-packet"
@@ -666,7 +2007,7 @@
         "knowledge": "n/a",
         "world_time": "n/a"
       },
-      "title": "Captures registered for one source",
+      "title": "Captures registered for one source, with the acquisition fetch that produced them",
       "volatile": false
     },
     {
@@ -829,13 +2170,115 @@
       "volatile": false
     },
     {
+      "cost_class": "medium",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "document_types": null,
+        "entity_kinds": null,
+        "since": "2026-10-01T00:00:00Z",
+        "stream_kinds": null
+      },
+      "id": "q:facts.changes_since",
+      "kind": "named_query",
+      "name": "facts.changes_since",
+      "pagination": null,
+      "paramOrder": [
+        "since",
+        "stream_kinds",
+        "entity_kinds",
+        "document_types"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "document_types": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "entity_kinds": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "since": {
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": "string"
+          },
+          "stream_kinds": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "since"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "change_source",
+          "change_kind",
+          "learned_at",
+          "knowledge_seq",
+          "world_from",
+          "subject_entity_id",
+          "subject",
+          "stream_kind",
+          "scope_key",
+          "old_value",
+          "new_value",
+          "document_id",
+          "document_title",
+          "logical_key",
+          "unit_kind",
+          "changed_attributes",
+          "claim_id"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.changes_since($1::timestamptz, $2::text[], $3::text[], $4::text[]) order by learned_at desc, change_source, subject limit 200",
+      "tasks": [
+        "what-changed-since",
+        "release-history"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "param:since"
+      },
+      "title": "What changed since a date, on both clocks (facts opened/replaced, events, unit-level document diffs)",
+      "volatile": false
+    },
+    {
       "cost_class": "cheap",
       "domain": "temporal-facts",
       "embedding": null,
       "example": {
         "entity_id": null,
         "limit": 50,
-        "stream_kind": "model_offering_price"
+        "stream_kind": "offering_price"
       },
       "id": "q:facts.current_by_stream",
       "kind": "named_query",
@@ -884,7 +2327,8 @@
       "sql": "select id, stream_id, stream_kind, subject_entity_id, subject_relationship_id, scope_key,\n       valid_during, status, amount, currency, unit, belief, temporal_basis, k_from, k_to, payload\nfrom api.current_facts\nwhere ($1::text is null or stream_kind = $1)\n  and ($2::uuid is null or subject_entity_id = $2)\norder by stream_kind, scope_key, id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
       "tasks": [
         "record-price-change",
-        "record-availability-change"
+        "record-availability-change",
+        "find-stale-facts"
       ],
       "temporal": {
         "knowledge": "head",
@@ -901,8 +2345,8 @@
         "entity_id": "0192b000-0000-7000-8000-000000000001",
         "limit": 50,
         "offset": 0,
-        "scope_key": "per_1m_input_tokens",
-        "stream_kind": "model_offering_price"
+        "scope_key": "input_tokens||",
+        "stream_kind": "offering_price"
       },
       "id": "q:facts.history_for_stream",
       "kind": "named_query",
@@ -974,6 +2418,252 @@
     },
     {
       "cost_class": "cheap",
+      "domain": "evidence",
+      "embedding": null,
+      "example": {
+        "entity_id": "0192b000-0000-7000-8000-000000000001",
+        "scope_key": null,
+        "stream_kind": "offering_price"
+      },
+      "id": "q:facts.locators",
+      "kind": "named_query",
+      "name": "facts.locators",
+      "pagination": null,
+      "paramOrder": [
+        "entity_id",
+        "stream_kind",
+        "scope_key"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          },
+          "scope_key": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stream_kind": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "entity_id",
+          "stream_kind"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "segment_id",
+          "scope_key",
+          "amount",
+          "currency",
+          "unit",
+          "status",
+          "payload",
+          "valid_during",
+          "claim_id",
+          "claim_statement",
+          "locator_id",
+          "selector_kind",
+          "selector",
+          "normalized_value",
+          "capture_id",
+          "captured_at",
+          "request_url",
+          "source_url",
+          "document_node_id",
+          "unit_kind",
+          "logical_key"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.fact_locators($1::uuid, $2::text, $3::text)",
+      "tasks": [
+        "price-with-locator",
+        "admit-support-for-claim"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "A current fact with its claim, exact locator, capture and the typed unit it was read from",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "temporal-facts",
+      "embedding": null,
+      "example": {
+        "meter": "input_tokens",
+        "offering_id": "0192b000-0000-7000-8000-000000000001"
+      },
+      "id": "q:facts.price_history",
+      "kind": "named_query",
+      "name": "facts.price_history",
+      "pagination": null,
+      "paramOrder": [
+        "offering_id",
+        "meter"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "meter": {
+            "default": "input_tokens",
+            "enum": [
+              "input_tokens",
+              "output_tokens",
+              "cached_input_tokens",
+              "batch_input_tokens",
+              "batch_output_tokens"
+            ],
+            "type": "string"
+          },
+          "offering_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "offering_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "segment_id",
+          "meter",
+          "tier",
+          "region",
+          "amount",
+          "currency",
+          "unit",
+          "valid_during",
+          "belief",
+          "temporal_basis",
+          "k_from",
+          "k_to",
+          "learned_at",
+          "retracted_at",
+          "claim_id",
+          "replaces_segment_id"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.price_history($1::uuid, $2::text)",
+      "tasks": [
+        "price-with-locator",
+        "supersede-stale-fact",
+        "record-price-change",
+        "find-stale-facts"
+      ],
+      "temporal": {
+        "knowledge": "all",
+        "world_time": "history"
+      },
+      "title": "Every price segment of an offering and meter with both clocks, including superseded beliefs",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "guidance",
+      "embedding": null,
+      "example": {
+        "entity_id": null,
+        "kind": null,
+        "limit": 50,
+        "text": null
+      },
+      "id": "q:guidance.items",
+      "kind": "named_query",
+      "name": "guidance.items",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "kind",
+        "entity_id",
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "entity_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "id",
+          "kind",
+          "title",
+          "statement",
+          "scope",
+          "assurance_level",
+          "payload",
+          "provenance_claim_id",
+          "created_at",
+          "subject_entity_ids"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.guidance_items\nwhere ($1::text is null or kind = $1)\n  and ($2::uuid is null or subject_entity_ids @> array[$2::uuid])\n  and ($3::text is null or title ilike '%' || $3 || '%' or statement ilike '%' || $3 || '%')\norder by created_at desc, id\nlimit least(greatest(coalesce($4, 50), 1), 200)\n",
+      "tasks": [
+        "what-do-we-know-about-entity",
+        "modules-covering-concept"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Expert guidance items (problems, solution patterns, failure modes, …) with their subject entities",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
       "domain": "temporal-facts",
       "embedding": null,
       "example": {},
@@ -1005,6 +2695,215 @@
         "world_time": "n/a"
       },
       "title": "Current tenant knowledge sequence",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "authoring",
+      "embedding": null,
+      "example": {
+        "release_id": "0192b000-0000-7000-8000-000000000001"
+      },
+      "id": "q:ours.modules_affected_by_release",
+      "kind": "named_query",
+      "name": "ours.modules_affected_by_release",
+      "pagination": null,
+      "paramOrder": [
+        "release_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "release_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "release_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "work_id",
+          "work_kind",
+          "work_slug",
+          "revision_id",
+          "revision_title",
+          "revision_created_at",
+          "software",
+          "release",
+          "released_at",
+          "breaking",
+          "binding",
+          "version_spec"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.modules_affected_by_release($1::uuid)",
+      "tasks": [
+        "modules-affected-by-release"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "Our head revisions that bind or require the software a release belongs to and were authored before it",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "authoring",
+      "embedding": null,
+      "example": {
+        "kind": null,
+        "limit": 50,
+        "released": null,
+        "text": null
+      },
+      "id": "q:ours.works_authored",
+      "kind": "named_query",
+      "name": "ours.works_authored",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "kind",
+        "released",
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "released": {
+            "default": null,
+            "pgType": "boolean",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "work_id",
+          "kind",
+          "slug",
+          "title",
+          "head_revision_id",
+          "revision_no",
+          "workspace_id",
+          "workspace_kind",
+          "released",
+          "covers_concepts",
+          "uses_software",
+          "runtime_requirements",
+          "knowledge_seq",
+          "source_tier"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.works_authored\nwhere ($1::text is null or kind = $1)\n  and ($2::boolean is null or released = $2)\n  and ($3::text is null or title ilike '%' || $3 || '%' or covers_concepts::text ilike '%' || $3 || '%' or uses_software::text ilike '%' || $3 || '%')\norder by created_at desc, slug\nlimit least(greatest(coalesce($4, 50), 1), 200)\n",
+      "tasks": [
+        "modules-covering-concept",
+        "modules-affected-by-release"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "Our courses, modules, lessons, activities, reports and templates at head revision (lens ours, tier 1)",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "ranking",
+      "embedding": null,
+      "example": {
+        "limit": 20,
+        "slug": "cheapest-frontier-input"
+      },
+      "id": "q:ranking.leaderboard",
+      "kind": "named_query",
+      "name": "ranking.leaderboard",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "slug",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 20,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "slug": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "rank",
+          "entity_id",
+          "display_name",
+          "score",
+          "unit",
+          "explanation",
+          "edition_no",
+          "published_at"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.leaderboard($1::text, $2::integer)",
+      "tasks": [
+        "compare-models"
+      ],
+      "temporal": {
+        "knowledge": "edition",
+        "world_time": "n/a"
+      },
+      "title": "Latest published edition of a named leaderboard (ranked entities with the fact segments behind each score)",
       "volatile": false
     },
     {
@@ -1041,7 +2940,7 @@
       "role": "pipeline_agent",
       "sql": "select i.id as intent_id, i.intent_type, i.idempotency_key, i.approval_state, i.created_at,\n       i.mission_id, b.knowledge_seq, b.receipt_id, b.recorded_at, b.summary\nfrom orchestration.operation_intent i\nleft join temporal.knowledge_batch b\n  on b.tenant_id = i.tenant_id and b.idempotency_key = i.idempotency_key\nwhere i.tenant_id = util.current_tenant_id()\n  and i.id = $1\n",
       "tasks": [
-        "publish-report",
+        "verify-ingestion-result",
         "check-knowledge-head"
       ],
       "temporal": {
@@ -1096,7 +2995,7 @@
       "role": "pipeline_agent",
       "sql": "select i.id as intent_id, i.intent_type, i.approval_state, i.created_at, i.idempotency_key,\n       b.knowledge_seq, b.receipt_id, b.recorded_at\nfrom orchestration.operation_intent i\nleft join temporal.knowledge_batch b\n  on b.tenant_id = i.tenant_id and b.idempotency_key = i.idempotency_key\nwhere i.tenant_id = util.current_tenant_id()\n  and i.mission_id = $1\norder by i.created_at desc, i.id\nlimit least(greatest(coalesce($2, 20), 1), 200)\n",
       "tasks": [
-        "publish-report"
+        "verify-ingestion-result"
       ],
       "temporal": {
         "knowledge": "head",
@@ -1160,306 +3059,14 @@
       "role": "app_reader",
       "sql": "select *\nfrom api.current_relationships\nwhere ($1::text is null or kind = $1)\n  and ($2::uuid is null or from_entity_id = $2 or to_entity_id = $2)\norder by kind, id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
       "tasks": [
-        "assert-relationship"
+        "assert-relationship",
+        "talk-to-repo-to-paper"
       ],
       "temporal": {
         "knowledge": "head",
         "world_time": "now()"
       },
       "title": "Current relationships, optionally filtered by kind or endpoint",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "research",
-      "embedding": null,
-      "example": {
-        "report_version_id": "00000000-0000-7000-8000-000000000001"
-      },
-      "id": "q:reports.artifacts",
-      "kind": "named_query",
-      "name": "reports.artifacts",
-      "pagination": null,
-      "paramOrder": [
-        "report_version_id"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "report_version_id": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "report_version_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "role",
-          "id",
-          "sha256",
-          "storage_bucket",
-          "object_path"
-        ],
-        "shape": "rows"
-      },
-      "role": "pipeline_agent",
-      "sql": "select r.role,a.* from research.report_artifact r join orchestration.artifact a on (a.tenant_id,a.id)=(r.tenant_id,r.artifact_id) where r.tenant_id=util.current_tenant_id() and r.report_version_id=$1::uuid order by r.role,a.id limit 200",
-      "tasks": [
-        "navigate-report"
-      ],
-      "temporal": {
-        "knowledge": "n/a",
-        "world_time": "n/a"
-      },
-      "title": "Registered report renditions and artifact metadata",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "research",
-      "embedding": null,
-      "example": {
-        "report_version_id": "00000000-0000-7000-8000-000000000001"
-      },
-      "id": "q:reports.assertions",
-      "kind": "named_query",
-      "name": "reports.assertions",
-      "pagination": null,
-      "paramOrder": [
-        "report_version_id"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "report_version_id": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "report_version_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "assertion_key",
-          "start_utf16",
-          "end_utf16",
-          "run_id",
-          "claim_key",
-          "claim_digest",
-          "evidence_manifest_artifact_id"
-        ],
-        "shape": "rows"
-      },
-      "role": "pipeline_agent",
-      "sql": "select a.*, c.run_id, c.claim_key, c.claim_digest, c.claim_id, c.evidence_manifest_artifact_id, c.role from research.report_assertion a left join research.report_assertion_claim c on (c.tenant_id,c.report_version_id,c.assertion_id)=(a.tenant_id,a.report_version_id,a.id) where a.tenant_id=util.current_tenant_id() and a.report_version_id=$1::uuid order by a.start_utf16,a.id,c.run_id,c.claim_key,c.claim_digest,c.role limit 200",
-      "tasks": [
-        "navigate-report"
-      ],
-      "temporal": {
-        "knowledge": "n/a",
-        "world_time": "n/a"
-      },
-      "title": "Assertions and run-qualified evidence bindings",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "research",
-      "embedding": null,
-      "example": {
-        "report_version_id": "00000000-0000-7000-8000-000000000001"
-      },
-      "id": "q:reports.dependencies",
-      "kind": "named_query",
-      "name": "reports.dependencies",
-      "pagination": null,
-      "paramOrder": [
-        "report_version_id"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "report_version_id": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "report_version_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "section_id",
-          "required_version_id",
-          "required_section_id",
-          "relation"
-        ],
-        "shape": "rows"
-      },
-      "role": "pipeline_agent",
-      "sql": "select * from research.report_section_dependency where tenant_id=util.current_tenant_id() and report_version_id=$1::uuid order by section_id,required_version_id,required_section_id,relation limit 200",
-      "tasks": [
-        "navigate-report"
-      ],
-      "temporal": {
-        "knowledge": "n/a",
-        "world_time": "n/a"
-      },
-      "title": "Exact section revisions needed for reuse",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "research",
-      "embedding": null,
-      "example": {
-        "report_version_id": "00000000-0000-7000-8000-000000000001"
-      },
-      "id": "q:reports.questions",
-      "kind": "named_query",
-      "name": "reports.questions",
-      "pagination": null,
-      "paramOrder": [
-        "report_version_id"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "report_version_id": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "report_version_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "question_key",
-          "coverage",
-          "explanation",
-          "resolution_evidence_needed",
-          "section_id"
-        ],
-        "shape": "rows"
-      },
-      "role": "pipeline_agent",
-      "sql": "select q.*, s.section_id from research.report_question q left join research.report_question_section s on (s.tenant_id,s.report_version_id,s.question_key)=(q.tenant_id,q.report_version_id,q.question_key) where q.tenant_id=util.current_tenant_id() and q.report_version_id=$1::uuid order by q.question_key,s.section_id limit 200",
-      "tasks": [
-        "navigate-report"
-      ],
-      "temporal": {
-        "knowledge": "n/a",
-        "world_time": "n/a"
-      },
-      "title": "Question coverage and answering sections",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "research",
-      "embedding": null,
-      "example": {
-        "report_version_id": "00000000-0000-7000-8000-000000000001"
-      },
-      "id": "q:reports.sections",
-      "kind": "named_query",
-      "name": "reports.sections",
-      "pagination": null,
-      "paramOrder": [
-        "report_version_id"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "report_version_id": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "report_version_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "section_id",
-          "section_key",
-          "ordinal",
-          "heading",
-          "content_pointer"
-        ],
-        "shape": "rows"
-      },
-      "role": "pipeline_agent",
-      "sql": "select v.*, s.section_key from research.report_section_version v join research.report_section s on (s.tenant_id,s.report_id,s.id)=(v.tenant_id,v.report_id,v.section_id) where v.tenant_id=util.current_tenant_id() and v.report_version_id=$1::uuid order by v.ordinal limit 200",
-      "tasks": [
-        "navigate-report"
-      ],
-      "temporal": {
-        "knowledge": "n/a",
-        "world_time": "n/a"
-      },
-      "title": "Ordered sections with stable keys",
-      "volatile": false
-    },
-    {
-      "cost_class": "cheap",
-      "domain": "research",
-      "embedding": null,
-      "example": {
-        "report_id": "00000000-0000-7000-8000-000000000001"
-      },
-      "id": "q:reports.versions",
-      "kind": "named_query",
-      "name": "reports.versions",
-      "pagination": null,
-      "paramOrder": [
-        "report_id"
-      ],
-      "params": {
-        "additionalProperties": false,
-        "properties": {
-          "report_id": {
-            "format": "uuid",
-            "type": "string"
-          }
-        },
-        "required": [
-          "report_id"
-        ],
-        "type": "object"
-      },
-      "result": {
-        "columns": [
-          "id",
-          "version",
-          "schema_version"
-        ],
-        "shape": "rows"
-      },
-      "role": "pipeline_agent",
-      "sql": "select v.*, p.schema_version, p.authoring_mode, p.as_of, p.predecessor_version_id from research.report_version v left join research.report_package p on (p.tenant_id,p.report_version_id)=(v.tenant_id,v.id) where v.tenant_id=util.current_tenant_id() and v.report_id=$1::uuid order by v.version desc limit 200",
-      "tasks": [
-        "navigate-report"
-      ],
-      "temporal": {
-        "knowledge": "n/a",
-        "world_time": "n/a"
-      },
-      "title": "Versions and package status for a report",
       "volatile": false
     },
     {
@@ -1584,7 +3191,227 @@
         "knowledge": "published",
         "world_time": "n/a"
       },
-      "title": "Hybrid search over a published 1536-d vector-space version",
+      "title": "Hybrid search over a published 1536-d vector-space version (legacy per-space entry; prefer retrieval.search_unified)",
+      "volatile": false
+    },
+    {
+      "cost_class": "heavy",
+      "domain": "retrieval",
+      "embedding": null,
+      "example": {
+        "as_of": null,
+        "content_kinds": null,
+        "document_types": null,
+        "entity_ids": null,
+        "lenses": [
+          "corpus",
+          "ours"
+        ],
+        "limit": 20,
+        "query": "context engineering",
+        "source_roles": null,
+        "space_slugs": null,
+        "tiers": null,
+        "unit_kinds": null,
+        "workspace_ids": null
+      },
+      "id": "q:retrieval.search_unified",
+      "kind": "named_query",
+      "name": "retrieval.search_unified",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "query",
+        "lenses",
+        "tiers",
+        "space_slugs",
+        "document_types",
+        "unit_kinds",
+        "entity_ids",
+        "as_of",
+        "workspace_ids",
+        "source_roles",
+        "content_kinds",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "default": null,
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "content_kinds": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "document_types": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "entity_ids": {
+            "default": null,
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "pgType": "uuid[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "lenses": {
+            "default": [
+              "corpus",
+              "ours"
+            ],
+            "items": {
+              "enum": [
+                "corpus",
+                "ours",
+                "private",
+                "evidence"
+              ],
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": "array"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "query": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_roles": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "space_slugs": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "tiers": {
+            "default": null,
+            "items": {
+              "maximum": 4,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "pgType": "smallint[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "unit_kinds": {
+            "default": null,
+            "items": {
+              "type": "string"
+            },
+            "pgType": "text[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          },
+          "workspace_ids": {
+            "default": null,
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "pgType": "uuid[]",
+            "type": [
+              "array",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "vector_item_id",
+          "lens",
+          "source_tier",
+          "content_kind",
+          "document_type_code",
+          "unit_kind",
+          "entity_id",
+          "document_id",
+          "document_version_id",
+          "target_kind",
+          "target_id",
+          "workspace_id",
+          "snippet",
+          "start_ms",
+          "end_ms",
+          "observed_at",
+          "valid_during",
+          "space_slug",
+          "fused_score",
+          "channel_scores"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.search_unified($1::text, null, $2::text[], $3::smallint[], $4::text[], $5::text[], $6::text[], $7::uuid[],\n                                 $8::timestamptz, $9::uuid[], $10::text[], $11::text[], least(greatest(coalesce($12, 20), 1), 200))\n",
+      "tasks": [
+        "talks-on-topic",
+        "search-my-notes",
+        "modules-covering-concept",
+        "run-hybrid-search"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "param:as_of"
+      },
+      "title": "L3 scoped semantic search over the one stack (lexical channels; the executor adds the ANN channel when it embeds)",
       "volatile": false
     },
     {
@@ -1774,7 +3601,7 @@
       "domain": "temporal-facts",
       "embedding": null,
       "example": {
-        "code": "model_offering_price"
+        "code": "offering_price"
       },
       "id": "q:vocab.stream_kind",
       "kind": "named_query",
@@ -1811,9 +3638,61 @@
       },
       "title": "Stream-kind vocabulary and slot rules",
       "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "content",
+      "embedding": null,
+      "example": {
+        "code": null,
+        "document_type": "pricing_page"
+      },
+      "id": "q:vocab.unit_kind",
+      "kind": "named_query",
+      "name": "vocab.unit_kind",
+      "pagination": null,
+      "paramOrder": [
+        "code",
+        "document_type"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "document_type": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select code, version, status, description, is_universal, applicable_document_types, parent_kinds,\n       logical_key_attributes, selector_kind, retrieval_role, entity_roles, attributes_schema\nfrom content.unit_kind\nwhere ($1::text is null or code = $1)\n  and ($2::text is null or $2 = any(applicable_document_types) or is_universal)\norder by code\n",
+      "tasks": [
+        "talk-passage-at-timecode",
+        "price-with-locator"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Unit-kind grammar (typed units, logical-key attributes, locator kind, retrieval role, entity roles)",
+      "volatile": false
     }
   ],
-  "migrationHead": "20261105010300",
+  "migrationHead": "20261108120500",
   "schemaVersion": "knowledge-query-catalog.v1",
-  "workspaceFingerprint": "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+  "workspaceFingerprint": "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 }

@@ -4,6 +4,7 @@ kind: table
 schema: knowledge_service
 name: checkpoint_artifact_reference
 domain: knowledge-service-runtime
+lens: machinery
 aliases: []
 tokens: [knowledge_service, checkpoint_artifact_reference, knowledge_service.checkpoint_artifact_reference, tenant_id, checkpoint_id, artifact_id]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"checkpoint_artifact_reference\"][\"Row\"]"
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.checkpoint_artifact_reference
 
-table in domain `knowledge-service-runtime`.
+table in domain `knowledge-service-runtime`, lens `machinery`.
 
 ## Columns
 

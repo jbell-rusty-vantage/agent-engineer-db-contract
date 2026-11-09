@@ -4,6 +4,7 @@ kind: function
 schema: knowledge_service
 name: guard_outbox_mutation
 domain: knowledge-service-runtime
+lens: machinery
 overloads: ["fn:knowledge_service.guard_outbox_mutation()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [outbox event linkage and payload are immutable, outbox messages cannot 
 touches: { reads: [], writes: [] }
 tokens: [knowledge_service, guard_outbox_mutation, knowledge_service.guard_outbox_mutation]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.guard_outbox_mutation
 
-Domain `knowledge-service-runtime`.
+Domain `knowledge-service-runtime`, lens `machinery`.
 
 ## guard_outbox_mutation() → trigger
 

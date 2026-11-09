@@ -4,22 +4,23 @@ kind: table
 schema: temporal
 name: segment
 domain: temporal-facts
+lens: corpus
 aliases: [fact, temporal fact, state segment]
-tokens: [temporal, segment, temporal.segment, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, specification_id]
-summary: "A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to)."
+tokens: [temporal, segment, temporal.segment, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at]
+summary: "A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to). One home for every number."
 summary_basis: curated
 rls: enabled
 readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"segment\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.segment
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
-> curated (model_assisted, unreviewed) — A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to).
+> curated (model_assisted, unreviewed) — A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to). One home for every number.
 
 ## Columns
 
@@ -35,8 +36,8 @@ table in domain `temporal-facts`.
 | 8 | `amount` | `numeric(20,6)` | yes | — | — |
 | 9 | `currency` | `character(3)` | yes | — | — |
 | 10 | `unit` | `text` | yes | — | _curated:_ Must be in stream_kind.unit_values when that list is present. |
-| 11 | `ref_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id |
-| 12 | `payload` | `jsonb` | no | `'{}'::jsonb` | — |
+| 11 | `ref_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
+| 12 | `payload` | `jsonb` | no | `'{}'::jsonb` | _curated:_ Validated by stream_kind.payload_schema; offering_price requires meter. |
 | 13 | `extent_id` | `uuid` | yes | — | FK → [`temporal.extent`](extent.md).id |
 | 14 | `caused_by_event_id` | `uuid` | yes | — | FK → [`temporal.event`](event.md).id |
 | 15 | `replaces_segment_id` | `uuid` | yes | — | FK → [`temporal.segment`](segment.md).id; _curated:_ Set by assert_state when splitting or replacing. |
@@ -44,23 +45,17 @@ table in domain `temporal-facts`.
 | 17 | `k_from` | `bigint` | no | — | — |
 | 18 | `k_to` | `bigint` | yes | — | _curated:_ Null means current knowledge; closure only via helpers. |
 | 19 | `created_at` | `timestamp with time zone` | no | `now()` | — |
-| 20 | `specification_id` | `uuid` | yes | — | FK → [`corpus.ai_model_version_spec`](../corpus/ai_model_version_spec.md).id |
 
 ## Constraints
 
 - PK (id)
 - unique (tenant_id, id)
 - **exclusion** `segment_stream_id_valid_during_excl`: `EXCLUDE USING gist (stream_id WITH =, valid_during WITH &&) WHERE (k_to IS NULL)`
-- check `segment_belief_check`: `(belief = ANY (ARRAY['accepted'::text, 'disputed'::text, 'unknown'::text]))`
-- check `segment_check`: `((k_to IS NULL) OR (k_to > k_from))`
-- check `segment_check1`: `((replaces_segment_id IS NULL) OR (replaces_segment_id <> id))`
-- check `segment_check2`: `((temporal_basis = ANY (ARRAY['observation_bounded'::text, 'unresolved'::text])) OR (extent_id IS NOT NULL))`
-- check `segment_temporal_basis_check`: `(temporal_basis = ANY (ARRAY['explicit'::text, 'carry_forward'::text, 'observation_bounded'::text, 'unresolved'::text]))`
-- check `segment_valid_during_check`: `((NOT isempty(valid_during)) AND lower_inc(valid_during) AND (NOT upper_inc(valid_during)) AND (NOT lower_inf(valid_during)))`
+- 6 check constraints; see [details](segment.details.md)
 
 ## Relationships
 
-14 outbound and 4 inbound foreign keys; full list in [details](segment.details.md).
+12 outbound and 4 inbound foreign keys; full list in [details](segment.details.md).
 
 ## Indexes
 
@@ -80,8 +75,8 @@ Enabled; 1 policies in [details](segment.details.md).
 
 ## Read paths
 
-- Named queries: `q:entity.at`, `q:entity.relationships`, `q:entity.timeline`, `q:entity.what_changed`, `q:facts.current_by_stream`, `q:facts.history_for_stream`, `q:relationships.current_by_kind`.
-- Exposed through: [`api.current_facts`](../api/current_facts.md), [`api.current_relationships`](../api/current_relationships.md).
+- Named queries: `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.talks`, `q:entity.at`, `q:entity.relationships`, `q:entity.timeline`, `q:entity.what_changed`, `q:facts.changes_since`, `q:facts.current_by_stream`, `q:facts.history_for_stream`, `q:facts.locators`, `q:facts.price_history`, `q:relationships.current_by_kind`.
+- Exposed through: [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.concepts`](../api/concepts.md), [`api.current_facts`](../api/current_facts.md), [`api.current_relationships`](../api/current_relationships.md), [`api.events`](../api/events.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.software`](../api/software.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
@@ -95,11 +90,11 @@ insert: `Database["temporal"]["Tables"]["segment"]["Insert"]`; row: `Database["t
 
 ## Examples
 
-Input price in March 2026 as known at head 0
+Input price history of an offering with both clocks
 
 ```bash
-knowledge db query entity.at --param at=2026-03-15T00:00:00Z --param entity_id=0192b000-0000-7000-8000-000000000001 --param k=0
+knowledge db query facts.price_history --param meter=input_tokens --param offering_id=0192b000-0000-7000-8000-000000000001
 ```
-Filter result rows to stream_kind model_offering_price.
+Includes superseded beliefs (k_to set).
 
 Defined in: `20260912010400_km_04_temporal.sql`.

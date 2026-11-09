@@ -2,20 +2,21 @@
 id: "sch:taxonomy"
 kind: schema
 name: taxonomy
+lens: corpus
 domains: [identity, relationships]
 relations: 9
 functions: 2
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # taxonomy
 
-Versioned multi-facet taxonomies and their enforced assignments. Domains: [`identity`](../../domains/identity.md), [`relationships`](../../domains/relationships.md).
+Versioned multi-facet taxonomies and their enforced assignments. Lens `corpus`. Domains: [`identity`](../../domains/identity.md), [`relationships`](../../domains/relationships.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
-| [`assignment`](../../relations/taxonomy/assignment.md) | table | unknown | — | → `orchestration.operation_receipt`, → `evidence.claim`, → `evaluation.review_task`, → `corpus.entity` |
+| [`assignment`](../../relations/taxonomy/assignment.md) | table | unknown | — | → `orchestration.operation_receipt`, → `evidence.claim`, → `evaluation.review_task`, → `catalog.entity` |
 | [`assignment_review_requirement`](../../relations/taxonomy/assignment_review_requirement.md) | table | unknown | — | → `taxonomy.facet` |
-| [`entity_kind`](../../relations/taxonomy/entity_kind.md) | table | unknown | Closed list of entity kinds and their canonical typed tables. | — |
+| [`entity_kind`](../../relations/taxonomy/entity_kind.md) | table | small | Closed list of entity kinds with the JSON Schema that validates catalog.entity.attributes… | — |
 | [`facet`](../../relations/taxonomy/facet.md) | table | unknown | — | — |
 | [`facet_version`](../../relations/taxonomy/facet_version.md) | table | unknown | — | → `taxonomy.facet`, → `evaluation.review_task` |
 | [`relationship_kind`](../../relations/taxonomy/relationship_kind.md) | table | unknown | Edge vocabulary with endpoint kinds, temporal flag, and property schema. | — |

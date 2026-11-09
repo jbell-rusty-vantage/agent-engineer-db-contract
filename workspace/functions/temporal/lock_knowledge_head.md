@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: lock_knowledge_head
 domain: temporal-facts
+lens: corpus
 overloads: ["fn:temporal.lock_knowledge_head(int8)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [expected knowledge head required, knowledge batch already open, rebase_
 touches: { reads: [], writes: [temporal.knowledge_head] }
 tokens: [temporal, lock_knowledge_head, temporal.lock_knowledge_head]
 defined_in: ["20260914010900_content_link_head_lock.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.lock_knowledge_head
 
-Domain `temporal-facts`.
+Domain `temporal-facts`, lens `corpus`.
 
 ## lock_knowledge_head(bigint) → bigint
 

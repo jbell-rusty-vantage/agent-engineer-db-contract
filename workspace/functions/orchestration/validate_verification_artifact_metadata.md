@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: validate_verification_artifact_metadata
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.validate_verification_artifact_metadata()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [verification metadata requires a marked same-tenant artifact, verificat
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, validate_verification_artifact_metadata, orchestration.validate_verification_artifact_metadata]
 defined_in: ["20260906020000_verification_artifact_contract_marker.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.validate_verification_artifact_metadata
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## validate_verification_artifact_metadata() → trigger
 

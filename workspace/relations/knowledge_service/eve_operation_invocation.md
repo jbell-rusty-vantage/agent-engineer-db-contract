@@ -4,6 +4,7 @@ kind: table
 schema: knowledge_service
 name: eve_operation_invocation
 domain: knowledge-service-runtime
+lens: machinery
 aliases: []
 tokens: [knowledge_service, eve_operation_invocation, knowledge_service.eve_operation_invocation, id, tenant_id, operation_id, issuer, key_id, jti, invocation_kind, envelope, envelope_sha256, lineage_sha256, observed_external_execution, issued_at, expires_at, accepted_at]
 summary: "Append-only full public Eve attestation envelopes, including signature, for offline authorization replay. It grants no authority itself."
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"eve_operation_invocation\"][\"Row\"]"
 defined_in: ["20260908010000_eve_verification_binding.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.eve_operation_invocation
 
-table in domain `knowledge-service-runtime` — Append-only full public Eve attestation envelopes, including signature, for offline authorization replay. It grants no authority itself..
+table in domain `knowledge-service-runtime`, lens `machinery` — Append-only full public Eve attestation envelopes, including signature, for offline authorization replay. It grants no authority itself..
 
 ## Columns
 

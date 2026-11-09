@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: evidence_packet
 domain: retrieval
+lens: corpus
 aliases: [packet]
 tokens: [retrieval, evidence_packet, retrieval.evidence_packet, id, tenant_id, run_id, packet, packet_schema_version, artifact_id, created_at, packet_sha256, normalized_query, authorization_context, omitted_results, coverage, abstention, event_ids, receipt_ids]
 summary: Assembled evidence bundle for one question.
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"evidence_packet\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.evidence_packet
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Assembled evidence bundle for one question.
 

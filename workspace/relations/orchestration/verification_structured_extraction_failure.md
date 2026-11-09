@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_structured_extraction_failure
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_structured_extraction_failure, orchestration.verification_structured_extraction_failure, tenant_id, operation_id, failure_code, status, completed_at, failure_artifact_id, failure_sha256, seal_payload_sha256, provider_call_sha256]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_structured_extraction_failure\"][\"Row\"]"
 defined_in: ["20260906032500_verification_structured_extraction_failure.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_structured_extraction_failure
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

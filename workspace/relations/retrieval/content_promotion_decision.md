@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: content_promotion_decision
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, content_promotion_decision, retrieval.content_promotion_decision, id, tenant_id, proposal_id, guarded_sha256, decision, gates, reviewer_identity, policy_version, rationale, expires_at, created_at, knowledge_review_decision_id, decision_operation_id, legacy_provenance]
 summary: null
@@ -13,11 +14,11 @@ readers: []
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"content_promotion_decision\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.content_promotion_decision
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

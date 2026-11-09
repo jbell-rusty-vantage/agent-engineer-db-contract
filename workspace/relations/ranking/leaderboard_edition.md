@@ -4,20 +4,21 @@ kind: table
 schema: ranking
 name: leaderboard_edition
 domain: ranking
+lens: corpus
 aliases: []
-tokens: [ranking, leaderboard_edition, ranking.leaderboard_edition, id, leaderboard_id, ranking_run_id, edition_no, published_at]
-summary: null
-summary_basis: none
+tokens: [ranking, leaderboard_edition, ranking.leaderboard_edition, id, leaderboard_id, edition_no, published_at, tenant_id, knowledge_seq, cohort]
+summary: "One frozen edition of a leaderboard: membership and knowledge head at publication."
+summary_basis: comment
 rls: enabled
 readers: [executor_service, service_role]
 writers: []
 typescript: "Database[\"ranking\"][\"Tables\"][\"leaderboard_edition\"][\"Row\"]"
 defined_in: ["20260826000800_ranking.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # ranking.leaderboard_edition
 
-table in domain `ranking`.
+table in domain `ranking`, lens `corpus` — One frozen edition of a leaderboard: membership and knowledge head at publication..
 
 ## Columns
 
@@ -25,9 +26,11 @@ table in domain `ranking`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK |
 | 2 | `leaderboard_id` | `uuid` | no | — | unique (leaderboard_id, edition_no); FK → [`ranking.leaderboard`](leaderboard.md).id |
-| 3 | `ranking_run_id` | `uuid` | no | — | FK → [`ranking.ranking_run`](ranking_run.md).id |
 | 4 | `edition_no` | `integer` | no | — | unique (leaderboard_id, edition_no) |
 | 5 | `published_at` | `timestamp with time zone` | no | `now()` | — |
+| 6 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | — |
+| 7 | `knowledge_seq` | `bigint` | yes | — | — |
+| 8 | `cohort` | `jsonb` | no | `'[]'::jsonb` | — |
 
 ## Constraints
 
@@ -36,8 +39,8 @@ table in domain `ranking`.
 
 ## Relationships
 
-Outbound: `leaderboard_id` → [`ranking.leaderboard`](leaderboard.md)`.id` on delete cascade; `ranking_run_id` → [`ranking.ranking_run`](ranking_run.md)`.id`.
-Inbound: none.
+Outbound: `leaderboard_id` → [`ranking.leaderboard`](leaderboard.md)`.id` on delete cascade.
+Inbound: [`ranking.leaderboard_entry`](leaderboard_entry.md).edition_id.
 
 ## Indexes
 
@@ -58,6 +61,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:ranking.leaderboard`.
 - Direct SELECT: `executor_service`.
 
 ## Write path

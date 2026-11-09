@@ -1,31 +1,37 @@
 {
   "budgets": {
-    "domain_bytes": 8192,
+    "domain_bytes": 12288,
+    "map_bytes": 4096,
+    "map_lines": 40,
+    "operation_bytes": 4096,
     "relation_details_bytes": 16384,
     "relation_main_bytes": 6144,
     "schema_readme_bytes": 16384,
     "search_index_bytes": 720896,
+    "start_here_bytes": 3072,
+    "start_here_lines": 60,
     "task_bytes": 5120
   },
   "build": {
-    "catalog_version": "sha256:d0a86e191016afa9eda24c66882d781537d1f680ce2ee2f2109848f91c160903",
+    "catalog_version": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
     "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:2b2888cde6a86f1e3f415a37477185fc793c23747079d4e66362c9ae17ba4b1b",
-    "fingerprint": "sha256:6c5ceddc8384603f673be66562c9b5cfb98e657eaadb17828ff4e18d0172933c",
-    "generated_types_sha256": "sha256:1ff74176c310a9aad52ec0ee78e346ac002f911171a0878893520112d7a63506",
-    "migration_head": "20261105010300",
-    "renderer_version": "3.0.0",
-    "rules_version": "ingestion-rules.v1@519cea73ea54e133eab6d38d8f92a9a1e9af1e44585078ac40d9c68cef068e23",
+    "enrichment_sha256": "sha256:370afc0438a55a50b597b959cf075618fb5b3a495ba30a82e349475616964384",
+    "fingerprint": "sha256:c6b68ac978e451f0f9ab9ae4b37d5e0ef86483faf2bfb0189782ebd414ec6e33",
+    "generated_types_sha256": "sha256:c7f6fb14cf0147847a88ca82184f941313bccdec1a4ef01b45b26c3d0016b505",
+    "migration_head": "20261108120500",
+    "renderer_version": "4.0.0",
+    "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-06T21:11:20.485Z",
+      "introspected_at": "2026-11-09T04:18:43.013Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+    "workspace_fingerprint": "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
   },
   "entry_points": [
     "START_HERE.md",
+    "MAP.md",
     "INDEX.md",
     "relations.txt",
     "queries/README.md",
@@ -33,24 +39,25 @@
   ],
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
-    "domains": 19,
-    "functions": 201,
-    "queries": 33,
-    "relation_details": 36,
+    "domains": 23,
+    "functions": 246,
+    "operations": 81,
+    "queries": 55,
+    "relation_details": 55,
     "relation_stubs": 0,
-    "relations": 354,
-    "schemas": 20,
-    "tasks": 19,
-    "types": 11,
-    "vocabularies": 12
+    "relations": 315,
+    "schemas": 27,
+    "tasks": 27,
+    "types": 10,
+    "vocabularies": 13
   },
   "scope": null,
   "sizes": {
-    "files": 683,
+    "files": 809,
     "largest": {
-      "bytes": 4355352,
+      "bytes": 4632128,
       "path": "schema-ir.json"
     },
-    "total_bytes": 7099349
+    "total_bytes": 7842468
   }
 }

@@ -29,8 +29,21 @@ function budgetFor(filePath, budgets) {
   if (filePath.startsWith("domains/")) return budgets.domain_bytes;
   if (filePath.startsWith("schemas/")) return budgets.schema_readme_bytes;
   if (filePath.startsWith("tasks/")) return budgets.task_bytes;
+  if (filePath.startsWith("ops/")) return budgets.operation_bytes ?? null;
+  if (filePath === pages.start) return budgets.start_here_bytes ?? null;
+  if (filePath === pages.map) return budgets.map_bytes ?? null;
   if (filePath === pages.searchIndex) return budgets.search_index_bytes;
   return null;
+}
+
+function lineBudgetFor(filePath, budgets) {
+  if (filePath === pages.start) return budgets.start_here_lines ?? null;
+  if (filePath === pages.map) return budgets.map_lines ?? null;
+  return null;
+}
+
+function lineCount(content) {
+  return content.trimEnd().split(/\r?\n/).length;
 }
 
 function checkBudgets(files, budgets, report) {
@@ -38,6 +51,8 @@ function checkBudgets(files, budgets, report) {
     const budget = budgetFor(filePath, budgets);
     const bytes = byteLength(content);
     if (budget && bytes > budget) report.error(ErrorCode.SIZE_BUDGET_EXCEEDED, filePath, `${bytes} bytes > budget ${budget}`);
+    const lineBudget = lineBudgetFor(filePath, budgets);
+    if (lineBudget && lineCount(content) > lineBudget) report.error(ErrorCode.SIZE_BUDGET_EXCEEDED, filePath, `${lineCount(content)} lines > budget ${lineBudget}`);
   }
 }
 
@@ -93,8 +108,12 @@ function checkCoverage(files, model, report) {
   for (const fn of model.visibleFunctions()) {
     if (!files.has(pages.function(fn))) report.error(ErrorCode.VALIDATION_FAILED, pages.function(fn), "function has no page");
   }
+  for (const operation of model.visibleOperations()) {
+    if (!files.has(pages.operation(operation.name))) report.error(ErrorCode.VALIDATION_FAILED, pages.operation(operation.name), "operation has no page");
+  }
   for (const schema of Object.keys(model.ir.schemas)) {
     if (!model.enrichment.schema_domains[schema]) report.error(ErrorCode.ENRICHMENT_INVALID, "domains.yaml", `schema ${schema} has no default domain`);
+    if (model.lenses.schemas && !model.lenses.schemas[schema]) report.error(ErrorCode.VALIDATION_FAILED, "workspace.config.json", `schema ${schema} has no lens (lenses.schemas)`);
   }
 }
 

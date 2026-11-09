@@ -4,6 +4,7 @@ kind: function
 schema: util
 name: reject_mutation
 domain: api-surface
+lens: machinery
 overloads: ["fn:util.reject_mutation()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, reject_mutation, util.reject_mutation]
 defined_in: ["20260826000100_foundation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # util.reject_mutation
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`.
 
 ## reject_mutation() → trigger
 

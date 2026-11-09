@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: guard_verification_blob_policy
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.guard_verification_blob_policy()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [artifact blob policy mismatch]
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, guard_verification_blob_policy, orchestration.guard_verification_blob_policy]
 defined_in: ["20260914010000_artifact_logical_custody.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.guard_verification_blob_policy
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## guard_verification_blob_policy() → trigger
 

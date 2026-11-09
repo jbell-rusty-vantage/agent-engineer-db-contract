@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: judge_output
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, judge_output, evaluation.judge_output, id, tenant_id, eval_run_case_output_id, grader_version_id, prompt_sha256, model_identity, schema_version, calibration_identity, output, output_sha256, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"judge_output\"][\"Row\"]"
 defined_in: ["20260903010300_knowledge_retrieval_completeness.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.judge_output
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

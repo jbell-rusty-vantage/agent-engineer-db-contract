@@ -19,7 +19,10 @@ if (!container.State.Running || container.Name !== `/${containerName}`
 const run = (sql) => execFileSync("docker", ["exec", "-i", containerName, "psql", "-X", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1", "-At"],
   { input: sql, encoding: "utf8", windowsHide: true, timeout: 60_000 });
 const version = migration.slice(0, 14);
-const source = readFileSync(resolve(import.meta.dirname, "../supabase/migrations", migration), "utf8");
+// --source-dir=supabase/drafts applies a lab draft (Build 08 R2) that is not yet in the canonical chain; default stays supabase/migrations.
+const sourceDirectory = argument("source-dir") ?? "supabase/migrations";
+if (!/^supabase\/(migrations|drafts)$/.test(sourceDirectory)) throw new Error("SOURCE_DIR_MUST_BE_MIGRATIONS_OR_DRAFTS");
+const source = readFileSync(resolve(import.meta.dirname, "..", sourceDirectory, migration), "utf8");
 const quote = (text) => `'${text.replaceAll("'", "''")}'`;
 const existing = run(`select statements[1] from supabase_migrations.schema_migrations where version=${quote(version)};`).trim();
 if (existing) {

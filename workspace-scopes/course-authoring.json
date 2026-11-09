@@ -1,0 +1,99 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "course-authoring",
+  "description": "Course authoring mission: author and release works (courses, modules, lessons, activities), bind them to catalog concepts and software, and keep them current when releases ship. Curriculum structure is included because authoring writes it; other machinery is excluded.",
+  "include": {
+    "domains": [
+      "authoring",
+      "curriculum",
+      "identity",
+      "guidance",
+      "api-surface",
+      "access"
+    ],
+    "relations": [
+      "content.document_node",
+      "content.unit_kind",
+      "retrieval.vector_item",
+      "library.passage"
+    ],
+    "functions": [
+      "api.product_command",
+      "api.product_read",
+      "api.works_authored",
+      "api.modules_affected_by_release",
+      "api.search_unified",
+      "api.talk_segments",
+      "api.resolve_entity",
+      "product.insert_revision",
+      "product.exposure",
+      "product.walk_blocks",
+      "product.validate_body",
+      "product.require_role",
+      "product.role_in",
+      "product.client_grant",
+      "util.current_tenant_id"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "knowledge_service.*",
+      "orchestration.*",
+      "util.*",
+      "api.mission_progress",
+      "api.review_queue"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "modules-covering-concept",
+    "modules-affected-by-release",
+    "compare-models",
+    "talks-on-topic",
+    "talk-passage-at-timecode",
+    "release-history",
+    "what-do-we-know-about-entity"
+  ],
+  "queries": [
+    "ours.*",
+    "catalog.*",
+    "guidance.items",
+    "retrieval.search_unified",
+    "content.talk_segments",
+    "content.document_units",
+    "entity.resolve",
+    "entity.attributes",
+    "knowledge.head"
+  ],
+  "operations": [
+    "ensure_personal_workspace",
+    "create_workspace",
+    "grant_member",
+    "revoke_member",
+    "create_work",
+    "revise_work",
+    "review_revision",
+    "freeze_release",
+    "open_distribution",
+    "grant_reader",
+    "offer_release",
+    "end_offer",
+    "register_asset",
+    "revoke_asset",
+    "register_file_set",
+    "record_deployment",
+    "preview_exposure",
+    "get_revision",
+    "list_works",
+    "get_offer",
+    "list_library",
+    "search"
+  ]
+}

@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: enforce_claim_association_proposed
 domain: evidence
+lens: machinery
 overloads: ["fn:evidence.enforce_claim_association_proposed()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [typed entity associations may be added only while claim is proposed]
 touches: { reads: [evidence.claim], writes: [] }
 tokens: [evidence, enforce_claim_association_proposed, evidence.enforce_claim_association_proposed]
 defined_in: ["20260829195623_lock_typed_claim_associations.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.enforce_claim_association_proposed
 
-Domain `evidence`.
+Domain `evidence`, lens `machinery`.
 
 ## enforce_claim_association_proposed() → trigger
 

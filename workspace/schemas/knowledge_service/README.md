@@ -2,14 +2,15 @@
 id: "sch:knowledge_service"
 kind: schema
 name: knowledge_service
+lens: machinery
 domains: [knowledge-service-runtime]
 relations: 15
 functions: 10
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service
 
-Restart-safe standalone operations, steps, events, leases, receipts, outbox and guarded review decisions. Domains: [`knowledge-service-runtime`](../../domains/knowledge-service-runtime.md).
+Restart-safe standalone operations, steps, events, leases, receipts, outbox and guarded review decisions. Lens `machinery`. Domains: [`knowledge-service-runtime`](../../domains/knowledge-service-runtime.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |

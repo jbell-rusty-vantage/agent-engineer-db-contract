@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: claim
 domain: evidence
+lens: evidence
 aliases: [claim]
 tokens: [evidence, claim, evidence.claim, id, tenant_id, claim_type, statement, structured, status, composite, atomized_from_id, producer_attempt_id, superseded_by_id, created_by_receipt_id, created_at, updated_at, relationship_id, producer_origin_digest]
 summary: "Atomic statement with type, status, and creating receipt."
@@ -13,11 +14,11 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.claim
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 > curated (model_assisted, unreviewed) — Atomic statement with type, status, and creating receipt.
 
@@ -38,7 +39,7 @@ table in domain `evidence`.
 | 11 | `created_by_receipt_id` | `uuid` | yes | — | FK → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md).id |
 | 12 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 | 13 | `updated_at` | `timestamp with time zone` | no | `now()` | — |
-| 14 | `relationship_id` | `uuid` | yes | — | FK → [`corpus.relationship`](../corpus/relationship.md).id |
+| 14 | `relationship_id` | `uuid` | yes | — | FK → [`catalog.relationship`](../catalog/relationship.md).id |
 | 15 | `producer_origin_digest` | `text` | yes | — | Originating origin digest (K01 originDigest) of the authenticated invocation that produced this claim when no orchestration attempt did; restates knowledge_verification.origin (no cross-schema FK). claim_producer_identity requires it or producer_attempt_id. |
 
 ## Constraints
@@ -50,9 +51,9 @@ table in domain `evidence`.
 
 ## Relationships
 
-Outbound: `atomized_from_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `claim_type` → [`evidence.claim_type`](claim_type.md)`.code`; `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id` (deferrable); `producer_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.id` (+tenant); `relationship_id` → [`corpus.relationship`](../corpus/relationship.md)`.id`; `superseded_by_id` → [`evidence.claim`](claim.md)`.id` (+tenant).
-Inbound: [`corpus.ai_model_version_spec`](../corpus/ai_model_version_spec.md).source_claim_id, [`corpus.entity_alias`](../corpus/entity_alias.md).source_claim_id, [`corpus.media_appearance`](../corpus/media_appearance.md).primary_claim_id, [`corpus.relationship`](../corpus/relationship.md).primary_claim_id, [`evaluation.review_task`](../evaluation/review_task.md).claim_id, [`evidence.attribution`](attribution.md).claim_id, [`evidence.claim`](claim.md).atomized_from_id|superseded_by_id, [`evidence.claim_conflict`](claim_conflict.md).claim_a_id|claim_b_id, [`evidence.claim_evidence_link`](claim_evidence_link.md).claim_id, [`evidence.claim_record`](claim_record.md).claim_id, [`evidence.claim_subject`](claim_subject.md).claim_id, [`evidence.extraction_record`](extraction_record.md).claim_id … 14 more in [details](claim.details.md).
-Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject), [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_check).
+Outbound: `atomized_from_id` → [`evidence.claim`](claim.md)`.id` (+tenant); `claim_type` → [`evidence.claim_type`](claim_type.md)`.code`; `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id` (deferrable); `producer_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.id` (+tenant); `relationship_id` → [`catalog.relationship`](../catalog/relationship.md)`.id`; `superseded_by_id` → [`evidence.claim`](claim.md)`.id` (+tenant).
+Inbound: [`authoring.release_item`](../authoring/release_item.md).claim_id, [`authoring.revision_binding`](../authoring/revision_binding.md).claim_id, [`catalog.entity_alias`](../catalog/entity_alias.md).source_claim_id, [`catalog.relationship`](../catalog/relationship.md).primary_claim_id, [`content.digest_item`](../content/digest_item.md).claim_id, [`content.unit_entity_role`](../content/unit_entity_role.md).claim_id, [`evaluation.review_task`](../evaluation/review_task.md).claim_id, [`evidence.attribution`](attribution.md).claim_id, [`evidence.claim`](claim.md).atomized_from_id|superseded_by_id, [`evidence.claim_conflict`](claim_conflict.md).claim_a_id|claim_b_id, [`evidence.claim_evidence_link`](claim_evidence_link.md).claim_id, [`evidence.claim_record`](claim_record.md).claim_id … 13 more in [details](claim.details.md).
+Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject), [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_exactly_one).
 
 ## Indexes
 
@@ -72,7 +73,8 @@ Enabled; 1 policies in [details](claim.details.md).
 
 ## Read paths
 
-- Named queries: `q:evidence.claims_for_entity`.
+- Named queries: `q:evidence.claims_for_entity`, `q:facts.locators`.
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_conflicts`](../api/claim_conflicts.md).
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

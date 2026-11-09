@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: verification_provider_semantic_identity
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.verification_provider_semantic_identity()"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [nonsemantic provider cannot choose semantic identity, semantic provider
 touches: { reads: [knowledge_service.operation], writes: [] }
 tokens: [orchestration, verification_provider_semantic_identity, orchestration.verification_provider_semantic_identity]
 defined_in: ["20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_semantic_identity
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## verification_provider_semantic_identity() → trigger
 

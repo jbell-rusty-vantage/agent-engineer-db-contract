@@ -4,6 +4,7 @@ kind: table
 schema: knowledge_service
 name: verification_component_binding
 domain: knowledge-service-runtime
+lens: machinery
 aliases: []
 tokens: [knowledge_service, verification_component_binding, knowledge_service.verification_component_binding, singleton, component, component_version, migration_keys, bound_at]
 summary: "The common verification component this AI Engineer binding consumes (Sprint V): the installed migration keys (a superset of 0001..0003) and greatest component version at bind time. Domain projections (research.*) reference knowledge_verification runs by (tenant_id, run_id); no common DDL is copied here."
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: []
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"verification_component_binding\"][\"Row\"]"
 defined_in: ["20261024010000_knowledge_component_binding.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.verification_component_binding
 
-table in domain `knowledge-service-runtime` — The common verification component this AI Engineer binding consumes (Sprint V): the installed migration keys (a superset of 0001..0003) and greatest component version at bind time. Domain projections (research.*) reference knowledge_verification runs by (tenant_id, run_id); no common DDL is copied here..
+table in domain `knowledge-service-runtime`, lens `machinery` — The common verification component this AI Engineer binding consumes (Sprint V): the installed migration keys (a superset of 0001..0003) and greatest component version at bind time. Domain projections (research.*) reference knowledge_verification runs by (tenant_id, run_id); no common DDL is copied here..
 
 ## Columns
 

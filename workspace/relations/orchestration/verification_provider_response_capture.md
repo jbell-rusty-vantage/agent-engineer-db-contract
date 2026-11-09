@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_provider_response_capture
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_provider_response_capture, orchestration.verification_provider_response_capture, tenant_id, provider_attempt_id, operation_id, operation_step_id, profile_artifact_id, profile_sha256, dispatch_fencing_token, http_status, response_envelope_artifact_id, transport_artifact_id, transport_sha256, captured_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_provider_response_capture\"][\"Row\"]"
 defined_in: ["20260906031400_verification_provider_response_capture.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_response_capture
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

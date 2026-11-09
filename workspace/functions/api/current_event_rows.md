@@ -4,6 +4,7 @@ kind: function
 schema: api
 name: current_event_rows
 domain: api-surface
+lens: corpus
 overloads: ["fn:api.current_event_rows()"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [temporal.event, temporal.event_occurrence], writes: [] }
 tokens: [api, current_event_rows, api.current_event_rows]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.current_event_rows
 
-Domain `api-surface`. Used by views: [`api.events_current`](../../relations/api/events_current.md).
+Domain `api-surface`, lens `corpus`. Used by views: [`api.events_current`](../../relations/api/events_current.md).
 
 ## current_event_rows() → TABLE(event_id uuid, tenant_id uuid, kind text, subject_entity_id uuid, object_entity_id uuid, occurrence_id uuid, occurred_during tstzrange, occurrence_mode text, payload jsonb)
 

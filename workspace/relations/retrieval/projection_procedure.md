@@ -4,20 +4,21 @@ kind: table
 schema: retrieval
 name: projection_procedure
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, projection_procedure, retrieval.projection_procedure, id, slug, version, description, code_ref, chunking, template, created_at, prompt_schema, tokenizer, projection_policy, implementation_sha256, container_sha256]
 summary: null
 summary_basis: none
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"projection_procedure\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.projection_procedure
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 
@@ -62,11 +63,11 @@ Enabled.
 
 ## Grants
 
-`executor_service`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: SELECT; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
 
 ## Read paths
 
-- Direct SELECT: `executor_service`.
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 

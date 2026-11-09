@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_provider_reconciliation
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_provider_reconciliation, orchestration.verification_provider_reconciliation, tenant_id, provider_attempt_id, operation_id, artifact_id, artifact_sha256, body, applied_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_provider_reconciliation\"][\"Row\"]"
 defined_in: ["20260906032800_verification_provider_reconciliation_ledger.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_reconciliation
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

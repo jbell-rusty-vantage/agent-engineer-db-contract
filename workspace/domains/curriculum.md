@@ -1,50 +1,42 @@
 ---
 id: "dom:curriculum"
 kind: domain
+lens: machinery
 schemas: [curriculum]
 aliases: [course structure, learning outcomes, requirements, prerequisites, release transitions]
 relations: [curriculum.part, curriculum.outcome, curriculum.requirement, curriculum.requirement_option, curriculum.prerequisite, curriculum.outcome_alignment, curriculum.release_transition, curriculum.requirement_transition]
 functions: []
-tasks: [what-do-we-know-about-entity]
-summary: "Structure, outcomes and requirements of authored course works, keyed to authoring revisions."
+tasks: [modules-affected-by-release, modules-covering-concept]
+summary: "Structure, outcomes and requirements of authored course works, keyed to authoring revisions (machinery lens: written by product operations)."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
-# Curriculum
+# Curriculum structure
 
-Structure, outcomes and requirements of authored course works, keyed to authoring revisions.
+Structure, outcomes and requirements of authored course works, keyed to authoring revisions (machinery lens: written by product operations).
 
-> curated (model_assisted, unreviewed) — Since the Build 01 product schema (2026-11-05), curriculum no longer owns lessons,
-> challenges or tracks. Courses, modules and activities are authored works in the
-> `authoring` schema; every curriculum row hangs off an `authoring.work_revision`.
-> The thirteen legacy relations (`curriculum.curriculum`, `track`, `module`,
-> `lesson`, `lesson_version`, `challenge`, `learning_objective`, …) were dropped by
-> the curriculum cutover migration.
-> 
-> `curriculum.part` places a child revision inside a parent revision at an ordinal,
-> as `recommended` or `optional`. `curriculum.outcome` states what a learner can do
-> after a revision (optional Bloom level, an `aieng.evidence-rule` for proof).
-> `curriculum.requirement` is what completion needs: an `outcome` or a
-> `mandatory_activity` (a part). `curriculum.requirement_option` lists the routes
-> that satisfy it (`standard`, `prior_work`, `test_out`, `alternative`,
+> curated (model_assisted, unreviewed) — Courses, modules and activities are authored works in the `authoring` schema; every
+> curriculum row hangs off an `authoring.work_revision`. `curriculum.part` places a child
+> revision inside a parent revision at an ordinal, as `recommended` or `optional`.
+> `curriculum.outcome` states what a learner can do after a revision (optional Bloom level,
+> an `aieng.evidence-rule` for proof). `curriculum.requirement` is what completion needs: an
+> `outcome` or a `mandatory_activity` (a part). `curriculum.requirement_option` lists the
+> routes that satisfy it (`standard`, `prior_work`, `test_out`, `alternative`,
 > `generated_eligible`, `learner_project`), each `proposed` until approved.
-> `curriculum.prerequisite` links revisions as `recommended` or `required`, with a
-> rationale. `curriculum.outcome_alignment` maps an outcome to a competency revision
-> by facet (`independent`, `assisted`, `agent_directed`) and coverage.
+> `curriculum.prerequisite` links revisions as `recommended` or `required`.
+> `curriculum.outcome_alignment` maps an outcome to a competency revision by facet.
 > 
-> Releases change over time: `curriculum.release_transition` maps one
-> `authoring.release` to the next (`needs_review`, `compatible`, `breaking`; a
-> compatible transition needs a reviewed event), and
-> `curriculum.requirement_transition` says per requirement whether learner progress
-> carries, needs reassessment or does not apply.
+> Releases change over time: `curriculum.release_transition` maps one `authoring.release`
+> to the next (`needs_review`, `compatible`, `breaking`), and
+> `curriculum.requirement_transition` says per requirement whether learner progress carries,
+> needs reassessment or does not apply.
 > 
-> Invariants: rows are scoped by tenant and workspace and reference revisions, never
-> mutable heads; a part cannot contain itself; a requirement is exactly one kind.
-> Trap: putting a product availability date in course structure; that fact belongs
-> on `temporal.stream_kind:model_offering_availability`, cited from content. Resolve
-> a concept with `what-do-we-know-about-entity` / `q:entity.card` before course
-> content names it.
+> These rows are written by product operations (create_work, revise_work, freeze_release),
+> never directly. Invariants: rows reference revisions, never mutable heads; a part cannot
+> contain itself; a requirement is exactly one kind. Trap: putting a product availability
+> date in course structure; that fact belongs on
+> `temporal.stream_kind:model_offering_availability`, cited from content.
 
 ## Relations that matter
 
@@ -61,10 +53,10 @@ Structure, outcomes and requirements of authored course works, keyed to authorin
 
 ## Named queries
 
-[`q:entity.card`](../queries/README.md)
+[`q:ours.works_authored`](../queries/README.md)
 
 ## Tasks
 
-[`what-do-we-know-about-entity`](../tasks/what-do-we-know-about-entity.md)
+[`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md)
 
 Schemas: [`curriculum`](../schemas/curriculum/README.md).

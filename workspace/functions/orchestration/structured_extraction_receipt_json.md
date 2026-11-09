@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: structured_extraction_receipt_json
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.structured_extraction_receipt_json(jsonb)"]
 security: invoker
 volatility: immutable
@@ -12,11 +13,11 @@ raises: [structured extraction receipt requires safe integers]
 touches: { reads: [], writes: [] }
 tokens: [orchestration, structured_extraction_receipt_json, orchestration.structured_extraction_receipt_json]
 defined_in: ["20260906032100_verification_structured_extraction_terminal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.structured_extraction_receipt_json
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## structured_extraction_receipt_json(jsonb) → text
 

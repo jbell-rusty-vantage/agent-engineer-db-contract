@@ -4,22 +4,21 @@ kind: table
 schema: retrieval
 name: retrieval_chunk
 domain: retrieval
-aliases: [chunk]
+lens: corpus
+aliases: []
 tokens: [retrieval, retrieval_chunk, retrieval.retrieval_chunk, id, tenant_id, chunk_set_id, ordinal, parent_chunk_id, source_text, contextual_prefix, embedding_text, source_text_sha256, contextual_prefix_sha256, embedding_text_sha256, source_token_count, embedding_token_count, retrieval_role, language, promotion_state, lifecycle, created_at]
-summary: Chunk produced by a chunking procedure; spans point into document nodes.
-summary_basis: curated
+summary: null
+summary_basis: none
 rls: enabled
 readers: [executor_service, service_role]
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"retrieval_chunk\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.retrieval_chunk
 
-table in domain `retrieval`.
-
-> curated (model_assisted, unreviewed) — Chunk produced by a chunking procedure; spans point into document nodes.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 
@@ -27,7 +26,7 @@ table in domain `retrieval`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, chunk_set_id, ordinal); unique (tenant_id, id) |
-| 3 | `chunk_set_id` | `uuid` | no | — | unique (tenant_id, chunk_set_id, ordinal); _curated:_ Parent set from the chunking procedure version. |
+| 3 | `chunk_set_id` | `uuid` | no | — | unique (tenant_id, chunk_set_id, ordinal) |
 | 4 | `ordinal` | `integer` | no | — | unique (tenant_id, chunk_set_id, ordinal) |
 | 5 | `parent_chunk_id` | `uuid` | yes | — | — |
 | 6 | `source_text` | `text` | no | — | — |
@@ -61,7 +60,7 @@ table in domain `retrieval`.
 
 Outbound: `tenant_id,chunk_set_id` → [`retrieval.chunk_set`](chunk_set.md)`.tenant_id,id` on delete restrict; `tenant_id,parent_chunk_id` → [`retrieval.retrieval_chunk`](retrieval_chunk.md)`.tenant_id,id` on delete restrict.
 Inbound: [`retrieval.chunk_claim_link`](chunk_claim_link.md).chunk_id, [`retrieval.chunk_edge`](chunk_edge.md).from_chunk_id|to_chunk_id, [`retrieval.chunk_entity_mention`](chunk_entity_mention.md).chunk_id, [`retrieval.chunk_relationship_evidence`](chunk_relationship_evidence.md).chunk_id, [`retrieval.chunk_span`](chunk_span.md).chunk_id, [`retrieval.projection_target`](projection_target.md).chunk_id, [`retrieval.retrieval_chunk`](retrieval_chunk.md).parent_chunk_id, [`retrieval.search_projection_chunk_support`](search_projection_chunk_support.md).chunk_id, [`retrieval.vector_item`](vector_item.md).retrieval_chunk_id.
-Polymorphic target of: [`retrieval.projection_target`](projection_target.md) (check constraint projection_target_check).
+Polymorphic target of: [`retrieval.projection_target`](projection_target.md) (check constraint projection_target_exactly_one).
 
 ## Indexes
 
@@ -92,14 +91,5 @@ Enabled.
 ## TypeScript
 
 insert: `Database["retrieval"]["Tables"]["retrieval_chunk"]["Insert"]`; row: `Database["retrieval"]["Tables"]["retrieval_chunk"]["Row"]`; update: `Database["retrieval"]["Tables"]["retrieval_chunk"]["Update"]`
-
-## Examples
-
-Packet members may cite chunks
-
-```bash
-knowledge db query retrieval.evidence_packet --param packet_id=0192c000-0000-7000-8000-000000000001
-```
-summary_evidence expands summaries to chunk_id plus locator_id.
 
 Defined in: `20260903010100_knowledge_retrieval_contract.sql`.

@@ -16,6 +16,7 @@ export const ids = {
   task: (slug) => `task:${slug}`,
   query: (name) => `q:${name}`,
   term: (slug) => `term:${slug}`,
+  operation: (name) => `op:${name}`,
 };
 
 /** Drops the `rel:` / `voc:` / `fn:` prefix, leaving the qualified name (and args, for functions). */

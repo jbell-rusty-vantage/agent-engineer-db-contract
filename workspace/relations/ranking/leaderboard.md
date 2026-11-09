@@ -4,20 +4,23 @@ kind: table
 schema: ranking
 name: leaderboard
 domain: ranking
-aliases: []
-tokens: [ranking, leaderboard, ranking.leaderboard, id, tenant_id, slug, group_version_id, policy_version_id, created_at]
-summary: null
-summary_basis: none
+lens: corpus
+aliases: [leaderboard definition]
+tokens: [ranking, leaderboard, ranking.leaderboard, id, tenant_id, slug, created_at, title, definition, description]
+summary: "A named ranked view whose cohort, metric (a stream kind) and policy are data; values come from temporal.segment."
+summary_basis: curated
 rls: enabled
 readers: [executor_service, service_role]
 writers: []
 typescript: "Database[\"ranking\"][\"Tables\"][\"leaderboard\"][\"Row\"]"
 defined_in: ["20260826000800_ranking.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # ranking.leaderboard
 
-table in domain `ranking`.
+table in domain `ranking`, lens `corpus` — A named ranked view: cohort filter, metric (a stream kind) and policy are data in definition; values come from temporal.segment..
+
+> curated (model_assisted, unreviewed) — A named ranked view whose cohort, metric (a stream kind) and policy are data; values come from temporal.segment.
 
 ## Columns
 
@@ -25,10 +28,11 @@ table in domain `ranking`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK |
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, slug) |
-| 3 | `slug` | `text` | no | — | unique (tenant_id, slug) |
-| 4 | `group_version_id` | `uuid` | no | — | FK → [`ranking.entity_group_version`](entity_group_version.md).id |
-| 5 | `policy_version_id` | `uuid` | no | — | FK → [`ranking.ranking_policy_version`](ranking_policy_version.md).id |
+| 3 | `slug` | `text` | no | — | unique (tenant_id, slug); _curated:_ api.leaderboard(p_slug) key. |
 | 6 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 7 | `title` | `text` | no | `''::text` | — |
+| 8 | `definition` | `jsonb` | no | `'{}'::jsonb` | _curated:_ cohort filter, metric stream kind, policy. |
+| 9 | `description` | `text` | yes | — | — |
 
 ## Constraints
 
@@ -37,7 +41,7 @@ table in domain `ranking`.
 
 ## Relationships
 
-Outbound: `group_version_id` → [`ranking.entity_group_version`](entity_group_version.md)`.id`; `policy_version_id` → [`ranking.ranking_policy_version`](ranking_policy_version.md)`.id`.
+Outbound: none.
 Inbound: [`ranking.leaderboard_edition`](leaderboard_edition.md).leaderboard_id.
 
 ## Indexes
@@ -59,6 +63,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:ranking.leaderboard`.
 - Direct SELECT: `executor_service`.
 
 ## Write path
@@ -69,5 +74,14 @@ Enabled.
 ## TypeScript
 
 insert: `Database["ranking"]["Tables"]["leaderboard"]["Insert"]`; row: `Database["ranking"]["Tables"]["leaderboard"]["Row"]`; update: `Database["ranking"]["Tables"]["leaderboard"]["Update"]`
+
+## Examples
+
+Latest edition
+
+```bash
+knowledge db query ranking.leaderboard --param limit=20 --param slug=cheapest-frontier-input
+```
+Empty when no edition has been published under that slug.
 
 Defined in: `20260826000800_ranking.sql`.

@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: rollback_vector_space
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.rollback_vector_space(uuid,uuid,text,text,text,text,uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [authorized rollback operation is required, current and rollback target 
 touches: { reads: [knowledge_service.operation, retrieval.content_promotion_decision], writes: [retrieval.publication_switch_receipt, retrieval.space_publication, retrieval.vector_space_version, retrieval.vector_store_space] }
 tokens: [retrieval, rollback_vector_space, retrieval.rollback_vector_space]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql", "20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.rollback_vector_space
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## rollback_vector_space(uuid, uuid, text, text, text, text, uuid) → uuid
 

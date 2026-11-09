@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: stream
 domain: temporal-facts
+lens: corpus
 aliases: [fact series, stream slot]
 tokens: [temporal, stream, temporal.stream, id, tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key, created_at]
 summary: "Identity of a fact series, unique on kind, subject, and scope_key."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"stream\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.stream
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Identity of a fact series, unique on kind, subject, and scope_key.
 
@@ -28,9 +29,9 @@ table in domain `temporal-facts`.
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id); unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key) |
 | 3 | `kind` | `text` | no | — | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); FK → [`temporal.stream_kind`](stream_kind.md).code |
-| 4 | `subject_entity_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); FK → [`corpus.entity`](../corpus/entity.md).id; _curated:_ Exactly one of subject_entity_id or subject_relationship_id is set. |
-| 5 | `subject_relationship_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); FK → [`corpus.relationship`](../corpus/relationship.md).id |
-| 6 | `scope_key` | `text` | no | `''::text` | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); _curated:_ Distinguishes parallel series; default empty string. Not validated against any convention: a correction reuses the existing series key; a new price series defaults to the unit. |
+| 4 | `subject_entity_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); FK → [`catalog.entity`](../catalog/entity.md).id; _curated:_ Exactly one of subject_entity_id or subject_relationship_id is set. |
+| 5 | `subject_relationship_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); FK → [`catalog.relationship`](../catalog/relationship.md).id |
+| 6 | `scope_key` | `text` | no | `''::text` | unique (tenant_id, kind, subject_entity_id, subject_relationship_id, scope_key); _curated:_ Distinguishes parallel series; default empty string. Prices use meter\|tier\|region. Not validated against any convention: a correction reuses the existing series key. |
 | 7 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 
 ## Constraints
@@ -42,9 +43,9 @@ table in domain `temporal-facts`.
 
 ## Relationships
 
-Outbound: `kind` → [`temporal.stream_kind`](stream_kind.md)`.code`; `subject_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `subject_relationship_id` → [`corpus.relationship`](../corpus/relationship.md)`.id` (+tenant).
+Outbound: `kind` → [`temporal.stream_kind`](stream_kind.md)`.code`; `subject_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `subject_relationship_id` → [`catalog.relationship`](../catalog/relationship.md)`.id` (+tenant).
 Inbound: [`temporal.segment`](segment.md).stream_id.
-Polymorphic: exactly one of `subject_entity_id`, `subject_relationship_id` → [`corpus.entity`](../corpus/entity.md) | [`corpus.relationship`](../corpus/relationship.md) — basis: check constraint stream_check.
+Polymorphic: exactly one of `subject_entity_id`, `subject_relationship_id` → [`catalog.entity`](../catalog/entity.md) | [`catalog.relationship`](../catalog/relationship.md) — basis: check constraint stream_check.
 
 ## Indexes
 
@@ -65,8 +66,8 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:entity.at`, `q:entity.relationships`, `q:entity.timeline`, `q:entity.what_changed`, `q:facts.current_by_stream`, `q:facts.history_for_stream`, `q:relationships.current_by_kind`.
-- Exposed through: [`api.current_facts`](../api/current_facts.md), [`api.current_relationships`](../api/current_relationships.md).
+- Named queries: `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.talks`, `q:entity.at`, `q:entity.relationships`, `q:entity.timeline`, `q:entity.what_changed`, `q:facts.changes_since`, `q:facts.current_by_stream`, `q:facts.history_for_stream`, `q:facts.locators`, `q:facts.price_history`, `q:relationships.current_by_kind`.
+- Exposed through: [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.concepts`](../api/concepts.md), [`api.current_facts`](../api/current_facts.md), [`api.current_relationships`](../api/current_relationships.md), [`api.events`](../api/events.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.software`](../api/software.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
@@ -83,8 +84,8 @@ insert: `Database["temporal"]["Tables"]["stream"]["Insert"]`; row: `Database["te
 History on one stream slot
 
 ```bash
-knowledge db query facts.history_for_stream --param entity_id=0192b000-0000-7000-8000-000000000001 --param limit=50 --param offset=0 --param scope_key=per_1m_input_tokens --param stream_kind=model_offering_price
+knowledge db query facts.history_for_stream --param entity_id=0192b000-0000-7000-8000-000000000001 --param limit=50 --param offset=0 --param scope_key=input_tokens|| --param stream_kind=offering_price
 ```
-Subject is the offering; scope_key is the price unit.
+Subject is the offering; scope_key is meter|tier|region.
 
 Defined in: `20260912010400_km_04_temporal.sql`.

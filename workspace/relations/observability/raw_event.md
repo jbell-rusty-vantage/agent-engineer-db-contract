@@ -4,6 +4,7 @@ kind: partitioned_table
 schema: observability
 name: raw_event
 domain: observability
+lens: machinery
 aliases: []
 tokens: [observability, raw_event, observability.raw_event, id, stream_cursor, idempotency_key, event, trace_id, occurred_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, pipeline_agent, service_role]
 typescript: "Database[\"observability\"][\"Tables\"][\"raw_event\"][\"Row\"]"
 defined_in: ["20260826001200_observability.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # observability.raw_event
 
-partitioned table in domain `observability`.
+partitioned table in domain `observability`, lens `machinery`.
 
 ## Columns
 

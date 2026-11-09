@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: validate_verification_benchmark_run
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.validate_verification_benchmark_run()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [benchmark checkpoint plan duplicate key, benchmark checkpoint plan entr
 touches: { reads: [knowledge_service.operation, orchestration.artifact], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_run, evaluation.validate_verification_benchmark_run]
 defined_in: ["20260906029000_verification_benchmark_durable_run.sql", "20260906029300_verification_benchmark_nullsafe_request_binding.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.validate_verification_benchmark_run
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## validate_verification_benchmark_run() → trigger
 

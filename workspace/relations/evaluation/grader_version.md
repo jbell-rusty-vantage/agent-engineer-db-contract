@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: grader_version
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, grader_version, evaluation.grader_version, id, grader_id, version, code_ref, model, prompt, config, created_at, tenant_id, verification_contract_version, manifest_artifact_id, manifest_sha256]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"grader_version\"][\"Row\"]"
 defined_in: ["20260826001100_evaluation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.grader_version
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

@@ -4,6 +4,7 @@ kind: table
 schema: knowledge_service
 name: eve_operation_binding
 domain: knowledge-service-runtime
+lens: machinery
 aliases: []
 tokens: [knowledge_service, eve_operation_binding, knowledge_service.eve_operation_binding, tenant_id, operation_id, idempotency_key, grant_id, use_case, request_sha256, actor_identity, mission_id, work_item_id, attempt_id, agent_deployment_id, capability_version, original_external_execution, issuer, original_key_id, original_jti, original_payload_sha256, created_at]
 summary: Immutable first-lineage binding for API-verified Eve verification requests. It grants no authority itself.
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"eve_operation_binding\"][\"Row\"]"
 defined_in: ["20260908010000_eve_verification_binding.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.eve_operation_binding
 
-table in domain `knowledge-service-runtime` — Immutable first-lineage binding for API-verified Eve verification requests. It grants no authority itself..
+table in domain `knowledge-service-runtime`, lens `machinery` — Immutable first-lineage binding for API-verified Eve verification requests. It grants no authority itself..
 
 ## Columns
 

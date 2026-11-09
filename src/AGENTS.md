@@ -7,7 +7,7 @@ Full interfaces, dependencies, tests, and architecture: [semantic map](../docs/a
 
 | Module | Responsibility | Enter |
 |---|---|---|
-| [type-contract](../docs/agents/CODE-MAP.md#type-contract) | Type-only Database/API/pre-research exports and provenance constants/helpers. | src/index.ts |
+| [type-contract](../docs/agents/CODE-MAP.md#type-contract) | Type-only Database export plus the api view/function row types (L1 catalog views, L2/L3 functions). | src/index.ts |
 
 Descriptions are maintained in `.agent-docs/modules.json` at the repository root. Do not edit this generated block.
 <!-- END GENERATED: semantic-map -->

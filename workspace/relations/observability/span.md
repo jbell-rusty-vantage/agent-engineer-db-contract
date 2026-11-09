@@ -4,6 +4,7 @@ kind: partitioned_table
 schema: observability
 name: span
 domain: observability
+lens: machinery
 aliases: []
 tokens: [observability, span, observability.span, id, trace_id, span_id, parent_span_id, name, kind, status, started_at, ended_at, duration_ms, cost_usd, token_input, token_output, attributes, occurred_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, pipeline_agent, service_role]
 typescript: "Database[\"observability\"][\"Tables\"][\"span\"][\"Row\"]"
 defined_in: ["20260826001200_observability.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # observability.span
 
-partitioned table in domain `observability`.
+partitioned table in domain `observability`, lens `machinery`.
 
 ## Columns
 

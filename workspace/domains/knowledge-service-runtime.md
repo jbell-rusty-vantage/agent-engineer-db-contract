@@ -1,19 +1,20 @@
 ---
 id: "dom:knowledge-service-runtime"
 kind: domain
+lens: machinery
 schemas: [knowledge_service]
 aliases: [operations, outbox, leases]
 relations: [knowledge_service.operation, knowledge_service.operation_step, knowledge_service.operation_event, knowledge_service.outbox, knowledge_service.lease, knowledge_service.callback_delivery, knowledge_service.eve_operation_binding]
 functions: [temporal.emit_outbox]
 tasks: [check-knowledge-head]
-summary: "Durable KS operations, steps, outbox, and eve bindings."
+summary: "Durable KS operations, steps, outbox, and eve bindings (machinery lens)."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Knowledge service runtime
 
-Durable KS operations, steps, outbox, and eve bindings.
+Durable KS operations, steps, outbox, and eve bindings (machinery lens).
 
 > curated (model_assisted, unreviewed) — `knowledge_service.operation` is the durable record of a platform or eve call
 > (operation_kind, idempotency_key, ownership_mode standalone | mission_control | eve,
@@ -22,21 +23,13 @@ Durable KS operations, steps, outbox, and eve bindings.
 > when retrieval projections refresh.
 > 
 > Leases, callback deliveries, and eve operation bindings are runtime control. Agents
-> do not write these tables. The knowledge executor records a
-> `knowledge_ingestion` operation when it applies an intent. Ownership_mode is `eve`
-> in the experiment and `mission_control` when Mission Control calls.
+> do not write these tables. The knowledge executor records a `knowledge_ingestion`
+> operation when it applies an intent. If a batch sealed but an artifact upload is pending,
+> the artifact row keeps `storage_state='pending'` and a retry step finishes it.
 > 
-> If a batch sealed but an artifact upload is pending, the artifact row keeps
-> `storage_state='pending'` and a retry step finishes it. Receipts live in Postgres
-> even when object storage lags.
-> 
-> Invariant: one operation row per idempotency_key. Trap: treating the outbox as a
-> query catalog — agents should `check-knowledge-head` / `q:knowledge.head` after a
-> sealed batch instead of polling `knowledge_service.outbox`. `temporal.emit_outbox`
-> runs inside `temporal.commit_batch`; do not call it yourself. Eve bindings
-> (`knowledge_service.eve_operation_binding`) record proving-ground ownership and
-> are not a write path for research agents. When diagnosis needs more than the
-> head, read `knowledge_service.operation_step` as pipeline_agent.
+> Trap: treating the outbox as a query catalog — agents should `check-knowledge-head` /
+> `q:knowledge.head` after a sealed batch instead of polling `knowledge_service.outbox`.
+> `temporal.emit_outbox` runs inside `temporal.commit_batch`; do not call it yourself.
 
 ## Relations that matter
 

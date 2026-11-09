@@ -4,20 +4,21 @@ kind: table
 schema: content
 name: document_version
 domain: content
+lens: corpus
 aliases: []
-tokens: [content, document_version, content.document_version, id, tenant_id, document_id, version_label, published_at, effective_from, resolved_revision, manifest_sha256, correction_state, supersedes_id, created_at]
+tokens: [content, document_version, content.document_version, id, tenant_id, document_id, version_label, published_at, effective_from, resolved_revision, manifest_sha256, correction_state, supersedes_id, created_at, format_code]
 summary: null
 summary_basis: none
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_version\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_version
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 
@@ -34,6 +35,7 @@ table in domain `content`.
 | 9 | `correction_state` | `text` | no | `'current'::text` | — |
 | 10 | `supersedes_id` | `uuid` | yes | — | — |
 | 11 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 12 | `format_code` | `text` | yes | — | FK → [`content.format`](format.md).code; Format axis of this captured version (content.format). |
 
 ## Constraints
 
@@ -46,8 +48,8 @@ table in domain `content`.
 
 ## Relationships
 
-Outbound: `tenant_id,document_id` → [`content.document`](document.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document_version`](document_version.md)`.tenant_id,id` on delete restrict.
-Inbound: [`content.document_representation`](document_representation.md).document_version_id, [`content.document_summary`](document_summary.md).document_version_id, [`content.document_version`](document_version.md).supersedes_id, [`content.document_version_source_capture`](document_version_source_capture.md).document_version_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).document_version_id.
+Outbound: `format_code` → [`content.format`](format.md)`.code`; `tenant_id,document_id` → [`content.document`](document.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document_version`](document_version.md)`.tenant_id,id` on delete restrict.
+Inbound: [`content.document_digest`](document_digest.md).document_version_id, [`content.document_representation`](document_representation.md).document_version_id, [`content.document_summary`](document_summary.md).document_version_id, [`content.document_version`](document_version.md).supersedes_id, [`content.document_version_source_capture`](document_version_source_capture.md).document_version_id, [`content.refresh_check`](refresh_check.md).new_version_id|prior_version_id, [`content.unit_change`](unit_change.md).to_version_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).document_version_id.
 
 ## Indexes
 
@@ -65,11 +67,13 @@ Enabled.
 
 ## Grants
 
-`executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `executor_service`: INSERT, SELECT; `service_role`: INSERT, SELECT. None: `anon`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Read paths
 
-- Direct SELECT: `executor_service`.
+- Named queries: `q:content.document_digest`, `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`.
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md).
+- Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path
 

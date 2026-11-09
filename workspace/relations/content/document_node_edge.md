@@ -4,6 +4,7 @@ kind: table
 schema: content
 name: document_node_edge
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, document_node_edge, content.document_node_edge, tenant_id, from_node_id, to_node_id, relation_kind, metadata, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_node_edge\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_node_edge
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 

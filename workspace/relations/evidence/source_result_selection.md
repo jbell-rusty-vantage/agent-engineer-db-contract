@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: source_result_selection
 domain: evidence
+lens: evidence
 aliases: []
 tokens: [evidence, source_result_selection, evidence.source_result_selection, tenant_id, attempt_id, revision, rank, disposition, reason, idempotency_key, selection_artifact_id, created_at]
 summary: Append-only research inclusion revisions per provider result; reads choose the latest recorded rank decision without redispatching discovery.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_result_selection\"][\"Row\"]"
 defined_in: ["20260914010400_source_attempt_recovery.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.source_result_selection
 
-table in domain `evidence` — Append-only research inclusion revisions per provider result; reads choose the latest recorded rank decision without redispatching discovery..
+table in domain `evidence`, lens `evidence` — Append-only research inclusion revisions per provider result; reads choose the latest recorded rank decision without redispatching discovery..
 
 ## Columns
 

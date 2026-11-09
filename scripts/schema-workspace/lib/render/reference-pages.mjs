@@ -44,6 +44,7 @@ export function renderFunctionPage(model, overloads) {
       schema: first.schema,
       name: first.name,
       domain,
+      lens: model.lensOfFunction(first.id),
       overloads: overloads.map((fn) => fn.id),
       security: first.security,
       volatility: first.volatility,
@@ -56,7 +57,7 @@ export function renderFunctionPage(model, overloads) {
     }) +
     joinBlocks([
       heading(1, `${first.schema}.${first.name}`),
-      `${overloads.length > 1 ? `${overloads.length} overloads. ` : ""}Domain ${code(domain ?? "none")}.${usedByViews.length > 0 ? ` Used by views: ${usedByViews.join(", ")}.` : ""}`,
+      `${overloads.length > 1 ? `${overloads.length} overloads. ` : ""}Domain ${code(domain ?? "none")}, lens ${code(model.lensOfFunction(first.id) ?? "none")}.${usedByViews.length > 0 ? ` Used by views: ${usedByViews.join(", ")}.` : ""}`,
       ...overloads.map((fn) => overloadSection(model, fn, page)),
       `Defined in: ${[...new Set(overloads.flatMap((fn) => fn.defined_in))].sort().map(code).join(", ") || "unknown"}.`,
     ]);
@@ -151,6 +152,7 @@ export function renderDomainPage(model, domain) {
     frontmatter({
       id: `dom:${domain.slug}`,
       kind: "domain",
+      lens: model.lensOfDomain(domain.slug),
       schemas: domain.schemas,
       aliases: domain.aliases,
       relations: listed.map((relationId) => idTail(relationId)),
@@ -170,7 +172,7 @@ export function renderDomainPage(model, domain) {
       functionLinks.length > 0 ? `${heading(2, "Functions")}\n${functionLinks.join(", ")}\n` : "",
       queryLinks.length > 0 ? `${heading(2, "Named queries")}\n${queryLinks.join(", ")}\n` : "",
       taskLinks.length > 0 ? `${heading(2, "Tasks")}\n${taskLinks.join(", ")}\n` : "",
-      `Schemas: ${domain.schemas.map((schema) => link(code(schema), page, pages.schemaReadme(schema))).join(", ") || "—"}.`,
+      `Schemas: ${domain.schemas.map((schema) => (model.schemaHasPages(schema) ? link(code(schema), page, pages.schemaReadme(schema)) : code(schema))).join(", ") || "—"}.`,
     ]);
   return { path: page, content };
 }
@@ -197,10 +199,10 @@ export function renderSchemaReadme(model, schema) {
   const vocabularies = Object.values(model.ir.vocabularies).filter((vocabulary) => vocabulary.schema === schema.name);
   const domains = [...new Set(schema.relation_ids.map((relationId) => model.domainOfRelation(relationId)).filter(Boolean))].sort();
   const content =
-    frontmatter({ id: schema.id, kind: "schema", name: schema.name, domains, relations: relations.length, functions: functionNames.length, workspace_fingerprint: model.buildInfo.workspace_fingerprint }) +
+    frontmatter({ id: schema.id, kind: "schema", name: schema.name, lens: model.lensOfSchema(schema.name), domains, relations: relations.length, functions: functionNames.length, workspace_fingerprint: model.buildInfo.workspace_fingerprint }) +
     joinBlocks([
       heading(1, schema.name),
-      `${schema.comment ?? ""} Domains: ${domains.map((slug) => (model.selection.domainSlugs.has(slug) ? link(code(slug), page, pages.domain(slug)) : code(slug))).join(", ") || "—"}.`.trim(),
+      `${schema.comment ?? ""} Lens ${code(model.lensOfSchema(schema.name) ?? "none")}. Domains: ${domains.map((slug) => (model.selection.domainSlugs.has(slug) ? link(code(slug), page, pages.domain(slug)) : code(slug))).join(", ") || "—"}.`.trim(),
       table(["Relation", "Kind", "Rows", "Summary", "Key edges"], rows),
       functionNames.length > 0 ? `Functions: ${functionNames.map((name) => link(code(name), page, `functions/${schema.name}/${name}.md`)).join(", ")}.` : "Functions: none.",
       schema.type_ids.length > 0 ? `Types: ${link(code(`types/${schema.name}.md`), page, pages.types(schema.name))}.` : "Types: none.",
@@ -215,6 +217,7 @@ export function renderTaskPage(model, task) {
     frontmatter({
       id: task.id,
       kind: "task",
+      lens: task.domains.map((slug) => model.lensOfDomain(slug)).find(Boolean) ?? null,
       domains: task.domains,
       queries: task.queries,
       aliases: task.aliases,

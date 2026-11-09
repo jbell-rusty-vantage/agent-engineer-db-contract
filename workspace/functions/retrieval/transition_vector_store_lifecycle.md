@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: transition_vector_store_lifecycle
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.transition_vector_store_lifecycle(uuid,text,text,text,uuid)"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [actor identity and reason are required, compatible active successor is 
 touches: { reads: [], writes: [retrieval.vector_store, retrieval.vector_store_lifecycle_event] }
 tokens: [retrieval, transition_vector_store_lifecycle, retrieval.transition_vector_store_lifecycle]
 defined_in: ["20260904015000_vector_store_lifecycle_control_plane.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.transition_vector_store_lifecycle
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## transition_vector_store_lifecycle(uuid, text, text, text, uuid) → uuid
 

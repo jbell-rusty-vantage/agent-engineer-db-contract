@@ -4,6 +4,7 @@ kind: function
 schema: content
 name: guard_terminal_transformation
 domain: content
+lens: machinery
 overloads: ["fn:content.guard_terminal_transformation()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [terminal transformation runs are immutable, transformation runs cannot 
 touches: { reads: [], writes: [] }
 tokens: [content, guard_terminal_transformation, content.guard_terminal_transformation]
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.guard_terminal_transformation
 
-Domain `content`.
+Domain `content`, lens `machinery`.
 
 ## guard_terminal_transformation() → trigger
 

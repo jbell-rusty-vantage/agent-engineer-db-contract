@@ -4,22 +4,23 @@ kind: table
 schema: orchestration
 name: artifact
 domain: orchestration-ledger
+lens: machinery
 aliases: [artifact]
 tokens: [orchestration, artifact, orchestration.artifact, id, tenant_id, artifact_type, schema_version, sha256, bucket_class, storage_bucket, object_path, media_type, size_bytes, producer_attempt_id, mission_id, superseded_by_id, created_at, verification_contract_version, storage_state, available_at, registration_error_class, custody_registered_at]
-summary: Content-addressed stored object typed by artifact_type.
+summary: Content-addressed stored object typed by artifact_type; product uploads and course assets register here too.
 summary_basis: curated
 rls: enabled
 readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"artifact\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.artifact
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
-> curated (model_assisted, unreviewed) — Content-addressed stored object typed by artifact_type.
+> curated (model_assisted, unreviewed) — Content-addressed stored object typed by artifact_type; product uploads and course assets register here too.
 
 ## Columns
 
@@ -40,7 +41,7 @@ table in domain `orchestration-ledger`.
 | 13 | `superseded_by_id` | `uuid` | yes | — | FK → [`orchestration.artifact`](artifact.md).id |
 | 14 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 | 15 | `verification_contract_version` | `text` | yes | — | Immutable opt-in to verification CAS and metadata admission. NULL preserves legacy artifact identity and writer compatibility. |
-| 16 | `storage_state` | `text` | no | `'available'::text` | Registration-first object lifecycle. Receipts may only reference available rows; pending/failed rows are reconciliation evidence.; _curated:_ stored or pending when the bucket write lagged the row. |
+| 16 | `storage_state` | `text` | no | `'available'::text` | Registration-first object lifecycle. Receipts may only reference available rows; pending/failed rows are reconciliation evidence.; _curated:_ pending until the worker verifies the object (complete_asset), then available. |
 | 17 | `available_at` | `timestamp with time zone` | yes | `now()` | — |
 | 18 | `registration_error_class` | `text` | yes | — | — |
 | 19 | `custody_registered_at` | `timestamp with time zone` | no | `clock_timestamp()` | — |
@@ -79,13 +80,14 @@ Enabled; 2 policies in [details](artifact.details.md).
 
 ## Read paths
 
-- Named queries: `q:artifacts.by_type`, `q:reports.artifacts`.
+- Named queries: `q:artifacts.by_type`.
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`.
 
 ## Write path
 
 - Direct DML: `control_plane`, `executor_service`.
-- Via functions (best effort): [`orchestration.apply_artifact_tombstone`](../../functions/orchestration/apply_artifact_tombstone.md), [`orchestration.reconcile_legacy_artifact_custody`](../../functions/orchestration/reconcile_legacy_artifact_custody.md).
+- Via functions (best effort): [`orchestration.apply_artifact_tombstone`](../../functions/orchestration/apply_artifact_tombstone.md), [`orchestration.reconcile_legacy_artifact_custody`](../../functions/orchestration/reconcile_legacy_artifact_custody.md), [`product.dispatch_worker`](../../functions/product/dispatch_worker.md), [`product.register_artifact`](../../functions/product/register_artifact.md).
+- Product operations (best effort): [`complete_asset`](../../ops/complete_asset.md).
 
 ## TypeScript
 

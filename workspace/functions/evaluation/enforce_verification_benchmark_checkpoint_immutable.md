@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: enforce_verification_benchmark_checkpoint_immutable
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.enforce_verification_benchmark_checkpoint_immutable()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [benchmark checkpoints are append-only]
 touches: { reads: [], writes: [] }
 tokens: [evaluation, enforce_verification_benchmark_checkpoint_immutable, evaluation.enforce_verification_benchmark_checkpoint_immutable]
 defined_in: ["20260906029000_verification_benchmark_durable_run.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.enforce_verification_benchmark_checkpoint_immutable
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## enforce_verification_benchmark_checkpoint_immutable() → trigger
 

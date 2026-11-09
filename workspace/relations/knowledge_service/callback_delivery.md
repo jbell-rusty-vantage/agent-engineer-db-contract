@@ -4,6 +4,7 @@ kind: table
 schema: knowledge_service
 name: callback_delivery
 domain: knowledge-service-runtime
+lens: machinery
 aliases: []
 tokens: [knowledge_service, callback_delivery, knowledge_service.callback_delivery, callback_id, tenant_id, task_id, operation_id, correlation_id, causation_id, signing_key_reference, receiver_identity, payload_sha256, signature, occurred_at, received_at]
 summary: Append-only authenticated A2A callback receipt and cross-restart replay ledger; payloads and secrets are never stored.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"callback_delivery\"][\"Row\"]"
 defined_in: ["20260903010900_callback_delivery_replay_ledger.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.callback_delivery
 
-table in domain `knowledge-service-runtime` — Append-only authenticated A2A callback receipt and cross-restart replay ledger; payloads and secrets are never stored..
+table in domain `knowledge-service-runtime`, lens `machinery` — Append-only authenticated A2A callback receipt and cross-restart replay ledger; payloads and secrets are never stored..
 
 ## Columns
 

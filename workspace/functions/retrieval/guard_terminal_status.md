@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: guard_terminal_status
 domain: retrieval
+lens: machinery
 overloads: ["fn:retrieval.guard_terminal_status()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["% cannot be deleted", "terminal % is immutable"]
 touches: { reads: [], writes: [] }
 tokens: [retrieval, guard_terminal_status, retrieval.guard_terminal_status]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.guard_terminal_status
 
-Domain `retrieval`.
+Domain `retrieval`, lens `machinery`.
 
 ## guard_terminal_status() → trigger
 

@@ -4,6 +4,7 @@ kind: function
 schema: evidence
 name: validate_capture_artifact
 domain: evidence
+lens: machinery
 overloads: ["fn:evidence.validate_capture_artifact()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [capture must bind a same-tenant registered source artifact with matchin
 touches: { reads: [evidence.source, orchestration.artifact], writes: [] }
 tokens: [evidence, validate_capture_artifact, evidence.validate_capture_artifact]
 defined_in: ["20260905010000_verification_persistence_contract.sql", "20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.validate_capture_artifact
 
-Domain `evidence`.
+Domain `evidence`, lens `machinery`.
 
 ## validate_capture_artifact() → trigger
 

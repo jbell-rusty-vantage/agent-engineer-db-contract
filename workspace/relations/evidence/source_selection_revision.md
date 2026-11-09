@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: source_selection_revision
 domain: evidence
+lens: evidence
 aliases: []
 tokens: [evidence, source_selection_revision, evidence.source_selection_revision, tenant_id, attempt_id, revision, idempotency_key, request_sha256, selection_artifact_id, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_selection_revision\"][\"Row\"]"
 defined_in: ["20260914010400_source_attempt_recovery.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.source_selection_revision
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 

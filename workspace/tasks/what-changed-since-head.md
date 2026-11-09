@@ -1,20 +1,21 @@
 ---
 id: "task:what-changed-since-head"
 kind: task
+lens: corpus
 domains: [temporal-facts]
-queries: [knowledge.head, entity.what_changed]
+queries: [knowledge.head, entity.what_changed, facts.changes_since]
 aliases: [diff, rebase, delta]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # What changed since head K
 
-Domains: [`temporal-facts`](../domains/temporal-facts.md). Queries: [`q:knowledge.head`](../queries/README.md), [`q:entity.what_changed`](../queries/README.md).
+Domains: [`temporal-facts`](../domains/temporal-facts.md). Queries: [`q:knowledge.head`](../queries/README.md), [`q:entity.what_changed`](../queries/README.md), [`q:facts.changes_since`](../queries/README.md).
 
 ## Navigation
 
-`domains/temporal-facts.md` → `q:entity.what_changed`
+`domains/temporal-facts.md` → `q:entity.what_changed` (per entity, by head) or `tasks/what-changed-since.md` (by date, whole tenant).
 
 ## Operation
 
@@ -35,4 +36,4 @@ Rows with `change_kind` opened or closed, `item_kind` segment, event, or relatio
 
 ## Pitfalls
 
-`what_changed` is entity-scoped (segments on the entity or its relationships, occurrences, relationship rows). Call it per subject when rebasing an intent. `k_from`/`k_to` here are knowledge heads, not world time.
+`what_changed` is entity-scoped (segments on the entity or its relationships, occurrences, relationship rows). Call it per subject when rebasing an intent. `k_from`/`k_to` here are knowledge heads, not world time; for a date-based, tenant-wide view use `q:facts.changes_since`.

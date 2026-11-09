@@ -4,22 +4,21 @@ kind: table
 schema: evidence
 name: source_encounter
 domain: evidence
-aliases: [encounter]
+lens: evidence
+aliases: []
 tokens: [evidence, source_encounter, evidence.source_encounter, id, tenant_id, source_id, provider_result_id, capture_id, encounter_kind, encountered_at, details, receipt_id, source_provider_attempt_id, requested_url, final_url, redirect_urls, result_disposition, failure_code]
-summary: "When a provider result was seen as a source, optionally with a capture."
-summary_basis: curated
+summary: null
+summary_basis: none
 rls: enabled
 readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_encounter\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.source_encounter
 
-table in domain `evidence`.
-
-> curated (model_assisted, unreviewed) — When a provider result was seen as a source, optionally with a capture.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 
@@ -28,8 +27,8 @@ table in domain `evidence`.
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id) |
 | 3 | `source_id` | `uuid` | no | — | FK → [`evidence.source`](source.md).id |
-| 4 | `provider_result_id` | `uuid` | yes | — | FK → [`evidence.provider_result`](provider_result.md).id; _curated:_ The search hit that produced this encounter. |
-| 5 | `capture_id` | `uuid` | yes | — | FK → [`evidence.source_capture`](source_capture.md).id; _curated:_ Optional evidence.source_capture taken at encounter time. |
+| 4 | `provider_result_id` | `uuid` | yes | — | FK → [`evidence.provider_result`](provider_result.md).id |
+| 5 | `capture_id` | `uuid` | yes | — | FK → [`evidence.source_capture`](source_capture.md).id |
 | 6 | `encounter_kind` | `text` | no | — | — |
 | 7 | `encountered_at` | `timestamp with time zone` | no | `now()` | — |
 | 8 | `details` | `jsonb` | no | `'{}'::jsonb` | — |
@@ -82,14 +81,5 @@ Enabled.
 ## TypeScript
 
 insert: `Database["evidence"]["Tables"]["source_encounter"]["Insert"]`; row: `Database["evidence"]["Tables"]["source_encounter"]["Row"]`; update: `Database["evidence"]["Tables"]["source_encounter"]["Update"]`
-
-## Examples
-
-Captures for one source
-
-```bash
-knowledge db query evidence.captures_for_source --param source_id=0192e000-0000-7000-8000-000000000001
-```
-Encounters may exist before a capture_id is filled.
 
 Defined in: `20260912010500_km_05_evidence.sql`.

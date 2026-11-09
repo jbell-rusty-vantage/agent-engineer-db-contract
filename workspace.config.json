@@ -2,28 +2,35 @@
   "format": "ai-engineer-schema-workspace-config/1",
   "workspaceFormat": "ai-engineer-schema-workspace/3",
   "irFormat": "ai-engineer-schema-ir/1",
-  "rendererVersion": "3.0.0",
+  "rendererVersion": "4.0.0",
   "schemas": [
     "public",
     "api",
     "util",
-    "research_private",
     "orchestration",
     "evidence",
+    "verification",
+    "acquisition",
     "taxonomy",
-    "corpus",
-    "knowledge",
+    "catalog",
+    "guidance",
     "staging",
     "ranking",
-    "research",
     "retrieval",
     "evaluation",
     "observability",
     "curriculum",
-    "provenance",
     "content",
     "knowledge_service",
-    "temporal"
+    "temporal",
+    "authoring",
+    "learning",
+    "access",
+    "library",
+    "inquiry",
+    "conversation",
+    "dataset",
+    "product"
   ],
   "excludedNamespaces": [
     "auth",
@@ -43,8 +50,18 @@
     "information_schema"
   ],
   "roles": {
-    "bounded": ["executor_service", "pipeline_agent", "verifier_agent", "control_plane", "app_reader"],
-    "platform": ["anon", "authenticated", "service_role"]
+    "bounded": [
+      "executor_service",
+      "pipeline_agent",
+      "verifier_agent",
+      "control_plane",
+      "app_reader"
+    ],
+    "platform": [
+      "anon",
+      "authenticated",
+      "service_role"
+    ]
   },
   "vocabularies": [
     "taxonomy.entity_kind",
@@ -52,26 +69,126 @@
     "temporal.stream_kind",
     "temporal.event_kind",
     "content.document_type",
+    "content.format",
+    "content.source_role",
+    "content.unit_kind",
+    "guidance.item_kind",
     "orchestration.intent_type",
     "orchestration.artifact_type",
     "evidence.capture_method",
-    "evidence.search_provider",
-    "corpus.media_platform",
-    "corpus.license",
-    "corpus.distribution_kind"
+    "evidence.search_provider"
   ],
-  "vocabularyVolatileColumns": ["created_at", "updated_at"],
+  "vocabularyVolatileColumns": [
+    "created_at",
+    "updated_at"
+  ],
   "budgets": {
     "relation_main_bytes": 6144,
     "relation_details_bytes": 16384,
-    "domain_bytes": 8192,
+    "domain_bytes": 12288,
     "schema_readme_bytes": 16384,
     "task_bytes": 5120,
+    "operation_bytes": 4096,
+    "start_here_bytes": 3072,
+    "start_here_lines": 60,
+    "map_bytes": 4096,
+    "map_lines": 40,
     "search_index_bytes": 720896
+  },
+  "operations": {
+    "dispatchers": [
+      {
+        "function": "product.dispatch_command",
+        "dispatcher": "command",
+        "call": "api.product_command"
+      },
+      {
+        "function": "product.dispatch_read",
+        "dispatcher": "read",
+        "call": "api.product_read"
+      },
+      {
+        "function": "product.dispatch_worker",
+        "dispatcher": "worker",
+        "call": "api.product_worker"
+      },
+      {
+        "function": "product.dispatch_research_command",
+        "dispatcher": "research",
+        "call": "api.product_command"
+      },
+      {
+        "function": "product.dispatch_research_read",
+        "dispatcher": "research",
+        "call": "api.product_read"
+      }
+    ]
+  },
+  "lenses": {
+    "names": [
+      "ours",
+      "private",
+      "corpus",
+      "evidence",
+      "machinery",
+      "legacy"
+    ],
+    "hidden": [
+      "machinery",
+      "legacy"
+    ],
+    "schemas": {
+      "authoring": "ours",
+      "learning": "ours",
+      "access": "ours",
+      "library": "ours",
+      "inquiry": "ours",
+      "dataset": "ours",
+      "product": "ours",
+      "conversation": "private",
+      "catalog": "corpus",
+      "content": "corpus",
+      "temporal": "corpus",
+      "taxonomy": "corpus",
+      "staging": "corpus",
+      "acquisition": "corpus",
+      "ranking": "corpus",
+      "guidance": "corpus",
+      "retrieval": "corpus",
+      "api": "corpus",
+      "evidence": "evidence",
+      "verification": "evidence",
+      "orchestration": "machinery",
+      "knowledge_service": "machinery",
+      "evaluation": "machinery",
+      "observability": "machinery",
+      "util": "machinery",
+      "curriculum": "machinery",
+      "public": "legacy"
+    },
+    "relations": {
+      "api.works_authored": "ours",
+      "api.mission_progress": "machinery",
+      "api.review_queue": "machinery",
+      "library.passage": "private"
+    },
+    "functions": {
+      "api.product_command": "ours",
+      "api.product_read": "ours",
+      "api.product_worker": "ours",
+      "api.submit_intent": "machinery",
+      "api.search_knowledge_1536": "machinery",
+      "api.hybrid_knowledge_search_history_1536": "machinery",
+      "catalog.import_research_starter_catalog": "legacy"
+    },
+    "triggerFunctions": "machinery"
   },
   "paths": {
     "generatedTypes": "src/database.generated.ts",
     "migrations": "supabase/migrations",
+    "draftMigrations": [
+      "supabase/drafts"
+    ],
     "enrichment": "workspace-enrichment",
     "workspace": "workspace",
     "scopes": "workspace-scopes"

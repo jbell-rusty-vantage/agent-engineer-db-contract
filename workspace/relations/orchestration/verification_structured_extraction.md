@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_structured_extraction
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_structured_extraction, orchestration.verification_structured_extraction, id, tenant_id, operation_id, operation_step_id, producer_attempt_id, identity_sha256, request_sha256, step_input_sha256, capture_id, profile_artifact_id, profile_sha256, schema_artifact_id, schema_artifact_sha256, source_artifact_id, source_sha256, representation_artifact_id, representation_sha256, transformation_artifact_id, transformation_sha256, prompt_sha256, schema_digest_sha256, status, started_at, retention_started_at, completed_at, provider_attempt_id, original_dispatch_fencing_token, http_status, captured_at, provider_request_artifact_id, provider_request_sha256, raw_response_artifact_id, raw_response_sha256, response_envelope_artifact_id, response_envelope_sha256, transport_artifact_id, transport_sha256, candidate_artifact_id, candidate_sha256, precontext_artifact_id, precontext_sha256, provenance_artifact_id, provenance_sha256]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_structured_extraction\"][\"Row\"]"
 defined_in: ["20260906031700_verification_structured_extraction_lifecycle.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_structured_extraction
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

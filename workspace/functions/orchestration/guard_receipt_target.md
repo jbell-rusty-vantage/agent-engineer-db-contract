@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: guard_receipt_target
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.guard_receipt_target()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [RECEIPT_TARGET_TENANT_MISMATCH]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt], writes: [] }
 tokens: [orchestration, guard_receipt_target, orchestration.guard_receipt_target]
 defined_in: ["20261031010000_operation_receipt_targets.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.guard_receipt_target
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## guard_receipt_target() → trigger
 

@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: guard_vector_store_lifecycle_transition
 domain: retrieval
+lens: machinery
 overloads: ["fn:retrieval.guard_vector_store_lifecycle_transition()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["illegal vector store lifecycle transition % -> %", vector store lifecy
 touches: { reads: [], writes: [] }
 tokens: [retrieval, guard_vector_store_lifecycle_transition, retrieval.guard_vector_store_lifecycle_transition]
 defined_in: ["20260904015000_vector_store_lifecycle_control_plane.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.guard_vector_store_lifecycle_transition
 
-Domain `retrieval`.
+Domain `retrieval`, lens `machinery`.
 
 ## guard_vector_store_lifecycle_transition() → trigger
 

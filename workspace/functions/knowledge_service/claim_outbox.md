@@ -4,6 +4,7 @@ kind: function
 schema: knowledge_service
 name: claim_outbox
 domain: knowledge-service-runtime
+lens: machinery
 overloads: ["fn:knowledge_service.claim_outbox(text,int4,int4,uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [claim limit or visibility timeout is outside the admitted range, claim 
 touches: { reads: [], writes: [knowledge_service.outbox] }
 tokens: [knowledge_service, claim_outbox, knowledge_service.claim_outbox]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.claim_outbox
 
-Domain `knowledge-service-runtime`.
+Domain `knowledge-service-runtime`, lens `machinery`.
 
 ## claim_outbox(text, integer, integer, uuid) → TABLE(id uuid, operation_id uuid, event_id uuid, topic text, payload jsonb, payload_sha256 text, delivery_attempts integer, claim_owner text, claim_token uuid, claimed_at timestamp with time zone, visibility_expires_at timestamp with time zone)
 

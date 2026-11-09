@@ -4,6 +4,7 @@ kind: table
 schema: curriculum
 name: release_transition
 domain: curriculum
+lens: machinery
 aliases: []
 tokens: [curriculum, release_transition, curriculum.release_transition, id, tenant_id, workspace_id, from_release_id, to_release_id, mapping_schema, mapping, compatibility, reviewed_event_id, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: []
 writers: []
 typescript: "Database[\"curriculum\"][\"Tables\"][\"release_transition\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # curriculum.release_transition
 
-table in domain `curriculum`.
+table in domain `curriculum`, lens `machinery`.
 
 ## Columns
 
@@ -47,8 +48,8 @@ table in domain `curriculum`.
 
 ## Relationships
 
-Outbound: `tenant_id,workspace_id,from_release_id` → `authoring.release``.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,reviewed_event_id` → `authoring.event``.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,to_release_id` → `authoring.release``.tenant_id,workspace_id,id` on delete restrict.
-Inbound: [`curriculum.requirement_transition`](requirement_transition.md).workspace_id,transition_id.
+Outbound: `tenant_id,workspace_id,from_release_id` → [`authoring.release`](../authoring/release.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,reviewed_event_id` → [`authoring.event`](../authoring/event.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,to_release_id` → [`authoring.release`](../authoring/release.md)`.tenant_id,workspace_id,id` on delete restrict.
+Inbound: [`curriculum.requirement_transition`](requirement_transition.md).workspace_id,transition_id, [`learning.credit`](../learning/credit.md).transition_id, [`learning.release_adoption`](../learning/release_adoption.md).source_workspace_id,transition_id.
 
 ## Indexes
 
@@ -56,7 +57,7 @@ Inbound: [`curriculum.requirement_transition`](requirement_transition.md).worksp
 
 ## Triggers
 
-- `immutable_guard` → `product.guard_immutable`
+- `immutable_guard` → [`product.guard_immutable`](../../functions/product/guard_immutable.md)
 
 ## Row-level security
 

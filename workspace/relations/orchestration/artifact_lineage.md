@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: artifact_lineage
 domain: orchestration-ledger
+lens: machinery
 aliases: [lineage]
 tokens: [orchestration, artifact_lineage, orchestration.artifact_lineage, id, tenant_id, from_artifact_id, to_artifact_id, relation_kind, transformation_run_id, receipt_id, created_at, activity_id, activity_version, transformation_signature]
 summary: "Typed edge between artifacts (derived_from, supersedes, corrects, produced_by, consumed_by)."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"artifact_lineage\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.artifact_lineage
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 > curated (model_assisted, unreviewed) — Typed edge between artifacts (derived_from, supersedes, corrects, produced_by, consumed_by).
 

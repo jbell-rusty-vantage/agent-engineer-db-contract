@@ -4,22 +4,21 @@ kind: table
 schema: retrieval
 name: chunk_span
 domain: retrieval
-aliases: [chunk span]
+lens: corpus
+aliases: []
 tokens: [retrieval, chunk_span, retrieval.chunk_span, tenant_id, chunk_id, ordinal, document_node_id, start_offset, end_offset, locator_id, selected_text_sha256, created_at]
-summary: "Character offsets of a chunk inside a document node, optionally with a locator."
-summary_basis: curated
+summary: null
+summary_basis: none
 rls: enabled
 readers: [executor_service, service_role]
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"chunk_span\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.chunk_span
 
-table in domain `retrieval`.
-
-> curated (model_assisted, unreviewed) — Character offsets of a chunk inside a document node, optionally with a locator.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 
@@ -28,8 +27,8 @@ table in domain `retrieval`.
 | 1 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | PK |
 | 2 | `chunk_id` | `uuid` | no | — | PK |
 | 3 | `ordinal` | `integer` | no | — | PK |
-| 4 | `document_node_id` | `uuid` | no | — | _curated:_ Parent content.document_node. |
-| 5 | `start_offset` | `integer` | yes | — | _curated:_ Inclusive start inside the node text. |
+| 4 | `document_node_id` | `uuid` | no | — | — |
+| 5 | `start_offset` | `integer` | yes | — | — |
 | 6 | `end_offset` | `integer` | yes | — | — |
 | 7 | `locator_id` | `uuid` | yes | — | FK → [`evidence.locator`](../evidence/locator.md).id |
 | 8 | `selected_text_sha256` | `text` | no | — | — |
@@ -77,14 +76,5 @@ Enabled.
 ## TypeScript
 
 insert: `Database["retrieval"]["Tables"]["chunk_span"]["Insert"]`; row: `Database["retrieval"]["Tables"]["chunk_span"]["Row"]`; update: `Database["retrieval"]["Tables"]["chunk_span"]["Update"]`
-
-## Examples
-
-Packet members may cite the node
-
-```bash
-knowledge db query retrieval.evidence_packet --param packet_id=0192c000-0000-7000-8000-000000000001
-```
-Timecodes come from the node, not from these offsets.
 
 Defined in: `20260903010100_knowledge_retrieval_contract.sql`.

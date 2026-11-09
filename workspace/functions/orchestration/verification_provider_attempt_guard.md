@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: verification_provider_attempt_guard
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.verification_provider_attempt_guard()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [provider reconciliation settlement transition mismatch, verification pr
 touches: { reads: [orchestration.verification_provider_reconciliation], writes: [] }
 tokens: [orchestration, verification_provider_attempt_guard, orchestration.verification_provider_attempt_guard]
 defined_in: ["20260906010000_verification_provider_budget_accounting.sql", "20260906012000_harden_verification_provider_accounting.sql", "20260906013000_verification_provider_dispatch_fence.sql", "20260906014000_provider_accounting_identity_overrun_rls.sql", "20260906032900_verification_provider_reconciliation_missing_response.sql", "20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_attempt_guard
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## verification_provider_attempt_guard() → trigger
 

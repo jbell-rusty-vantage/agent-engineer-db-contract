@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: commit_batch
 domain: temporal-facts
+lens: corpus
 overloads: ["fn:temporal.commit_batch(uuid,text,text,jsonb)"]
 security: definer
 volatility: volatile
@@ -11,12 +12,12 @@ executors: [executor_service, service_role]
 raises: [no open knowledge batch, receipt tenant mismatch, stream slot/payload rules violated]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt, temporal.segment, temporal.stream, temporal.stream_kind], writes: [temporal.knowledge_batch, temporal.knowledge_head] }
 tokens: [temporal, commit_batch, temporal.commit_batch]
-defined_in: ["20260912010400_km_04_temporal.sql", "20260912011200_km_12_projection_workers.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+defined_in: ["20260912010400_km_04_temporal.sql", "20260912011200_km_12_projection_workers.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.commit_batch
 
-Domain `temporal-facts`.
+Domain `temporal-facts`, lens `corpus`.
 
 ## commit_batch(uuid, text, text, jsonb) → bigint
 
@@ -37,4 +38,4 @@ Touches (best effort): reads [`orchestration.operation_intent`](../../relations/
 
 TypeScript: `Database["temporal"]["Functions"]["commit_batch"]`.
 
-Defined in: `20260912010400_km_04_temporal.sql`, `20260912011200_km_12_projection_workers.sql`.
+Defined in: `20260912010400_km_04_temporal.sql`, `20260912011200_km_12_projection_workers.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `part1_renames.sql`.

@@ -4,6 +4,7 @@ kind: view
 schema: orchestration
 name: mission_run_effects
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, mission_run_effects, orchestration.mission_run_effects, tenant_id, mc_run_id, mc_mission_id, mc_activation_id, mc_operation_id, mc_operation_attempt, mc_execution_generation, mc_lane, origin_digest, intent_id, receipt_id, receipt_outcome, applied_at, use_decision_id, ordinal, target_schema, target_table, target_id, entity_id, entity_kind, role, action, proposal_id, claim_id]
 summary: "Native effects by Mission Control run: intent (with its mc_* coordinates and origin digest) -> receipt -> receipt targets, for intents that carry mission coordinates. security_invoker: the caller's grants and tenant policies on the three tables apply, so only roles that can read operation_receipt (executor_service, control_plane) can read it."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: []
 typescript: "Database[\"orchestration\"][\"Views\"][\"mission_run_effects\"][\"Row\"]"
 defined_in: ["20261031010000_operation_receipt_targets.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.mission_run_effects
 
-view in domain `orchestration-ledger` — Native effects by Mission Control run: intent (with its mc_* coordinates and origin digest) -> receipt -> receipt targets, for intents that carry mission coordinates. security_invoker: the caller's grants and tenant policies on the three tables apply, so only roles that can read operation_receipt (executor_service, control_plane) can read it..
+view in domain `orchestration-ledger`, lens `machinery` — Native effects by Mission Control run: intent (with its mc_* coordinates and origin digest) -> receipt -> receipt targets, for intents that carry mission coordinates. security_invoker: the caller's grants and tenant policies on the three tables apply, so only roles that can read operation_receipt (executor_service, control_plane) can read it..
 
 ## Columns
 

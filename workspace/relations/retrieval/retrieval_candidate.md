@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: retrieval_candidate
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, retrieval_candidate, retrieval.retrieval_candidate, id, run_id, vector_item_id, lexical_ref, stage_scores, final_score, rank, tenant_id]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"retrieval_candidate\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.retrieval_candidate
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

@@ -1,12 +1,13 @@
 ---
 id: "task:compose-ingestion-intent"
 kind: task
+lens: corpus
 domains: [temporal-facts, identity, relationships, evidence, staging]
 queries: [knowledge.head, entity.resolve, vocab.stream_kind, vocab.relationship_kind, vocab.event_kind]
 aliases: [ingestion intent, proposal, write, intent skeleton]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Compose a knowledge ingestion intent
 
@@ -23,19 +24,19 @@ One intent = one source or report, one `expectedKnowledgeHead`, subjects declare
 ```json
 {
   "schemaVersion": "knowledge-ingestion-intent.v1",
-  "intentId": "codex-2026-09-11",
+  "intentId": "codex-2026-11-08",
   "expectedKnowledgeHead": 4,
   "onStale": "rebase_if_disjoint",
-  "context": { "missionId": "0192a000-0000-7000-8000-000000000001", "correlationId": "exp3-a-r1", "actor": { "kind": "agent", "id": "eve:db-aware-research" } },
-  "evidence": { "verificationRuns": [{ "runId": "vr_codex_2026_09_11", "manifestDigest": "sha256:c0d0" }] },
+  "context": { "missionId": "0192a000-0000-7000-8000-000000000001", "correlationId": "loop1-r1", "actor": { "kind": "agent", "id": "eve:research" } },
+  "evidence": { "verificationRuns": [{ "runId": "vr_codex_2026_11_08", "manifestDigest": "sha256:c0d0" }] },
   "subjects": [
     { "ref": "codex", "mode": "resolved", "entityId": "0192b000-0000-7000-8000-000000000011", "kind": "product" },
-    { "ref": "codex-cli", "mode": "new", "kind": "product", "displayName": "Codex CLI", "identifiers": [{ "scheme": "github", "value": "openai/codex" }], "onMatch": "use_existing" }
+    { "ref": "codex-cli", "mode": "new", "kind": "product", "displayName": "Codex CLI", "attributes": { "category": "coding_agent" }, "identifiers": [{ "scheme": "github", "value": "openai/codex" }], "onMatch": "use_existing" }
   ],
   "proposals": [
     { "proposalId": "p1", "kind": "entity.create", "subjectRef": "codex-cli", "belief": "accepted" },
-    { "proposalId": "p2", "kind": "relationship.assert", "fromRef": "codex", "toRef": "codex-cli", "relationshipKind": "has_feature", "worldInterval": { "from": "2026-09-11T00:00:00Z", "to": null, "bounds": "[)" }, "temporalBasis": "explicit", "belief": "accepted" },
-    { "proposalId": "p3", "kind": "fact.assert_state", "subjectRef": "codex", "streamKind": "model_offering_price", "scopeKey": "per_1m_input_tokens", "worldInterval": { "from": "2026-09-11T00:00:00Z", "to": null, "bounds": "[)" }, "amount": 1.25, "currency": "USD", "unit": "per_1m_input_tokens", "extent": { "sourceText": "September 11, 2026", "precision": "day", "earliest": "2026-09-11", "latest": "2026-09-11" }, "temporalBasis": "explicit", "belief": "accepted", "evidence": [{ "runId": "vr_codex_2026_09_11", "claimId": "c_01", "locatorRef": "q_01", "role": "primary" }] }
+    { "proposalId": "p2", "kind": "relationship.assert", "fromRef": "codex", "toRef": "codex-cli", "relationshipKind": "has_feature", "worldInterval": { "from": "2026-11-08T00:00:00Z", "to": null, "bounds": "[)" }, "temporalBasis": "explicit", "belief": "accepted" },
+    { "proposalId": "p3", "kind": "fact.assert_state", "subjectRef": "codex", "streamKind": "offering_price", "scopeKey": "input_tokens||", "worldInterval": { "from": "2026-11-08T00:00:00Z", "to": null, "bounds": "[)" }, "amount": 1.25, "currency": "USD", "unit": "usd_per_1m_tokens", "payload": { "meter": "input_tokens" }, "extent": { "sourceText": "November 8, 2026", "precision": "day", "earliest": "2026-11-08", "latest": "2026-11-08" }, "temporalBasis": "explicit", "belief": "accepted", "evidence": [{ "runId": "vr_codex_2026_11_08", "claimId": "c_01", "locatorRef": "q_01", "role": "primary" }] }
   ]
 }
 ```
@@ -46,4 +47,4 @@ One intent = one source or report, one `expectedKnowledgeHead`, subjects declare
 
 ## Pitfalls
 
-Every `fact.assert_state` that may correct an existing fact must carry the `scopeKey` of the series it corrects (run `tasks/find-stale-facts.md` first); the unit is the default only for a series that does not exist yet. `streamKind`, `relationshipKind`, `eventKind`, and subject `kind` are vocabulary codes (`vocab.*` queries); a wrong code is `VOCABULARY_VIOLATION` before any transaction. `expectedKnowledgeHead` comes from the read snapshot you based the intent on; a moved head is `REBASE_REQUIRED` unless `onStale` allows a disjoint rebase. Submit an intent once; the same `intentId` again returns `duplicateOf`, never a second batch. `claim.materialize` needs `context.attemptId`.
+Every `fact.assert_state` that may correct an existing fact must carry the `scopeKey` of the series it corrects (run `tasks/find-stale-facts.md` first). `streamKind`, `relationshipKind`, `eventKind`, and subject `kind` are vocabulary codes (`vocab.*` queries); a wrong code is `VOCABULARY_VIOLATION` before any transaction; subject `attributes` must satisfy the kind's schema. `expectedKnowledgeHead` comes from the read snapshot; a moved head is `REBASE_REQUIRED` unless `onStale` allows a disjoint rebase. Submit an intent once; the same `intentId` again returns `duplicateOf`. `claim.materialize` needs `context.attemptId`.

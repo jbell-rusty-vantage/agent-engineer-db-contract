@@ -4,6 +4,7 @@ kind: table
 schema: staging
 name: candidate
 domain: staging
+lens: corpus
 aliases: [candidate]
 tokens: [staging, candidate, staging.candidate, id, tenant_id, proposed_kind, proposed_payload, resolved_entity_id, source_id, created_at]
 summary: Proposed identity awaiting resolution; not a draft fact.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"staging\"][\"Tables\"][\"candidate\"][\"Row\"]"
 defined_in: ["20260826000700_staging.sql", "20260912010900_km_09_ranking_staging.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # staging.candidate
 
-table in domain `staging`.
+table in domain `staging`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Proposed identity awaiting resolution; not a draft fact.
 
@@ -29,7 +30,7 @@ table in domain `staging`.
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id) |
 | 3 | `proposed_kind` | `text` | no | — | FK → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md).code; _curated:_ FK to taxonomy.entity_kind. |
 | 4 | `proposed_payload` | `jsonb` | no | — | — |
-| 5 | `resolved_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id; _curated:_ Set after a match or create decision. |
+| 5 | `resolved_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id; _curated:_ Set after a match or create decision. |
 | 6 | `source_id` | `uuid` | yes | — | FK → [`evidence.source`](../evidence/source.md).id |
 | 7 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 
@@ -40,7 +41,7 @@ table in domain `staging`.
 
 ## Relationships
 
-Outbound: `proposed_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `resolved_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `source_id` → [`evidence.source`](../evidence/source.md)`.id` (+tenant).
+Outbound: `proposed_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `resolved_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `source_id` → [`evidence.source`](../evidence/source.md)`.id` (+tenant).
 Inbound: [`evaluation.review_task`](../evaluation/review_task.md).candidate_id, [`staging.identity_match`](identity_match.md).candidate_id, [`staging.resolution_decision`](resolution_decision.md).candidate_id, [`staging.vetting_decision`](vetting_decision.md).candidate_id.
 Polymorphic: `proposed_kind` selects one of 36 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK candidate_proposed_kind_fkey.
 Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject).

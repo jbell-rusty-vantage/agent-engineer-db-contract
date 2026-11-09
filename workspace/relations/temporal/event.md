@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: event
 domain: temporal-facts
+lens: corpus
 aliases: [event identity]
 tokens: [temporal, event, temporal.event, id, tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key, created_at]
 summary: "Event identity (kind, subject, optional object/relationship, dedupe_key)."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"event\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.event
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Event identity (kind, subject, optional object/relationship, dedupe_key).
 
@@ -28,9 +29,9 @@ table in domain `temporal-facts`.
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id); unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key) |
 | 3 | `kind` | `text` | no | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`temporal.event_kind`](event_kind.md).code |
-| 4 | `subject_entity_id` | `uuid` | no | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`corpus.entity`](../corpus/entity.md).id |
-| 5 | `object_entity_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`corpus.entity`](../corpus/entity.md).id |
-| 6 | `relationship_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`corpus.relationship`](../corpus/relationship.md).id |
+| 4 | `subject_entity_id` | `uuid` | no | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`catalog.entity`](../catalog/entity.md).id |
+| 5 | `object_entity_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`catalog.entity`](../catalog/entity.md).id |
+| 6 | `relationship_id` | `uuid` | yes | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); FK → [`catalog.relationship`](../catalog/relationship.md).id |
 | 7 | `dedupe_key` | `text` | yes | — | unique (tenant_id, kind, subject_entity_id, object_entity_id, relationship_id, dedupe_key); _curated:_ Optional natural key so the same announcement is not inserted twice. |
 | 8 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 
@@ -42,7 +43,7 @@ table in domain `temporal-facts`.
 
 ## Relationships
 
-Outbound: `kind` → [`temporal.event_kind`](event_kind.md)`.code`; `object_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `relationship_id` → [`corpus.relationship`](../corpus/relationship.md)`.id` (+tenant); `subject_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant).
+Outbound: `kind` → [`temporal.event_kind`](event_kind.md)`.code`; `object_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `relationship_id` → [`catalog.relationship`](../catalog/relationship.md)`.id` (+tenant); `subject_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant).
 Inbound: [`temporal.event_occurrence`](event_occurrence.md).event_id, [`temporal.segment`](segment.md).caused_by_event_id.
 
 ## Indexes
@@ -64,8 +65,8 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:entity.card`, `q:entity.timeline`, `q:entity.what_changed`, `q:events.current_for_entity`.
-- Exposed through: [`api.events_current`](../api/events_current.md).
+- Named queries: `q:catalog.models`, `q:catalog.models_at`, `q:catalog.software_releases`, `q:entity.card`, `q:entity.timeline`, `q:entity.what_changed`, `q:events.current_for_entity`, `q:facts.changes_since`.
+- Exposed through: [`api.events_current`](../api/events_current.md), [`api.models`](../api/models.md), [`api.software_releases`](../api/software_releases.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

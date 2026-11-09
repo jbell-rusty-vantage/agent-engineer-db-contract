@@ -4,6 +4,7 @@ kind: function
 schema: api
 name: product_worker
 domain: api-surface
+lens: ours
 overloads: ["fn:api.product_worker(text,jsonb)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [api, product_worker, api.product_worker]
 defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.product_worker
 
-Domain `api-surface`.
+Domain `api-surface`, lens `ours`.
 
 ## product_worker(text, jsonb) → jsonb
 
@@ -28,6 +29,8 @@ function, volatile, security definer, language plpgsql, config `search_path=""`.
 | `p_payload` | `jsonb` | — | — |
 
 Execute: `service_role`.
+
+Touches (best effort): reads —; writes —; calls [`product.claims`](../product/claims.md), [`product.dispatch_worker`](../product/dispatch_worker.md), [`product.fail`](../product/fail.md).
 
 TypeScript: `Database["api"]["Functions"]["product_worker"]`.
 

@@ -87,6 +87,7 @@ export function selectionForScope(ir, enrichment, scope) {
   }
 
   const taskSlugs = new Set((scope.tasks ?? []).filter((slug) => enrichment.tasks.some((task) => task.slug === slug)));
+  const operationNames = new Set((ir.derived.operations ?? []).map((operation) => operation.name).filter((name) => matchesAny(name, scope.operations ?? [])));
   const queryNames = new Set(enrichment.queries.entries.map((entry) => entry.name).filter((name) => matchesAny(name, scope.queries ?? [])));
   const domainSlugs = new Set([...includedDomains, ...[...relationIds].map((relationId) => model.domainOfRelation(relationId)).filter(Boolean)]);
   const omittedRelations = Object.keys(ir.relations).filter((relationId) => !relationIds.has(relationId) && !stubRelationIds.has(relationId)).sort();
@@ -96,7 +97,7 @@ export function selectionForScope(ir, enrichment, scope) {
       id: scope.id,
       description: scope.description ?? "",
       sha256: digest(scope),
-      included: { relations: relationIds.size, functions: functionIds.size, stubs: stubRelationIds.size, tasks: taskSlugs.size, queries: queryNames.size },
+      included: { relations: relationIds.size, functions: functionIds.size, stubs: stubRelationIds.size, tasks: taskSlugs.size, queries: queryNames.size, operations: operationNames.size },
       omitted: { relations: omittedRelations.length, functions: omittedFunctions.length, relation_ids: omittedRelations, function_ids: omittedFunctions },
       definition: scope,
     },
@@ -106,5 +107,6 @@ export function selectionForScope(ir, enrichment, scope) {
     domainSlugs,
     taskSlugs,
     queryNames,
+    operationNames,
   };
 }

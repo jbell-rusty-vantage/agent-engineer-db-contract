@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: chunk_set
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, chunk_set, retrieval.chunk_set, id, tenant_id, representation_id, procedure_version_id, frozen_config, tokenizer, input_manifest_sha256, output_manifest_sha256, chunk_set_sha256, status, qa_evaluation_id, promotion_decision_id, supersedes_id, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"chunk_set\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.chunk_set
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

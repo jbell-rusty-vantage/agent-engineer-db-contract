@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: knowledge_head
 domain: temporal-facts
+lens: corpus
 aliases: [head, tenant clock]
 tokens: [temporal, knowledge_head, temporal.knowledge_head, tenant_id, knowledge_seq, updated_at, open_xid, open_k]
 summary: One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an open batch.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"knowledge_head\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.knowledge_head
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an open batch.
 
@@ -59,7 +60,8 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:entity.at`, `q:entity.relationships`, `q:entity.timeline`, `q:knowledge.head`.
+- Named queries: `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:entity.at`, `q:entity.relationships`, `q:entity.timeline`, `q:knowledge.head`.
+- Exposed through: [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

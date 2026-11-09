@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_semantic_response_observation
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_semantic_response_observation, orchestration.verification_semantic_response_observation, tenant_id, producer_attempt_id, provider_attempt_id, operation_id, operation_step_id, profile_artifact_id, profile_sha256, dispatch_fencing_token, blinded_input_artifact_id, blinded_input_sha256, request_artifact_id, request_sha256, raw_response_artifact_id, raw_response_sha256, response_envelope_artifact_id, response_envelope_sha256, observation_artifact_id, observation_sha256, requested_model, observed_model, model_status, revalidation_required, prompt_tokens, completion_tokens, total_tokens, reported_cost_status, reported_cost_micros, recorded_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_semantic_response_observation\"][\"Row\"]"
 defined_in: ["20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_semantic_response_observation
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 

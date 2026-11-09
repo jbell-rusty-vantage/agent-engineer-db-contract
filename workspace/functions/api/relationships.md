@@ -4,21 +4,22 @@ kind: function
 schema: api
 name: relationships
 domain: api-surface
+lens: corpus
 overloads: ["fn:api.relationships(uuid,text,timestamptz,int8,text)"]
 security: definer
 volatility: stable
 executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
-touches: { reads: [corpus.relationship, taxonomy.relationship_kind, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
+touches: { reads: [catalog.relationship, taxonomy.relationship_kind, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, relationships, api.relationships]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.relationships
 
-Domain `api-surface`.
+Domain `api-surface`, lens `corpus`.
 
-## relationships(uuid, text, timestamp with time zone, bigint, text) → SETOF corpus.relationship
+## relationships(uuid, text, timestamp with time zone, bigint, text) → SETOF catalog.relationship
 
 function, stable, security definer, language sql, config `search_path=""`.
 
@@ -32,7 +33,7 @@ function, stable, security definer, language sql, config `search_path=""`.
 
 Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
-Touches (best effort): reads [`corpus.relationship`](../../relations/corpus/relationship.md), [`taxonomy.relationship_kind`](../../relations/taxonomy/relationship_kind.md), [`temporal.knowledge_head`](../../relations/temporal/knowledge_head.md), [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
+Touches (best effort): reads [`catalog.relationship`](../../relations/catalog/relationship.md), [`taxonomy.relationship_kind`](../../relations/taxonomy/relationship_kind.md), [`temporal.knowledge_head`](../../relations/temporal/knowledge_head.md), [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
 
 Named queries: `q:entity.relationships`.
 

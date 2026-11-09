@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: verification_structured_extraction_completion_guard
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.verification_structured_extraction_completion_guard()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [structured extraction operation success requires one exact receipt, str
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, knowledge_service.receipt, orchestration.verification_structured_extraction], writes: [] }
 tokens: [orchestration, verification_structured_extraction_completion_guard, orchestration.verification_structured_extraction_completion_guard]
 defined_in: ["20260906031500_verification_structured_extraction_candidate_artifacts.sql", "20260906032100_verification_structured_extraction_terminal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_structured_extraction_completion_guard
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## verification_structured_extraction_completion_guard() → trigger
 

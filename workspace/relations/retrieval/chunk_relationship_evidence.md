@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: chunk_relationship_evidence
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, chunk_relationship_evidence, retrieval.chunk_relationship_evidence, tenant_id, chunk_id, relationship_id, verb]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"chunk_relationship_evidence\"][\"Row\"]"
 defined_in: ["20260903010300_knowledge_retrieval_completeness.sql", "20260912010800_km_08_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.chunk_relationship_evidence
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 
@@ -25,7 +26,7 @@ table in domain `retrieval`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | PK |
 | 2 | `chunk_id` | `uuid` | no | — | PK; FK → [`retrieval.retrieval_chunk`](retrieval_chunk.md).id |
-| 3 | `relationship_id` | `uuid` | no | — | PK; FK → [`corpus.relationship`](../corpus/relationship.md).id |
+| 3 | `relationship_id` | `uuid` | no | — | PK; FK → [`catalog.relationship`](../catalog/relationship.md).id |
 | 4 | `verb` | `text` | no | — | PK |
 
 ## Constraints
@@ -35,7 +36,7 @@ table in domain `retrieval`.
 
 ## Relationships
 
-Outbound: `chunk_id` → [`retrieval.retrieval_chunk`](retrieval_chunk.md)`.id` (+tenant); `relationship_id` → [`corpus.relationship`](../corpus/relationship.md)`.id` (+tenant).
+Outbound: `chunk_id` → [`retrieval.retrieval_chunk`](retrieval_chunk.md)`.id` (+tenant); `relationship_id` → [`catalog.relationship`](../catalog/relationship.md)`.id` (+tenant).
 Inbound: none.
 
 ## Indexes

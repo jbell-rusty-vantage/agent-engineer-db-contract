@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: extent
 domain: temporal-facts
+lens: corpus
 aliases: [date extent]
 tokens: [temporal, extent, temporal.extent, id, tenant_id, source_text, precision, earliest, latest, timezone, locator_id]
 summary: Source text for a date with precision and optional earliest/latest bounds.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"extent\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.extent
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Source text for a date with precision and optional earliest/latest bounds.
 

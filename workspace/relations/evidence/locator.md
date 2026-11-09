@@ -4,22 +4,23 @@ kind: table
 schema: evidence
 name: locator
 domain: evidence
+lens: evidence
 aliases: [quote, selector]
 tokens: [evidence, locator, evidence.locator, id, capture_id, media_type, selector, selected_content_sha256, normalized_value, context_fingerprint, extractor_name, extractor_version, extraction_params, created_at, tenant_id, verification_contract_version, representation_artifact_id, selector_sha256, selected_size_bytes, occurrence_count, resolution_state, normalization_policy, resolution_version, selector_kind, start_ms, end_ms, page_number]
-summary: "Precise selection inside a capture, with selected_content_sha256."
+summary: "Precise selection inside a capture (text quote, table cell, timecode, page+bbox) with selected_content_sha256 and a normalized value."
 summary_basis: curated
 rls: enabled
 readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"evidence\"][\"Tables\"][\"locator\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.locator
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
-> curated (model_assisted, unreviewed) — Precise selection inside a capture, with selected_content_sha256.
+> curated (model_assisted, unreviewed) — Precise selection inside a capture (text quote, table cell, timecode, page+bbox) with selected_content_sha256 and a normalized value.
 
 ## Columns
 
@@ -30,7 +31,7 @@ table in domain `evidence`.
 | 3 | `media_type` | `text` | no | — | — |
 | 4 | `selector` | `jsonb` | no | — | — |
 | 5 | `selected_content_sha256` | `text` | yes | — | _curated:_ Digest of the selected span, not the whole capture. |
-| 6 | `normalized_value` | `text` | yes | — | — |
+| 6 | `normalized_value` | `text` | yes | — | _curated:_ The value as read, normalized (api.fact_locators shows it beside the fact's amount). |
 | 7 | `context_fingerprint` | `text` | yes | — | — |
 | 8 | `extractor_name` | `text` | no | — | — |
 | 9 | `extractor_version` | `text` | no | — | — |
@@ -45,8 +46,8 @@ table in domain `evidence`.
 | 18 | `resolution_state` | `text` | yes | — | — |
 | 19 | `normalization_policy` | `text` | yes | — | — |
 | 20 | `resolution_version` | `text` | yes | — | — |
-| 21 | `selector_kind` | `text` | no | `'text_quote'::text` | _curated:_ text_quote, table, media_timecode, and others. |
-| 22 | `start_ms` | `integer` | yes | — | — |
+| 21 | `selector_kind` | `text` | no | `'text_quote'::text` | _curated:_ text_quote, table, media_timecode, page_bbox, json_pointer, line_range. |
+| 22 | `start_ms` | `integer` | yes | — | _curated:_ Timecode locators: window start in milliseconds. |
 | 23 | `end_ms` | `integer` | yes | — | — |
 | 24 | `page_number` | `integer` | yes | — | — |
 
@@ -69,7 +70,7 @@ table in domain `evidence`.
 
 ## Relationships
 
-3 outbound and 19 inbound foreign keys; full list in [details](locator.details.md).
+3 outbound and 18 inbound foreign keys; full list in [details](locator.details.md).
 
 ## Indexes
 
@@ -89,6 +90,7 @@ Enabled; 1 policies in [details](locator.details.md).
 
 ## Read paths
 
+- Named queries: `q:facts.locators`.
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
@@ -101,11 +103,11 @@ insert: `Database["evidence"]["Tables"]["locator"]["Insert"]`; row: `Database["e
 
 ## Examples
 
-Support rows carry locator_id
+Where a current price was read
 
 ```bash
-knowledge db query evidence.claim_support --param claim_id=0192d000-0000-7000-8000-000000000001
+knowledge db query facts.locators --param entity_id=0192b000-0000-7000-8000-000000000001 --param scope_key=null --param stream_kind=offering_price
 ```
-admit_support requires a locator.
+Returns locator, capture URL/time and the typed unit (document_node_id).
 
 Defined in: `20260826000300_evidence_core.sql`.

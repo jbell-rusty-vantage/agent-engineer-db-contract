@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: claim_evidence_link
 domain: evidence
+lens: evidence
 aliases: []
 tokens: [evidence, claim_evidence_link, evidence.claim_evidence_link, id, claim_id, locator_id, role, support_verdict, authority_assessment, created_at, tenant_id, verification_contract_version]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim_evidence_link\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.claim_evidence_link
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 

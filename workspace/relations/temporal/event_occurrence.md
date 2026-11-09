@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: event_occurrence
 domain: temporal-facts
+lens: corpus
 aliases: [occurrence]
 tokens: [temporal, event_occurrence, temporal.event_occurrence, id, tenant_id, event_id, occurred_during, occurrence_mode, belief, extent_id, primary_claim_id, payload, k_from, k_to, created_at]
 summary: "K-stamped occurrence of an event (actual, scheduled, or cancelled)."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"event_occurrence\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.event_occurrence
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — K-stamped occurrence of an event (actual, scheduled, or cancelled).
 
@@ -75,8 +76,8 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:entity.card`, `q:entity.timeline`, `q:entity.what_changed`, `q:events.current_for_entity`.
-- Exposed through: [`api.events_current`](../api/events_current.md).
+- Named queries: `q:catalog.models`, `q:catalog.models_at`, `q:catalog.software_releases`, `q:entity.card`, `q:entity.timeline`, `q:entity.what_changed`, `q:events.current_for_entity`, `q:facts.changes_since`.
+- Exposed through: [`api.events_current`](../api/events_current.md), [`api.models`](../api/models.md), [`api.software_releases`](../api/software_releases.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

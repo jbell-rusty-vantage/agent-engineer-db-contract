@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: segment_support
 domain: evidence
+lens: evidence
 aliases: [support]
 tokens: [evidence, segment_support, evidence.segment_support, id, tenant_id, segment_id, event_occurrence_id, claim_id, locator_id, role, k_from, k_to]
 summary: K-stamped link from a claim and locator to a segment or occurrence.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"evidence\"][\"Tables\"][\"segment_support\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.segment_support
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 > curated (model_assisted, unreviewed) — K-stamped link from a claim and locator to a segment or occurrence.
 
@@ -70,7 +71,8 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:evidence.claim_support`.
+- Named queries: `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:evidence.claim_support`, `q:facts.locators`.
+- Exposed through: [`api.model_offerings`](../api/model_offerings.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

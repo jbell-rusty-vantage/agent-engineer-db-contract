@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: current_k
 domain: temporal-facts
+lens: corpus
 overloads: ["fn:temporal.current_k()"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [temporal.knowledge_head], writes: [] }
 tokens: [temporal, current_k, temporal.current_k]
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.current_k
 
-Domain `temporal-facts`.
+Domain `temporal-facts`, lens `corpus`.
 
 ## current_k() → bigint
 

@@ -1,6 +1,7 @@
 ---
 id: "dom:staging"
 kind: domain
+lens: corpus
 schemas: [staging]
 aliases: [candidates, review, identity match]
 relations: [staging.candidate, staging.identity_match, staging.resolution_decision, staging.vetting_decision, taxonomy.entity_kind]
@@ -9,7 +10,7 @@ tasks: [compose-ingestion-intent, resolve-or-create-entity, stage-uncertain-cand
 summary: "Candidates for new identities, not a staging copy of facts."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Staging and identity resolution
 
@@ -27,17 +28,10 @@ Candidates for new identities, not a staging copy of facts.
 > instead of entity.create.
 > 
 > `proposed_kind` must exist in `taxonomy.entity_kind`. Pipeline agents may insert
-> candidates; only the executor writes decisions with a receipt. Evaluation review
-> tasks can point at a candidate. Do not park an uncertain price here — use belief
-> disputed or stage only the unknown organization.
-> 
-> Invariant: a candidate is not an entity until `staging.resolution_decision` is
-> create or match. Trap: calling `q:entity.resolve` and treating a mid-score hit as
-> a create. Use `stage-uncertain-candidate` and `q:staging.unresolved` /
-> `q:staging.candidates_for_kind` until a human or identity pass decides. Then
-> `resolve-or-create-entity` can emit entity.create only for the admitted id. The
-> source_id on the candidate should point at the `evidence.source` that mentioned
-> the name, so later merges have a quote.
+> candidates; only the executor writes decisions with a receipt. Review tasks in
+> `evaluation` can point at a candidate. Do not park an uncertain price here — use belief
+> disputed or stage only the unknown organization. The source_id on the candidate should
+> point at the `evidence.source` that mentioned the name, so later merges have a quote.
 
 ## Relations that matter
 
@@ -47,7 +41,7 @@ Candidates for new identities, not a staging copy of facts.
 | [`staging.identity_match`](../relations/staging/identity_match.md) | Scored match between a candidate and an existing entity. | PK (id); unique (tenant_id, id); RLS | `executor_service`, `pipeline_agent` |
 | [`staging.resolution_decision`](../relations/staging/resolution_decision.md) | create, match, reject, or defer decision with a receipt. | PK (id); unique (tenant_id, id); RLS | `executor_service`, `pipeline_agent` |
 | [`staging.vetting_decision`](../relations/staging/vetting_decision.md) | admit, reject, or defer vetting decision with a receipt. | PK (id); unique (tenant_id, id); RLS | `executor_service`, `pipeline_agent` |
-| [`taxonomy.entity_kind`](../relations/taxonomy/entity_kind.md) | Closed list of entity kinds and their canonical typed tables. | PK (code); unique (canonical_schema, canonical_table); RLS | `executor_service` |
+| [`taxonomy.entity_kind`](../relations/taxonomy/entity_kind.md) | Closed list of entity kinds with the JSON Schema that validates catalog.entity.attributes, the parent kind an… | PK (code); RLS | `executor_service` |
 
 ## Functions
 

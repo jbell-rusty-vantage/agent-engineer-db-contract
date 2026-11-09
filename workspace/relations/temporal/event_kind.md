@@ -4,6 +4,7 @@ kind: table
 schema: temporal
 name: event_kind
 domain: temporal-facts
+lens: corpus
 aliases: [event vocabulary]
 tokens: [temporal, event_kind, temporal.event_kind, code, subject_kinds, object_kinds, starts_stream_kind, ends_stream_kind, description]
 summary: Event vocabulary with subject and object kinds and optional start/end stream kinds.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"event_kind\"][\"Row\"]"
 defined_in: ["20260912010100_km_01_vocabularies.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.event_kind
 
-table in domain `temporal-facts`.
+table in domain `temporal-facts`, lens `corpus`.
 
 > curated (model_assisted, unreviewed) — Event vocabulary with subject and object kinds and optional start/end stream kinds.
 
@@ -39,7 +40,7 @@ table in domain `temporal-facts`.
 ## Relationships
 
 Outbound: `ends_stream_kind` → [`temporal.stream_kind`](stream_kind.md)`.code`; `starts_stream_kind` → [`temporal.stream_kind`](stream_kind.md)`.code`.
-Inbound: [`temporal.event`](event.md).kind.
+Inbound: [`content.unit_assertion_mapping`](../content/unit_assertion_mapping.md).event_kind, [`temporal.event`](event.md).kind.
 
 ## Indexes
 

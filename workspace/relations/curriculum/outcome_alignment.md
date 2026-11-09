@@ -4,6 +4,7 @@ kind: table
 schema: curriculum
 name: outcome_alignment
 domain: curriculum
+lens: machinery
 aliases: []
 tokens: [curriculum, outcome_alignment, curriculum.outcome_alignment, id, tenant_id, workspace_id, outcome_id, competency_revision_id, facet, coverage, rationale, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: []
 writers: []
 typescript: "Database[\"curriculum\"][\"Tables\"][\"outcome_alignment\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # curriculum.outcome_alignment
 
-table in domain `curriculum`.
+table in domain `curriculum`, lens `machinery`.
 
 ## Columns
 
@@ -44,7 +45,7 @@ table in domain `curriculum`.
 
 ## Relationships
 
-Outbound: `tenant_id,competency_revision_id` → `authoring.work_revision``.tenant_id,id` on delete restrict; `tenant_id,workspace_id,outcome_id` → [`curriculum.outcome`](outcome.md)`.tenant_id,workspace_id,id` on delete restrict.
+Outbound: `tenant_id,competency_revision_id` → [`authoring.work_revision`](../authoring/work_revision.md)`.tenant_id,id` on delete restrict; `tenant_id,workspace_id,outcome_id` → [`curriculum.outcome`](outcome.md)`.tenant_id,workspace_id,id` on delete restrict.
 Inbound: none.
 
 ## Indexes
@@ -53,8 +54,8 @@ Inbound: none.
 
 ## Triggers
 
-- `immutable_guard` → `product.guard_immutable`
-- `seal_guard` → `product.guard_unsealed_parent`
+- `immutable_guard` → [`product.guard_immutable`](../../functions/product/guard_immutable.md)
+- `seal_guard` → [`product.guard_unsealed_parent`](../../functions/product/guard_unsealed_parent.md)
 
 ## Row-level security
 
@@ -72,7 +73,7 @@ No role has privileges. None: `anon`, `app_reader`, `authenticated`, `control_pl
 ## Write path
 
 - No direct DML for any agent role.
-- No write path for agents; rows are seeded by migrations or platform tooling.
+- Via functions (best effort): [`product.insert_revision`](../../functions/product/insert_revision.md).
 
 ## TypeScript
 

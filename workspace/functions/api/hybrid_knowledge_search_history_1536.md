@@ -4,6 +4,7 @@ kind: function
 schema: api
 name: hybrid_knowledge_search_history_1536
 domain: api-surface
+lens: machinery
 overloads: ["fn:api.hybrid_knowledge_search_history_1536(uuid,text,halfvec,jsonb,int4,int4,int4,int8,uuid[],timestamptz,timestamptz,timestamptz,uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [currently authorized publication required, invalid bounded history quer
 touches: { reads: [retrieval.search_projection, retrieval.vector_item, retrieval.vector_item_embedding_1536, temporal.knowledge_head], writes: [] }
 tokens: [api, hybrid_knowledge_search_history_1536, api.hybrid_knowledge_search_history_1536]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.hybrid_knowledge_search_history_1536
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`.
 
 ## hybrid_knowledge_search_history_1536(uuid, text, halfvec, jsonb, integer, integer, integer, bigint, uuid[], timestamp with time zone, timestamp with time zone, timestamp with time zone, uuid) → TABLE(vector_item_id uuid, search_projection_id uuid, search_text text, source_kind text, fused_score double precision, channel_scores jsonb)
 

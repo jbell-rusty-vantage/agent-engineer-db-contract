@@ -2,33 +2,21 @@
 id: "sch:ranking"
 kind: schema
 name: ranking
+lens: corpus
 domains: [ranking]
-relations: 16
+relations: 3
 functions: 0
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # ranking
 
-Metric definitions/observations, features, groups, policies, snapshots. Domains: [`ranking`](../../domains/ranking.md).
+Metric definitions/observations, features, groups, policies, snapshots. Lens `corpus`. Domains: [`ranking`](../../domains/ranking.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
-| [`entity_group`](../../relations/ranking/entity_group.md) | table | unknown | — | — |
-| [`entity_group_version`](../../relations/ranking/entity_group_version.md) | table | unknown | — | → `ranking.entity_group` |
-| [`feature_definition`](../../relations/ranking/feature_definition.md) | table | unknown | — | — |
-| [`feature_value`](../../relations/ranking/feature_value.md) | table | unknown | — | → `ranking.feature_definition`, → `corpus.entity` |
-| [`group_membership`](../../relations/ranking/group_membership.md) | table | unknown | — | → `corpus.entity`, → `ranking.entity_group_version`, → `evidence.claim` |
-| [`leaderboard`](../../relations/ranking/leaderboard.md) | table | unknown | — | → `ranking.entity_group_version`, → `ranking.ranking_policy_version` |
-| [`leaderboard_edition`](../../relations/ranking/leaderboard_edition.md) | table | unknown | — | → `ranking.leaderboard`, → `ranking.ranking_run` |
-| [`membership_snapshot`](../../relations/ranking/membership_snapshot.md) | table | unknown | — | → `ranking.entity_group_version` |
-| [`metric_definition`](../../relations/ranking/metric_definition.md) | table | unknown | — | — |
-| [`metric_definition_version`](../../relations/ranking/metric_definition_version.md) | table | unknown | — | → `ranking.metric_definition` |
-| [`metric_observation`](../../relations/ranking/metric_observation.md) | table | unknown | — | → `corpus.benchmark_run`, → `evidence.claim`, → `evidence.locator`, → `ranking.metric_definition_version` |
-| [`ranking_policy`](../../relations/ranking/ranking_policy.md) | table | unknown | — | — |
-| [`ranking_policy_version`](../../relations/ranking/ranking_policy_version.md) | table | unknown | — | → `ranking.ranking_policy` |
-| [`ranking_result`](../../relations/ranking/ranking_result.md) | table | unknown | — | → `ranking.ranking_run`, → `corpus.entity` |
-| [`ranking_run`](../../relations/ranking/ranking_run.md) | table | unknown | — | → `ranking.ranking_policy_version`, → `ranking.membership_snapshot`, → `orchestration.work_item` |
-| [`selection`](../../relations/ranking/selection.md) | table | unknown | — | → `ranking.ranking_run` |
+| [`leaderboard`](../../relations/ranking/leaderboard.md) | table | unknown | A named ranked view whose cohort, metric (a stream kind) and policy are data; values come… | — |
+| [`leaderboard_edition`](../../relations/ranking/leaderboard_edition.md) | table | unknown | One frozen edition of a leaderboard: membership and knowledge head at publication. | → `ranking.leaderboard` |
+| [`leaderboard_entry`](../../relations/ranking/leaderboard_entry.md) | table | unknown | Ranked row of an edition with the fact segments that produced the score. | → `ranking.leaderboard_edition`, → `catalog.entity` |
 
 Functions: none.
 

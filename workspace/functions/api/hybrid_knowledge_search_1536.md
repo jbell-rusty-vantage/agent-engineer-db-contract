@@ -3,7 +3,8 @@ id: "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,
 kind: function
 schema: api
 name: hybrid_knowledge_search_1536
-domain: api-surface
+domain: retrieval
+lens: corpus
 overloads: ["fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [query text length must be between 1 and 4096, result/candidate/RRF boun
 touches: { reads: [retrieval.space_publication, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space, retrieval.vector_space_version, retrieval.vector_store_space], writes: [] }
 tokens: [api, hybrid_knowledge_search_1536, api.hybrid_knowledge_search_1536]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql", "20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.hybrid_knowledge_search_1536
 
-Domain `api-surface`.
+Domain `retrieval`, lens `corpus`.
 
 ## hybrid_knowledge_search_1536(uuid, text, halfvec, jsonb, integer, integer, integer, text[], uuid[], text[], text[], timestamp with time zone, bigint, smallint, uuid) → TABLE(vector_item_id uuid, search_projection_id uuid, search_text text, source_kind text, fused_score double precision, channel_scores jsonb)
 

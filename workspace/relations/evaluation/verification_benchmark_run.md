@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: verification_benchmark_run
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, verification_benchmark_run, evaluation.verification_benchmark_run, id, tenant_id, operation_id, dataset_artifact_id, dataset_sha256, experiment_artifact_id, experiment_sha256, runner_version, network_policy, random_seed, repetitions, checkpoint_plan, checkpoint_plan_sha256, expected_checkpoint_count, started_at, completed_at, run_manifest_artifact_id, run_manifest_sha256, status, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"verification_benchmark_run\"][\"Row\"]"
 defined_in: ["20260906029000_verification_benchmark_durable_run.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.verification_benchmark_run
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

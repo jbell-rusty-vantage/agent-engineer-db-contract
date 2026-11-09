@@ -2,37 +2,38 @@
 id: "sch:orchestration"
 kind: schema
 name: orchestration
+lens: machinery
 domains: [orchestration-ledger]
 relations: 37
 functions: 48
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration
 
-Missions, work graph, sessions, capability catalog, intents, receipts, artifacts. Domains: [`orchestration-ledger`](../../domains/orchestration-ledger.md).
+Missions, work graph, sessions, capability catalog, intents, receipts, artifacts. Lens `machinery`. Domains: [`orchestration-ledger`](../../domains/orchestration-ledger.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
 | [`agent_session`](../../relations/orchestration/agent_session.md) | table | unknown | — | → `orchestration.mission` |
-| [`artifact`](../../relations/orchestration/artifact.md) | table | unknown | Content-addressed stored object typed by artifact_type. | → `orchestration.artifact_type`, → `orchestration.mission`, → `orchestration.attempt` |
+| [`artifact`](../../relations/orchestration/artifact.md) | table | small | Content-addressed stored object typed by artifact_type; product uploads and course assets… | → `orchestration.artifact_type`, → `orchestration.mission`, → `orchestration.attempt` |
 | [`artifact_lineage`](../../relations/orchestration/artifact_lineage.md) | table | unknown | Typed edge between artifacts (derived_from, supersedes, corrects, produced_by, consumed_b… | → `orchestration.operation_receipt`, → `orchestration.artifact`, → `content.transformation_run` |
 | [`artifact_manifest`](../../relations/orchestration/artifact_manifest.md) | table | unknown | — | → `orchestration.mission`, → `orchestration.work_item` |
 | [`artifact_tombstone`](../../relations/orchestration/artifact_tombstone.md) | table | unknown | — | → `orchestration.artifact` |
 | [`artifact_type`](../../relations/orchestration/artifact_type.md) | table | unknown | — | — |
 | [`attempt`](../../relations/orchestration/attempt.md) | table | unknown | — | → `orchestration.agent_session`, → `orchestration.work_item` |
-| [`capability`](../../relations/orchestration/capability.md) | table | unknown | — | → `orchestration.capability_kind`, → `corpus.entity` |
+| [`capability`](../../relations/orchestration/capability.md) | table | unknown | — | → `orchestration.capability_kind`, → `catalog.entity` |
 | [`capability_kind`](../../relations/orchestration/capability_kind.md) | table | unknown | — | — |
 | [`capability_profile`](../../relations/orchestration/capability_profile.md) | table | unknown | — | — |
 | [`capability_profile_item`](../../relations/orchestration/capability_profile_item.md) | table | unknown | — | → `orchestration.capability_version`, → `orchestration.capability_profile` |
 | [`capability_version`](../../relations/orchestration/capability_version.md) | table | unknown | — | → `orchestration.capability`, → `evaluation.eval_dataset` |
 | [`continuation_checkpoint`](../../relations/orchestration/continuation_checkpoint.md) | table | unknown | — | → `orchestration.agent_session`, → `orchestration.mission`, → `orchestration.artifact` |
 | [`intent_type`](../../relations/orchestration/intent_type.md) | table | unknown | — | — |
-| [`mission`](../../relations/orchestration/mission.md) | table | unknown | — | → `orchestration.capability_profile`, → `ranking.selection` |
+| [`mission`](../../relations/orchestration/mission.md) | table | unknown | — | → `orchestration.capability_profile` |
 | [`mission_event`](../../relations/orchestration/mission_event.md) | table | unknown | — | → `orchestration.mission` |
 | [`mission_run_effects`](../../relations/orchestration/mission_run_effects.md) | view | unknown | Native effects by Mission Control run: intent (with its mc_* coordinates and origin diges… | — |
-| [`operation_intent`](../../relations/orchestration/operation_intent.md) | table | unknown | Durable proposed operation with unique idempotency_key. | → `orchestration.intent_type`, → `orchestration.mission`, → `orchestration.attempt` |
-| [`operation_receipt`](../../relations/orchestration/operation_receipt.md) | table | unknown | Immutable outcome of one intent (applied, rejected, noop, partial). | → `orchestration.operation_intent` |
-| [`operation_receipt_target`](../../relations/orchestration/operation_receipt_target.md) | table | unknown | Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence… | → `taxonomy.entity_kind`, → `orchestration.operation_receipt`, → `evidence.claim`, → `corpus.entity` |
+| [`operation_intent`](../../relations/orchestration/operation_intent.md) | table | small | Durable proposed operation with unique idempotency_key. | → `orchestration.intent_type`, → `orchestration.mission`, → `orchestration.attempt` |
+| [`operation_receipt`](../../relations/orchestration/operation_receipt.md) | table | small | Immutable outcome of one intent (applied, rejected, noop, partial). | → `orchestration.operation_intent` |
+| [`operation_receipt_target`](../../relations/orchestration/operation_receipt_target.md) | table | unknown | Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence… | → `taxonomy.entity_kind`, → `orchestration.operation_receipt`, → `evidence.claim`, → `catalog.entity` |
 | [`outbox_event`](../../relations/orchestration/outbox_event.md) | table | unknown | — | → `orchestration.mission` |
 | [`provider_route`](../../relations/orchestration/provider_route.md) | table | unknown | — | — |
 | [`verification_artifact_metadata`](../../relations/orchestration/verification_artifact_metadata.md) | table | unknown | Immutable verification.v1 metadata for an artifact whose canonical identity remains orche… | → `orchestration.artifact` |

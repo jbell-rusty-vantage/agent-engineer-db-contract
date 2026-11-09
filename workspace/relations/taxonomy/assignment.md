@@ -4,6 +4,7 @@ kind: table
 schema: taxonomy
 name: assignment
 domain: relationships
+lens: corpus
 aliases: []
 tokens: [taxonomy, assignment, taxonomy.assignment, id, tenant_id, term_id, target_work_id, method, confidence, provenance_claim_id, review_task_id, valid_from, valid_to, created_by_receipt_id, created_at, target_entity_id, target_record_id]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"assignment\"][\"Row\"]"
 defined_in: ["20260826001400_deferred_fks.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # taxonomy.assignment
 
-table in domain `relationships`.
+table in domain `relationships`, lens `corpus`.
 
 ## Columns
 
@@ -28,15 +29,15 @@ table in domain `relationships`.
 | 3 | `term_id` | `uuid` | no | — | FK → [`taxonomy.term`](term.md).id |
 | 21 | `target_work_id` | `uuid` | yes | — | — |
 | 23 | `method` | `text` | no | — | — |
-| 24 | `confidence` | `corpus.confidence` | yes | — | — |
+| 24 | `confidence` | `catalog.confidence` | yes | — | — |
 | 25 | `provenance_claim_id` | `uuid` | yes | — | FK → [`evidence.claim`](../evidence/claim.md).id |
 | 26 | `review_task_id` | `uuid` | yes | — | FK → [`evaluation.review_task`](../evaluation/review_task.md).id |
 | 27 | `valid_from` | `timestamp with time zone` | no | `now()` | — |
 | 28 | `valid_to` | `timestamp with time zone` | yes | — | — |
 | 29 | `created_by_receipt_id` | `uuid` | yes | — | FK → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md).id |
 | 30 | `created_at` | `timestamp with time zone` | no | `now()` | — |
-| 36 | `target_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id |
-| 37 | `target_record_id` | `uuid` | yes | — | FK → [`knowledge.record`](../knowledge/record.md).id |
+| 36 | `target_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
+| 37 | `target_record_id` | `uuid` | yes | — | FK → [`guidance.item`](../guidance/item.md).id |
 
 ## Constraints
 
@@ -46,9 +47,9 @@ table in domain `relationships`.
 
 ## Relationships
 
-Outbound: `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`; `provenance_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id`; `review_task_id` → [`evaluation.review_task`](../evaluation/review_task.md)`.id`; `target_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id`; `target_record_id` → [`knowledge.record`](../knowledge/record.md)`.id`; `tenant_id,target_work_id` → `authoring.work``.tenant_id,id` on delete restrict; `term_id` → [`taxonomy.term`](term.md)`.id` on delete cascade.
+Outbound: `created_by_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`; `provenance_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id`; `review_task_id` → [`evaluation.review_task`](../evaluation/review_task.md)`.id`; `target_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `target_record_id` → [`guidance.item`](../guidance/item.md)`.id`; `tenant_id,target_work_id` → [`authoring.work`](../authoring/work.md)`.tenant_id,id` on delete restrict; `term_id` → [`taxonomy.term`](term.md)`.id` on delete cascade.
 Inbound: none.
-Polymorphic: exactly one of `target_entity_id`, `target_record_id`, `target_work_id` → [`corpus.entity`](../corpus/entity.md) | [`knowledge.record`](../knowledge/record.md) — basis: check constraint assignment_one_target_ck.
+Polymorphic: exactly one of `target_entity_id`, `target_record_id`, `target_work_id` → [`catalog.entity`](../catalog/entity.md) | [`guidance.item`](../guidance/item.md) — basis: check constraint assignment_one_target_ck.
 
 ## Indexes
 

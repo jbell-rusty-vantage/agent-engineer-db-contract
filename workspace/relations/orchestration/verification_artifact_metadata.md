@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: verification_artifact_metadata
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, verification_artifact_metadata, orchestration.verification_artifact_metadata, tenant_id, artifact_id, producer_activity_id, producer_version, content_encoding, encryption_class, retention_class, data_classification, parent_artifact_ids, transformation_signature, attestation_artifact_id, created_at, logical_object_key]
 summary: Immutable verification.v1 metadata for an artifact whose canonical identity remains orchestration.artifact.
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role, verifier_agent]
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_artifact_metadata\"][\"Row\"]"
 defined_in: ["20260905012000_verification_artifact_metadata.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_artifact_metadata
 
-table in domain `orchestration-ledger` — Immutable verification.v1 metadata for an artifact whose canonical identity remains orchestration.artifact..
+table in domain `orchestration-ledger`, lens `machinery` — Immutable verification.v1 metadata for an artifact whose canonical identity remains orchestration.artifact..
 
 ## Columns
 

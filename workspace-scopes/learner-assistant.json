@@ -1,0 +1,103 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "learner-assistant",
+  "description": "Learner assistant mission: help a learner enrol, attempt, submit, appeal and keep private notes; search their own material (lens private) and released course material (lens ours); answer catalog questions with the L1 views. No machinery.",
+  "include": {
+    "domains": [
+      "learning",
+      "library",
+      "access",
+      "api-surface"
+    ],
+    "relations": [
+      "authoring.work",
+      "authoring.work_revision",
+      "authoring.release",
+      "authoring.release_item",
+      "authoring.distribution",
+      "authoring.distribution_offer",
+      "authoring.workspace",
+      "authoring.workspace_member",
+      "retrieval.vector_item",
+      "retrieval.projection_target"
+    ],
+    "functions": [
+      "api.product_command",
+      "api.product_read",
+      "api.search_unified",
+      "api.talk_segments",
+      "api.resolve_entity",
+      "product.readable_revision",
+      "product.can_read_offer",
+      "product.restricted",
+      "product.processing_allowed",
+      "product.finalize",
+      "product.policy",
+      "util.current_tenant_id"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "knowledge_service.*",
+      "orchestration.*",
+      "util.*",
+      "curriculum.*",
+      "api.mission_progress",
+      "api.review_queue"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "search-my-notes",
+    "compare-models",
+    "price-with-locator",
+    "talks-on-topic",
+    "talk-passage-at-timecode",
+    "modules-covering-concept"
+  ],
+  "queries": [
+    "retrieval.search_unified",
+    "catalog.*",
+    "ours.works_authored",
+    "guidance.items",
+    "content.talk_segments",
+    "entity.resolve",
+    "facts.locators",
+    "facts.price_history"
+  ],
+  "operations": [
+    "ensure_personal_workspace",
+    "enroll",
+    "adopt_release",
+    "start_attempt",
+    "submit_attempt",
+    "open_appeal",
+    "grant_evidence",
+    "propose_equivalence",
+    "request_environment",
+    "set_control",
+    "create_connection",
+    "create_thread",
+    "append_message",
+    "preview_removal",
+    "confirm_removal",
+    "search",
+    "progress",
+    "get_result",
+    "get_lesson_view",
+    "get_thread",
+    "get_offer",
+    "list_library",
+    "get_revision",
+    "invite_guardian",
+    "consent_guardian",
+    "authorize_processing"
+  ]
+}

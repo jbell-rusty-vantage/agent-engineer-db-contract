@@ -3,7 +3,8 @@ id: "fn:public.set_updated_at()"
 kind: function
 schema: public
 name: set_updated_at
-domain: research-starter-protected
+domain: legacy
+lens: machinery
 overloads: ["fn:public.set_updated_at()"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [public, set_updated_at, public.set_updated_at]
 defined_in: ["20260814025347_research_starter_videos.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # public.set_updated_at
 
-Domain `research-starter-protected`.
+Domain `legacy`, lens `machinery`.
 
 ## set_updated_at() → trigger
 

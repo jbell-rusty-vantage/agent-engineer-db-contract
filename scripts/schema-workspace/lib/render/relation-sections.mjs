@@ -1,5 +1,5 @@
 import { idTail, isPolymorphicTarget } from "../ir/ids.mjs";
-import { functionLink, relationLink } from "./links.mjs";
+import { functionLink, operationLink, relationLink } from "./links.mjs";
 import { code, curated, heading, link, table, truncate } from "./markdown.mjs";
 import { isViewKind, pages } from "./model.mjs";
 
@@ -202,7 +202,10 @@ function writePathSection(model, relation, fromPage) {
   const lines = [];
   lines.push(direct.length > 0 ? `- Direct DML: ${direct.map(code).join(", ")}.` : "- No direct DML for any agent role.");
   if (via.length > 0) lines.push(`- Via functions (best effort): ${via.join(", ")}.`);
-  if (direct.length === 0 && via.length === 0) lines.push("- No write path for agents; rows are seeded by migrations or platform tooling.");
+  const qualified = `${relation.schema}.${relation.name}`;
+  const operations = model.operationsTouching(relation.id).filter((name) => model.ir.derived.operations.some((operation) => operation.name === name && operation.writes.includes(qualified)));
+  if (operations.length > 0) lines.push(`- Product operations (best effort): ${operations.map((name) => operationLink(model, fromPage, name)).join(", ")}.`);
+  if (direct.length === 0 && via.length === 0 && operations.length === 0) lines.push("- No write path for agents; rows are seeded by migrations or platform tooling.");
   return `${lines.join("\n")}\n`;
 }
 

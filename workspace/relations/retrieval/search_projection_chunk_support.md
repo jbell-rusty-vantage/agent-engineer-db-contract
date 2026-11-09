@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: search_projection_chunk_support
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, search_projection_chunk_support, retrieval.search_projection_chunk_support, tenant_id, search_projection_id, ordinal, chunk_id, support_kind, locator_id, selected_text_sha256, created_at]
 summary: "Typed, immutable faithful/atomic support for a purpose-specific search projection."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"search_projection_chunk_support\"][\"Row\"]"
 defined_in: ["20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.search_projection_chunk_support
 
-table in domain `retrieval` — Typed, immutable faithful/atomic support for a purpose-specific search projection..
+table in domain `retrieval`, lens `corpus` — Typed, immutable faithful/atomic support for a purpose-specific search projection..
 
 ## Columns
 

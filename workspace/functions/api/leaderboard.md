@@ -1,35 +1,39 @@
 ---
-id: "fn:api.leaderboard(int4)"
+id: "fn:api.leaderboard(text,int4)"
 kind: function
 schema: api
 name: leaderboard
 domain: api-surface
-overloads: ["fn:api.leaderboard(int4)"]
+lens: corpus
+overloads: ["fn:api.leaderboard(text,int4)"]
 security: definer
 volatility: stable
-executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
-touches: { reads: [ranking.ranking_result], writes: [] }
+touches: { reads: [catalog.entity, ranking.leaderboard, ranking.leaderboard_edition, ranking.leaderboard_entry], writes: [] }
 tokens: [api, leaderboard, api.leaderboard]
-defined_in: ["20260826001500_api_and_grants.sql", "20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+defined_in: ["20260826001500_api_and_grants.sql", "20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.leaderboard
 
-Domain `api-surface`.
+Domain `api-surface`, lens `corpus`.
 
-## leaderboard(integer) → SETOF ranking.ranking_result
+## leaderboard(text, integer) → TABLE(rank integer, entity_id uuid, display_name text, score numeric, unit text, explanation jsonb, edition_no integer, published_at timestamp with time zone)
 
 function, stable, security definer, language sql, config `search_path=""`.
 
 | Argument | Type | Default | Mode |
 | --- | --- | --- | --- |
+| `p_slug` | `text` | — | — |
 | `p_limit` | `integer` | `20` | — |
 
-Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
-Touches (best effort): reads [`ranking.ranking_result`](../../relations/ranking/ranking_result.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
+Touches (best effort): reads [`catalog.entity`](../../relations/catalog/entity.md), [`ranking.leaderboard`](../../relations/ranking/leaderboard.md), [`ranking.leaderboard_edition`](../../relations/ranking/leaderboard_edition.md), [`ranking.leaderboard_entry`](../../relations/ranking/leaderboard_entry.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
+
+Named queries: `q:ranking.leaderboard`.
 
 TypeScript: `Database["api"]["Functions"]["leaderboard"]`.
 
-Defined in: `20260826001500_api_and_grants.sql`, `20260912011000_km_10_api.sql`.
+Defined in: `20260826001500_api_and_grants.sql`, `20260912011000_km_10_api.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `part1_renames.sql`.

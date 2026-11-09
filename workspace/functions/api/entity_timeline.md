@@ -4,6 +4,7 @@ kind: function
 schema: api
 name: entity_timeline
 domain: api-surface
+lens: corpus
 overloads: ["fn:api.entity_timeline(uuid,timestamptz,timestamptz,int8)"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [temporal.event, temporal.event_occurrence, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, entity_timeline, api.entity_timeline]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.entity_timeline
 
-Domain `api-surface`.
+Domain `api-surface`, lens `corpus`.
 
 ## entity_timeline(uuid, timestamp with time zone, timestamp with time zone, bigint) → TABLE(item_kind text, item_id uuid, world_interval tstzrange, details jsonb)
 

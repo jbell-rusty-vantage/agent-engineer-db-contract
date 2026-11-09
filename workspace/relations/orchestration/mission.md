@@ -4,8 +4,9 @@ kind: table
 schema: orchestration
 name: mission
 domain: orchestration-ledger
+lens: machinery
 aliases: []
-tokens: [orchestration, mission, orchestration.mission, id, tenant_id, slug, goal, research_questions, acceptance_criteria, selection_id, capability_profile_id, budget_cost_usd, budget_wall_seconds, budget_max_fanout, budget_max_depth, budget_max_retries, status, terminal_reason, started_at, ended_at, created_at, updated_at]
+tokens: [orchestration, mission, orchestration.mission, id, tenant_id, slug, goal, research_questions, acceptance_criteria, capability_profile_id, budget_cost_usd, budget_wall_seconds, budget_max_fanout, budget_max_depth, budget_max_retries, status, terminal_reason, started_at, ended_at, created_at, updated_at]
 summary: null
 summary_basis: none
 rls: enabled
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"mission\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.mission
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 
@@ -29,7 +30,6 @@ table in domain `orchestration-ledger`.
 | 4 | `goal` | `text` | no | — | — |
 | 5 | `research_questions` | `jsonb` | no | `'[]'::jsonb` | — |
 | 6 | `acceptance_criteria` | `jsonb` | no | `'[]'::jsonb` | — |
-| 7 | `selection_id` | `uuid` | yes | — | FK → [`ranking.selection`](../ranking/selection.md).id |
 | 8 | `capability_profile_id` | `uuid` | yes | — | FK → [`orchestration.capability_profile`](capability_profile.md).id |
 | 9 | `budget_cost_usd` | `numeric(12,4)` | yes | — | — |
 | 10 | `budget_wall_seconds` | `integer` | yes | — | — |
@@ -53,8 +53,8 @@ table in domain `orchestration-ledger`.
 
 ## Relationships
 
-Outbound: `capability_profile_id` → [`orchestration.capability_profile`](capability_profile.md)`.id`; `selection_id` → [`ranking.selection`](../ranking/selection.md)`.id`.
-Inbound: [`evaluation.eval_run`](../evaluation/eval_run.md).mission_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).mission_id, [`observability.trace`](../observability/trace.md).mission_id, [`observability.usage_rollup`](../observability/usage_rollup.md).mission_id, [`orchestration.agent_session`](agent_session.md).mission_id, [`orchestration.artifact`](artifact.md).mission_id, [`orchestration.artifact_manifest`](artifact_manifest.md).mission_id, [`orchestration.continuation_checkpoint`](continuation_checkpoint.md).mission_id, [`orchestration.mission_event`](mission_event.md).mission_id, [`orchestration.operation_intent`](operation_intent.md).mission_id, [`orchestration.outbox_event`](outbox_event.md).mission_id, [`orchestration.work_item`](work_item.md).mission_id … 5 more in [details](mission.details.md).
+Outbound: `capability_profile_id` → [`orchestration.capability_profile`](capability_profile.md)`.id`.
+Inbound: [`evaluation.eval_run`](../evaluation/eval_run.md).mission_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).mission_id, [`observability.trace`](../observability/trace.md).mission_id, [`observability.usage_rollup`](../observability/usage_rollup.md).mission_id, [`orchestration.agent_session`](agent_session.md).mission_id, [`orchestration.artifact`](artifact.md).mission_id, [`orchestration.artifact_manifest`](artifact_manifest.md).mission_id, [`orchestration.continuation_checkpoint`](continuation_checkpoint.md).mission_id, [`orchestration.mission_event`](mission_event.md).mission_id, [`orchestration.operation_intent`](operation_intent.md).mission_id, [`orchestration.outbox_event`](outbox_event.md).mission_id, [`orchestration.work_item`](work_item.md).mission_id.
 
 ## Indexes
 

@@ -4,6 +4,7 @@ kind: function
 schema: knowledge_service
 name: extend_outbox_claim
 domain: knowledge-service-runtime
+lens: machinery
 overloads: ["fn:knowledge_service.extend_outbox_claim(uuid,text,uuid,int4)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [stale or foreign outbox claim, valid app.tenant_id context is required,
 touches: { reads: [], writes: [knowledge_service.outbox] }
 tokens: [knowledge_service, extend_outbox_claim, knowledge_service.extend_outbox_claim]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.extend_outbox_claim
 
-Domain `knowledge-service-runtime`.
+Domain `knowledge-service-runtime`, lens `machinery`.
 
 ## extend_outbox_claim(uuid, text, uuid, integer) → timestamp with time zone
 

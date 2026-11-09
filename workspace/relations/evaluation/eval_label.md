@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: eval_label
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, eval_label, evaluation.eval_label, id, case_id, label, labeled_by, review_decision_id, created_at, tenant_id, verification_contract_version, label_artifact_id, label_sha256, provenance_class]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"eval_label\"][\"Row\"]"
 defined_in: ["20260826001100_evaluation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.eval_label
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

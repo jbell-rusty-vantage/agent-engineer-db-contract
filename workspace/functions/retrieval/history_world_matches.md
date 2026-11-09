@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: history_world_matches
 domain: retrieval
+lens: corpus
 overloads: ["fn:retrieval.history_world_matches(tstzrange,timestamptz,timestamptz,timestamptz)"]
 security: invoker
 volatility: immutable
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [retrieval, history_world_matches, retrieval.history_world_matches]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.history_world_matches
 
-Domain `retrieval`.
+Domain `retrieval`, lens `corpus`.
 
 ## history_world_matches(tstzrange, timestamp with time zone, timestamp with time zone, timestamp with time zone) → boolean
 

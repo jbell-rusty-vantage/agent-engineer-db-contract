@@ -21,6 +21,7 @@ export function relationFrontmatter(model, relation) {
     schema: relation.schema,
     name: relation.name,
     domain: model.domainOfRelation(relation.id),
+    lens: model.lensOfRelation(relation.id),
     aliases: overlay?.aliases ?? [],
     tokens: tokensOf(relation),
     summary,
@@ -54,7 +55,7 @@ function spillUntilBudget({ relation, budgets, compose }) {
 function composeMainPage({ model, relation, overlay, mainPage, detailsPage, spilled, needsDetailsForEdges }) {
   const intro = [
     heading(1, `${relation.schema}.${relation.name}`),
-    `${relation.kind.replaceAll("_", " ")} in domain ${code(model.domainOfRelation(relation.id) ?? "none")}${relation.comment ? ` — ${relation.comment}` : ""}.`,
+    `${relation.kind.replaceAll("_", " ")} in domain ${code(model.domainOfRelation(relation.id) ?? "none")}, lens ${code(model.lensOfRelation(relation.id) ?? "none")}${relation.comment ? ` — ${relation.comment}` : ""}.`,
     overlay ? curated(overlay, overlay.notes ?? overlay.summary) : "",
   ];
   return frontmatter(relationFrontmatter(model, relation)) + joinBlocks([...intro, ...relationMainSections({ model, relation, mainPage, detailsPage, spilled, needsDetailsForEdges })]);

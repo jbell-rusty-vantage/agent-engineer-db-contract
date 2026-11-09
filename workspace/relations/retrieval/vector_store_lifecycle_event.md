@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: vector_store_lifecycle_event
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, vector_store_lifecycle_event, retrieval.vector_store_lifecycle_event, id, tenant_id, vector_store_id, actor_identity, reason, previous_lifecycle, new_lifecycle, occurred_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_store_lifecycle_event\"][\"Row\"]"
 defined_in: ["20260904015000_vector_store_lifecycle_control_plane.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.vector_store_lifecycle_event
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

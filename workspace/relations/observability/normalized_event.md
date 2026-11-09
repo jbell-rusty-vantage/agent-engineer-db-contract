@@ -4,6 +4,7 @@ kind: partitioned_table
 schema: observability
 name: normalized_event
 domain: observability
+lens: machinery
 aliases: []
 tokens: [observability, normalized_event, observability.normalized_event, id, raw_event_id, trace_id, mission_id, event_kind, lifecycle_phase, payload, occurred_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"observability\"][\"Tables\"][\"normalized_event\"][\"Row\"]"
 defined_in: ["20260826001200_observability.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # observability.normalized_event
 
-partitioned table in domain `observability`.
+partitioned table in domain `observability`, lens `machinery`.
 
 ## Columns
 

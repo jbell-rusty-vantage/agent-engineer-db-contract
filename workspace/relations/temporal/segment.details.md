@@ -4,15 +4,26 @@ kind: details
 schema: temporal
 name: segment
 of: "rel:temporal.segment"
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.segment — details
 
 Spill-over from [the main page](segment.md).
 
+## Constraints
+- PK (id)
+- unique (tenant_id, id)
+- **exclusion** `segment_stream_id_valid_during_excl`: `EXCLUDE USING gist (stream_id WITH =, valid_during WITH &&) WHERE (k_to IS NULL)`
+- check `segment_belief_check`: `(belief = ANY (ARRAY['accepted'::text, 'disputed'::text, 'unknown'::text]))`
+- check `segment_check`: `((k_to IS NULL) OR (k_to > k_from))`
+- check `segment_check1`: `((replaces_segment_id IS NULL) OR (replaces_segment_id <> id))`
+- check `segment_check2`: `((temporal_basis = ANY (ARRAY['observation_bounded'::text, 'unresolved'::text])) OR (extent_id IS NOT NULL))`
+- check `segment_temporal_basis_check`: `(temporal_basis = ANY (ARRAY['explicit'::text, 'carry_forward'::text, 'observation_bounded'::text, 'unresolved'::text]))`
+- check `segment_valid_during_check`: `((NOT isempty(valid_during)) AND lower_inc(valid_during) AND (NOT upper_inc(valid_during)) AND (NOT lower_inf(valid_during)))`
+
 ## Relationships
 
-Outbound: `caused_by_event_id` → [`temporal.event`](event.md)`.id` (+tenant); `extent_id` → [`temporal.extent`](extent.md)`.id` (+tenant); `primary_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant); `ref_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id` (+tenant); `replaces_segment_id` → [`temporal.segment`](segment.md)`.id` (+tenant); `specification_id` → [`corpus.ai_model_version_spec`](../corpus/ai_model_version_spec.md)`.id` (+tenant); `stream_id` → [`temporal.stream`](stream.md)`.id` (+tenant).
+Outbound: `caused_by_event_id` → [`temporal.event`](event.md)`.id` (+tenant); `extent_id` → [`temporal.extent`](extent.md)`.id` (+tenant); `primary_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant); `ref_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `replaces_segment_id` → [`temporal.segment`](segment.md)`.id` (+tenant); `stream_id` → [`temporal.stream`](stream.md)`.id` (+tenant).
 Inbound: [`evidence.segment_support`](../evidence/segment_support.md).segment_id, [`temporal.segment`](segment.md).replaces_segment_id.
 Polymorphic target of: [`evidence.segment_support`](../evidence/segment_support.md) (check constraint segment_support_check).
 

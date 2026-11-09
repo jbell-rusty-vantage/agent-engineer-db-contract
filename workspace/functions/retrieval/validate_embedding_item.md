@@ -4,6 +4,7 @@ kind: function
 schema: retrieval
 name: validate_embedding_item
 domain: retrieval
+lens: machinery
 overloads: ["fn:retrieval.validate_embedding_item()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["embedding dimensions %, expected % and canonical physical dimension 15
 touches: { reads: [retrieval.embedding_run], writes: [] }
 tokens: [retrieval, validate_embedding_item, retrieval.validate_embedding_item]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.validate_embedding_item
 
-Domain `retrieval`.
+Domain `retrieval`, lens `machinery`.
 
 ## validate_embedding_item() → trigger
 

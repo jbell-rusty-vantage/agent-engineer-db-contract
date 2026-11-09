@@ -28,11 +28,12 @@ functions `schema.name` (overloads grouped), columns `schema.name.column`, vocab
 ```yaml
 format: ai-engineer-workspace-enrichment/1
 schema_domains:            # default domain for every relation/function of a schema (full coverage)
-  corpus: identity
+  catalog: identity
   temporal: temporal-facts
 domains:
   - slug: temporal-facts
     title: Temporal facts (two clocks)
+    lens: corpus              # optional; otherwise the most common lens of the domain's relations
     provenance: human
     reviewed: 2026-09-11
     aliases: [facts, two-clock, bitemporal]
@@ -54,6 +55,7 @@ format: ai-engineer-workspace-enrichment/1
 relations:
   - relation: temporal.segment
     domain: temporal-facts                # optional; overrides schema_domains
+    lens: corpus                          # optional; overrides workspace.config.json lenses (ours | private | corpus | evidence | machinery | legacy)
     aliases: [fact, temporal fact, state segment]
     summary: "A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to)."
     notes: |

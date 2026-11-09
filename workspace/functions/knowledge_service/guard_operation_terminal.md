@@ -4,6 +4,7 @@ kind: function
 schema: knowledge_service
 name: guard_operation_terminal
 domain: knowledge-service-runtime
+lens: machinery
 overloads: ["fn:knowledge_service.guard_operation_terminal()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: ["% state cannot be deleted", retry may only reset execution state, "ter
 touches: { reads: [], writes: [] }
 tokens: [knowledge_service, guard_operation_terminal, knowledge_service.guard_operation_terminal]
 defined_in: ["20260903010200_knowledge_runtime_security.sql", "20260903010800_authorized_operation_retry.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # knowledge_service.guard_operation_terminal
 
-Domain `knowledge-service-runtime`.
+Domain `knowledge-service-runtime`, lens `machinery`.
 
 ## guard_operation_terminal() → trigger
 

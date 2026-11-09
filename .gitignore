@@ -32,3 +32,6 @@ internal_hidden_docs/
 *.key
 *.p12
 *.pfx
+
+# Python bytecode from the lab scripts
+__pycache__/

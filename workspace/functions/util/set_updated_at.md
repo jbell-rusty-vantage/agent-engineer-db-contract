@@ -4,6 +4,7 @@ kind: function
 schema: util
 name: set_updated_at
 domain: api-surface
+lens: machinery
 overloads: ["fn:util.set_updated_at()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, set_updated_at, util.set_updated_at]
 defined_in: ["20260826000100_foundation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # util.set_updated_at
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`.
 
 ## set_updated_at() → trigger
 

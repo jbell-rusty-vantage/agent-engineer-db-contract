@@ -4,6 +4,7 @@ kind: function
 schema: evaluation
 name: guard_benchmark_publication_dependency
 domain: evaluation
+lens: machinery
 overloads: ["fn:evaluation.guard_benchmark_publication_dependency()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [published benchmark dataset versions are immutable, published benchmark
 touches: { reads: [evaluation.eval_run, evaluation.experiment_arm, evaluation.verification_benchmark_arm_publication], writes: [] }
 tokens: [evaluation, guard_benchmark_publication_dependency, evaluation.guard_benchmark_publication_dependency]
 defined_in: ["20260906030000_verification_benchmark_arm_publication.sql", "20260906030300_verification_benchmark_published_dataset_immutable.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.guard_benchmark_publication_dependency
 
-Domain `evaluation`.
+Domain `evaluation`, lens `machinery`.
 
 ## guard_benchmark_publication_dependency() → trigger
 

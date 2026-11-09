@@ -4,6 +4,7 @@ kind: table
 schema: evaluation
 name: verification_benchmark_arm_publication
 domain: evaluation
+lens: machinery
 aliases: []
 tokens: [evaluation, verification_benchmark_arm_publication, evaluation.verification_benchmark_arm_publication, id, tenant_id, benchmark_run_id, operation_id, benchmark_arm_id, experiment_arm_id, eval_run_id, publication_manifest_artifact_id, publication_manifest_sha256, configuration_artifact_id, configuration_sha256, policy_artifact_id, policy_sha256, target_code_ref, terminal_status, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"verification_benchmark_arm_publication\"][\"Row\"]"
 defined_in: ["20260906030000_verification_benchmark_arm_publication.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evaluation.verification_benchmark_arm_publication
 
-table in domain `evaluation`.
+table in domain `evaluation`, lens `machinery`.
 
 ## Columns
 

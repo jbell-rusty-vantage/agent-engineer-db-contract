@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: publication_switch_receipt
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, publication_switch_receipt, retrieval.publication_switch_receipt, id, tenant_id, vector_store_space_id, from_publication_id, to_publication_id, action, reason, guarded_sha256, actor_identity, idempotency_key, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"publication_switch_receipt\"][\"Row\"]"
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.publication_switch_receipt
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: source
 domain: evidence
+lens: evidence
 aliases: [source, URL]
 tokens: [evidence, source, evidence.source, id, tenant_id, source_class, canonical_url, url_pattern, publisher, sensitivity, license_spdx, license_notes, terms_url, robots_policy, created_at, updated_at, verification_contract_version, logical_identity, host, registrable_domain, publisher_entity_id, source_kind, first_seen_at, last_seen_at, last_encounter_kind, last_capture_id, capture_count, failure_streak, next_revisit_after, blocked_reason, state_knowledge_seq]
 summary: Canonical source (URL/domain) with revisit and publisher pointers.
@@ -13,11 +14,11 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.source
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 > curated (model_assisted, unreviewed) — Canonical source (URL/domain) with revisit and publisher pointers.
 
@@ -42,7 +43,7 @@ table in domain `evidence`.
 | 15 | `logical_identity` | `text` | yes | — | unique (tenant_id, source_class, logical_identity) |
 | 16 | `host` | `text` | yes | — | — |
 | 17 | `registrable_domain` | `text` | yes | — | _curated:_ Filter key for sources_by_domain. |
-| 18 | `publisher_entity_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id; _curated:_ Optional corpus.entity of the publisher. |
+| 18 | `publisher_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id; _curated:_ Optional catalog.entity of the publisher. |
 | 19 | `source_kind` | `text` | yes | — | — |
 | 20 | `first_seen_at` | `timestamp with time zone` | yes | — | — |
 | 21 | `last_seen_at` | `timestamp with time zone` | yes | — | — |
@@ -50,7 +51,7 @@ table in domain `evidence`.
 | 23 | `last_capture_id` | `uuid` | yes | — | FK → [`evidence.source_capture`](source_capture.md).id |
 | 24 | `capture_count` | `bigint` | no | `0` | — |
 | 25 | `failure_streak` | `integer` | no | `0` | — |
-| 26 | `next_revisit_after` | `timestamp with time zone` | yes | — | _curated:_ When the crawler may fetch again. |
+| 26 | `next_revisit_after` | `timestamp with time zone` | yes | — | _curated:_ When the refresh may fetch again. |
 | 27 | `blocked_reason` | `text` | yes | — | — |
 | 28 | `state_knowledge_seq` | `bigint` | yes | — | — |
 
@@ -66,7 +67,7 @@ table in domain `evidence`.
 
 ## Relationships
 
-Outbound: `last_capture_id` → [`evidence.source_capture`](source_capture.md)`.id`; `publisher_entity_id` → [`corpus.entity`](../corpus/entity.md)`.id`.
+Outbound: `last_capture_id` → [`evidence.source_capture`](source_capture.md)`.id`; `publisher_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
 Inbound: [`content.document`](../content/document.md).canonical_source_id, [`evidence.attribution`](attribution.md).source_id, [`evidence.degraded_assurance`](degraded_assurance.md).source_id, [`evidence.provider_result`](provider_result.md).source_id, [`evidence.source_capture`](source_capture.md).source_id, [`evidence.source_encounter`](source_encounter.md).source_id, [`staging.candidate`](../staging/candidate.md).source_id.
 
 ## Indexes
@@ -79,8 +80,7 @@ Inbound: [`content.document`](../content/document.md).canonical_source_id, [`evi
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](source.details.md).
 
 ## Grants
 
@@ -88,13 +88,13 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:entity.card`, `q:evidence.sources_by_domain`.
+- Named queries: `q:entity.card`, `q:evidence.sources_by_domain`, `q:facts.locators`.
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
 - Direct DML: `executor_service`, `pipeline_agent`.
-- Via functions (best effort): [`corpus.import_research_starter_catalog`](../../functions/corpus/import_research_starter_catalog.md), [`evidence.rebuild_source_state`](../../functions/evidence/rebuild_source_state.md).
+- Via functions (best effort): [`catalog.import_research_starter_catalog`](../../functions/catalog/import_research_starter_catalog.md), [`evidence.rebuild_source_state`](../../functions/evidence/rebuild_source_state.md).
 
 ## TypeScript
 

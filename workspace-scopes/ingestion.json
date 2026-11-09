@@ -1,0 +1,93 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "ingestion",
+  "description": "Ingestion mission: compose and verify knowledge-ingestion intents (identities with validated attributes, relationships, two-clock facts, evidence, staging) plus the ledger rows needed to read receipts. No product operations.",
+  "include": {
+    "domains": [
+      "identity",
+      "relationships",
+      "temporal-facts",
+      "evidence",
+      "acquisition",
+      "staging",
+      "content"
+    ],
+    "relations": [
+      "orchestration.operation_intent",
+      "orchestration.operation_receipt",
+      "orchestration.artifact",
+      "orchestration.artifact_type",
+      "orchestration.intent_type",
+      "knowledge_service.operation"
+    ],
+    "functions": [
+      "temporal.*",
+      "catalog.*",
+      "verification.*",
+      "util.current_tenant_id",
+      "api.resolve_entity",
+      "api.entity_at",
+      "api.what_changed",
+      "api.changes_since",
+      "api.price_history",
+      "api.fact_locators",
+      "api.knowledge_head"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "evidence.verification_*",
+      "orchestration.verification_*",
+      "orchestration.mission*",
+      "orchestration.work_item*",
+      "orchestration.agent_session",
+      "content.document_summary*",
+      "content.transformation_*",
+      "content.conversion_*"
+    ],
+    "functions": [
+      "catalog.import_research_starter_catalog"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "compose-ingestion-intent",
+    "verify-ingestion-result",
+    "resolve-or-create-entity",
+    "find-entity-by-identifier",
+    "record-price-change",
+    "record-availability-change",
+    "assert-relationship",
+    "supersede-stale-fact",
+    "admit-support-for-claim",
+    "stage-uncertain-candidate",
+    "what-changed-since-head",
+    "check-knowledge-head",
+    "find-stale-facts",
+    "price-with-locator"
+  ],
+  "queries": [
+    "entity.*",
+    "facts.*",
+    "events.*",
+    "relationships.*",
+    "vocab.*",
+    "evidence.*",
+    "acquisition.*",
+    "staging.*",
+    "receipts.*",
+    "artifacts.*",
+    "knowledge.head",
+    "content.unit_changes",
+    "content.refresh_checks",
+    "content.document_units"
+  ],
+  "operations": []
+}

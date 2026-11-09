@@ -4,6 +4,7 @@ kind: table
 schema: content
 name: document_identifier
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, document_identifier, content.document_identifier, id, tenant_id, document_id, identifier_type, normalized_value, authority, valid_from, valid_to, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_identifier\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.document_identifier
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 
@@ -69,7 +70,7 @@ Enabled.
 ## Write path
 
 - Direct DML: `executor_service`.
-- Via functions (best effort): [`corpus.import_research_starter_catalog`](../../functions/corpus/import_research_starter_catalog.md).
+- Via functions (best effort): [`catalog.import_research_starter_catalog`](../../functions/catalog/import_research_starter_catalog.md).
 
 ## TypeScript
 

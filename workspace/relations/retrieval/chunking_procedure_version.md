@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: chunking_procedure_version
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, chunking_procedure_version, retrieval.chunking_procedure_version, id, tenant_id, slug, version, capability_version_id, supported_content_classes, tokenizer, schema_contract, code_sha256, container_sha256, defaults, limits, status, created_at, strategy, target_tokens, overlap_tokens, respect_boundaries]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"chunking_procedure_version\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.chunking_procedure_version
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

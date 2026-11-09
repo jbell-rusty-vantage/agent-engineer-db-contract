@@ -1,5 +1,5 @@
 {
-  "migrationHead": "20261105010300",
+  "migrationHead": "20261108120500",
   "rules": [
     {
       "action": "reject",
@@ -7,12 +7,12 @@
         "proposal_kind": "entity.alias"
       },
       "basis": "curated",
-      "detail": "`entity_alias_tenant_id_entity_id_alias_normalized_alias_kin_key` is unique per entity,\nnot globally. The same alias string may exist on two entities. The executor rejects an\nalias that `api.resolve_entity` matches to a different active canonical entity at\nscore ≥ 0.98, so agents do not silently attach a well-known name to the wrong id.\n",
+      "detail": "The alias unique key is per entity, not global. The same alias string may exist on two\nentities. The executor rejects an alias that `api.resolve_entity` matches to a different\nactive canonical entity at score ≥ 0.98, so agents do not silently attach a well-known\nname to the wrong id.\n",
       "id": "alias.must_not_collide_canonical",
       "provenance": "model_assisted",
       "refs": [
-        "rel:corpus.entity_alias",
-        "rel:corpus.entity",
+        "rel:catalog.entity_alias",
+        "rel:catalog.entity",
         "fn:api.resolve_entity(text)"
       ],
       "reviewed": null,
@@ -42,15 +42,16 @@
         "proposal_kind": "entity.create"
       },
       "basis": "enforced",
-      "detail": "`corpus.entity.kind` references `taxonomy.entity_kind(code)` via `entity_kind_fkey`.\nA `new` subject whose kind is not a vocabulary code is rejected before a batch opens\n(`VOCABULARY_VIOLATION`). Typed payloads must use columns of that kind's\n`canonical_table`.\n",
+      "detail": "`catalog.entity.kind` references `taxonomy.entity_kind(code)`. A `new` subject whose kind\nis not a vocabulary code is rejected before a batch opens (`VOCABULARY_VIOLATION`).\nKind-specific attributes go into `catalog.entity.attributes` and are validated by trigger\n`catalog.validate_entity_attributes` against `taxonomy.entity_kind.attributes_schema`\n(for example `model_offering` requires `offering_key`, `ai_model_version` requires\n`version_label`). Numbers that change over time are fact streams, never attributes.\n",
       "id": "entity.kind_in_vocabulary",
       "provenance": "model_assisted",
       "refs": [
-        "rel:corpus.entity",
-        "rel:taxonomy.entity_kind"
+        "rel:catalog.entity",
+        "rel:taxonomy.entity_kind",
+        "fn:catalog.validate_entity_attributes()"
       ],
       "reviewed": null,
-      "title": "Entity kind must be in vocabulary"
+      "title": "Entity kind must be in vocabulary and attributes must validate"
     },
     {
       "action": "reject",
@@ -64,7 +65,7 @@
       "refs": [
         "rel:temporal.segment",
         "rel:temporal.event_occurrence",
-        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)"
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
       ],
       "reviewed": null,
       "title": "World-time required on facts"
@@ -75,11 +76,11 @@
         "proposal_kind": "entity.identifier"
       },
       "basis": "enforced",
-      "detail": "`entity_identifier_scheme_check` restricts `scheme` to the closed list\n(wikidata, ror, orcid, github, huggingface, npm, pypi, crates, go_module, doi, arxiv,\nopenreview, mcp_registry, cve, ghsa, spdx, crunchbase, pitchbook, linkedin, x,\nyoutube_channel, youtube_playlist, youtube_video, spotify, apple_podcasts, domain,\nsec_cik, lei, isin, other). `entity_identifier_tenant_id_scheme_value_key` makes\n`(scheme, value)` unique per tenant.\n",
+      "detail": "`entity_identifier_scheme_check` restricts `scheme` to the closed list\n(wikidata, ror, orcid, github, huggingface, npm, pypi, crates, go_module, doi, arxiv,\nopenreview, mcp_registry, cve, ghsa, spdx, crunchbase, pitchbook, linkedin, x,\nyoutube_channel, youtube_playlist, youtube_video, spotify, apple_podcasts, domain,\nsec_cik, lei, isin, other). `(scheme, value)` is unique per tenant.\n",
       "id": "identifier.namespace_in_vocabulary",
       "provenance": "model_assisted",
       "refs": [
-        "rel:corpus.entity_identifier"
+        "rel:catalog.entity_identifier"
       ],
       "reviewed": null,
       "title": "Identifier namespace must be in vocabulary"
@@ -88,14 +89,14 @@
       "action": "reject",
       "applies_to": {
         "proposal_kind": "fact.assert_state",
-        "stream_kind": "model_offering_price"
+        "stream_kind": "offering_price"
       },
       "basis": "enforced",
-      "detail": "`temporal.commit_batch` requires `currency ~ '^[A-Z]{3}$'` for\n`model_offering_price`, `compute_offering_price`, and `valuation`. Amount and a\nunit from `unit_values` are also required (`requires_amount`).\n",
+      "detail": "`temporal.commit_batch` requires `currency ~ '^[A-Z]{3}$'` for\n`offering_price`, `compute_offering_price`, and `valuation`. Amount and a\nunit from `unit_values` are also required (`requires_amount`).\n",
       "id": "price.currency_iso4217",
       "provenance": "model_assisted",
       "refs": [
-        "voc:temporal.stream_kind.model_offering_price",
+        "voc:temporal.stream_kind.offering_price",
         "fn:temporal.commit_batch(uuid,text,text,jsonb)",
         "rel:temporal.segment"
       ],
@@ -106,19 +107,19 @@
       "action": "rewrite",
       "applies_to": {
         "proposal_kind": "fact.assert_state",
-        "stream_kind": "model_offering_price"
+        "stream_kind": "offering_price"
       },
       "basis": "curated",
-      "detail": "Two `model_offering_price` facts on the same subject and world interval do not collide\nonly when `scope_key` distinguishes them, so a **new** series with no `scopeKey` is\nrewritten to the proposal `unit` (for example `per_1m_input_tokens`); the exclusion\nconstraint `segment_stream_id_valid_during_excl` would otherwise reject the second\ncurrent segment. The database does not enforce any naming convention for `scope_key`:\na series that already exists for the same subject, stream, and unit keeps whatever\n`scope_key` it was created with (older data uses keys such as `input_tokens`). Read\n`q:facts.current_by_stream` first; if a current segment with the same unit exists under\nanother `scope_key`, name that key explicitly, or the stale segment stays current beside\nyour new one. Allowed units are the unit_values on `temporal.stream_kind:model_offering_price`.\n",
-      "id": "price.scope_key_is_unit",
+      "detail": "Two `offering_price` facts on the same subject and world interval do not collide only when\n`scope_key` distinguishes them, so a **new** series with no `scopeKey` is rewritten to\n`meter|tier|region` from the payload (for example `input_tokens||`); the exclusion\nconstraint `segment_stream_id_valid_during_excl` would otherwise reject the second\ncurrent segment. The database does not enforce any naming convention for `scope_key`:\na series that already exists for the same subject, stream and meter keeps whatever\n`scope_key` it was created with. Read `q:facts.price_history` first; if a current segment\nwith the same meter exists under another `scope_key`, name that key explicitly, or the\nstale segment stays current beside your new one. The payload `meter` is required by the\n`temporal.stream_kind:offering_price` payload schema.\n",
+      "id": "price.scope_key_is_meter",
       "provenance": "model_assisted",
       "refs": [
-        "voc:temporal.stream_kind.model_offering_price",
+        "voc:temporal.stream_kind.offering_price",
         "rel:temporal.segment",
         "rel:temporal.stream"
       ],
       "reviewed": null,
-      "title": "A new price series defaults its scope_key to the unit; an existing series keeps its key"
+      "title": "A price series is keyed by meter (and tier, region); an existing series keeps its key"
     },
     {
       "action": "note",
@@ -130,7 +131,7 @@
       "id": "proposal.idempotent_repeat",
       "provenance": "model_assisted",
       "refs": [
-        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,uuid)",
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
         "rel:temporal.knowledge_batch",
         "rel:orchestration.operation_intent"
       ],
@@ -143,11 +144,11 @@
         "proposal_kind": "relationship.assert"
       },
       "basis": "enforced",
-      "detail": "Trigger `relationship_kinds` on `corpus.relationship` runs\n`corpus.check_relationship_kinds` and raises if the from/to entity kinds are not in\n`taxonomy.relationship_kind.from_kinds` / `to_kinds`. `version_of` additionally requires\na matching pair (product_version/product, ai_model_version/ai_model, …).\n",
+      "detail": "Trigger `relationship_kinds` on `catalog.relationship` runs\n`catalog.check_relationship_kinds` and raises if the from/to entity kinds are not in\n`taxonomy.relationship_kind.from_kinds` / `to_kinds`. `version_of` additionally requires\na matching pair (product_version/product, ai_model_version/ai_model, …); the parent kind\nis also recorded on `taxonomy.entity_kind.parent_kind`.\n",
       "id": "relationship.kinds_constrain_endpoints",
       "provenance": "model_assisted",
       "refs": [
-        "rel:corpus.relationship",
+        "rel:catalog.relationship",
         "rel:taxonomy.relationship_kind",
         "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)"
       ],
@@ -207,6 +208,24 @@
       "title": "Support must precede claim materialization of a fact"
     },
     {
+      "action": "hold",
+      "applies_to": {
+        "proposal_kind": "fact.assert_state"
+      },
+      "basis": "curated",
+      "detail": "A fact read from a document unit (`content.document_node`) must name the\n`content.unit_assertion_mapping` that interprets the unit kind into a stream, relationship\nor event. Deterministic mappings on first-party structured units (`content.unit_kind:price_row`\non a `content.document_type:pricing_page`) take the cheap path; other mappings carry a\n`risk_floor` and are held for Knowledge Services verification. The locator of the fact is the\nunit's position, so `api.fact_locators` can show the exact row later.\n",
+      "id": "unit.mapping_before_assertion",
+      "provenance": "model_assisted",
+      "refs": [
+        "rel:content.unit_assertion_mapping",
+        "rel:content.document_node",
+        "rel:content.unit_kind",
+        "rel:evidence.extraction_record"
+      ],
+      "reviewed": null,
+      "title": "Typed units become assertions only through a declared mapping"
+    },
+    {
       "action": "reject",
       "applies_to": {
         "proposal_kind": "fact.assert_state"
@@ -224,6 +243,6 @@
       "title": "expected_head required for writes"
     }
   ],
-  "rulesVersion": "ingestion-rules.v1@519cea73ea54e133eab6d38d8f92a9a1e9af1e44585078ac40d9c68cef068e23",
+  "rulesVersion": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
   "schemaVersion": "ingestion-rules.v1"
 }

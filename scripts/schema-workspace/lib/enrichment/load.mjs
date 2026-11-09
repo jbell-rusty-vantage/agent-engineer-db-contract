@@ -11,6 +11,7 @@ const PROVENANCE = new Set(["human", "model_assisted", "generated"]);
 const COST_CLASSES = new Set(["cheap", "medium", "heavy"]);
 const RULE_ACTIONS = new Set(["rewrite", "reject", "hold", "stage", "note"]);
 const RULE_BASES = new Set(["enforced", "curated"]);
+const LENSES = new Set(["ours", "private", "corpus", "evidence", "machinery", "legacy"]);
 
 const DEFAULT_QUERY_DEFAULTS = {
   role: "app_reader",
@@ -61,6 +62,7 @@ function implicitDomains(ir) {
     title: schema.name,
     provenance: "generated",
     reviewed: null,
+    lens: null,
     aliases: [],
     schemas: [schema.name],
     relations: [],
@@ -87,8 +89,10 @@ function loadDomains(directory, ir, resolver, issues) {
     const location = `domains[${index}]`;
     if (!entry.slug) issues.add(file, location, "slug is required");
     checkProvenance(entry, file, location, issues);
+    if (entry.lens && !LENSES.has(entry.lens)) issues.add(file, `${location}.lens`, `unknown lens "${entry.lens}"`);
     return {
       slug: entry.slug,
+      lens: entry.lens ?? null,
       title: entry.title ?? entry.slug,
       provenance: entry.provenance,
       reviewed: entry.reviewed ?? null,
@@ -128,8 +132,10 @@ function loadRelationOverlays(directory, resolver, issues) {
     for (const column of Object.keys(entry.column_notes ?? {})) {
       resolver.column(relationId, column, "relations.yaml", `${location}.column_notes.${column}`);
     }
+    if (entry.lens && !LENSES.has(entry.lens)) issues.add("relations.yaml", `${location}.lens`, `unknown lens "${entry.lens}"`);
     overlays[relationId] = {
       domain: entry.domain ?? null,
+      lens: entry.lens ?? null,
       aliases: entry.aliases ?? [],
       summary: entry.summary ?? null,
       notes: entry.notes ?? null,

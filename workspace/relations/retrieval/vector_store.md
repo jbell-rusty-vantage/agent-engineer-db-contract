@@ -4,6 +4,7 @@ kind: table
 schema: retrieval
 name: vector_store
 domain: retrieval
+lens: corpus
 aliases: []
 tokens: [retrieval, vector_store, retrieval.vector_store, id, tenant_id, owner_identity, store_class, slug, name, purpose, visibility, lifecycle, quota_profile, retention_policy, deletion_policy, created_by_attempt_id, supersedes_id, created_at, created_by_operation_id]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, service_role]
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_store\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.vector_store
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
 ## Columns
 

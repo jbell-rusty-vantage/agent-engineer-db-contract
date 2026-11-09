@@ -1,16 +1,17 @@
 ---
 id: "task:verify-ingestion-result"
 kind: task
+lens: corpus
 domains: [temporal-facts, orchestration-ledger]
-queries: [receipts.for_intent, knowledge.head, entity.what_changed, facts.history_for_stream, artifacts.by_type]
+queries: [receipts.for_intent, knowledge.head, entity.what_changed, facts.price_history, artifacts.by_type]
 aliases: [receipt, verify write, post-ingest check]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # Verify what an ingestion actually changed
 
-Domains: [`temporal-facts`](../domains/temporal-facts.md), [`orchestration-ledger`](../domains/orchestration-ledger.md). Queries: [`q:receipts.for_intent`](../queries/README.md), [`q:knowledge.head`](../queries/README.md), [`q:entity.what_changed`](../queries/README.md), [`q:facts.history_for_stream`](../queries/README.md), [`q:artifacts.by_type`](../queries/README.md).
+Domains: [`temporal-facts`](../domains/temporal-facts.md), [`orchestration-ledger`](../domains/orchestration-ledger.md). Queries: [`q:receipts.for_intent`](../queries/README.md), [`q:knowledge.head`](../queries/README.md), [`q:entity.what_changed`](../queries/README.md), [`q:facts.price_history`](../queries/README.md), [`q:artifacts.by_type`](../queries/README.md).
 
 ## Navigation
 
@@ -23,12 +24,12 @@ Take `knowledgeHead.before` and `knowledgeHead.after` from the receipt and diff 
 ```json
 {
   "schemaVersion": "knowledge-read-intent.v1",
-  "intentId": "verify-codex-2026-09-11",
+  "intentId": "verify-codex-2026-11-08",
   "operations": [
     { "opId": "receipt", "kind": "named_query", "query": "receipts.for_intent", "params": { "intent_id": "0192c000-0000-7000-8000-000000000001" } },
     { "opId": "head", "kind": "named_query", "query": "knowledge.head" },
     { "opId": "changed", "kind": "named_query", "query": "entity.what_changed", "params": { "entity_id": "0192b000-0000-7000-8000-000000000011", "k_from": 4, "k_to": 5 } },
-    { "opId": "price_history", "kind": "named_query", "query": "facts.history_for_stream", "params": { "entity_id": "0192b000-0000-7000-8000-000000000011", "stream_kind": "model_offering_price", "scope_key": "per_1m_input_tokens", "limit": 5, "offset": 0 } }
+    { "opId": "price_history", "kind": "named_query", "query": "facts.price_history", "params": { "offering_id": "0192b000-0000-7000-8000-000000000011", "meter": "input_tokens" } }
   ]
 }
 ```

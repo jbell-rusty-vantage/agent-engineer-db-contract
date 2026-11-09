@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: operation_receipt_target
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, operation_receipt_target, orchestration.operation_receipt_target, tenant_id, receipt_id, ordinal, target_schema, target_table, target_id, entity_id, entity_kind, role, action, proposal_id, claim_id]
 summary: "Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence/knowledge/ranking/research row the apply created, reused (already present, not rewritten), superseded (closed) or staged, with its role, the proposal that touched it, the entity (id and kind) for corpus rows and the claim for evidence rows. target_id is text because some targets are composite JSON tuples. Written once by executor_service in the apply transaction; immutable."
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_receipt_target\"][\"Row\"]"
 defined_in: ["20261031010000_operation_receipt_targets.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.operation_receipt_target
 
-table in domain `orchestration-ledger` — Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence/knowledge/ranking/research row the apply created, reused (already present, not rewritten), superseded (closed) or staged, with its role, the proposal that touched it, the entity (id and kind) for corpus rows and the claim for evidence rows. target_id is text because some targets are composite JSON tuples. Written once by executor_service in the apply transaction; immutable..
+table in domain `orchestration-ledger`, lens `machinery` — Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence/knowledge/ranking/research row the apply created, reused (already present, not rewritten), superseded (closed) or staged, with its role, the proposal that touched it, the entity (id and kind) for corpus rows and the claim for evidence rows. target_id is text because some targets are composite JSON tuples. Written once by executor_service in the apply transaction; immutable..
 
 ## Columns
 
@@ -50,7 +51,7 @@ table in domain `orchestration-ledger` — Normalized targets of one native oper
 
 ## Relationships
 
-Outbound: `entity_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `receipt_id` → [`orchestration.operation_receipt`](operation_receipt.md)`.id`; `tenant_id,claim_id` → [`evidence.claim`](../evidence/claim.md)`.tenant_id,id`; `tenant_id,entity_id,entity_kind` → [`corpus.entity`](../corpus/entity.md)`.tenant_id,id,kind`.
+Outbound: `entity_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `receipt_id` → [`orchestration.operation_receipt`](operation_receipt.md)`.id`; `tenant_id,claim_id` → [`evidence.claim`](../evidence/claim.md)`.tenant_id,id`; `tenant_id,entity_id,entity_kind` → [`catalog.entity`](../catalog/entity.md)`.tenant_id,id,kind`.
 Inbound: none.
 Polymorphic: `entity_kind` selects one of 36 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK operation_receipt_target_entity_kind_fkey.
 

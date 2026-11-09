@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: verification_provider_operation_claim
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.verification_provider_operation_claim()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [provider attempt active closed-scope lease claim required, provider att
 touches: { reads: [orchestration.verification_provider_reconciliation], writes: [] }
 tokens: [orchestration, verification_provider_operation_claim, orchestration.verification_provider_operation_claim]
 defined_in: ["20260906031300_verification_provider_operation_scope.sql", "20260906032800_verification_provider_reconciliation_ledger.sql", "20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.verification_provider_operation_claim
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## verification_provider_operation_claim() → trigger
 

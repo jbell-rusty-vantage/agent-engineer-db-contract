@@ -4,22 +4,23 @@ kind: table
 schema: retrieval
 name: search_projection
 domain: retrieval
+lens: corpus
 aliases: [projection]
 tokens: [retrieval, search_projection, retrieval.search_projection, id, tenant_id, projection_target_id, projection_procedure_id, purpose, source_text, contextual_prefix, embedding_text, source_text_sha256, contextual_prefix_sha256, embedding_text_sha256, support_manifest, language, content_kind, visibility, classification, effective_during, promotion_state, generator_identity, prompt_schema_version, representation_decision_id, content_promotion_decision_id, created_at]
-summary: Derived text projection that a vector item may point at.
+summary: Derived text projection that a vector item points at.
 summary_basis: curated
 rls: enabled
 readers: []
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"search_projection\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.search_projection
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
-> curated (model_assisted, unreviewed) — Derived text projection that a vector item may point at.
+> curated (model_assisted, unreviewed) — Derived text projection that a vector item points at.
 
 ## Columns
 
@@ -27,7 +28,7 @@ table in domain `retrieval`.
 | ---: | --- | --- | --- | --- | --- |
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, id); unique (tenant_id, projection_target_id, projection_procedure_id, purpose, embedding_text_sha256) |
-| 3 | `projection_target_id` | `uuid` | no | — | unique (tenant_id, projection_target_id, projection_procedure_id, purpose, embedding_text_sha256); _curated:_ Five-way target (entity, document, record, …). |
+| 3 | `projection_target_id` | `uuid` | no | — | unique (tenant_id, projection_target_id, projection_procedure_id, purpose, embedding_text_sha256); _curated:_ The projection_target row (entity, guidance item, chunk, claim, summary, unit, digest, revision, passage). |
 | 4 | `projection_procedure_id` | `uuid` | no | — | unique (tenant_id, projection_target_id, projection_procedure_id, purpose, embedding_text_sha256); FK → [`retrieval.projection_procedure`](projection_procedure.md).id |
 | 5 | `purpose` | `text` | no | — | unique (tenant_id, projection_target_id, projection_procedure_id, purpose, embedding_text_sha256) |
 | 6 | `source_text` | `text` | no | — | — |
@@ -65,7 +66,7 @@ Inbound: [`retrieval.embedding_item`](embedding_item.md).search_projection_id, [
 
 ## Indexes
 
-`search_projection_target_idx`; `search_projection_tenant_id_id_key` unique; `search_projection_tenant_id_projection_target_id_projection_key` unique
+3 indexes; see [details](search_projection.details.md).
 
 ## Triggers
 
@@ -73,8 +74,7 @@ Inbound: [`retrieval.embedding_item`](embedding_item.md).search_projection_id, [
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 2 policies in [details](search_projection.details.md).
 
 ## Grants
 
@@ -87,7 +87,7 @@ No role has privileges. None: `anon`, `app_reader`, `authenticated`, `control_pl
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`retrieval.project_entity_timeline`](../../functions/retrieval/project_entity_timeline.md).
+- Via functions (best effort): [`retrieval.index_text_item`](../../functions/retrieval/index_text_item.md), [`retrieval.project_entity_timeline`](../../functions/retrieval/project_entity_timeline.md).
 
 ## TypeScript
 

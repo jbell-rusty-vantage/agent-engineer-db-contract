@@ -4,6 +4,7 @@ kind: table
 schema: content
 name: transformation_run
 domain: content
+lens: corpus
 aliases: []
 tokens: [content, transformation_run, content.transformation_run, id, tenant_id, transformation_kind, contract_version, capability_version_id, code_ref, package_lock_sha256, environment_sha256, model_identity, provider_route, parameters, parameters_sha256, operation_id, attempt_id, status, idempotency_key, input_manifest_sha256, output_manifest_sha256, receipt, failure_class, resource_observations, cost_usd, started_at, ended_at, created_at, converter_identity, converter_version]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"transformation_run\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # content.transformation_run
 
-table in domain `content`.
+table in domain `content`, lens `corpus`.
 
 ## Columns
 
@@ -67,7 +68,7 @@ table in domain `content`.
 ## Relationships
 
 Outbound: `capability_version_id` → [`orchestration.capability_version`](../orchestration/capability_version.md)`.id` on delete restrict; `tenant_id,attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.tenant_id,id` on delete restrict; `transformation_kind` → [`content.transformation_kind`](transformation_kind.md)`.code`.
-Inbound: [`content.document_representation`](document_representation.md).transformation_run_id, [`content.document_summary`](document_summary.md).transformation_run_id, [`content.transformation_input`](transformation_input.md).transformation_run_id, [`content.transformation_output`](transformation_output.md).transformation_run_id, [`orchestration.artifact_lineage`](../orchestration/artifact_lineage.md).transformation_run_id.
+Inbound: [`content.document_digest`](document_digest.md).transformation_run_id, [`content.document_representation`](document_representation.md).transformation_run_id, [`content.document_summary`](document_summary.md).transformation_run_id, [`content.transformation_input`](transformation_input.md).transformation_run_id, [`content.transformation_output`](transformation_output.md).transformation_run_id, [`orchestration.artifact_lineage`](../orchestration/artifact_lineage.md).transformation_run_id.
 
 ## Indexes
 

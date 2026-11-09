@@ -1,0 +1,116 @@
+---
+id: "rel:api.libraries"
+kind: view
+schema: api
+name: libraries
+domain: api-surface
+lens: corpus
+aliases: []
+tokens: [api, libraries, api.libraries, software_id, kind, software, slug, ecosystem, package_name, category, docs_url, repository_url, developers, maintainers, latest_release, latest_release_on, license, stars, downloads, mcp_hosting, mcp_auth, mcp_is_official, protocols, concepts, summary]
+summary: null
+summary_basis: none
+rls: disabled
+readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+writers: []
+typescript: "Database[\"api\"][\"Views\"][\"libraries\"][\"Row\"]"
+defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+---
+# api.libraries
+
+view in domain `api-surface`, lens `corpus`.
+
+## Columns
+
+| # | Column | Type | Null | Default | Notes |
+| ---: | --- | --- | --- | --- | --- |
+| 1 | `software_id` | `uuid` | yes | — | — |
+| 2 | `kind` | `text` | yes | — | — |
+| 3 | `software` | `text` | yes | — | — |
+| 4 | `slug` | `text` | yes | — | — |
+| 5 | `ecosystem` | `text` | yes | — | — |
+| 6 | `package_name` | `text` | yes | — | — |
+| 7 | `category` | `text` | yes | — | — |
+| 8 | `docs_url` | `text` | yes | — | — |
+| 9 | `repository_url` | `text` | yes | — | — |
+| 10 | `developers` | `text[]` | yes | — | — |
+| 11 | `maintainers` | `text[]` | yes | — | — |
+| 12 | `latest_release` | `text` | yes | — | — |
+| 13 | `latest_release_on` | `date` | yes | — | — |
+| 14 | `license` | `text` | yes | — | — |
+| 15 | `stars` | `numeric` | yes | — | — |
+| 16 | `downloads` | `numeric` | yes | — | — |
+| 17 | `mcp_hosting` | `text` | yes | — | — |
+| 18 | `mcp_auth` | `text` | yes | — | — |
+| 19 | `mcp_is_official` | `boolean` | yes | — | — |
+| 20 | `protocols` | `text[]` | yes | — | — |
+| 21 | `concepts` | `text[]` | yes | — | — |
+| 22 | `summary` | `text` | yes | — | — |
+
+## Constraints
+
+_None._
+
+## Relationships
+
+Outbound: none.
+Inbound: none.
+
+## Indexes
+
+_None._
+
+## Triggers
+
+_None._
+
+## Row-level security
+
+Disabled.
+
+## Grants
+
+`app_reader`: SELECT; `authenticated`: SELECT; `control_plane`: SELECT; `executor_service`: SELECT; `pipeline_agent`: SELECT; `service_role`: SELECT; `verifier_agent`: SELECT. None: `anon`.
+
+## Read paths
+
+- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
+
+## Write path
+
+Views are not written.
+
+## View definition
+
+```sql
+SELECT software_id,
+    kind,
+    software,
+    slug,
+    ecosystem,
+    package_name,
+    category,
+    docs_url,
+    repository_url,
+    developers,
+    maintainers,
+    latest_release,
+    latest_release_on,
+    license,
+    stars,
+    downloads,
+    mcp_hosting,
+    mcp_auth,
+    mcp_is_official,
+    protocols,
+    concepts,
+    summary
+   FROM api.software
+  WHERE kind = 'library'::text;
+```
+
+## TypeScript
+
+row: `Database["api"]["Views"]["libraries"]["Row"]`
+
+Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `part4_views_seeds.sql`.

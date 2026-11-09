@@ -4,6 +4,7 @@ kind: table
 schema: orchestration
 name: capability
 domain: orchestration-ledger
+lens: machinery
 aliases: []
 tokens: [orchestration, capability, orchestration.capability, id, tenant_id, slug, kind, purpose, operations, packages_mcp_server_version_id, created_at, updated_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"capability\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.capability
 
-table in domain `orchestration-ledger`.
+table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Columns
 
@@ -29,7 +30,7 @@ table in domain `orchestration-ledger`.
 | 4 | `kind` | `text` | no | — | FK → [`orchestration.capability_kind`](capability_kind.md).code |
 | 5 | `purpose` | `text` | no | — | — |
 | 6 | `operations` | `text[]` | no | `'{}'::text[]` | — |
-| 7 | `packages_mcp_server_version_id` | `uuid` | yes | — | FK → [`corpus.entity`](../corpus/entity.md).id |
+| 7 | `packages_mcp_server_version_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
 | 8 | `created_at` | `timestamp with time zone` | no | `now()` | — |
 | 9 | `updated_at` | `timestamp with time zone` | no | `now()` | — |
 
@@ -40,7 +41,7 @@ table in domain `orchestration-ledger`.
 
 ## Relationships
 
-Outbound: `kind` → [`orchestration.capability_kind`](capability_kind.md)`.code`; `packages_mcp_server_version_id` → [`corpus.entity`](../corpus/entity.md)`.id`.
+Outbound: `kind` → [`orchestration.capability_kind`](capability_kind.md)`.code`; `packages_mcp_server_version_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
 Inbound: [`orchestration.capability_version`](capability_version.md).capability_id.
 
 ## Indexes

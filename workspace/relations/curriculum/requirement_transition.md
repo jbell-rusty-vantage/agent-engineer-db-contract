@@ -4,6 +4,7 @@ kind: table
 schema: curriculum
 name: requirement_transition
 domain: curriculum
+lens: machinery
 aliases: []
 tokens: [curriculum, requirement_transition, curriculum.requirement_transition, id, tenant_id, workspace_id, transition_id, from_requirement_id, to_requirement_id, effect, carry, rationale, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: []
 writers: []
 typescript: "Database[\"curriculum\"][\"Tables\"][\"requirement_transition\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # curriculum.requirement_transition
 
-table in domain `curriculum`.
+table in domain `curriculum`, lens `machinery`.
 
 ## Columns
 
@@ -56,7 +57,7 @@ Inbound: none.
 
 ## Triggers
 
-- `immutable_guard` → `product.guard_immutable`
+- `immutable_guard` → [`product.guard_immutable`](../../functions/product/guard_immutable.md)
 
 ## Row-level security
 

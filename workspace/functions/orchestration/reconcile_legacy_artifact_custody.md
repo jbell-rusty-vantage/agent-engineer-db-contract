@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: reconcile_legacy_artifact_custody
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.reconcile_legacy_artifact_custody(uuid,text,int8,text,uuid)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [artifact reconciliation identity mismatch, artifact reconciliation stat
 touches: { reads: [], writes: [orchestration.artifact] }
 tokens: [orchestration, reconcile_legacy_artifact_custody, orchestration.reconcile_legacy_artifact_custody]
 defined_in: ["20260914010300_receipt_custody_reconciliation.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.reconcile_legacy_artifact_custody
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## reconcile_legacy_artifact_custody(uuid, text, bigint, text, uuid) → void
 

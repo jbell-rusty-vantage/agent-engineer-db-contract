@@ -4,6 +4,7 @@ kind: function
 schema: api
 name: search_knowledge_1536
 domain: api-surface
+lens: machinery
 overloads: ["fn:api.search_knowledge_1536(uuid,halfvec,int4)"]
 security: definer
 volatility: stable
@@ -12,11 +13,11 @@ raises: [p_limit must be between 1 and 200, valid app.tenant_id context is requi
 touches: { reads: [retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space_version], writes: [] }
 tokens: [api, search_knowledge_1536, api.search_knowledge_1536]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # api.search_knowledge_1536
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`.
 
 ## search_knowledge_1536(uuid, halfvec, integer) → TABLE(vector_item_id uuid, search_projection_id uuid, score double precision, search_text text)
 

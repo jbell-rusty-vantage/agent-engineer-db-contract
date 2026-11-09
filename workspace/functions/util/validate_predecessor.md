@@ -4,6 +4,7 @@ kind: function
 schema: util
 name: validate_predecessor
 domain: api-surface
+lens: machinery
 overloads: ["fn:util.validate_predecessor()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [supersession must point one-way to an older row, supersession predecess
 touches: { reads: [], writes: [] }
 tokens: [util, validate_predecessor, util.validate_predecessor]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # util.validate_predecessor
 
-Domain `api-surface`.
+Domain `api-surface`, lens `machinery`.
 
 ## validate_predecessor() → trigger
 

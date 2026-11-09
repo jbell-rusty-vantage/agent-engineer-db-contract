@@ -17,6 +17,7 @@ export function loadConfig(overrides = {}) {
     paths: {
       generatedTypes: resolvePath(raw.paths.generatedTypes),
       migrations: resolvePath(raw.paths.migrations),
+      draftMigrations: (raw.paths.draftMigrations ?? []).map(resolvePath),
       enrichment: resolvePath(overrides.enrichment ?? raw.paths.enrichment),
       workspace: resolvePath(overrides.workspace ?? raw.paths.workspace),
       scopes: resolvePath(raw.paths.scopes),

@@ -4,22 +4,23 @@ kind: table
 schema: retrieval
 name: space_publication
 domain: retrieval
+lens: corpus
 aliases: [publication]
 tokens: [retrieval, space_publication, retrieval.space_publication, id, tenant_id, vector_store_space_id, vector_space_version_id, vector_item_manifest_sha256, embedding_manifest_sha256, index_manifest_sha256, evaluation_result_id, publication_decision_id, predecessor_id, status, expected_item_count, published_at, created_at, operation_id, legacy_provenance]
-summary: Published vector-space version that hybrid search may read.
+summary: Published vector-space version that search may read.
 summary_basis: curated
 rls: enabled
 readers: []
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"space_publication\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # retrieval.space_publication
 
-table in domain `retrieval`.
+table in domain `retrieval`, lens `corpus`.
 
-> curated (model_assisted, unreviewed) — Published vector-space version that hybrid search may read.
+> curated (model_assisted, unreviewed) — Published vector-space version that search may read.
 
 ## Columns
 
@@ -35,7 +36,7 @@ table in domain `retrieval`.
 | 8 | `evaluation_result_id` | `uuid` | yes | — | — |
 | 9 | `publication_decision_id` | `uuid` | no | — | — |
 | 10 | `predecessor_id` | `uuid` | yes | — | — |
-| 11 | `status` | `text` | no | `'draft'::text` | _curated:_ Must be published for hybrid search. |
+| 11 | `status` | `text` | no | `'draft'::text` | _curated:_ Must be published for app_reader search. |
 | 12 | `expected_item_count` | `bigint` | no | — | — |
 | 13 | `published_at` | `timestamp with time zone` | yes | — | — |
 | 14 | `created_at` | `timestamp with time zone` | no | `now()` | — |
@@ -95,11 +96,11 @@ insert: `Database["retrieval"]["Tables"]["space_publication"]["Insert"]`; row: `
 
 ## Examples
 
-Search a published version
+Search only published versions
 
 ```bash
-knowledge db query retrieval.hybrid_search --param filters={} --param limit=20 --param query_text=OpenAI API pricing 2026 --param vector_space_version_id=0192b100-0000-7000-8000-000000000001
+knowledge db query retrieval.search_unified --param lenses=["corpus"] --param limit=20 --param query=pricing
 ```
-Unpublished versions raise insufficient_privilege.
+Unpublished versions are invisible.
 
 Defined in: `20260903010100_knowledge_retrieval_contract.sql`.

@@ -4,6 +4,7 @@ kind: function
 schema: orchestration
 name: guard_verification_structured_extraction_publication
 domain: orchestration-ledger
+lens: machinery
 overloads: ["fn:orchestration.guard_verification_structured_extraction_publication()"]
 security: invoker
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [structured extraction publication accounting drift, structured extracti
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt, orchestration.verification_structured_extraction, orchestration.verification_structured_extraction_execution], writes: [] }
 tokens: [orchestration, guard_verification_structured_extraction_publication, orchestration.guard_verification_structured_extraction_publication]
 defined_in: ["20260906031900_verification_structured_extraction_publication.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # orchestration.guard_verification_structured_extraction_publication
 
-Domain `orchestration-ledger`.
+Domain `orchestration-ledger`, lens `machinery`.
 
 ## guard_verification_structured_extraction_publication() → trigger
 

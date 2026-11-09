@@ -1,9 +1,35 @@
 {
+  "accept research": [
+    "op:accept_research"
+  ],
+  "acceptance": [
+    "dom:inquiry"
+  ],
   "accepted": [
     "term:belief"
   ],
+  "acquisition fetch": [
+    "term:fetch"
+  ],
+  "act 2": [
+    "rel:evidence.extraction_record"
+  ],
+  "act 3": [
+    "rel:content.unit_assertion_mapping",
+    "term:assertion-mapping"
+  ],
+  "add policy version": [
+    "op:add_policy_version"
+  ],
+  "add support": [
+    "op:add_support"
+  ],
   "admission": [
+    "dom:evidence",
     "term:admission"
+  ],
+  "admission ledger": [
+    "rel:verification.use_admission"
   ],
   "admit": [
     "term:admission"
@@ -15,10 +41,19 @@
     "term:support"
   ],
   "admitted use": [
-    "dom:research-v2"
+    "rel:verification.use_admission"
+  ],
+  "adopt release": [
+    "op:adopt_release"
+  ],
+  "affected modules": [
+    "q:ours.modules_affected_by_release"
+  ],
+  "agent skills": [
+    "rel:api.software"
   ],
   "alias": [
-    "rel:corpus.entity_alias",
+    "rel:catalog.entity_alias",
     "term:alias"
   ],
   "aliases": [
@@ -27,16 +62,23 @@
   "ambiguous identity": [
     "task:stage-uncertain-candidate"
   ],
-  "answering sections": [
-    "rel:research.report_question_section"
-  ],
-  "api sku": [
-    "rel:corpus.model_offering"
-  ],
   "app_reader": [
     "dom:api-surface"
   ],
+  "appeals": [
+    "dom:learning"
+  ],
+  "append message": [
+    "op:append_message"
+  ],
   "artifact": [
+    "op:complete_asset",
+    "op:freeze_release",
+    "op:offer_release",
+    "op:record_grading",
+    "op:register_asset",
+    "op:register_file_set",
+    "op:submit_attempt",
     "rel:orchestration.artifact",
     "term:artifact"
   ],
@@ -44,11 +86,24 @@
     "dom:orchestration-ledger",
     "q:artifacts.by_type"
   ],
+  "arxiv": [
+    "q:catalog.papers"
+  ],
   "as of": [
     "q:entity.at"
   ],
   "as-of date": [
     "term:world-time"
+  ],
+  "assertion": [
+    "dom:inquiry"
+  ],
+  "assertion mapping": [
+    "rel:content.unit_assertion_mapping",
+    "term:assertion-mapping"
+  ],
+  "assets": [
+    "dom:authoring"
   ],
   "assurance": [
     "term:assurance"
@@ -58,6 +113,24 @@
   ],
   "assurance_rank": [
     "term:assurance"
+  ],
+  "at minute": [
+    "task:talk-passage-at-timecode"
+  ],
+  "attempts": [
+    "dom:learning"
+  ],
+  "attributes": [
+    "q:entity.attributes"
+  ],
+  "authority tier": [
+    "term:source-tier"
+  ],
+  "authorize processing": [
+    "op:authorize_processing"
+  ],
+  "authors": [
+    "q:catalog.people"
   ],
   "availability": [
     "task:record-availability-change"
@@ -72,8 +145,15 @@
   "belief": [
     "term:belief"
   ],
-  "bindings": [
-    "dom:provenance"
+  "benchmarks": [
+    "q:catalog.benchmark_scores"
+  ],
+  "best model for": [
+    "task:compare-models"
+  ],
+  "bibliographic row": [
+    "rel:catalog.work",
+    "term:work"
   ],
   "bitemporal": [
     "dom:temporal-facts",
@@ -82,8 +162,11 @@
   "bounded role": [
     "term:role"
   ],
-  "bundles": [
-    "dom:research"
+  "breaking changes": [
+    "task:release-history"
+  ],
+  "budget model": [
+    "task:cheapest-qualified-model"
   ],
   "candidate": [
     "rel:staging.candidate",
@@ -95,7 +178,7 @@
   ],
   "canonical entity": [
     "dom:identity",
-    "rel:corpus.entity",
+    "rel:catalog.entity",
     "term:canonical-entity"
   ],
   "capture": [
@@ -111,17 +194,60 @@
   "card": [
     "q:entity.card"
   ],
+  "catalog": [
+    "dom:identity"
+  ],
   "catalog query": [
     "term:named-query"
+  ],
+  "catalog views": [
+    "dom:api-surface"
+  ],
+  "catalog work": [
+    "term:work"
+  ],
+  "cells": [
+    "dom:inquiry"
+  ],
+  "census": [
+    "dom:content",
+    "rel:content.structure_census",
+    "term:census"
+  ],
+  "changed units": [
+    "q:content.unit_changes"
+  ],
+  "changelog": [
+    "q:catalog.software_releases",
+    "rel:api.software_releases",
+    "task:release-history"
+  ],
+  "changes since": [
+    "dom:temporal-facts",
+    "q:facts.changes_since",
+    "task:what-changed-since"
+  ],
+  "chat": [
+    "op:append_message",
+    "op:create_thread",
+    "op:get_thread",
+    "op:search",
+    "rel:conversation.thread"
   ],
   "cheap": [
     "term:cost-class"
   ],
-  "chunk": [
-    "rel:retrieval.retrieval_chunk"
+  "cheapest": [
+    "task:cheapest-qualified-model"
   ],
-  "chunk span": [
-    "rel:retrieval.chunk_span"
+  "cheapest with tool use": [
+    "task:cheapest-qualified-model"
+  ],
+  "citation for a fact": [
+    "q:facts.locators"
+  ],
+  "citation for price": [
+    "task:price-with-locator"
   ],
   "citations": [
     "task:build-evidence-packet"
@@ -130,9 +256,6 @@
     "rel:evidence.claim",
     "term:claim"
   ],
-  "claim binding": [
-    "rel:research.report_assertion_claim"
-  ],
   "claim role": [
     "rel:evidence.claim_subject"
   ],
@@ -140,8 +263,52 @@
     "dom:evidence",
     "q:evidence.claims_for_entity"
   ],
-  "company": [
-    "rel:corpus.organization"
+  "client grant": [
+    "dom:access"
+  ],
+  "commands": [
+    "dom:product-operations"
+  ],
+  "commit dataset revision": [
+    "op:commit_dataset_revision"
+  ],
+  "companies": [
+    "q:catalog.organizations"
+  ],
+  "compare models": [
+    "q:catalog.models",
+    "rel:api.models",
+    "task:compare-models"
+  ],
+  "complete asset": [
+    "op:complete_asset"
+  ],
+  "concepts": [
+    "q:catalog.concepts"
+  ],
+  "conference talks": [
+    "q:catalog.talks"
+  ],
+  "conference talks on": [
+    "task:talks-on-topic"
+  ],
+  "conferences": [
+    "q:catalog.events"
+  ],
+  "confirm removal": [
+    "op:confirm_removal"
+  ],
+  "connections": [
+    "dom:library"
+  ],
+  "consent": [
+    "dom:access"
+  ],
+  "consent guardian": [
+    "op:consent_guardian"
+  ],
+  "continuum": [
+    "term:knowledge-continuum"
   ],
   "contradicts": [
     "task:find-stale-facts"
@@ -152,11 +319,77 @@
   "cost class": [
     "term:cost-class"
   ],
+  "cost effective": [
+    "task:cheapest-qualified-model"
+  ],
+  "cost per token": [
+    "task:price-with-locator"
+  ],
+  "course": [
+    "op:add_support",
+    "op:create_dataset",
+    "op:create_watch",
+    "op:create_work",
+    "op:deliver_output",
+    "op:enroll",
+    "op:freeze_release",
+    "op:get_dataset",
+    "op:get_dataset_diff",
+    "op:get_lesson_view",
+    "op:get_report",
+    "op:list_works",
+    "op:preview_removal",
+    "op:propose_research",
+    "op:revise_work",
+    "op:search",
+    "op:trace_reverse",
+    "rel:authoring.work"
+  ],
+  "course coverage": [
+    "task:modules-covering-concept"
+  ],
   "course structure": [
     "dom:curriculum"
   ],
+  "courses": [
+    "dom:authoring",
+    "q:ours.works_authored"
+  ],
+  "courses table": [
+    "rel:api.works_authored"
+  ],
+  "coverage": [
+    "task:modules-covering-concept"
+  ],
+  "create client grant": [
+    "op:create_client_grant"
+  ],
+  "create connection": [
+    "op:create_connection"
+  ],
+  "create dataset": [
+    "op:create_dataset"
+  ],
   "create entity": [
     "task:resolve-or-create-entity"
+  ],
+  "create thread": [
+    "op:create_thread"
+  ],
+  "create watch": [
+    "op:create_watch"
+  ],
+  "create work": [
+    "op:create_work"
+  ],
+  "create workspace": [
+    "op:create_workspace"
+  ],
+  "credentials": [
+    "dom:access"
+  ],
+  "credits": [
+    "dom:learning"
   ],
   "current events view": [
     "rel:api.events_current"
@@ -173,16 +406,46 @@
   "current relationships view": [
     "rel:api.current_relationships"
   ],
+  "daily refresh": [
+    "dom:acquisition",
+    "q:content.refresh_checks",
+    "rel:content.refresh_check"
+  ],
+  "dataset": [
+    "dom:inquiry"
+  ],
   "date extent": [
     "rel:temporal.extent",
     "term:extent"
   ],
+  "decide dataset change": [
+    "op:decide_dataset_change"
+  ],
+  "decide delivery": [
+    "op:decide_delivery"
+  ],
+  "decide equivalence": [
+    "op:decide_equivalence"
+  ],
   "defer": [
     "task:stage-uncertain-candidate"
+  ],
+  "deliver output": [
+    "op:deliver_output"
+  ],
+  "delivery": [
+    "dom:inquiry"
   ],
   "delta": [
     "q:entity.what_changed",
     "task:what-changed-since-head"
+  ],
+  "delta since date": [
+    "q:facts.changes_since",
+    "task:what-changed-since"
+  ],
+  "deployments": [
+    "dom:authoring"
   ],
   "deprecated": [
     "task:record-availability-change"
@@ -191,8 +454,46 @@
     "q:entity.what_changed",
     "task:what-changed-since-head"
   ],
+  "digest": [
+    "q:content.document_digest",
+    "rel:content.document_digest",
+    "term:digest"
+  ],
+  "digest item": [
+    "rel:content.digest_item",
+    "term:digest"
+  ],
+  "digests": [
+    "dom:content"
+  ],
+  "dispatch": [
+    "dom:product-operations",
+    "term:operation"
+  ],
   "disputed": [
     "term:belief"
+  ],
+  "distributions": [
+    "dom:authoring"
+  ],
+  "document": [
+    "rel:content.document"
+  ],
+  "document diff": [
+    "q:content.unit_changes",
+    "rel:content.unit_change"
+  ],
+  "document digest": [
+    "term:digest"
+  ],
+  "document structure": [
+    "q:content.document_units"
+  ],
+  "document unit": [
+    "term:typed-unit"
+  ],
+  "document_node": [
+    "term:typed-unit"
   ],
   "documents": [
     "dom:content"
@@ -201,11 +502,16 @@
     "term:domain"
   ],
   "edge": [
-    "rel:corpus.relationship"
+    "rel:catalog.relationship"
   ],
   "edges": [
-    "dom:provenance",
     "dom:relationships"
+  ],
+  "edit dataset": [
+    "op:edit_dataset"
+  ],
+  "editions": [
+    "dom:ranking"
   ],
   "embedding space": [
     "term:vector-space"
@@ -213,21 +519,32 @@
   "embeddings": [
     "dom:retrieval"
   ],
-  "encounter": [
-    "rel:evidence.source_encounter"
+  "end offer": [
+    "op:end_offer"
   ],
   "engineering record": [
-    "rel:knowledge.record"
+    "rel:guidance.item",
+    "term:guidance-item"
   ],
   "engineering records": [
-    "dom:knowledge-records"
+    "dom:guidance",
+    "q:guidance.items"
+  ],
+  "enroll": [
+    "op:enroll"
+  ],
+  "enrollment": [
+    "dom:learning"
+  ],
+  "ensure personal workspace": [
+    "op:ensure_personal_workspace"
   ],
   "entities view": [
     "rel:api.entities"
   ],
   "entity": [
     "dom:identity",
-    "rel:corpus.entity",
+    "rel:catalog.entity",
     "term:canonical-entity"
   ],
   "entity alias": [
@@ -242,6 +559,9 @@
   "eval": [
     "dom:evaluation"
   ],
+  "evals": [
+    "q:catalog.benchmark_scores"
+  ],
   "event identity": [
     "rel:temporal.event"
   ],
@@ -253,6 +573,7 @@
   ],
   "events": [
     "dom:observability",
+    "q:catalog.events",
     "q:events.current_for_entity"
   ],
   "evidence claim": [
@@ -261,19 +582,26 @@
   "evidence packet": [
     "term:evidence-packet"
   ],
-  "exact report read": [
-    "dom:research-v2"
-  ],
   "expected head": [
-    "task:check-knowledge-head"
+    "task:check-knowledge-head",
+    "term:head-revision"
+  ],
+  "expert item": [
+    "term:guidance-item"
   ],
   "extent": [
     "term:extent"
   ],
   "external id": [
-    "rel:corpus.entity_identifier",
+    "rel:catalog.entity_identifier",
     "task:find-entity-by-identifier",
     "term:identifier"
+  ],
+  "extraction": [
+    "rel:evidence.extraction_record"
+  ],
+  "facets": [
+    "dom:relationships"
   ],
   "fact": [
     "rel:temporal.segment",
@@ -286,20 +614,48 @@
     "rel:temporal.stream",
     "term:stream"
   ],
-  "factory": [
-    "dom:research-starter-protected"
-  ],
   "facts": [
     "dom:temporal-facts"
   ],
-  "findings": [
-    "dom:research"
+  "failure modes": [
+    "dom:guidance",
+    "q:guidance.items"
+  ],
+  "fetch": [
+    "dom:acquisition",
+    "rel:acquisition.fetch",
+    "term:fetch"
+  ],
+  "fetch ledger": [
+    "dom:acquisition",
+    "q:acquisition.fetches_for_url",
+    "rel:acquisition.fetch",
+    "term:fetch"
+  ],
+  "fetches": [
+    "q:acquisition.fetches_for_url"
+  ],
+  "finalize result": [
+    "op:finalize_result"
   ],
   "fingerprint": [
     "term:fingerprint"
   ],
+  "flywheel": [
+    "q:ours.modules_affected_by_release",
+    "task:modules-affected-by-release"
+  ],
+  "format axis": [
+    "rel:content.format"
+  ],
+  "freeze release": [
+    "op:freeze_release"
+  ],
   "freshness": [
     "task:check-knowledge-head"
+  ],
+  "frozen release": [
+    "term:release"
   ],
   "fused search": [
     "term:hybrid-search"
@@ -316,8 +672,61 @@
   "gates": [
     "dom:evaluation"
   ],
+  "get acceptance": [
+    "op:get_acceptance"
+  ],
+  "get dataset": [
+    "op:get_dataset"
+  ],
+  "get dataset diff": [
+    "op:get_dataset_diff"
+  ],
+  "get lesson view": [
+    "op:get_lesson_view"
+  ],
+  "get offer": [
+    "op:get_offer"
+  ],
+  "get report": [
+    "op:get_report"
+  ],
+  "get result": [
+    "op:get_result"
+  ],
+  "get revision": [
+    "op:get_revision"
+  ],
+  "get support": [
+    "op:get_support"
+  ],
+  "get thread": [
+    "op:get_thread"
+  ],
   "graders": [
     "dom:evaluation"
+  ],
+  "grading": [
+    "dom:learning"
+  ],
+  "grammar": [
+    "dom:content",
+    "q:vocab.unit_kind",
+    "rel:content.unit_kind"
+  ],
+  "grammar logical key": [
+    "term:logical-key"
+  ],
+  "grant evidence": [
+    "op:grant_evidence"
+  ],
+  "grant member": [
+    "op:grant_member"
+  ],
+  "grant publisher": [
+    "op:grant_publisher"
+  ],
+  "grant reader": [
+    "op:grant_reader"
   ],
   "graph": [
     "dom:relationships",
@@ -326,10 +735,32 @@
   "graph edge": [
     "task:assert-relationship"
   ],
+  "guardian": [
+    "dom:access"
+  ],
+  "guidance": [
+    "q:guidance.items"
+  ],
+  "guidance item": [
+    "rel:guidance.item",
+    "term:guidance-item"
+  ],
+  "guidance table": [
+    "rel:api.guidance_items"
+  ],
+  "harness grant": [
+    "dom:access"
+  ],
+  "has_code": [
+    "task:talk-to-repo-to-paper"
+  ],
   "head": [
     "q:knowledge.head",
     "rel:temporal.knowledge_head",
     "term:knowledge-head"
+  ],
+  "head revision": [
+    "term:head-revision"
   ],
   "heavy": [
     "term:cost-class"
@@ -339,6 +770,9 @@
   ],
   "history": [
     "dom:temporal-facts"
+  ],
+  "how-to": [
+    "dom:guidance"
   ],
   "hybrid search": [
     "q:retrieval.hybrid_search",
@@ -364,14 +798,43 @@
     "dom:staging"
   ],
   "identity row": [
-    "rel:corpus.entity",
+    "rel:catalog.entity",
     "term:canonical-entity"
   ],
-  "incremental report": [
-    "task:register-report"
+  "immutable revision": [
+    "op:accept_research",
+    "op:add_support",
+    "op:append_message",
+    "op:confirm_removal",
+    "op:deliver_output",
+    "op:freeze_release",
+    "op:get_dataset",
+    "op:get_dataset_diff",
+    "op:get_lesson_view",
+    "op:get_report",
+    "op:get_revision",
+    "op:preview_exposure",
+    "op:preview_removal",
+    "op:propose_equivalence",
+    "op:propose_research",
+    "op:record_embeddings",
+    "op:record_grading",
+    "op:search",
+    "op:submit_attempt",
+    "op:trace_reverse",
+    "rel:authoring.work_revision"
+  ],
+  "index passages": [
+    "op:index_passages"
+  ],
+  "index_text_item": [
+    "term:projection"
   ],
   "ingestion intent": [
     "task:compose-ingestion-intent"
+  ],
+  "input_tokens": [
+    "term:meter"
   ],
   "intent": [
     "rel:orchestration.operation_intent",
@@ -383,6 +846,12 @@
   "intents": [
     "dom:orchestration-ledger"
   ],
+  "invite guardian": [
+    "op:invite_guardian"
+  ],
+  "issue provided credential": [
+    "op:issue_provided_credential"
+  ],
   "k": [
     "term:knowledge-head"
   ],
@@ -392,17 +861,29 @@
   "k_to": [
     "term:knowledge-time"
   ],
+  "key point": [
+    "rel:content.digest_item"
+  ],
   "kind": [
     "term:entity-kind"
   ],
+  "kind assignment": [
+    "rel:content.document_kind_assignment"
+  ],
   "kind row": [
-    "q:entity.typed_row"
+    "q:entity.attributes"
   ],
   "kind table": [
     "term:vocabulary"
   ],
+  "kinds": [
+    "rel:taxonomy.entity_kind"
+  ],
   "knowledge batch": [
     "term:knowledge-batch"
+  ],
+  "knowledge continuum": [
+    "term:knowledge-continuum"
   ],
   "knowledge head": [
     "dom:temporal-facts",
@@ -410,6 +891,10 @@
   ],
   "knowledge interval": [
     "term:knowledge-time"
+  ],
+  "knowledge record": [
+    "rel:guidance.item",
+    "term:guidance-item"
   ],
   "knowledge time": [
     "term:knowledge-time"
@@ -421,11 +906,43 @@
   "ks operation": [
     "rel:knowledge_service.operation"
   ],
+  "l1": [
+    "dom:api-surface",
+    "term:knowledge-continuum"
+  ],
   "l1 domain": [
     "term:domain"
   ],
+  "l2": [
+    "term:knowledge-continuum"
+  ],
+  "l3": [
+    "term:knowledge-continuum"
+  ],
+  "l4": [
+    "term:knowledge-continuum"
+  ],
+  "labs": [
+    "q:catalog.organizations"
+  ],
   "leaderboard": [
-    "dom:ranking"
+    "dom:ranking",
+    "q:ranking.leaderboard"
+  ],
+  "leaderboard definition": [
+    "rel:ranking.leaderboard"
+  ],
+  "leaderboard row": [
+    "rel:ranking.leaderboard_entry"
+  ],
+  "learned_at": [
+    "term:knowledge-time"
+  ],
+  "learner notes": [
+    "task:search-my-notes"
+  ],
+  "learners": [
+    "dom:learning"
   ],
   "learning outcomes": [
     "dom:curriculum"
@@ -433,51 +950,91 @@
   "leases": [
     "dom:knowledge-service-runtime"
   ],
-  "legacy report": [
-    "rel:research.report_version"
+  "legacy": [
+    "dom:legacy"
   ],
-  "legacy report publish": [
-    "task:publish-report"
+  "lens": [
+    "dom:retrieval",
+    "term:lens"
   ],
-  "library profile view": [
-    "rel:api.library_profile"
+  "lens facet": [
+    "term:lens"
+  ],
+  "levels": [
+    "term:knowledge-continuum"
+  ],
+  "libraries": [
+    "q:catalog.software",
+    "rel:api.software"
   ],
   "lineage": [
     "rel:orchestration.artifact_lineage"
   ],
   "link": [
-    "rel:corpus.relationship",
+    "rel:catalog.relationship",
     "task:assert-relationship"
   ],
   "links": [
     "q:entity.relationships"
   ],
+  "list library": [
+    "op:list_library"
+  ],
+  "list watches": [
+    "op:list_watches"
+  ],
+  "list works": [
+    "op:list_works"
+  ],
   "locator": [
+    "q:facts.locators",
     "term:locator"
   ],
   "locators": [
     "dom:evidence"
   ],
+  "logical key": [
+    "term:logical-key"
+  ],
+  "logical_key": [
+    "term:logical-key"
+  ],
   "lookup": [
     "q:entity.resolve"
+  ],
+  "mapping": [
+    "term:assertion-mapping"
+  ],
+  "mastery": [
+    "dom:learning"
   ],
   "match": [
     "rel:staging.identity_match"
   ],
+  "mcp servers": [
+    "q:catalog.software",
+    "rel:api.software"
+  ],
+  "media format": [
+    "rel:content.format"
+  ],
   "medium": [
     "term:cost-class"
   ],
-  "merge": [
-    "rel:corpus.entity_merge"
+  "mentions": [
+    "rel:content.unit_entity_role"
   ],
-  "metrics": [
-    "dom:ranking"
+  "merge": [
+    "rel:catalog.entity_merge"
+  ],
+  "messages": [
+    "dom:library"
+  ],
+  "meter": [
+    "term:meter"
   ],
   "mission": [
     "term:mission"
-  ],
-  "mission progress view": [
-    "rel:api.mission_progress"
   ],
   "mission receipts": [
     "q:receipts.recent_for_mission"
@@ -485,17 +1042,91 @@
   "missions": [
     "dom:orchestration-ledger"
   ],
-  "model family": [
-    "rel:corpus.ai_model"
+  "model comparison": [
+    "task:compare-models"
   ],
-  "model version": [
-    "rel:corpus.ai_model_version"
+  "model table": [
+    "q:catalog.models"
+  ],
+  "model versions": [
+    "rel:api.models"
+  ],
+  "models": [
+    "q:catalog.models"
+  ],
+  "models as of": [
+    "q:catalog.models_at"
+  ],
+  "models table": [
+    "dom:api-surface",
+    "rel:api.models"
+  ],
+  "module": [
+    "op:add_support",
+    "op:create_dataset",
+    "op:create_watch",
+    "op:create_work",
+    "op:deliver_output",
+    "op:enroll",
+    "op:freeze_release",
+    "op:get_dataset",
+    "op:get_dataset_diff",
+    "op:get_lesson_view",
+    "op:get_report",
+    "op:list_works",
+    "op:preview_removal",
+    "op:propose_research",
+    "op:revise_work",
+    "op:search",
+    "op:trace_reverse",
+    "rel:authoring.work"
+  ],
+  "modules": [
+    "dom:authoring",
+    "q:ours.works_authored"
+  ],
+  "modules about": [
+    "task:modules-covering-concept"
+  ],
+  "modules table": [
+    "rel:api.works_authored"
+  ],
+  "my notes": [
+    "dom:library",
+    "op:confirm_removal",
+    "op:index_passages",
+    "op:preview_removal",
+    "op:record_embeddings",
+    "op:search",
+    "rel:library.passage",
+    "task:search-my-notes"
   ],
   "named query": [
     "term:named-query"
   ],
+  "needs review after release": [
+    "task:modules-affected-by-release"
+  ],
+  "node": [
+    "rel:content.document_node",
+    "term:typed-unit"
+  ],
   "nodes": [
     "dom:content"
+  ],
+  "note passage": [
+    "op:confirm_removal",
+    "op:index_passages",
+    "op:preview_removal",
+    "op:record_embeddings",
+    "op:search",
+    "rel:library.passage"
+  ],
+  "notes": [
+    "dom:library"
+  ],
+  "obligation": [
+    "dom:inquiry"
   ],
   "occurred_during": [
     "term:world-time"
@@ -503,8 +1134,35 @@
   "occurrence": [
     "rel:temporal.event_occurrence"
   ],
-  "offering": [
-    "rel:corpus.model_offering"
+  "offer release": [
+    "op:offer_release"
+  ],
+  "offerings": [
+    "q:catalog.model_offerings"
+  ],
+  "offerings as of": [
+    "q:catalog.model_offerings_at"
+  ],
+  "offerings table": [
+    "rel:api.model_offerings"
+  ],
+  "offers": [
+    "dom:authoring"
+  ],
+  "op": [
+    "term:operation"
+  ],
+  "open appeal": [
+    "op:open_appeal"
+  ],
+  "open distribution": [
+    "op:open_distribution"
+  ],
+  "open-world kinds": [
+    "rel:content.document_kind_assignment"
+  ],
+  "operation": [
+    "term:operation"
   ],
   "operation intent": [
     "term:intent"
@@ -515,17 +1173,27 @@
   "operations": [
     "dom:knowledge-service-runtime"
   ],
+  "ops": [
+    "dom:product-operations"
+  ],
   "orchestration mission": [
     "term:mission"
   ],
-  "org": [
-    "rel:corpus.organization"
+  "organizations": [
+    "q:catalog.organizations"
+  ],
+  "our works": [
+    "q:ours.works_authored",
+    "rel:api.works_authored"
   ],
   "outbox": [
     "dom:knowledge-service-runtime"
   ],
   "outdated": [
     "task:find-stale-facts"
+  ],
+  "output_tokens": [
+    "term:meter"
   ],
   "overview": [
     "q:entity.card"
@@ -542,58 +1210,142 @@
   "packets": [
     "dom:retrieval"
   ],
+  "paper behind": [
+    "task:talk-to-repo-to-paper"
+  ],
+  "paper row": [
+    "rel:catalog.work"
+  ],
+  "papers": [
+    "q:catalog.papers"
+  ],
+  "passage": [
+    "op:confirm_removal",
+    "op:index_passages",
+    "op:preview_removal",
+    "op:record_embeddings",
+    "op:search",
+    "rel:library.passage"
+  ],
+  "passages": [
+    "dom:library"
+  ],
   "people": [
-    "rel:corpus.person"
+    "q:catalog.people"
   ],
   "point in time": [
     "q:entity.at"
   ],
-  "post research report": [
-    "task:register-report"
+  "policy": [
+    "dom:access"
   ],
   "post-ingest check": [
     "task:verify-ingestion-result"
   ],
-  "pre-research": [
-    "dom:research-starter-protected"
-  ],
   "prerequisites": [
     "dom:curriculum"
   ],
+  "preview exposure": [
+    "op:preview_exposure"
+  ],
+  "preview removal": [
+    "op:preview_removal"
+  ],
   "price": [
+    "task:price-with-locator",
     "task:record-price-change"
   ],
+  "price history": [
+    "q:facts.price_history"
+  ],
+  "price meter": [
+    "term:meter"
+  ],
+  "price table": [
+    "q:catalog.model_offerings",
+    "rel:api.model_offerings"
+  ],
+  "price timeline": [
+    "q:facts.price_history"
+  ],
+  "prices": [
+    "q:catalog.model_offerings",
+    "rel:api.model_offerings"
+  ],
+  "prices as of": [
+    "q:catalog.model_offerings_at"
+  ],
   "pricing": [
+    "task:price-with-locator",
     "task:record-price-change"
   ],
   "prior knowledge": [
     "task:what-do-we-know-about-entity"
   ],
-  "project objects": [
-    "dom:provenance"
+  "private search": [
+    "task:search-my-notes"
+  ],
+  "product api": [
+    "dom:product-operations"
+  ],
+  "product operation": [
+    "term:operation"
+  ],
+  "progress": [
+    "op:progress"
   ],
   "projection": [
     "rel:retrieval.search_projection",
     "term:projection"
   ],
   "projection target": [
+    "op:record_embeddings",
     "rel:retrieval.projection_target"
   ],
   "proposal": [
     "task:compose-ingestion-intent"
+  ],
+  "propose dataset change": [
+    "op:propose_dataset_change"
+  ],
+  "propose equivalence": [
+    "op:propose_equivalence"
+  ],
+  "propose research": [
+    "op:propose_research"
+  ],
+  "prose summary": [
+    "rel:content.document_summary"
+  ],
+  "provenance of a number": [
+    "q:facts.locators"
+  ],
+  "public": [
+    "dom:legacy"
   ],
   "publication": [
     "dom:retrieval",
     "rel:retrieval.space_publication",
     "term:publication"
   ],
-  "question coverage": [
-    "rel:research.report_question"
+  "published work": [
+    "rel:catalog.work",
+    "term:work"
   ],
   "quote": [
     "rel:evidence.locator",
     "task:admit-support-for-claim",
     "term:locator"
+  ],
+  "quote from talk": [
+    "task:talk-passage-at-timecode"
+  ],
+  "ranking": [
+    "dom:ranking",
+    "q:ranking.leaderboard"
+  ],
+  "reads": [
+    "dom:product-operations"
   ],
   "rebase": [
     "q:entity.what_changed",
@@ -611,8 +1363,39 @@
   "receipts": [
     "dom:orchestration-ledger"
   ],
+  "recent changes": [
+    "q:facts.changes_since",
+    "task:what-changed-since"
+  ],
+  "record deployment": [
+    "op:record_deployment"
+  ],
+  "record embeddings": [
+    "op:record_embeddings"
+  ],
+  "record equivalence check": [
+    "op:record_equivalence_check"
+  ],
+  "record grading": [
+    "op:record_grading"
+  ],
   "reference data": [
     "term:vocabulary"
+  ],
+  "refresh": [
+    "dom:acquisition",
+    "dom:content",
+    "q:content.refresh_checks",
+    "rel:content.refresh_check"
+  ],
+  "refresh results": [
+    "task:what-changed-since"
+  ],
+  "register asset": [
+    "op:register_asset"
+  ],
+  "register file set": [
+    "op:register_file_set"
   ],
   "rel kind": [
     "term:relationship-kind"
@@ -627,8 +1410,26 @@
   "relationship vocabulary": [
     "rel:taxonomy.relationship_kind"
   ],
+  "release": [
+    "term:release"
+  ],
+  "release history": [
+    "q:catalog.software_releases"
+  ],
+  "release impact": [
+    "q:ours.modules_affected_by_release",
+    "task:modules-affected-by-release"
+  ],
   "release transitions": [
     "dom:curriculum"
+  ],
+  "releases": [
+    "dom:authoring",
+    "q:catalog.software_releases",
+    "task:release-history"
+  ],
+  "releases table": [
+    "rel:api.software_releases"
   ],
   "replace": [
     "task:supersede-stale-fact"
@@ -636,76 +1437,44 @@
   "replay": [
     "q:entity.at"
   ],
-  "report": [
-    "rel:research.report"
+  "repo for talk": [
+    "task:talk-to-repo-to-paper"
   ],
-  "report assertion": [
-    "rel:research.report_assertion"
-  ],
-  "report evidence": [
-    "q:reports.assertions",
-    "rel:research.report_assertion_claim",
-    "task:navigate-report"
-  ],
-  "report gaps": [
-    "q:reports.questions",
-    "rel:research.report_question",
-    "task:navigate-report"
-  ],
-  "report lifecycle": [
-    "dom:research"
-  ],
-  "report manifest": [
-    "rel:research.report_artifact"
-  ],
-  "report navigation": [
-    "dom:research"
-  ],
-  "report outline": [
-    "q:reports.sections",
-    "rel:research.report_section_version",
-    "task:navigate-report"
-  ],
-  "report package": [
-    "rel:research.report_package"
-  ],
-  "report registration": [
-    "task:register-report"
-  ],
-  "report renditions": [
-    "q:reports.artifacts",
-    "rel:research.report_artifact"
-  ],
-  "report revision": [
-    "rel:research.report_version"
-  ],
-  "report revisions": [
-    "q:reports.versions"
-  ],
-  "report structure": [
-    "dom:research",
-    "task:navigate-report"
-  ],
-  "report v2": [
-    "dom:research-v2"
-  ],
-  "report.publish": [
-    "task:publish-report"
+  "report work": [
+    "op:add_support",
+    "op:create_dataset",
+    "op:create_watch",
+    "op:create_work",
+    "op:deliver_output",
+    "op:enroll",
+    "op:freeze_release",
+    "op:get_dataset",
+    "op:get_dataset_diff",
+    "op:get_lesson_view",
+    "op:get_report",
+    "op:list_works",
+    "op:preview_removal",
+    "op:propose_research",
+    "op:revise_work",
+    "op:search",
+    "op:trace_reverse",
+    "rel:authoring.work"
   ],
   "reports": [
-    "dom:research"
+    "q:ours.works_authored"
   ],
-  "required context": [
-    "rel:research.report_section_dependency"
+  "repositories": [
+    "q:catalog.software",
+    "rel:api.software"
+  ],
+  "request environment": [
+    "op:request_environment"
   ],
   "requirements": [
     "dom:curriculum"
   ],
-  "research-report.v1": [
-    "rel:research.report_package"
-  ],
-  "research-report.v2": [
-    "dom:research-v2"
+  "research request": [
+    "dom:inquiry"
   ],
   "resolution": [
     "rel:staging.resolution_decision"
@@ -713,8 +1482,14 @@
   "resolve": [
     "q:entity.resolve"
   ],
-  "retrieval run": [
-    "rel:retrieval.retrieval_run"
+  "resolve appeal": [
+    "op:resolve_appeal"
+  ],
+  "restrict source": [
+    "op:restrict_source"
+  ],
+  "restrictions": [
+    "dom:access"
   ],
   "review": [
     "dom:staging"
@@ -722,11 +1497,50 @@
   "review queue": [
     "q:staging.unresolved"
   ],
-  "review queue view": [
-    "rel:api.review_queue"
+  "review revision": [
+    "op:review_revision"
   ],
   "review tasks": [
     "dom:evaluation"
+  ],
+  "revise work": [
+    "op:revise_work"
+  ],
+  "revision": [
+    "op:accept_research",
+    "op:add_support",
+    "op:append_message",
+    "op:confirm_removal",
+    "op:deliver_output",
+    "op:freeze_release",
+    "op:get_dataset",
+    "op:get_dataset_diff",
+    "op:get_lesson_view",
+    "op:get_report",
+    "op:get_revision",
+    "op:preview_exposure",
+    "op:preview_removal",
+    "op:propose_equivalence",
+    "op:propose_research",
+    "op:record_embeddings",
+    "op:record_grading",
+    "op:search",
+    "op:submit_attempt",
+    "op:trace_reverse",
+    "rel:authoring.work_revision",
+    "term:head-revision"
+  ],
+  "revisions": [
+    "dom:authoring"
+  ],
+  "revoke asset": [
+    "op:revoke_asset"
+  ],
+  "revoke client grant": [
+    "op:revoke_client_grant"
+  ],
+  "revoke member": [
+    "op:revoke_member"
   ],
   "rls": [
     "term:rls"
@@ -748,7 +1562,7 @@
     "term:workspace"
   ],
   "scheme": [
-    "rel:corpus.entity_identifier",
+    "rel:catalog.entity_identifier",
     "task:find-entity-by-identifier",
     "term:identifier"
   ],
@@ -761,11 +1575,15 @@
   "scope key": [
     "term:scope-key"
   ],
+  "scoped search": [
+    "q:retrieval.search_unified"
+  ],
   "scopekey": [
     "term:scope-key"
   ],
   "scores": [
-    "dom:ranking"
+    "dom:ranking",
+    "q:catalog.benchmark_scores"
   ],
   "sealed batch": [
     "rel:temporal.knowledge_batch",
@@ -776,10 +1594,12 @@
   ],
   "search": [
     "dom:retrieval",
+    "op:search",
+    "q:retrieval.search_unified",
     "task:run-hybrid-search"
   ],
-  "search hit": [
-    "rel:evidence.provider_result"
+  "search conversations": [
+    "task:search-my-notes"
   ],
   "search projection": [
     "term:projection"
@@ -787,16 +1607,12 @@
   "search query": [
     "rel:evidence.source_query"
   ],
-  "section identity": [
-    "rel:research.report_section"
+  "search uploads": [
+    "task:search-my-notes"
   ],
-  "section reuse": [
-    "q:reports.dependencies",
-    "rel:research.report_section_dependency",
-    "task:navigate-report"
-  ],
-  "section revision": [
-    "rel:research.report_section_version"
+  "searchable item": [
+    "op:record_embeddings",
+    "rel:retrieval.vector_item"
   ],
   "segment": [
     "term:segment"
@@ -808,11 +1624,64 @@
     "rel:evidence.locator",
     "term:locator"
   ],
+  "semantic search": [
+    "q:retrieval.search_unified",
+    "task:run-hybrid-search"
+  ],
+  "sessions": [
+    "q:catalog.talks"
+  ],
+  "sessions on": [
+    "task:talks-on-topic"
+  ],
+  "set acceptance state": [
+    "op:set_acceptance_state"
+  ],
+  "set account profile": [
+    "op:set_account_profile"
+  ],
+  "set control": [
+    "op:set_control"
+  ],
+  "set deployment status": [
+    "op:set_deployment_status"
+  ],
+  "set watch state": [
+    "op:set_watch_state"
+  ],
   "sha256": [
     "term:fingerprint"
   ],
+  "skills": [
+    "q:catalog.software"
+  ],
+  "slide at": [
+    "task:talk-passage-at-timecode"
+  ],
+  "slides": [
+    "q:content.talk_segments"
+  ],
+  "software": [
+    "q:catalog.software"
+  ],
+  "software release": [
+    "term:release"
+  ],
+  "software table": [
+    "rel:api.software"
+  ],
+  "solution patterns": [
+    "dom:guidance",
+    "q:guidance.items"
+  ],
   "source": [
     "rel:evidence.source"
+  ],
+  "source role": [
+    "rel:content.source_role"
+  ],
+  "source tier": [
+    "term:source-tier"
   ],
   "sources": [
     "q:evidence.sources_by_domain"
@@ -824,14 +1693,26 @@
   "space publication": [
     "term:publication"
   ],
+  "space slug": [
+    "rel:retrieval.vector_space",
+    "term:vector-space"
+  ],
   "space version": [
     "rel:retrieval.vector_space_version"
+  ],
+  "spaces": [
+    "dom:retrieval"
   ],
   "spans": [
     "dom:observability"
   ],
-  "stable section": [
-    "rel:research.report_section"
+  "speakers": [
+    "q:catalog.people"
+  ],
+  "spend": [
+    "dom:acquisition",
+    "q:acquisition.fetches_for_url",
+    "rel:acquisition.fetch"
   ],
   "staging candidate": [
     "term:staging-candidate"
@@ -843,15 +1724,15 @@
   "stale head": [
     "term:rebase-required"
   ],
-  "starter videos": [
-    "dom:research-starter-protected"
+  "stale modules": [
+    "task:modules-affected-by-release"
+  ],
+  "start attempt": [
+    "op:start_attempt"
   ],
   "state segment": [
     "rel:temporal.segment",
     "term:segment"
-  ],
-  "store attachment": [
-    "rel:retrieval.vector_store_space"
   ],
   "stored artifact": [
     "term:artifact"
@@ -875,18 +1756,70 @@
   "stream vocabulary": [
     "rel:temporal.stream_kind"
   ],
+  "structural census": [
+    "term:census"
+  ],
+  "structure census": [
+    "term:census"
+  ],
+  "structured digest": [
+    "term:digest"
+  ],
+  "submissions": [
+    "dom:learning"
+  ],
+  "submit attempt": [
+    "op:submit_attempt"
+  ],
   "summaries": [
     "dom:content"
   ],
+  "summary": [
+    "rel:content.document_summary"
+  ],
+  "summary with anchors": [
+    "q:content.document_digest"
+  ],
   "support": [
+    "dom:inquiry",
     "q:evidence.claim_support",
     "rel:evidence.segment_support",
     "task:admit-support-for-claim",
     "term:support"
   ],
   "synonym": [
-    "rel:corpus.entity_alias",
+    "rel:catalog.entity_alias",
     "term:alias"
+  ],
+  "t0": [
+    "term:source-tier"
+  ],
+  "t1": [
+    "term:source-tier"
+  ],
+  "t2": [
+    "term:source-tier"
+  ],
+  "t3": [
+    "term:source-tier"
+  ],
+  "t4": [
+    "term:source-tier"
+  ],
+  "talk code": [
+    "task:talk-to-repo-to-paper"
+  ],
+  "talk passage": [
+    "q:content.talk_segments"
+  ],
+  "talk row": [
+    "rel:catalog.work"
+  ],
+  "talks": [
+    "q:catalog.talks"
+  ],
+  "talks about": [
+    "task:talks-on-topic"
   ],
   "task": [
     "term:task"
@@ -895,10 +1828,13 @@
     "term:task"
   ],
   "technical records": [
-    "dom:knowledge-records"
+    "dom:guidance"
   ],
-  "technical records view": [
-    "rel:api.technical_record_search"
+  "technique lineage": [
+    "task:talk-to-repo-to-paper"
+  ],
+  "techniques": [
+    "q:catalog.concepts"
   ],
   "temporal basis": [
     "term:temporal-basis"
@@ -922,14 +1858,50 @@
   "tenant_id": [
     "term:tenant"
   ],
+  "terms": [
+    "dom:relationships"
+  ],
+  "thread": [
+    "op:append_message",
+    "op:create_thread",
+    "op:get_thread",
+    "op:search",
+    "rel:conversation.thread"
+  ],
+  "threads": [
+    "dom:library"
+  ],
+  "tier": [
+    "dom:retrieval",
+    "term:source-tier"
+  ],
+  "timecode": [
+    "q:content.talk_segments",
+    "task:talk-passage-at-timecode"
+  ],
   "timeline": [
     "dom:temporal-facts",
     "q:entity.timeline"
   ],
+  "topics": [
+    "q:catalog.concepts"
+  ],
+  "trace assertion": [
+    "op:trace_assertion"
+  ],
+  "trace reverse": [
+    "op:trace_reverse"
+  ],
   "traces": [
     "dom:observability"
   ],
-  "transformations": [
+  "transcript": [
+    "q:content.talk_segments"
+  ],
+  "transcript window": [
+    "task:talk-passage-at-timecode"
+  ],
+  "transcripts": [
     "dom:content"
   ],
   "two clocks": [
@@ -940,25 +1912,58 @@
     "term:two-clocks"
   ],
   "typed row": [
-    "q:entity.typed_row"
+    "q:entity.attributes"
+  ],
+  "typed unit": [
+    "rel:content.document_node",
+    "term:typed-unit"
+  ],
+  "typed units": [
+    "q:content.document_units"
+  ],
+  "unchanged": [
+    "dom:acquisition",
+    "q:content.refresh_checks"
+  ],
+  "unified search": [
+    "q:retrieval.search_unified"
   ],
   "unit": [
-    "term:unit-value"
+    "rel:content.document_node",
+    "term:typed-unit"
   ],
-  "unit value": [
-    "term:unit-value"
+  "unit assertion mapping": [
+    "term:assertion-mapping"
+  ],
+  "unit diff": [
+    "q:content.unit_changes",
+    "rel:content.unit_change"
+  ],
+  "unit entity role": [
+    "rel:content.unit_entity_role"
+  ],
+  "unit kinds": [
+    "q:vocab.unit_kind",
+    "rel:content.unit_kind"
+  ],
+  "units": [
+    "dom:content",
+    "q:content.document_units"
   ],
   "unresolved": [
     "q:staging.unresolved"
+  ],
+  "uploads": [
+    "dom:library"
   ],
   "url": [
     "rel:evidence.source"
   ],
   "use admission": [
-    "dom:research-v2"
+    "term:admission"
   ],
-  "utf-16 span": [
-    "rel:research.report_assertion"
+  "use decision": [
+    "rel:verification.use_admission"
   ],
   "valid_during": [
     "term:world-time"
@@ -967,6 +1972,7 @@
     "task:run-hybrid-search"
   ],
   "vector item": [
+    "op:record_embeddings",
     "rel:retrieval.vector_item"
   ],
   "vector search": [
@@ -984,6 +1990,9 @@
   "verify write": [
     "task:verify-ingestion-result"
   ],
+  "version history": [
+    "task:release-history"
+  ],
   "vetting": [
     "rel:staging.vetting_decision"
   ],
@@ -992,6 +2001,74 @@
   ],
   "vocabulary": [
     "term:vocabulary"
+  ],
+  "watch": [
+    "dom:inquiry"
+  ],
+  "what changed": [
+    "q:facts.changes_since"
+  ],
+  "what do we teach about": [
+    "task:modules-covering-concept"
+  ],
+  "what shipped": [
+    "task:release-history"
+  ],
+  "what's new": [
+    "task:what-changed-since"
+  ],
+  "where does the price come from": [
+    "task:price-with-locator"
+  ],
+  "where was it read": [
+    "dom:evidence",
+    "q:facts.locators"
+  ],
+  "which model": [
+    "task:compare-models"
+  ],
+  "who speaks": [
+    "rel:content.source_role"
+  ],
+  "who spoke about": [
+    "task:talks-on-topic"
+  ],
+  "whose knowledge": [
+    "term:lens"
+  ],
+  "withdraw acceptance": [
+    "op:withdraw_acceptance"
+  ],
+  "work": [
+    "op:add_support",
+    "op:create_dataset",
+    "op:create_watch",
+    "op:create_work",
+    "op:deliver_output",
+    "op:enroll",
+    "op:freeze_release",
+    "op:get_dataset",
+    "op:get_dataset_diff",
+    "op:get_lesson_view",
+    "op:get_report",
+    "op:list_works",
+    "op:preview_removal",
+    "op:propose_research",
+    "op:revise_work",
+    "op:search",
+    "op:trace_reverse",
+    "rel:authoring.work",
+    "term:work"
+  ],
+  "work head": [
+    "term:head-revision"
+  ],
+  "worker": [
+    "dom:product-operations"
+  ],
+  "works": [
+    "dom:authoring",
+    "dom:identity"
   ],
   "workspace": [
     "term:workspace"

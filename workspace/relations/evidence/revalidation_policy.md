@@ -4,6 +4,7 @@ kind: table
 schema: evidence
 name: revalidation_policy
 domain: evidence
+lens: evidence
 aliases: []
 tokens: [evidence, revalidation_policy, evidence.revalidation_policy, id, slug, applies_to, rules, max_age, created_at]
 summary: null
@@ -13,11 +14,11 @@ readers: [executor_service, service_role, verifier_agent]
 writers: [executor_service, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"revalidation_policy\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # evidence.revalidation_policy
 
-table in domain `evidence`.
+table in domain `evidence`, lens `evidence`.
 
 ## Columns
 

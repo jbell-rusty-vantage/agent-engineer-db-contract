@@ -1,0 +1,108 @@
+{
+  "format": "ai-engineer-schema-scope/1",
+  "id": "research",
+  "description": "Research mission: answer loop-1 question shapes over the corpus (L1 catalog views, L2 facts and time, L3 scoped search) and file the result as a report through the inquiry operations. No machinery.",
+  "include": {
+    "domains": [
+      "identity",
+      "relationships",
+      "temporal-facts",
+      "evidence",
+      "acquisition",
+      "content",
+      "guidance",
+      "retrieval",
+      "ranking",
+      "staging",
+      "api-surface",
+      "inquiry"
+    ],
+    "relations": [
+      "authoring.work",
+      "authoring.work_revision",
+      "authoring.revision_binding"
+    ],
+    "functions": [
+      "api.*",
+      "temporal.*",
+      "util.current_tenant_id",
+      "product.proposal_problems",
+      "product.support_counts",
+      "product.support_detail"
+    ]
+  },
+  "exclude": {
+    "relations": [
+      "public.*",
+      "evaluation.*",
+      "observability.*",
+      "knowledge_service.*",
+      "orchestration.*",
+      "util.*",
+      "curriculum.*",
+      "api.mission_progress",
+      "api.review_queue"
+    ],
+    "functions": [
+      "api.submit_intent",
+      "api.product_worker"
+    ]
+  },
+  "closure": {
+    "fk_targets": "stub",
+    "vocabularies": "full",
+    "functions_touching_included": "summary"
+  },
+  "tasks": [
+    "compare-models",
+    "price-with-locator",
+    "what-changed-since",
+    "cheapest-qualified-model",
+    "release-history",
+    "talks-on-topic",
+    "talk-passage-at-timecode",
+    "talk-to-repo-to-paper",
+    "modules-covering-concept",
+    "modules-affected-by-release",
+    "what-do-we-know-about-entity",
+    "find-entity-by-identifier",
+    "build-evidence-packet",
+    "run-hybrid-search",
+    "check-knowledge-head",
+    "what-changed-since-head"
+  ],
+  "queries": [
+    "catalog.*",
+    "ours.works_authored",
+    "guidance.items",
+    "facts.*",
+    "entity.*",
+    "events.*",
+    "relationships.*",
+    "vocab.*",
+    "knowledge.head",
+    "content.*",
+    "retrieval.*",
+    "evidence.*",
+    "acquisition.*",
+    "ranking.*",
+    "staging.*"
+  ],
+  "operations": [
+    "propose_research",
+    "accept_research",
+    "deliver_output",
+    "add_support",
+    "get_acceptance",
+    "get_support",
+    "get_report",
+    "trace_assertion",
+    "trace_reverse",
+    "create_watch",
+    "list_watches",
+    "create_work",
+    "revise_work",
+    "get_revision",
+    "list_works"
+  ]
+}

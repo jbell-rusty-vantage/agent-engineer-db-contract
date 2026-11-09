@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: make_extent
 domain: temporal-facts
+lens: corpus
 overloads: ["fn:temporal.make_extent(text,text,uuid,timestamptz,timestamptz,text)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: [locator tenant mismatch, no open knowledge batch]
 touches: { reads: [evidence.locator], writes: [temporal.extent] }
 tokens: [temporal, make_extent, temporal.make_extent]
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.make_extent
 
-Domain `temporal-facts`.
+Domain `temporal-facts`, lens `corpus`.
 
 ## make_extent(text, text, uuid, timestamp with time zone, timestamp with time zone, text) → uuid
 

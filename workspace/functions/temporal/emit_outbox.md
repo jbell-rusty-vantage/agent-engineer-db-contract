@@ -4,6 +4,7 @@ kind: function
 schema: temporal
 name: emit_outbox
 domain: knowledge-service-runtime
+lens: corpus
 overloads: ["fn:temporal.emit_outbox(text,int8,jsonb)"]
 security: definer
 volatility: volatile
@@ -12,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [knowledge_service.operation, knowledge_service.operation_event, knowledge_service.outbox] }
 tokens: [temporal, emit_outbox, temporal.emit_outbox]
 defined_in: ["20260912011200_km_12_projection_workers.sql"]
-workspace_fingerprint: "sha256:7a48802958842799e147100aef5431e62d1d8bd786b3cb08c29eaa0e8a8ccf0e"
+workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
 ---
 # temporal.emit_outbox
 
-Domain `knowledge-service-runtime`.
+Domain `knowledge-service-runtime`, lens `corpus`.
 
 ## emit_outbox(text, bigint, jsonb) → uuid
 
