@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.release_item, authoring.work_revision, learning.submission, library.resource_control, retrieval.projection_target, retrieval.vector_item], writes: [access.account_profile, access.policy_version, access.provided_credential, access.source_restriction, authoring.deployment, authoring.publisher_grant, learning.assessment_result, learning.criterion_result, learning.equivalence_request, learning.grading_run, library.passage, library.preparation, orchestration.artifact] }
 tokens: [product, dispatch_worker, product.dispatch_worker]
 defined_in: ["20261105010300_product_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part3b_product.sql]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # product.dispatch_worker
 

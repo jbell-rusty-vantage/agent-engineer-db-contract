@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"staging\"][\"Tables\"][\"candidate\"][\"Row\"]"
 defined_in: ["20260826000700_staging.sql", "20260912010900_km_09_ranking_staging.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # staging.candidate
 
@@ -43,7 +43,7 @@ table in domain `staging`, lens `corpus`.
 
 Outbound: `proposed_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `resolved_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `source_id` → [`evidence.source`](../evidence/source.md)`.id` (+tenant).
 Inbound: [`evaluation.review_task`](../evaluation/review_task.md).candidate_id, [`staging.identity_match`](identity_match.md).candidate_id, [`staging.resolution_decision`](resolution_decision.md).candidate_id, [`staging.vetting_decision`](vetting_decision.md).candidate_id.
-Polymorphic: `proposed_kind` selects one of 36 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK candidate_proposed_kind_fkey.
+Polymorphic: `proposed_kind` selects one of 37 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK candidate_proposed_kind_fkey.
 Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject).
 
 ## Indexes

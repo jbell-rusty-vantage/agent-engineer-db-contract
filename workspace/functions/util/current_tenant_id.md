@@ -13,11 +13,11 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, current_tenant_id, util.current_tenant_id]
 defined_in: ["20260826001550_rls_policies.sql", "20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # util.current_tenant_id
 
-Domain `api-surface`, lens `machinery`. Used by views: [`api.benchmark_scores`](../../relations/api/benchmark_scores.md), [`api.claim_candidates`](../../relations/api/claim_candidates.md), [`api.claim_conflicts`](../../relations/api/claim_conflicts.md), [`api.concepts`](../../relations/api/concepts.md), [`api.events`](../../relations/api/events.md), [`api.guidance_items`](../../relations/api/guidance_items.md), [`api.organizations`](../../relations/api/organizations.md), [`api.papers`](../../relations/api/papers.md), [`api.people`](../../relations/api/people.md), [`api.software`](../../relations/api/software.md), [`api.software_releases`](../../relations/api/software_releases.md), [`api.talks`](../../relations/api/talks.md).
+Domain `api-surface`, lens `machinery`. Used by views: [`api.advisories`](../../relations/api/advisories.md), [`api.api_symbols`](../../relations/api/api_symbols.md), [`api.benchmark_scores`](../../relations/api/benchmark_scores.md), [`api.benchmarks`](../../relations/api/benchmarks.md), [`api.claim_candidates`](../../relations/api/claim_candidates.md), [`api.claim_conflicts`](../../relations/api/claim_conflicts.md), [`api.compute_devices`](../../relations/api/compute_devices.md), [`api.compute_offerings`](../../relations/api/compute_offerings.md), [`api.concepts`](../../relations/api/concepts.md), [`api.endpoints`](../../relations/api/endpoints.md), [`api.events`](../../relations/api/events.md), [`api.guidance_items`](../../relations/api/guidance_items.md), [`api.organizations`](../../relations/api/organizations.md), [`api.papers`](../../relations/api/papers.md), [`api.people`](../../relations/api/people.md), [`api.protocol_versions`](../../relations/api/protocol_versions.md), [`api.registry_listings`](../../relations/api/registry_listings.md), [`api.software`](../../relations/api/software.md), [`api.software_releases`](../../relations/api/software_releases.md), [`api.talks`](../../relations/api/talks.md).
 
 ## current_tenant_id() → uuid
 

@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, pipeline_agent, service_role, verifier_a
 writers: [executor_service, service_role]
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"term_target_kind\"][\"Row\"]"
 defined_in: ["20260829192855_optimize_ai_entity_taxonomy_and_relationships.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # taxonomy.term_target_kind
 
@@ -36,7 +36,7 @@ table in domain `relationships`, lens `corpus` — Restricts secondary taxonomy 
 
 Outbound: `entity_kind_code` → [`taxonomy.entity_kind`](entity_kind.md)`.code` on delete cascade; `term_id` → [`taxonomy.term`](term.md)`.id` on delete cascade.
 Inbound: none.
-Polymorphic: `entity_kind_code` selects one of 36 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK term_target_kind_entity_kind_code_fkey.
+Polymorphic: `entity_kind_code` selects one of 37 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK term_target_kind_entity_kind_code_fkey.
 
 ## Indexes
 

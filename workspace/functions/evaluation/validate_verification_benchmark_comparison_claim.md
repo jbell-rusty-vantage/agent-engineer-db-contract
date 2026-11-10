@@ -13,7 +13,7 @@ raises: [benchmark comparison active lease claim required, benchmark comparison 
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_comparison_claim, evaluation.validate_verification_benchmark_comparison_claim]
 defined_in: ["20260906031000_verification_benchmark_comparison_claim.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # evaluation.validate_verification_benchmark_comparison_claim
 

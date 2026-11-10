@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document_representation, content.representation_decision, retrieval.chunk_set, retrieval.retrieval_chunk], writes: [] }
 tokens: [retrieval, validate_chunk_projection_target, retrieval.validate_chunk_projection_target]
 defined_in: ["20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # retrieval.validate_chunk_projection_target
 

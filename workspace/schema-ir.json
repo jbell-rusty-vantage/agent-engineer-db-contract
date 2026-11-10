@@ -2,8 +2,8 @@
   "build": {
     "contract_version": "0.6.0",
     "enrichment_sha256": "sha256:370afc0438a55a50b597b959cf075618fb5b3a495ba30a82e349475616964384",
-    "generated_types_sha256": "sha256:c7f6fb14cf0147847a88ca82184f941313bccdec1a4ef01b45b26c3d0016b505",
-    "migration_head": "20261108120500",
+    "generated_types_sha256": "sha256:6224b9e2db82996051df788a75f3848fd787265b1a4b231ba2b706e094546d6a",
+    "migration_head": "20261109130500",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -11,8 +11,14 @@
   },
   "derived": {
     "function_ids_by_name": {
+      "api.advisories_for": [
+        "fn:api.advisories_for(text,text)"
+      ],
       "api.changes_since": [
         "fn:api.changes_since(timestamptz,text[],text[],text[])"
+      ],
+      "api.cheapest_compute": [
+        "fn:api.cheapest_compute(text,text,timestamptz)"
       ],
       "api.current_event_rows": [
         "fn:api.current_event_rows()"
@@ -71,6 +77,9 @@
       "api.leaderboard": [
         "fn:api.leaderboard(text,int4)"
       ],
+      "api.leaderboard_diff": [
+        "fn:api.leaderboard_diff(text,int4,int4)"
+      ],
       "api.model_offerings_at": [
         "fn:api.model_offerings_at(timestamptz)"
       ],
@@ -121,6 +130,9 @@
       ],
       "api.summary_evidence": [
         "fn:api.summary_evidence(uuid)"
+      ],
+      "api.symbol_changes": [
+        "fn:api.symbol_changes(text,text,text)"
       ],
       "api.talk_segments": [
         "fn:api.talk_segments(uuid,int4,int4,text)"
@@ -2436,6 +2448,7 @@
           "ai_protocol_version": "rel:catalog.entity",
           "benchmark": "rel:catalog.entity",
           "benchmark_run": "rel:catalog.entity",
+          "benchmark_version": "rel:catalog.entity",
           "case_study": "rel:catalog.work",
           "compute_device": "rel:catalog.entity",
           "compute_offering": "rel:catalog.entity",
@@ -2481,6 +2494,7 @@
           "ai_protocol_version": "rel:catalog.entity",
           "benchmark": "rel:catalog.entity",
           "benchmark_run": "rel:catalog.entity",
+          "benchmark_version": "rel:catalog.entity",
           "case_study": "rel:catalog.work",
           "compute_device": "rel:catalog.entity",
           "compute_offering": "rel:catalog.entity",
@@ -2594,6 +2608,7 @@
           "ai_protocol_version": "rel:catalog.entity",
           "benchmark": "rel:catalog.entity",
           "benchmark_run": "rel:catalog.entity",
+          "benchmark_version": "rel:catalog.entity",
           "case_study": "rel:catalog.work",
           "compute_device": "rel:catalog.entity",
           "compute_offering": "rel:catalog.entity",
@@ -2665,6 +2680,7 @@
           "ai_protocol_version": "rel:catalog.entity",
           "benchmark": "rel:catalog.entity",
           "benchmark_run": "rel:catalog.entity",
+          "benchmark_version": "rel:catalog.entity",
           "case_study": "rel:catalog.work",
           "compute_device": "rel:catalog.entity",
           "compute_offering": "rel:catalog.entity",
@@ -2725,6 +2741,7 @@
           "ai_protocol_version": "rel:catalog.entity",
           "benchmark": "rel:catalog.entity",
           "benchmark_run": "rel:catalog.entity",
+          "benchmark_version": "rel:catalog.entity",
           "case_study": "rel:catalog.work",
           "compute_device": "rel:catalog.entity",
           "compute_offering": "rel:catalog.entity",
@@ -2770,6 +2787,7 @@
           "ai_protocol_version": "rel:catalog.entity",
           "benchmark": "rel:catalog.entity",
           "benchmark_run": "rel:catalog.entity",
+          "benchmark_version": "rel:catalog.entity",
           "case_study": "rel:catalog.work",
           "compute_device": "rel:catalog.entity",
           "compute_offering": "rel:catalog.entity",
@@ -3592,14 +3610,35 @@
       ]
     },
     "view_sources": {
+      "rel:api.advisories": [
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:catalog.relationship"
+      ],
       "rel:api.agent_skills": [
         "rel:api.software"
+      ],
+      "rel:api.api_symbols": [
+        "fn:util.current_tenant_id()",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role",
+        "rel:content.unit_link"
       ],
       "rel:api.benchmark_scores": [
         "fn:util.current_tenant_id()",
         "rel:catalog.entity",
+        "rel:catalog.relationship",
         "rel:temporal.segment",
         "rel:temporal.stream"
+      ],
+      "rel:api.benchmarks": [
+        "fn:util.current_tenant_id()",
+        "rel:api.benchmark_scores",
+        "rel:catalog.entity",
+        "rel:catalog.relationship"
       ],
       "rel:api.claim_candidates": [
         "fn:api.names(uuid[])",
@@ -3618,6 +3657,21 @@
         "rel:evidence.claim_conflict",
         "rel:evidence.conflict_reconciliation"
       ],
+      "rel:api.compute_devices": [
+        "fn:api.names(uuid[])",
+        "fn:api.related(uuid,text,text,timestamptz)",
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:catalog.relationship"
+      ],
+      "rel:api.compute_offerings": [
+        "fn:api.names(uuid[])",
+        "fn:api.related(uuid,text,text,timestamptz)",
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:temporal.segment",
+        "rel:temporal.stream"
+      ],
       "rel:api.concepts": [
         "fn:api.related(uuid,text,text,timestamptz)",
         "fn:util.current_tenant_id()",
@@ -3631,6 +3685,14 @@
       "rel:api.current_relationships": [
         "fn:api.current_relationship_rows()",
         "rel:catalog.relationship"
+      ],
+      "rel:api.endpoints": [
+        "fn:util.current_tenant_id()",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role"
       ],
       "rel:api.entities": [
         "fn:api.entity_aliases(uuid)",
@@ -3681,13 +3743,29 @@
         "fn:util.current_tenant_id()",
         "rel:catalog.entity",
         "rel:catalog.relationship",
-        "rel:catalog.work"
+        "rel:catalog.work",
+        "rel:content.document",
+        "rel:content.document_about_entity"
       ],
       "rel:api.people": [
         "fn:api.names(uuid[])",
         "fn:api.related(uuid,text,text,timestamptz)",
         "fn:util.current_tenant_id()",
         "rel:catalog.entity"
+      ],
+      "rel:api.protocol_versions": [
+        "fn:api.names(uuid[])",
+        "fn:api.related(uuid,text,text,timestamptz)",
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:catalog.relationship"
+      ],
+      "rel:api.registry_listings": [
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:catalog.relationship",
+        "rel:temporal.segment",
+        "rel:temporal.stream"
       ],
       "rel:api.repositories": [
         "rel:api.software"
@@ -3795,12 +3873,27 @@
         ],
         "via_functions": []
       },
+      "rel:api.advisories": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:api.agent_skills": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:api.api_symbols": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:api.benchmark_scores": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.benchmarks": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -3811,6 +3904,16 @@
         "via_functions": []
       },
       "rel:api.claim_conflicts": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.compute_devices": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.compute_offerings": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -3826,6 +3929,11 @@
         "via_functions": []
       },
       "rel:api.current_relationships": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.endpoints": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -3886,6 +3994,16 @@
         "via_functions": []
       },
       "rel:api.people": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.protocol_versions": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.registry_listings": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -4363,6 +4481,11 @@
         "via_functions": []
       },
       "rel:content.unit_kind": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:content.unit_link": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -15641,9 +15764,90 @@
       }
     ]
   },
-  "fingerprint": "sha256:c6b68ac978e451f0f9ab9ae4b37d5e0ef86483faf2bfb0189782ebd414ec6e33",
+  "fingerprint": "sha256:f232c28f29fe2ddb9a811f3f3f81555dc24724eed5075493b79f2922b8d1a411",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
+    "fn:api.advisories_for(text,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_software",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_version",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:44e45d4ba83c55d4c315494ea138d3960b8aaaf02d0ebe8899689dcf7f24f59a",
+      "comment": "L2: advisories affecting a software thing, and whether a given version falls in each vulnerable range (numeric component comparison, not string compare: 1.2.3 < 1.2.14).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.advisories_for(text,text)",
+      "identity_arguments": "p_software text, p_version text",
+      "kind": "function",
+      "language": "sql",
+      "name": "advisories_for",
+      "raises": [],
+      "returns": "TABLE(ghsa_id text, cve_id text, severity text, summary text, affected_range text, fixed_version text, affects_version boolean, published_at text, url text, claim_id uuid)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "api.advisories",
+          "catalog.entity"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"advisories_for\"]",
+      "volatility": "stable"
+    },
     "fn:api.changes_since(timestamptz,text[],text[],text[])": {
       "arguments": [
         {
@@ -15671,13 +15875,14 @@
           "type": "text[]"
         }
       ],
-      "body_sha256": "sha256:4f5f6109abaed6f9399981e5533c92ffe5db4bae507cfd2f6c0ea7cea1b1a702",
-      "comment": "L2 both clocks: what changed since a date, as facts opened/replaced (with the old value), events, and unit-level diffs of refreshed documents; learned_at is when we recorded it, world_from is when it holds in the world.",
+      "body_sha256": "sha256:a1625ab09373dd348eaf67f6d18f52ca9557ad1b88e3301261c73d249d6b61c6",
+      "comment": "L2 both clocks: facts opened/replaced, events and unit changes learned after p_since; format-only unit changes (same content, different representation format) are excluded (§14.7 fix a).",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261109130000_build08_loop2_numbers_compute_apis.sql",
         "part4_views_seeds.sql"
       ],
       "executors": [
@@ -15746,6 +15951,101 @@
         "writes": []
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"changes_since\"]",
+      "volatility": "stable"
+    },
+    "fn:api.cheapest_compute(text,text,timestamptz)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_device",
+          "type": "text"
+        },
+        {
+          "default": "'on_demand'::text",
+          "mode": "in",
+          "name": "p_commitment",
+          "type": "text"
+        },
+        {
+          "default": "now()",
+          "mode": "in",
+          "name": "p_at",
+          "type": "timestamp with time zone"
+        }
+      ],
+      "body_sha256": "sha256:127e02b80d03345b790ee11f4cb2d1ed0d59296d28872c2fcf007ffc7411f83d",
+      "comment": "L1→L2: current (or as-of) prices of offerings that run on a device, cheapest per GPU-hour first, with the claim id behind each price; commitment on_demand | spot | preemptible | reserved_*.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.cheapest_compute(text,text,timestamptz)",
+      "identity_arguments": "p_device text, p_commitment text, p_at timestamp with time zone",
+      "kind": "function",
+      "language": "sql",
+      "name": "cheapest_compute",
+      "raises": [],
+      "returns": "TABLE(offering text, provider text, offering_class text, region text, commitment text, amount numeric, unit text, usd_per_gpu_hour numeric, gpu_count integer, valid_from timestamp with time zone, learned_k bigint, claim_id uuid, locator_count bigint)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "api.names",
+          "api.related",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.entity",
+          "catalog.relationship",
+          "evidence.segment_support",
+          "temporal.knowledge_batch",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"cheapest_compute\"]",
       "volatility": "stable"
     },
     "fn:api.current_event_rows()": {
@@ -17437,6 +17737,96 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"leaderboard\"]",
       "volatility": "stable"
     },
+    "fn:api.leaderboard_diff(text,int4,int4)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_slug",
+          "type": "text"
+        },
+        {
+          "default": "NULL::integer",
+          "mode": "in",
+          "name": "p_edition_a",
+          "type": "integer"
+        },
+        {
+          "default": "NULL::integer",
+          "mode": "in",
+          "name": "p_edition_b",
+          "type": "integer"
+        }
+      ],
+      "body_sha256": "sha256:6affa7be8558e4dc2d856323c871d3a83ee456629cce087916c02181c3a6a830",
+      "comment": "L2: what changed on a leaderboard between two editions (captures): entered, left, moved, score_changed, unchanged; both clocks (board_date vs observed_at).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.leaderboard_diff(text,int4,int4)",
+      "identity_arguments": "p_slug text, p_edition_a integer, p_edition_b integer",
+      "kind": "function",
+      "language": "sql",
+      "name": "leaderboard_diff",
+      "raises": [],
+      "returns": "TABLE(change text, subject_label text, entity_id uuid, rank_a integer, rank_b integer, score_a numeric, score_b numeric, conditions jsonb, edition_a integer, edition_b integer, observed_a timestamp with time zone, observed_b timestamp with time zone, board_date_a date, board_date_b date)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "ranking.leaderboard",
+          "ranking.leaderboard_edition",
+          "ranking.leaderboard_entry"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"leaderboard_diff\"]",
+      "volatility": "stable"
+    },
     "fn:api.model_offerings_at(timestamptz)": {
       "arguments": [
         {
@@ -18894,6 +19284,93 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"summary_evidence\"]",
       "volatility": "stable"
     },
+    "fn:api.symbol_changes(text,text,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_repository",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_from_tag",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_to_tag",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:810b3f7cfac7e64e03dac359dee5a889f058a0c5dc8cc2ca7ad59172dd1215ab",
+      "comment": "L2: public symbols added, removed, re-signed or (un)deprecated between two releases of a repository; overloaded names are compared as one signature set (D-39).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql",
+        "20261109130500_build08_loop2_fixups5.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.symbol_changes(text,text,text)",
+      "identity_arguments": "p_repository text, p_from_tag text, p_to_tag text",
+      "kind": "function",
+      "language": "sql",
+      "name": "symbol_changes",
+      "raises": [],
+      "returns": "TABLE(change text, qualified_name text, symbol_kind text, signature_from text, signature_to text, module text, from_node_id uuid, to_node_id uuid)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "api.api_symbols"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"symbol_changes\"]",
+      "volatility": "stable"
+    },
     "fn:api.talk_segments(uuid,int4,int4,text)": {
       "arguments": [
         {
@@ -19118,12 +19595,15 @@
     },
     "fn:catalog.check_relationship_kinds()": {
       "arguments": [],
-      "body_sha256": "sha256:02755181cdc3763c71cf2c26763c2611c00d4143fd6cc4e7da3bfdd4ccf0d4bf",
-      "comment": null,
+      "body_sha256": "sha256:da498350100de21647764cdffd5afa1dd412003e540fd53bce555c7e2e3dbd7c",
+      "comment": "Relationship endpoints must match the kind vocabulary; version_of pairs are enumerated: product_version→product, ai_model_version→ai_model, library_release→library, ai_protocol_version→ai_protocol, benchmark_version→benchmark (loop 2).",
       "config": [
         "search_path=\"\""
       ],
-      "defined_in": [],
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql",
+        "20261109130300_build08_loop2_fixups3.sql"
+      ],
       "executors": [],
       "grants": {},
       "id": "fn:catalog.check_relationship_kinds()",
@@ -35336,6 +35816,250 @@
         "service_role"
       ]
     },
+    "rel:api.advisories": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.advisory_id",
+          "identity": null,
+          "name": "advisory_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.advisory",
+          "identity": null,
+          "name": "advisory",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.ghsa_id",
+          "identity": null,
+          "name": "ghsa_id",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.cve_id",
+          "identity": null,
+          "name": "cve_id",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.severity",
+          "identity": null,
+          "name": "severity",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.summary",
+          "identity": null,
+          "name": "summary",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.url",
+          "identity": null,
+          "name": "url",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.published_at",
+          "identity": null,
+          "name": "published_at",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.software_id",
+          "identity": null,
+          "name": "software_id",
+          "nullable": true,
+          "position": 9,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.software",
+          "identity": null,
+          "name": "software",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.software_kind",
+          "identity": null,
+          "name": "software_kind",
+          "nullable": true,
+          "position": 11,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.affected_range",
+          "identity": null,
+          "name": "affected_range",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.fixed_version",
+          "identity": null,
+          "name": "fixed_version",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 14,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.advisories.learned_k",
+          "identity": null,
+          "name": "learned_k",
+          "nullable": true,
+          "position": 15,
+          "type": "bigint"
+        }
+      ],
+      "comment": "L1: security advisories with the affected software, vulnerable range and first patched version (GHSA records; OSV used only to resolve aliases).",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.advisories",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "advisories",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"advisories\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT a.id AS advisory_id,\n    a.display_name AS advisory,\n    a.attributes ->> 'ghsa_id'::text AS ghsa_id,\n    a.attributes ->> 'cve_id'::text AS cve_id,\n    a.attributes ->> 'severity'::text AS severity,\n    a.attributes ->> 'summary'::text AS summary,\n    a.attributes ->> 'url'::text AS url,\n    a.attributes ->> 'published_at'::text AS published_at,\n    r.from_entity_id AS software_id,\n    s.display_name AS software,\n    s.kind AS software_kind,\n    r.properties ->> 'affected_range'::text AS affected_range,\n    r.properties ->> 'fixed_version'::text AS fixed_version,\n    r.primary_claim_id AS claim_id,\n    r.k_from AS learned_k\n   FROM catalog.entity a\n     LEFT JOIN catalog.relationship r ON r.to_entity_id = a.id AND r.kind = 'affected_by_advisory'::text AND r.k_to IS NULL\n     LEFT JOIN catalog.entity s ON s.id = r.from_entity_id\n  WHERE a.tenant_id = util.current_tenant_id() AND a.kind = 'security_advisory'::text AND a.lifecycle = 'active'::text;",
+      "writers": []
+    },
     "rel:api.agent_skills": {
       "checks": [],
       "columns": [
@@ -35665,6 +36389,262 @@
       "view_definition": " SELECT software_id,\n    kind,\n    software,\n    slug,\n    ecosystem,\n    package_name,\n    category,\n    docs_url,\n    repository_url,\n    developers,\n    maintainers,\n    latest_release,\n    latest_release_on,\n    license,\n    stars,\n    downloads,\n    mcp_hosting,\n    mcp_auth,\n    mcp_is_official,\n    protocols,\n    concepts,\n    summary\n   FROM api.software\n  WHERE kind = 'agent_skill'::text;",
       "writers": []
     },
+    "rel:api.api_symbols": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.repository",
+          "identity": null,
+          "name": "repository",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.release_tag",
+          "identity": null,
+          "name": "release_tag",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.package",
+          "identity": null,
+          "name": "package",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.qualified_name",
+          "identity": null,
+          "name": "qualified_name",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.symbol_kind",
+          "identity": null,
+          "name": "symbol_kind",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.signature",
+          "identity": null,
+          "name": "signature",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.module",
+          "identity": null,
+          "name": "module",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.is_public",
+          "identity": null,
+          "name": "is_public",
+          "nullable": true,
+          "position": 10,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.deprecated",
+          "identity": null,
+          "name": "deprecated",
+          "nullable": true,
+          "position": 11,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.docstring_head",
+          "identity": null,
+          "name": "docstring_head",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.path",
+          "identity": null,
+          "name": "path",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.lineno",
+          "identity": null,
+          "name": "lineno",
+          "nullable": true,
+          "position": 14,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.release_id",
+          "identity": null,
+          "name": "release_id",
+          "nullable": true,
+          "position": 15,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.docs_links",
+          "identity": null,
+          "name": "docs_links",
+          "nullable": true,
+          "position": 16,
+          "type": "bigint"
+        }
+      ],
+      "comment": "L1: public symbols per repository release (R3), with how many docs sections document each symbol (R4).",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.api_symbols",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "api_symbols",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"api_symbols\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    d.attributes ->> 'repository'::text AS repository,\n    d.attributes ->> 'release_tag'::text AS release_tag,\n    d.attributes ->> 'package'::text AS package,\n    n.attributes ->> 'qualified_name'::text AS qualified_name,\n    n.attributes ->> 'kind'::text AS symbol_kind,\n    n.attributes ->> 'signature'::text AS signature,\n    n.attributes ->> 'module'::text AS module,\n    (n.attributes ->> 'is_public'::text)::boolean AS is_public,\n    (n.attributes ->> 'deprecated'::text)::boolean AS deprecated,\n    n.attributes ->> 'docstring_head'::text AS docstring_head,\n    n.attributes ->> 'path'::text AS path,\n    (n.attributes ->> 'lineno'::text)::integer AS lineno,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'release'::text\n         LIMIT 1) AS release_id,\n    ( SELECT count(*) AS count\n           FROM content.unit_link l\n          WHERE l.to_node_id = n.id AND l.kind = 'documents'::text) AS docs_links\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND d.document_type_code = 'api_surface'::text AND n.unit_kind = 'api_symbol'::text;",
+      "writers": []
+    },
     "rel:api.benchmark_scores": {
       "checks": [],
       "columns": [
@@ -35721,11 +36701,35 @@
           "default": null,
           "fk": null,
           "generated": null,
+          "id": "col:api.benchmark_scores.benchmark_version_id",
+          "identity": null,
+          "name": "benchmark_version_id",
+          "nullable": true,
+          "position": 5,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.benchmark_version",
+          "identity": null,
+          "name": "benchmark_version",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
           "id": "col:api.benchmark_scores.benchmark_id",
           "identity": null,
           "name": "benchmark_id",
           "nullable": true,
-          "position": 5,
+          "position": 7,
           "type": "uuid"
         },
         {
@@ -35737,7 +36741,7 @@
           "identity": null,
           "name": "benchmark",
           "nullable": true,
-          "position": 6,
+          "position": 8,
           "type": "text"
         },
         {
@@ -35749,7 +36753,7 @@
           "identity": null,
           "name": "score",
           "nullable": true,
-          "position": 7,
+          "position": 9,
           "type": "numeric(20,6)"
         },
         {
@@ -35761,7 +36765,19 @@
           "identity": null,
           "name": "unit",
           "nullable": true,
-          "position": 8,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.harness",
+          "identity": null,
+          "name": "harness",
+          "nullable": true,
+          "position": 11,
           "type": "text"
         },
         {
@@ -35773,7 +36789,19 @@
           "identity": null,
           "name": "setting",
           "nullable": true,
-          "position": 9,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.reported_by",
+          "identity": null,
+          "name": "reported_by",
+          "nullable": true,
+          "position": 13,
           "type": "text"
         },
         {
@@ -35785,8 +36813,68 @@
           "identity": null,
           "name": "source_kind",
           "nullable": true,
-          "position": 10,
+          "position": 14,
           "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.cost_usd",
+          "identity": null,
+          "name": "cost_usd",
+          "nullable": true,
+          "position": 15,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.run_date",
+          "identity": null,
+          "name": "run_date",
+          "nullable": true,
+          "position": 16,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.n_tasks",
+          "identity": null,
+          "name": "n_tasks",
+          "nullable": true,
+          "position": 17,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.reasoning_effort",
+          "identity": null,
+          "name": "reasoning_effort",
+          "nullable": true,
+          "position": 18,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.conditions",
+          "identity": null,
+          "name": "conditions",
+          "nullable": true,
+          "position": 19,
+          "type": "jsonb"
         },
         {
           "comment": null,
@@ -35797,7 +36885,7 @@
           "identity": null,
           "name": "valid_from",
           "nullable": true,
-          "position": 11,
+          "position": 20,
           "type": "timestamp with time zone"
         },
         {
@@ -35809,7 +36897,7 @@
           "identity": null,
           "name": "learned_k",
           "nullable": true,
-          "position": 12,
+          "position": 21,
           "type": "bigint"
         },
         {
@@ -35821,7 +36909,7 @@
           "identity": null,
           "name": "observed_at",
           "nullable": true,
-          "position": 13,
+          "position": 22,
           "type": "timestamp with time zone"
         },
         {
@@ -35833,7 +36921,7 @@
           "identity": null,
           "name": "claim_id",
           "nullable": true,
-          "position": 14,
+          "position": 23,
           "type": "uuid"
         },
         {
@@ -35845,13 +36933,26 @@
           "identity": null,
           "name": "belief",
           "nullable": true,
-          "position": 15,
+          "position": 24,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmark_scores.scope_key",
+          "identity": null,
+          "name": "scope_key",
+          "nullable": true,
+          "position": 25,
           "type": "text"
         }
       ],
-      "comment": "L1: benchmark results as facts (one home for numbers): subject version, benchmark, score/unit, setting, who measured it, when it holds and when we learned it.",
+      "comment": "L1: current conditioned benchmark scores: subject, benchmark version and parent benchmark, harness, who measured (reported_by), cost, run date, with the claim locator id.",
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261109130000_build08_loop2_numbers_compute_apis.sql",
         "part4_views_seeds.sql"
       ],
       "exclusions": [],
@@ -35907,7 +37008,215 @@
         "row": "Database[\"api\"][\"Views\"][\"benchmark_scores\"][\"Row\"]"
       },
       "unique": [],
-      "view_definition": " SELECT s.id AS segment_id,\n    st.subject_entity_id AS subject_id,\n    sub.display_name AS subject,\n    sub.kind AS subject_kind,\n    s.ref_entity_id AS benchmark_id,\n    b.display_name AS benchmark,\n    s.amount AS score,\n    s.unit,\n    s.payload ->> 'setting'::text AS setting,\n    s.payload ->> 'source_kind'::text AS source_kind,\n    lower(s.valid_during) AS valid_from,\n    s.k_from AS learned_k,\n    s.created_at AS observed_at,\n    s.primary_claim_id AS claim_id,\n    s.belief\n   FROM temporal.segment s\n     JOIN temporal.stream st ON st.id = s.stream_id\n     JOIN catalog.entity sub ON sub.id = st.subject_entity_id\n     LEFT JOIN catalog.entity b ON b.id = s.ref_entity_id\n  WHERE s.tenant_id = util.current_tenant_id() AND st.kind = 'benchmark_score'::text AND s.k_to IS NULL;",
+      "view_definition": " SELECT s.id AS segment_id,\n    st.subject_entity_id AS subject_id,\n    sub.display_name AS subject,\n    sub.kind AS subject_kind,\n    s.ref_entity_id AS benchmark_version_id,\n    b.display_name AS benchmark_version,\n    COALESCE(bb.id,\n        CASE\n            WHEN b.kind = 'benchmark'::text THEN b.id\n            ELSE NULL::uuid\n        END) AS benchmark_id,\n    COALESCE(bb.display_name,\n        CASE\n            WHEN b.kind = 'benchmark'::text THEN b.display_name\n            ELSE NULL::text\n        END) AS benchmark,\n    s.amount AS score,\n    s.unit,\n    s.payload ->> 'harness'::text AS harness,\n    s.payload ->> 'setting'::text AS setting,\n    s.payload ->> 'reported_by'::text AS reported_by,\n    s.payload ->> 'source_kind'::text AS source_kind,\n    (s.payload ->> 'cost_usd'::text)::numeric AS cost_usd,\n    s.payload ->> 'run_date'::text AS run_date,\n    (s.payload ->> 'n_tasks'::text)::integer AS n_tasks,\n    s.payload ->> 'reasoning_effort'::text AS reasoning_effort,\n    s.payload AS conditions,\n    lower(s.valid_during) AS valid_from,\n    s.k_from AS learned_k,\n    s.created_at AS observed_at,\n    s.primary_claim_id AS claim_id,\n    s.belief,\n    st.scope_key\n   FROM temporal.segment s\n     JOIN temporal.stream st ON st.id = s.stream_id\n     JOIN catalog.entity sub ON sub.id = st.subject_entity_id\n     LEFT JOIN catalog.entity b ON b.id = s.ref_entity_id\n     LEFT JOIN catalog.relationship vr ON vr.from_entity_id = b.id AND vr.kind = 'version_of'::text AND vr.k_to IS NULL\n     LEFT JOIN catalog.entity bb ON bb.id = vr.to_entity_id AND bb.kind = 'benchmark'::text\n  WHERE s.tenant_id = util.current_tenant_id() AND st.kind = 'benchmark_score'::text AND s.k_to IS NULL;",
+      "writers": []
+    },
+    "rel:api.benchmarks": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.benchmark_id",
+          "identity": null,
+          "name": "benchmark_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.benchmark",
+          "identity": null,
+          "name": "benchmark",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.slug",
+          "identity": null,
+          "name": "slug",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.organizer",
+          "identity": null,
+          "name": "organizer",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.metric",
+          "identity": null,
+          "name": "metric",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.score_type",
+          "identity": null,
+          "name": "score_type",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.domain",
+          "identity": null,
+          "name": "domain",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.agentic",
+          "identity": null,
+          "name": "agentic",
+          "nullable": true,
+          "position": 8,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.canonical_url",
+          "identity": null,
+          "name": "canonical_url",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.versions",
+          "identity": null,
+          "name": "versions",
+          "nullable": true,
+          "position": 10,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.score_count",
+          "identity": null,
+          "name": "score_count",
+          "nullable": true,
+          "position": 11,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.benchmarks.reported_by_kinds",
+          "identity": null,
+          "name": "reported_by_kinds",
+          "nullable": true,
+          "position": 12,
+          "type": "text[]"
+        }
+      ],
+      "comment": "L1: benchmarks with their versions, organizer, metric/score type and how many conditioned scores we hold from which reporters.",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.benchmarks",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "benchmarks",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"benchmarks\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT id AS benchmark_id,\n    display_name AS benchmark,\n    slug,\n    attributes ->> 'organizer'::text AS organizer,\n    attributes ->> 'metric'::text AS metric,\n    attributes ->> 'score_type'::text AS score_type,\n    attributes ->> 'domain'::text AS domain,\n    (attributes ->> 'agentic'::text)::boolean AS agentic,\n    attributes ->> 'canonical_url'::text AS canonical_url,\n    COALESCE(( SELECT array_agg(v.display_name ORDER BY v.display_name) AS array_agg\n           FROM catalog.relationship r\n             JOIN catalog.entity v ON v.id = r.from_entity_id\n          WHERE r.to_entity_id = b.id AND r.kind = 'version_of'::text AND r.k_to IS NULL AND v.kind = 'benchmark_version'::text), '{}'::text[]) AS versions,\n    ( SELECT count(*) AS count\n           FROM api.benchmark_scores sc\n          WHERE sc.benchmark_id = b.id) AS score_count,\n    ( SELECT array_agg(DISTINCT sc.reported_by) AS array_agg\n           FROM api.benchmark_scores sc\n          WHERE sc.benchmark_id = b.id) AS reported_by_kinds\n   FROM catalog.entity b\n  WHERE tenant_id = util.current_tenant_id() AND kind = 'benchmark'::text AND lifecycle = 'active'::text;",
       "writers": []
     },
     "rel:api.claim_candidates": {
@@ -36374,6 +37683,614 @@
       },
       "unique": [],
       "view_definition": " SELECT x.id AS conflict_id,\n    x.conflict_kind,\n    x.detected_by,\n    x.detected_at,\n    a.id AS first_party_claim_id,\n    a.statement AS first_party_statement,\n    a.status::text AS first_party_status,\n    b.id AS other_claim_id,\n    b.statement AS other_statement,\n    b.status::text AS other_status,\n    b.structured ->> 'source_role'::text AS other_source_role,\n    b.structured ->> 'provenance'::text AS other_provenance,\n    ( SELECT r.outcome\n           FROM evidence.conflict_reconciliation r\n          WHERE r.conflict_id = x.id\n          ORDER BY r.decided_at DESC\n         LIMIT 1) AS reconciliation\n   FROM evidence.claim_conflict x\n     JOIN evidence.claim a ON a.id = x.claim_a_id\n     JOIN evidence.claim b ON b.id = x.claim_b_id\n  WHERE a.tenant_id = util.current_tenant_id();",
+      "writers": []
+    },
+    "rel:api.compute_devices": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.device_id",
+          "identity": null,
+          "name": "device_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.device",
+          "identity": null,
+          "name": "device",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.slug",
+          "identity": null,
+          "name": "slug",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.vendor",
+          "identity": null,
+          "name": "vendor",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.device_class",
+          "identity": null,
+          "name": "device_class",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.memory_gb",
+          "identity": null,
+          "name": "memory_gb",
+          "nullable": true,
+          "position": 6,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.memory_bandwidth_tbps",
+          "identity": null,
+          "name": "memory_bandwidth_tbps",
+          "nullable": true,
+          "position": 7,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.bf16_tflops",
+          "identity": null,
+          "name": "bf16_tflops",
+          "nullable": true,
+          "position": 8,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.fp8_tflops",
+          "identity": null,
+          "name": "fp8_tflops",
+          "nullable": true,
+          "position": 9,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.fp4_pflops",
+          "identity": null,
+          "name": "fp4_pflops",
+          "nullable": true,
+          "position": 10,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.sparse_figures",
+          "identity": null,
+          "name": "sparse_figures",
+          "nullable": true,
+          "position": 11,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.tdp_w",
+          "identity": null,
+          "name": "tdp_w",
+          "nullable": true,
+          "position": 12,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.interconnect",
+          "identity": null,
+          "name": "interconnect",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.form_factor",
+          "identity": null,
+          "name": "form_factor",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.released_on",
+          "identity": null,
+          "name": "released_on",
+          "nullable": true,
+          "position": 15,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.spec_url",
+          "identity": null,
+          "name": "spec_url",
+          "nullable": true,
+          "position": 16,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.manufacturers",
+          "identity": null,
+          "name": "manufacturers",
+          "nullable": true,
+          "position": 17,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_devices.offering_count",
+          "identity": null,
+          "name": "offering_count",
+          "nullable": true,
+          "position": 18,
+          "type": "bigint"
+        }
+      ],
+      "comment": "L1: accelerators and systems with first-party spec attributes (sparse figures flagged) and how many offerings run on them.",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.compute_devices",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "compute_devices",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"compute_devices\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT id AS device_id,\n    display_name AS device,\n    slug,\n    attributes ->> 'vendor'::text AS vendor,\n    attributes ->> 'device_class'::text AS device_class,\n    (attributes ->> 'memory_gb'::text)::numeric AS memory_gb,\n    (attributes ->> 'memory_bandwidth_tbps'::text)::numeric AS memory_bandwidth_tbps,\n    (attributes ->> 'bf16_tflops'::text)::numeric AS bf16_tflops,\n    (attributes ->> 'fp8_tflops'::text)::numeric AS fp8_tflops,\n    (attributes ->> 'fp4_pflops'::text)::numeric AS fp4_pflops,\n    (attributes ->> 'sparse_figures'::text)::boolean AS sparse_figures,\n    (attributes ->> 'tdp_w'::text)::numeric AS tdp_w,\n    attributes ->> 'interconnect'::text AS interconnect,\n    attributes ->> 'form_factor'::text AS form_factor,\n    attributes ->> 'released_on'::text AS released_on,\n    attributes ->> 'spec_url'::text AS spec_url,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(d.id, 'manufactures'::text, 'incoming'::text) x(x))) AS manufacturers,\n    ( SELECT count(*) AS count\n           FROM catalog.relationship r\n          WHERE r.to_entity_id = d.id AND r.kind = 'runs_on'::text AND r.k_to IS NULL) AS offering_count\n   FROM catalog.entity d\n  WHERE tenant_id = util.current_tenant_id() AND kind = 'compute_device'::text AND lifecycle = 'active'::text;",
+      "writers": []
+    },
+    "rel:api.compute_offerings": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.offering_id",
+          "identity": null,
+          "name": "offering_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.offering",
+          "identity": null,
+          "name": "offering",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.slug",
+          "identity": null,
+          "name": "slug",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.offering_class",
+          "identity": null,
+          "name": "offering_class",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.provider_slug",
+          "identity": null,
+          "name": "provider_slug",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.providers",
+          "identity": null,
+          "name": "providers",
+          "nullable": true,
+          "position": 6,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.devices",
+          "identity": null,
+          "name": "devices",
+          "nullable": true,
+          "position": 7,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.gpu_count",
+          "identity": null,
+          "name": "gpu_count",
+          "nullable": true,
+          "position": 8,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.vcpu",
+          "identity": null,
+          "name": "vcpu",
+          "nullable": true,
+          "position": 9,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.memory_gb",
+          "identity": null,
+          "name": "memory_gb",
+          "nullable": true,
+          "position": 10,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.pricing_url",
+          "identity": null,
+          "name": "pricing_url",
+          "nullable": true,
+          "position": 11,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.meter",
+          "identity": null,
+          "name": "meter",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.commitment",
+          "identity": null,
+          "name": "commitment",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.region",
+          "identity": null,
+          "name": "region",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.amount",
+          "identity": null,
+          "name": "amount",
+          "nullable": true,
+          "position": 15,
+          "type": "numeric(20,6)"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.currency",
+          "identity": null,
+          "name": "currency",
+          "nullable": true,
+          "position": 16,
+          "type": "character(3)"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.unit",
+          "identity": null,
+          "name": "unit",
+          "nullable": true,
+          "position": 17,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.per",
+          "identity": null,
+          "name": "per",
+          "nullable": true,
+          "position": 18,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.usd_per_gpu_hour",
+          "identity": null,
+          "name": "usd_per_gpu_hour",
+          "nullable": true,
+          "position": 19,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.valid_from",
+          "identity": null,
+          "name": "valid_from",
+          "nullable": true,
+          "position": 20,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.learned_k",
+          "identity": null,
+          "name": "learned_k",
+          "nullable": true,
+          "position": 21,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.compute_offerings.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 22,
+          "type": "uuid"
+        }
+      ],
+      "comment": "L1: compute offerings (instance types, serverless GPUs, sandboxes, TPU slices) with every current price row (meter × commitment × region) normalised to USD per GPU-hour where a GPU count is known.",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.compute_offerings",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "compute_offerings",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"compute_offerings\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT o.id AS offering_id,\n    o.display_name AS offering,\n    o.slug,\n    o.attributes ->> 'offering_class'::text AS offering_class,\n    o.attributes ->> 'provider_slug'::text AS provider_slug,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(o.id, 'provides_compute'::text, 'incoming'::text) x(x))) AS providers,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(o.id, 'runs_on'::text, 'outgoing'::text) x(x))) AS devices,\n    (o.attributes ->> 'gpu_count'::text)::integer AS gpu_count,\n    (o.attributes ->> 'vcpu'::text)::numeric AS vcpu,\n    (o.attributes ->> 'memory_gb'::text)::numeric AS memory_gb,\n    o.attributes ->> 'pricing_url'::text AS pricing_url,\n    p.meter,\n    p.commitment,\n    p.region,\n    p.amount,\n    p.currency,\n    p.unit,\n    p.per,\n    p.usd_per_gpu_hour,\n    p.valid_from,\n    p.learned_k,\n    p.claim_id\n   FROM catalog.entity o\n     LEFT JOIN LATERAL ( SELECT s.payload ->> 'meter'::text AS meter,\n            COALESCE(s.payload ->> 'commitment'::text, 'unknown'::text) AS commitment,\n            s.payload ->> 'region'::text AS region,\n            s.amount,\n            s.currency,\n            s.unit,\n            s.payload ->> 'per'::text AS per,\n                CASE\n                    WHEN s.unit = 'USD_per_GPU_hour'::text THEN s.amount\n                    WHEN (s.unit = ANY (ARRAY['USD_per_node_hour'::text, 'USD_per_hour'::text])) AND COALESCE((s.payload ->> 'gpu_count'::text)::numeric, (o.attributes ->> 'gpu_count'::text)::numeric) > 0::numeric THEN s.amount / COALESCE((s.payload ->> 'gpu_count'::text)::numeric, (o.attributes ->> 'gpu_count'::text)::numeric)\n                    WHEN s.unit = 'USD_per_chip_hour'::text THEN s.amount\n                    ELSE NULL::numeric\n                END AS usd_per_gpu_hour,\n            lower(s.valid_during) AS valid_from,\n            s.k_from AS learned_k,\n            s.primary_claim_id AS claim_id\n           FROM temporal.segment s\n             JOIN temporal.stream st ON st.id = s.stream_id\n          WHERE st.subject_entity_id = o.id AND st.kind = 'offering_price'::text AND s.k_to IS NULL AND (upper_inf(s.valid_during) OR upper(s.valid_during) > now())) p ON true\n  WHERE o.tenant_id = util.current_tenant_id() AND o.kind = 'compute_offering'::text AND o.lifecycle = 'active'::text;",
       "writers": []
     },
     "rel:api.concepts": {
@@ -37133,6 +39050,250 @@
       },
       "unique": [],
       "view_definition": " SELECT id,\n    tenant_id,\n    kind,\n    from_entity_id,\n    to_entity_id,\n    qualifier,\n    episode,\n    properties,\n    primary_claim_id,\n    k_from,\n    k_to,\n    created_at\n   FROM api.current_relationship_rows() current_relationship_rows(id, tenant_id, kind, from_entity_id, to_entity_id, qualifier, episode, properties, primary_claim_id, k_from, k_to, created_at);",
+      "writers": []
+    },
+    "rel:api.endpoints": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.api_document",
+          "identity": null,
+          "name": "api_document",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.published_at",
+          "identity": null,
+          "name": "published_at",
+          "nullable": true,
+          "position": 5,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.method",
+          "identity": null,
+          "name": "method",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.path",
+          "identity": null,
+          "name": "path",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.operation_id",
+          "identity": null,
+          "name": "operation_id",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.summary",
+          "identity": null,
+          "name": "summary",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.tags",
+          "identity": null,
+          "name": "tags",
+          "nullable": true,
+          "position": 10,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.deprecated",
+          "identity": null,
+          "name": "deprecated",
+          "nullable": true,
+          "position": 11,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.parameter_count",
+          "identity": null,
+          "name": "parameter_count",
+          "nullable": true,
+          "position": 12,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.family",
+          "identity": null,
+          "name": "family",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.logical_key",
+          "identity": null,
+          "name": "logical_key",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.endpoints.api_entity_id",
+          "identity": null,
+          "name": "api_entity_id",
+          "nullable": true,
+          "position": 15,
+          "type": "uuid"
+        }
+      ],
+      "comment": "L1: API operations per captured specification version; diff two versions by logical key (method|path) through content.unit_change or api.changes_since.",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.endpoints",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "endpoints",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"endpoints\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    d.canonical_title AS api_document,\n    v.version_label,\n    v.published_at,\n    n.attributes ->> 'method'::text AS method,\n    n.attributes ->> 'path'::text AS path,\n    n.attributes ->> 'operation_id'::text AS operation_id,\n    n.attributes ->> 'summary'::text AS summary,\n    n.attributes -> 'tags'::text AS tags,\n    (n.attributes ->> 'deprecated'::text)::boolean AS deprecated,\n    (n.attributes ->> 'parameter_count'::text)::integer AS parameter_count,\n    n.attributes ->> 'family'::text AS family,\n    n.logical_key,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'api'::text\n         LIMIT 1) AS api_entity_id\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND (d.document_type_code = ANY (ARRAY['openapi_spec'::text, 'api_reference'::text])) AND n.unit_kind = 'endpoint'::text;",
       "writers": []
     },
     "rel:api.entities": {
@@ -39818,11 +41979,35 @@
           "default": null,
           "fk": null,
           "generated": null,
+          "id": "col:api.papers.cited_by_count",
+          "identity": null,
+          "name": "cited_by_count",
+          "nullable": true,
+          "position": 12,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.papers.cites_count",
+          "identity": null,
+          "name": "cites_count",
+          "nullable": true,
+          "position": 13,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
           "id": "col:api.papers.citations",
           "identity": null,
           "name": "citations",
           "nullable": true,
-          "position": 12,
+          "position": 14,
           "type": "numeric"
         },
         {
@@ -39834,13 +42019,76 @@
           "identity": null,
           "name": "abstract",
           "nullable": true,
-          "position": 13,
+          "position": 15,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.papers.ingestion_level",
+          "identity": null,
+          "name": "ingestion_level",
+          "nullable": true,
+          "position": 16,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.papers.promotion",
+          "identity": null,
+          "name": "promotion",
+          "nullable": true,
+          "position": 17,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.papers.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 18,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.papers.document_type_code",
+          "identity": null,
+          "name": "document_type_code",
+          "nullable": true,
+          "position": 19,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.papers.publication_form",
+          "identity": null,
+          "name": "publication_form",
+          "nullable": true,
+          "position": 20,
           "type": "text"
         }
       ],
-      "comment": "L1: papers with identifiers, authors, code repositories, techniques introduced and the talks that discuss them.",
+      "comment": "L1: papers with authors, code, citing talks/papers, cited papers and the ingestion level (P0 reference / P1 digest / P2 full) with its recorded promotion decision (document linked through document_about_entity role primary).",
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261109130000_build08_loop2_numbers_compute_apis.sql",
+        "20261109130100_build08_loop2_fixups.sql",
+        "20261109130200_build08_loop2_fixups2.sql",
         "part4_views_seeds.sql"
       ],
       "exclusions": [],
@@ -39896,7 +42144,7 @@
         "row": "Database[\"api\"][\"Views\"][\"papers\"][\"Row\"]"
       },
       "unique": [],
-      "view_definition": " SELECT w.id AS paper_id,\n    w.title,\n    w.attributes ->> 'arxiv_id'::text AS arxiv_id,\n    w.attributes ->> 'doi'::text AS doi,\n    w.published_at,\n    w.canonical_url,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'authored_by'::text, 'outgoing'::text) x(x))) AS authors,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'published_by'::text, 'outgoing'::text) x(x))) AS publishers,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'has_code'::text, 'outgoing'::text) x(x))) AS repositories,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'introduces_technique'::text, 'outgoing'::text) x(x))) AS techniques,\n    ( SELECT count(*) AS count\n           FROM catalog.relationship r\n             JOIN catalog.entity t ON t.id = r.from_entity_id\n          WHERE r.to_entity_id = w.id AND r.kind = 'about'::text AND t.kind = 'talk'::text AND r.k_to IS NULL) AS talks_about,\n    api.fact_amount(w.id, 'paper_citations'::text) AS citations,\n    w.abstract\n   FROM catalog.work w\n     JOIN catalog.entity e ON e.id = w.id\n  WHERE w.tenant_id = util.current_tenant_id() AND w.kind = 'paper'::text AND e.lifecycle = 'active'::text;",
+      "view_definition": " WITH doc AS (\n         SELECT a.entity_id,\n            d.id AS document_id,\n            d.attributes,\n            d.document_type_code,\n            row_number() OVER (PARTITION BY a.entity_id ORDER BY d.created_at DESC) AS rn\n           FROM content.document_about_entity a\n             JOIN content.document d ON d.id = a.document_id\n          WHERE a.role = 'primary'::text AND (d.document_type_code = ANY (ARRAY['arxiv_paper'::text, 'conference_paper'::text, 'journal_article'::text, 'tech_report'::text, 'model_card'::text, 'system_card'::text, 'dataset_card'::text, 'research_report'::text]))\n        )\n SELECT w.id AS paper_id,\n    w.title,\n    w.attributes ->> 'arxiv_id'::text AS arxiv_id,\n    w.attributes ->> 'doi'::text AS doi,\n    w.published_at,\n    w.canonical_url,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'authored_by'::text, 'outgoing'::text) x(x))) AS authors,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'published_by'::text, 'outgoing'::text) x(x))) AS publishers,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'has_code'::text, 'outgoing'::text) x(x))) AS repositories,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'introduces_technique'::text, 'outgoing'::text) x(x))) AS techniques,\n    ( SELECT count(*) AS count\n           FROM catalog.relationship r\n             JOIN catalog.entity t ON t.id = r.from_entity_id\n          WHERE r.to_entity_id = w.id AND (r.kind = ANY (ARRAY['about'::text, 'cites'::text])) AND t.kind = 'talk'::text AND r.k_to IS NULL) AS talks_about,\n    ( SELECT count(*) AS count\n           FROM catalog.relationship r\n          WHERE r.to_entity_id = w.id AND r.kind = 'cites'::text AND r.k_to IS NULL) AS cited_by_count,\n    ( SELECT count(*) AS count\n           FROM catalog.relationship r\n          WHERE r.from_entity_id = w.id AND r.kind = 'cites'::text AND r.k_to IS NULL) AS cites_count,\n    api.fact_amount(w.id, 'paper_citations'::text) AS citations,\n    w.abstract,\n    COALESCE(doc.attributes ->> 'ingestion_level'::text, w.attributes ->> 'ingestion_level'::text, 'P0'::text) AS ingestion_level,\n    COALESCE(doc.attributes -> 'promotion'::text, w.attributes -> 'promotion'::text) AS promotion,\n    doc.document_id,\n    doc.document_type_code,\n    w.attributes ->> 'publication_form'::text AS publication_form\n   FROM catalog.work w\n     JOIN catalog.entity e ON e.id = w.id\n     LEFT JOIN doc ON doc.entity_id = w.id AND doc.rn = 1\n  WHERE w.tenant_id = util.current_tenant_id() AND w.kind = 'paper'::text AND e.lifecycle = 'active'::text;",
       "writers": []
     },
     "rel:api.people": {
@@ -40058,6 +42306,422 @@
       },
       "unique": [],
       "view_definition": " SELECT id AS person_id,\n    display_name AS person,\n    slug,\n    attributes ->> 'title'::text AS title,\n    attributes ->> 'profile_url'::text AS profile_url,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(e.id, 'employed_by'::text, 'outgoing'::text) x(x))) AS affiliations,\n    ( SELECT count(*) AS count\n           FROM api.related(e.id, 'presented_by'::text, 'incoming'::text) related(related)) AS talk_count,\n    ( SELECT count(*) AS count\n           FROM api.related(e.id, 'authored_by'::text, 'incoming'::text) related(related)) AS work_count\n   FROM catalog.entity e\n  WHERE tenant_id = util.current_tenant_id() AND kind = 'person'::text AND lifecycle = 'active'::text;",
+      "writers": []
+    },
+    "rel:api.protocol_versions": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.version_id",
+          "identity": null,
+          "name": "version_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.version",
+          "identity": null,
+          "name": "version",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.protocol",
+          "identity": null,
+          "name": "protocol",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.released_on",
+          "identity": null,
+          "name": "released_on",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.status",
+          "identity": null,
+          "name": "status",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.changelog_url",
+          "identity": null,
+          "name": "changelog_url",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.schema_url",
+          "identity": null,
+          "name": "schema_url",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.deprecates",
+          "identity": null,
+          "name": "deprecates",
+          "nullable": true,
+          "position": 9,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.highlights",
+          "identity": null,
+          "name": "highlights",
+          "nullable": true,
+          "position": 10,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.protocol_versions.implemented_by",
+          "identity": null,
+          "name": "implemented_by",
+          "nullable": true,
+          "position": 11,
+          "type": "text[]"
+        }
+      ],
+      "comment": "L1: protocol revisions (MCP) with status, changelog, highlights and the software releases that implement them.",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.protocol_versions",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "protocol_versions",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"protocol_versions\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT v.id AS version_id,\n    v.display_name AS version,\n    p.display_name AS protocol,\n    v.attributes ->> 'version_label'::text AS version_label,\n    v.attributes ->> 'released_on'::text AS released_on,\n    v.attributes ->> 'status'::text AS status,\n    v.attributes ->> 'changelog_url'::text AS changelog_url,\n    v.attributes ->> 'schema_url'::text AS schema_url,\n    v.attributes -> 'deprecates'::text AS deprecates,\n    v.attributes -> 'highlights'::text AS highlights,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(v.id, 'implements_protocol'::text, 'incoming'::text) x(x))) AS implemented_by\n   FROM catalog.entity v\n     JOIN catalog.relationship r ON r.from_entity_id = v.id AND r.kind = 'version_of'::text AND r.k_to IS NULL\n     JOIN catalog.entity p ON p.id = r.to_entity_id AND p.kind = 'ai_protocol'::text\n  WHERE v.tenant_id = util.current_tenant_id() AND v.kind = 'ai_protocol_version'::text AND v.lifecycle = 'active'::text;",
+      "writers": []
+    },
+    "rel:api.registry_listings": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.relationship_id",
+          "identity": null,
+          "name": "relationship_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.server_id",
+          "identity": null,
+          "name": "server_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.server",
+          "identity": null,
+          "name": "server",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.namespace",
+          "identity": null,
+          "name": "namespace",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.first_party_inferred",
+          "identity": null,
+          "name": "first_party_inferred",
+          "nullable": true,
+          "position": 5,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.transports",
+          "identity": null,
+          "name": "transports",
+          "nullable": true,
+          "position": 6,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.latest_version",
+          "identity": null,
+          "name": "latest_version",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.repository_url",
+          "identity": null,
+          "name": "repository_url",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.registry_status",
+          "identity": null,
+          "name": "registry_status",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.registry",
+          "identity": null,
+          "name": "registry",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.properties",
+          "identity": null,
+          "name": "properties",
+          "nullable": true,
+          "position": 11,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.learned_k",
+          "identity": null,
+          "name": "learned_k",
+          "nullable": true,
+          "position": 12,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.registry_listings.current_status",
+          "identity": null,
+          "name": "current_status",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        }
+      ],
+      "comment": "L1: servers listed in a registry with transports, namespace-inferred first-party flag and the registry's own status stream (official = registry validation, not vendor status).",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.registry_listings",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "registry_listings",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"registry_listings\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT r.id AS relationship_id,\n    s.id AS server_id,\n    s.display_name AS server,\n    s.attributes ->> 'namespace'::text AS namespace,\n    (s.attributes ->> 'first_party_inferred'::text)::boolean AS first_party_inferred,\n    s.attributes -> 'transport'::text AS transports,\n    s.attributes ->> 'latest_version'::text AS latest_version,\n    s.attributes ->> 'repository_url'::text AS repository_url,\n    s.attributes ->> 'registry_status'::text AS registry_status,\n    g.display_name AS registry,\n    r.properties,\n    r.k_from AS learned_k,\n    ( SELECT seg.status\n           FROM temporal.stream st\n             JOIN temporal.segment seg ON seg.stream_id = st.id\n          WHERE st.subject_relationship_id = r.id AND st.kind = 'registry_listing_status'::text AND seg.k_to IS NULL\n          ORDER BY (lower(seg.valid_during)) DESC\n         LIMIT 1) AS current_status\n   FROM catalog.relationship r\n     JOIN catalog.entity s ON s.id = r.from_entity_id\n     JOIN catalog.entity g ON g.id = r.to_entity_id\n  WHERE r.tenant_id = util.current_tenant_id() AND r.kind = 'listed_in'::text AND r.k_to IS NULL AND g.kind = 'registry'::text;",
       "writers": []
     },
     "rel:api.repositories": {
@@ -50869,6 +53533,26 @@
         },
         {
           "columns": [
+            "benchmark_version_id"
+          ],
+          "constraint": "leaderboard_benchmark_version_id_fkey",
+          "from": "rel:ranking.leaderboard",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "publisher_entity_id"
+          ],
+          "constraint": "leaderboard_publisher_entity_id_fkey",
+          "from": "rel:ranking.leaderboard",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
             "entity_id"
           ],
           "constraint": "leaderboard_entry_entity_id_fkey",
@@ -53711,7 +56395,7 @@
           "name": "digest_item_confidence_check"
         },
         {
-          "expression": "(item_kind = ANY (ARRAY['key_point'::text, 'entity_role'::text, 'assertion_ref'::text, 'change'::text, 'open_question'::text, 'limitation'::text, 'research_direction'::text]))",
+          "expression": "(item_kind = ANY (ARRAY['key_point'::text, 'entity_role'::text, 'assertion_ref'::text, 'change'::text, 'open_question'::text, 'limitation'::text, 'research_direction'::text, 'problem'::text, 'method'::text, 'key_result'::text, 'artifact'::text, 'practitioner_change'::text]))",
           "name": "digest_item_item_kind_check"
         },
         {
@@ -53775,7 +56459,7 @@
           "type": "integer"
         },
         {
-          "comment": null,
+          "comment": "key_point | entity_role | assertion_ref | change | open_question | limitation | research_direction | problem | method | key_result | artifact | practitioner_change (the last five are the P1 structured paper digest of Build 08 §15.3).",
           "default": null,
           "fk": null,
           "generated": null,
@@ -56228,6 +58912,26 @@
         },
         {
           "columns": [
+            "from_node_id"
+          ],
+          "constraint": "unit_link_from_node_id_fkey",
+          "from": "rel:content.unit_link",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "to_node_id"
+          ],
+          "constraint": "unit_link_to_node_id_fkey",
+          "from": "rel:content.unit_link",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
             "tenant_id",
             "document_node_id"
           ],
@@ -56235,6 +58939,16 @@
           "from": "rel:evidence.extraction_record",
           "to_columns": [
             "tenant_id",
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "node_id"
+          ],
+          "constraint": "leaderboard_entry_node_id_fkey",
+          "from": "rel:ranking.leaderboard_entry",
+          "to_columns": [
             "id"
           ]
         },
@@ -61932,7 +64646,7 @@
     "rel:content.unit_change": {
       "checks": [
         {
-          "expression": "(change_kind = ANY (ARRAY['added'::text, 'removed'::text, 'attribute_changed'::text, 'text_changed'::text, 'moved'::text]))",
+          "expression": "(change_kind = ANY (ARRAY['added'::text, 'removed'::text, 'attribute_changed'::text, 'text_changed'::text, 'moved'::text, 'format_only'::text]))",
           "name": "unit_change_change_kind_check"
         },
         {
@@ -62050,7 +64764,7 @@
           "type": "uuid"
         },
         {
-          "comment": null,
+          "comment": "added | removed | attribute_changed | text_changed | moved | format_only (same logical key, same normalized content, different representation format: excluded from changes_since by default).",
           "default": null,
           "fk": null,
           "generated": null,
@@ -62819,6 +65533,219 @@
         "insert": "Database[\"content\"][\"Tables\"][\"unit_kind\"][\"Insert\"]",
         "row": "Database[\"content\"][\"Tables\"][\"unit_kind\"][\"Row\"]",
         "update": "Database[\"content\"][\"Tables\"][\"unit_kind\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": []
+    },
+    "rel:content.unit_link": {
+      "checks": [
+        {
+          "expression": "(kind = ANY (ARRAY['documents'::text, 'cites'::text, 'supersedes'::text, 'implements'::text, 'mentions'::text, 'same_symbol'::text]))",
+          "name": "unit_link_kind_check"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.default_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:content.unit_link.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "unit_link_from_node_id_fkey",
+            "to": "rel:content.document_node"
+          },
+          "generated": null,
+          "id": "col:content.unit_link.from_node_id",
+          "identity": null,
+          "name": "from_node_id",
+          "nullable": false,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "unit_link_to_node_id_fkey",
+            "to": "rel:content.document_node"
+          },
+          "generated": null,
+          "id": "col:content.unit_link.to_node_id",
+          "identity": null,
+          "name": "to_node_id",
+          "nullable": false,
+          "position": 3,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:content.unit_link.kind",
+          "identity": null,
+          "name": "kind",
+          "nullable": false,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": "'rule'::text",
+          "fk": null,
+          "generated": null,
+          "id": "col:content.unit_link.method",
+          "identity": null,
+          "name": "method",
+          "nullable": false,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": "1.0",
+          "fk": null,
+          "generated": null,
+          "id": "col:content.unit_link.confidence",
+          "identity": null,
+          "name": "confidence",
+          "nullable": false,
+          "position": 6,
+          "type": "numeric(5,4)"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:content.unit_link.created_at",
+          "identity": null,
+          "name": "created_at",
+          "nullable": false,
+          "position": 7,
+          "type": "timestamp with time zone"
+        }
+      ],
+      "comment": "R4: typed edge between two units (a docs section documents an api_symbol; a slide cites a paper reference; a symbol unit in release B is the same symbol as in release A). Symbols are units, not entities, so unit_entity_role cannot carry this.",
+      "defined_in": [
+        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "from_node_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "unit_link_from_node_id_fkey",
+          "on_delete": "cascade",
+          "to": "rel:content.document_node",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "to_node_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "unit_link_to_node_id_fkey",
+          "on_delete": "cascade",
+          "to": "rel:content.document_node",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:content.unit_link",
+      "inbound_foreign_keys": [],
+      "indexes": [
+        {
+          "definition": "CREATE INDEX unit_link_to_ix ON content.unit_link USING btree (to_node_id, kind)",
+          "id": "idx:content.unit_link_to_ix",
+          "method": "btree",
+          "name": "unit_link_to_ix",
+          "predicate": null,
+          "unique": false
+        }
+      ],
+      "kind": "table",
+      "name": "unit_link",
+      "partitions": null,
+      "primary_key": [
+        "from_node_id",
+        "to_node_id",
+        "kind"
+      ],
+      "readers": [
+        "app_reader",
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:content.unit_link.unit_link_tenant",
+            "name": "unit_link_tenant",
+            "permissive": true,
+            "roles": [
+              "public"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": null
+          }
+        ]
+      },
+      "schema": "content",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"content\"][\"Tables\"][\"unit_link\"][\"Insert\"]",
+        "row": "Database[\"content\"][\"Tables\"][\"unit_link\"][\"Row\"]",
+        "update": "Database[\"content\"][\"Tables\"][\"unit_link\"][\"Update\"]"
       },
       "unique": [],
       "view_definition": null,
@@ -85239,6 +88166,16 @@
           "from": "rel:orchestration.verification_structured_extraction",
           "to_columns": [
             "tenant_id",
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "capture_id"
+          ],
+          "constraint": "leaderboard_edition_capture_id_fkey",
+          "from": "rel:ranking.leaderboard_edition",
+          "to_columns": [
             "id"
           ]
         }
@@ -120541,6 +123478,66 @@
           "nullable": true,
           "position": 9,
           "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "leaderboard_publisher_entity_id_fkey",
+            "to": "rel:catalog.entity"
+          },
+          "generated": null,
+          "id": "col:ranking.leaderboard.publisher_entity_id",
+          "identity": null,
+          "name": "publisher_entity_id",
+          "nullable": true,
+          "position": 10,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "leaderboard_benchmark_version_id_fkey",
+            "to": "rel:catalog.entity"
+          },
+          "generated": null,
+          "id": "col:ranking.leaderboard.benchmark_version_id",
+          "identity": null,
+          "name": "benchmark_version_id",
+          "nullable": true,
+          "position": 11,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:ranking.leaderboard.source_url",
+          "identity": null,
+          "name": "source_url",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": "'{}'::jsonb",
+          "fk": null,
+          "generated": null,
+          "id": "col:ranking.leaderboard.methodology",
+          "identity": null,
+          "name": "methodology",
+          "nullable": false,
+          "position": 13,
+          "type": "jsonb"
         }
       ],
       "comment": "A named ranked view: cohort filter, metric (a stream kind) and policy are data in definition; values come from temporal.segment.",
@@ -120548,10 +123545,39 @@
         "20260826000800_ranking.sql"
       ],
       "exclusions": [],
-      "foreign_keys": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "benchmark_version_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "leaderboard_benchmark_version_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "publisher_entity_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "leaderboard_publisher_entity_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
       "grants": {
         "anon": [],
-        "app_reader": [],
+        "app_reader": [
+          "SELECT"
+        ],
         "authenticated": [],
         "control_plane": [],
         "executor_service": [
@@ -120593,6 +123619,7 @@
         "id"
       ],
       "readers": [
+        "app_reader",
         "executor_service",
         "service_role"
       ],
@@ -120725,6 +123752,48 @@
           "nullable": false,
           "position": 8,
           "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "leaderboard_edition_capture_id_fkey",
+            "to": "rel:evidence.source_capture"
+          },
+          "generated": null,
+          "id": "col:ranking.leaderboard_edition.capture_id",
+          "identity": null,
+          "name": "capture_id",
+          "nullable": true,
+          "position": 9,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:ranking.leaderboard_edition.observed_at",
+          "identity": null,
+          "name": "observed_at",
+          "nullable": true,
+          "position": 10,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": "The date the publisher shows on the board (world time), if any; observed_at is when we captured it (knowledge time).",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:ranking.leaderboard_edition.board_date",
+          "identity": null,
+          "name": "board_date",
+          "nullable": true,
+          "position": 11,
+          "type": "date"
         }
       ],
       "comment": "One frozen edition of a leaderboard: membership and knowledge head at publication.",
@@ -120733,6 +123802,19 @@
       ],
       "exclusions": [],
       "foreign_keys": [
+        {
+          "columns": [
+            "capture_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "leaderboard_edition_capture_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:evidence.source_capture",
+          "to_columns": [
+            "id"
+          ]
+        },
         {
           "columns": [
             "leaderboard_id"
@@ -120749,7 +123831,9 @@
       ],
       "grants": {
         "anon": [],
-        "app_reader": [],
+        "app_reader": [
+          "SELECT"
+        ],
         "authenticated": [],
         "control_plane": [],
         "executor_service": [
@@ -120791,6 +123875,7 @@
         "id"
       ],
       "readers": [
+        "app_reader",
         "executor_service",
         "service_role"
       ],
@@ -120946,6 +124031,48 @@
           "nullable": false,
           "position": 8,
           "type": "uuid[]"
+        },
+        {
+          "comment": "harness, reported_by, effort, tool_mode, step_budget ... as the board states them; the same conditions are on the benchmark_score segment payload.",
+          "default": "'{}'::jsonb",
+          "fk": null,
+          "generated": null,
+          "id": "col:ranking.leaderboard_entry.conditions",
+          "identity": null,
+          "name": "conditions",
+          "nullable": false,
+          "position": 9,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:ranking.leaderboard_entry.subject_label",
+          "identity": null,
+          "name": "subject_label",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "leaderboard_entry_node_id_fkey",
+            "to": "rel:content.document_node"
+          },
+          "generated": null,
+          "id": "col:ranking.leaderboard_entry.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 11,
+          "type": "uuid"
         }
       ],
       "comment": "Ranked row of an edition with the fact segments that produced the score.",
@@ -120977,6 +124104,19 @@
           "name": "leaderboard_entry_entity_id_fkey",
           "on_delete": "no action",
           "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "node_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "leaderboard_entry_node_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:content.document_node",
           "to_columns": [
             "id"
           ]
@@ -140493,7 +143633,9 @@
       "comment": "Views and functions only. The sole surface exposed to apps and agents.",
       "domain_ids": [],
       "function_ids": [
+        "fn:api.advisories_for(text,text)",
         "fn:api.changes_since(timestamptz,text[],text[],text[])",
+        "fn:api.cheapest_compute(text,text,timestamptz)",
         "fn:api.current_event_rows()",
         "fn:api.current_fact_rows()",
         "fn:api.current_relationship_rows()",
@@ -140513,6 +143655,7 @@
         "fn:api.hybrid_knowledge_search_history_1536(uuid,text,halfvec,jsonb,int4,int4,int4,int8,uuid[],timestamptz,timestamptz,timestamptz,uuid)",
         "fn:api.knowledge_head()",
         "fn:api.leaderboard(text,int4)",
+        "fn:api.leaderboard_diff(text,int4,int4)",
         "fn:api.model_offerings_at(timestamptz)",
         "fn:api.models_at(timestamptz)",
         "fn:api.modules_affected_by_release(uuid)",
@@ -140530,19 +143673,26 @@
         "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
         "fn:api.summary_evidence(uuid)",
+        "fn:api.symbol_changes(text,text,text)",
         "fn:api.talk_segments(uuid,int4,int4,text)",
         "fn:api.what_changed(uuid,int8,int8)"
       ],
       "id": "sch:api",
       "name": "api",
       "relation_ids": [
+        "rel:api.advisories",
         "rel:api.agent_skills",
+        "rel:api.api_symbols",
         "rel:api.benchmark_scores",
+        "rel:api.benchmarks",
         "rel:api.claim_candidates",
         "rel:api.claim_conflicts",
+        "rel:api.compute_devices",
+        "rel:api.compute_offerings",
         "rel:api.concepts",
         "rel:api.current_facts",
         "rel:api.current_relationships",
+        "rel:api.endpoints",
         "rel:api.entities",
         "rel:api.events",
         "rel:api.events_current",
@@ -140555,6 +143705,8 @@
         "rel:api.organizations",
         "rel:api.papers",
         "rel:api.people",
+        "rel:api.protocol_versions",
+        "rel:api.registry_listings",
         "rel:api.repositories",
         "rel:api.review_queue",
         "rel:api.software",
@@ -140667,7 +143819,8 @@
         "rel:content.unit_assertion_mapping",
         "rel:content.unit_change",
         "rel:content.unit_entity_role",
-        "rel:content.unit_kind"
+        "rel:content.unit_kind",
+        "rel:content.unit_link"
       ],
       "type_ids": []
     },
@@ -142107,6 +145260,27 @@
           "work_entity_kind": null
         },
         {
+          "axis_note": "derived from a first-party tarball; attributes record repository, release_tag, tag_filter, parser and scope",
+          "code": "api_surface",
+          "default_chunking_slug": "structural_heading",
+          "default_extraction_kinds": [
+            "entity"
+          ],
+          "default_spaces": [
+            "tool_capabilities"
+          ],
+          "default_summary_kinds": [
+            "technical"
+          ],
+          "description": "Derived document: the public API surface of one repository release (symbols parsed from the tag tarball); the tree itself is never a document (R1/R3)",
+          "family": "code",
+          "is_primary_source": true,
+          "promoted_from_census": false,
+          "published_at_is_world_time": true,
+          "status": "active",
+          "work_entity_kind": null
+        },
+        {
           "axis_note": null,
           "code": "arxiv_paper",
           "default_chunking_slug": "semantic_boundary",
@@ -142549,6 +145723,29 @@
           "work_entity_kind": "paper"
         },
         {
+          "axis_note": "primary when organizer-run; aggregator boards are T3 with per-row source labels",
+          "code": "leaderboard_page",
+          "default_chunking_slug": "structural_heading",
+          "default_extraction_kinds": [
+            "measurement",
+            "entity"
+          ],
+          "default_spaces": [
+            "benchmark_intelligence"
+          ],
+          "default_summary_kinds": [
+            "abstract",
+            "technical"
+          ],
+          "description": "A published leaderboard or benchmark results table (HTML, JSON, CSV) from an organizer or an aggregator",
+          "family": "research",
+          "is_primary_source": true,
+          "promoted_from_census": false,
+          "published_at_is_world_time": true,
+          "status": "active",
+          "work_entity_kind": null
+        },
+        {
           "axis_note": null,
           "code": "livestream_transcript",
           "default_chunking_slug": "transcript_window",
@@ -142795,6 +145992,27 @@
             "technical"
           ],
           "description": "official docs page",
+          "family": "vendor",
+          "is_primary_source": true,
+          "promoted_from_census": false,
+          "published_at_is_world_time": true,
+          "status": "active",
+          "work_entity_kind": null
+        },
+        {
+          "axis_note": "endpoints, parameters and schema components become typed units; diffs across captures are what the provider added",
+          "code": "openapi_spec",
+          "default_chunking_slug": "structural_heading",
+          "default_extraction_kinds": [
+            "entity"
+          ],
+          "default_spaces": [
+            "tool_capabilities"
+          ],
+          "default_summary_kinds": [
+            "technical"
+          ],
+          "description": "A machine-readable API description (OpenAPI 3 YAML/JSON) published by the provider",
           "family": "vendor",
           "is_primary_source": true,
           "promoted_from_census": false,
@@ -143509,7 +146727,7 @@
           "work_entity_kind": "media_work"
         }
       ],
-      "rows_sha256": "sha256:af259a9b4d3f009222d093ade5d342a8b339f71846e7c9e9f73c19f7bb75574a",
+      "rows_sha256": "sha256:acd5740bd74f1859084efe449207b17314d7895302a2caecb159f698dbfa5c41",
       "schema": "content",
       "table": "document_type"
     },
@@ -143731,6 +146949,152 @@
       "rows": [
         {
           "applicable_document_types": [
+            "security_advisory_page"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "affected_range": {
+                "type": "string"
+              },
+              "cve_id": {
+                "type": "string"
+              },
+              "cwe": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "ecosystem": {
+                "type": "string"
+              },
+              "fixed_version": {
+                "type": "string"
+              },
+              "ghsa_id": {
+                "type": "string"
+              },
+              "package": {
+                "type": "string"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ghsa_id"
+            ],
+            "type": "object"
+          },
+          "code": "advisory",
+          "description": "One security advisory record (GHSA/CVE) with the affected package, range and fix",
+          "entity_roles": [
+            "advisory",
+            "software",
+            "package"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "ghsa_id",
+            "package"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "json_pointer",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "api_surface"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "deprecated": {
+                "type": "boolean"
+              },
+              "docstring_head": {
+                "type": "string"
+              },
+              "exported_by": {
+                "type": "string"
+              },
+              "is_public": {
+                "type": "boolean"
+              },
+              "kind": {
+                "enum": [
+                  "function",
+                  "class",
+                  "method",
+                  "constant",
+                  "type",
+                  "module",
+                  "variable"
+                ],
+                "type": "string"
+              },
+              "lineno": {
+                "type": "integer"
+              },
+              "module": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "qualified_name": {
+                "type": "string"
+              },
+              "signature": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "qualified_name",
+              "kind"
+            ],
+            "type": "object"
+          },
+          "code": "api_symbol",
+          "description": "One public symbol of a library release: qualified name, kind, signature, module (R3); logical key = qualified name so unit_change across releases is the breaking-change evidence",
+          "entity_roles": [
+            "release",
+            "software",
+            "documents"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "qualified_name"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "repository",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
             "changelog",
             "release_notes",
             "github_release"
@@ -143876,8 +147240,9 @@
           "code": "docs_section",
           "description": "Documentation section",
           "entity_roles": [
+            "concept",
             "software",
-            "concept"
+            "symbol_doc"
           ],
           "is_universal": false,
           "logical_key_attributes": [
@@ -143910,25 +147275,120 @@
         },
         {
           "applicable_document_types": [
-            "model_card",
-            "system_card",
-            "product_page"
+            "openapi_spec",
+            "api_reference"
           ],
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "deprecated": {
+                "type": "boolean"
+              },
+              "family": {
+                "type": "string"
+              },
+              "has_request_body": {
+                "type": "boolean"
+              },
+              "method": {
+                "type": "string"
+              },
+              "operation_id": {
+                "type": "string"
+              },
+              "parameter_count": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "tags": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "method",
+              "path"
+            ],
+            "type": "object"
+          },
+          "code": "endpoint",
+          "description": "One API operation (method + path) of a provider API",
+          "entity_roles": [
+            "api",
+            "product_version",
+            "provider"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "method",
+            "path"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "json_pointer",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "leaderboard_page",
+            "arxiv_paper",
+            "system_card",
+            "model_card",
+            "tech_report",
+            "product_page",
+            "official_blog_post"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
             "properties": {
               "benchmark": {
+                "type": "string"
+              },
+              "benchmark_version": {
+                "type": "string"
+              },
+              "ci": {
                 "type": "string"
               },
               "comparison_model": {
                 "type": "string"
               },
+              "effort": {
+                "type": "string"
+              },
+              "harness": {
+                "type": "string"
+              },
               "model": {
+                "type": "string"
+              },
+              "n_trials": {
+                "type": "integer"
+              },
+              "reported_by": {
                 "type": "string"
               },
               "score": {
                 "type": "number"
               },
               "setting": {
+                "type": "string"
+              },
+              "source_note": {
+                "type": "string"
+              },
+              "table_heading": {
                 "type": "string"
               },
               "unit": {
@@ -143945,13 +147405,16 @@
           "description": "One benchmark result row",
           "entity_roles": [
             "model",
-            "benchmark"
+            "benchmark",
+            "harness",
+            "publisher"
           ],
           "is_universal": false,
           "logical_key_attributes": [
             "benchmark",
             "setting",
-            "model"
+            "model",
+            "reported_by"
           ],
           "parent_kinds": [
             "model_card_section",
@@ -143986,6 +147449,134 @@
           ],
           "retrieval_role": "embed",
           "selector_kind": "bounding_box",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "leaderboard_page"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "accelerator": {
+                "type": "string"
+              },
+              "accelerators_per_node": {
+                "type": "integer"
+              },
+              "benchmark": {
+                "type": "string"
+              },
+              "benchmark_version": {
+                "type": "string"
+              },
+              "ci_high": {
+                "type": "number"
+              },
+              "ci_low": {
+                "type": "number"
+              },
+              "cost_usd": {
+                "type": "number"
+              },
+              "effort": {
+                "type": "string"
+              },
+              "harness": {
+                "type": "string"
+              },
+              "harness_version": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "n_tasks": {
+                "type": "integer"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "organization": {
+                "type": "string"
+              },
+              "pass_k": {
+                "type": "integer"
+              },
+              "rank": {
+                "type": "integer"
+              },
+              "release_date": {
+                "type": "string"
+              },
+              "reported_by": {
+                "type": "string"
+              },
+              "run_date": {
+                "type": "string"
+              },
+              "scenario": {
+                "type": "string"
+              },
+              "score": {
+                "type": "number"
+              },
+              "source_label": {
+                "type": "string"
+              },
+              "source_url": {
+                "type": "string"
+              },
+              "step_budget": {
+                "type": "integer"
+              },
+              "subject_name": {
+                "type": "string"
+              },
+              "system_name": {
+                "type": "string"
+              },
+              "tool_mode": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "votes": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "subject_name",
+              "score"
+            ],
+            "type": "object"
+          },
+          "code": "leaderboard_row",
+          "description": "One ranked row of a leaderboard: subject, score, conditions as the board states them",
+          "entity_roles": [
+            "subject",
+            "benchmark",
+            "leaderboard",
+            "harness",
+            "publisher",
+            "system",
+            "device"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "benchmark",
+            "subject_name",
+            "harness"
+          ],
+          "parent_kinds": [
+            "table",
+            "section",
+            "document_root"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "table",
           "status": "active",
           "version": 1
         },
@@ -144145,6 +147736,59 @@
         },
         {
           "applicable_document_types": [
+            "leaderboard_page",
+            "arxiv_paper",
+            "framework_docs_page",
+            "official_docs_page",
+            "tech_report"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "formula": {
+                "type": "string"
+              },
+              "higher_is_better": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              },
+              "scale": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "code": "metric_definition",
+          "description": "What a metric or benchmark measures, how it is scored and which direction is better",
+          "entity_roles": [
+            "benchmark"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "name"
+          ],
+          "parent_kinds": [
+            "section",
+            "document_root"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
             "model_card",
             "system_card",
             "product_page"
@@ -144232,6 +147876,61 @@
           "version": 1
         },
         {
+          "applicable_document_types": [
+            "arxiv_paper",
+            "tech_report",
+            "conference_paper",
+            "journal_article"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "heading": {
+                "type": "string"
+              },
+              "level": {
+                "type": "integer"
+              },
+              "path": {
+                "type": "string"
+              },
+              "section_role": {
+                "enum": [
+                  "abstract",
+                  "introduction",
+                  "method",
+                  "results",
+                  "discussion",
+                  "limitations",
+                  "conclusion",
+                  "references",
+                  "appendix",
+                  "other"
+                ],
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "code": "paper_section",
+          "description": "A section of a paper or technical report (P1 keeps abstract and conclusion; P2 keeps all)",
+          "entity_roles": [
+            "paper"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "path"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
           "applicable_document_types": null,
           "attributes_schema": {
             "properties": {
@@ -144255,6 +147954,69 @@
           ],
           "retrieval_role": "embed",
           "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "openapi_spec",
+            "api_reference"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "deprecated": {
+                "type": "boolean"
+              },
+              "description": {
+                "type": "string"
+              },
+              "endpoint_key": {
+                "type": "string"
+              },
+              "location": {
+                "enum": [
+                  "path",
+                  "query",
+                  "header",
+                  "cookie",
+                  "body"
+                ],
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "schema_type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "endpoint_key",
+              "name",
+              "location"
+            ],
+            "type": "object"
+          },
+          "code": "parameter",
+          "description": "One parameter or request-body field of an endpoint",
+          "entity_roles": [
+            "api"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "endpoint_key",
+            "location",
+            "name"
+          ],
+          "parent_kinds": [
+            "endpoint"
+          ],
+          "retrieval_role": "filter",
+          "selector_kind": "json_pointer",
           "status": "active",
           "version": 1
         },
@@ -144341,9 +148103,13 @@
             "pricing_page"
           ],
           "attributes_schema": {
+            "additionalProperties": true,
             "properties": {
               "amount": {
                 "type": "number"
+              },
+              "commitment": {
+                "type": "string"
               },
               "condition": {
                 "type": "string"
@@ -144351,13 +148117,25 @@
               "currency": {
                 "type": "string"
               },
+              "effective_from": {
+                "type": "string"
+              },
+              "gpu_count": {
+                "type": "integer"
+              },
               "meter": {
                 "type": "string"
               },
               "offering": {
                 "type": "string"
               },
+              "per": {
+                "type": "string"
+              },
               "region": {
+                "type": "string"
+              },
+              "section": {
                 "type": "string"
               },
               "tier": {
@@ -144377,17 +148155,19 @@
             "type": "object"
           },
           "code": "price_row",
-          "description": "One priced meter for an offering",
+          "description": "One priced meter for an offering (model tokens, GPU-hours, sandbox vCPU-seconds); the section label is read before slot assignment (§14.7 grammar fix b)",
           "entity_roles": [
             "offering",
-            "provider"
+            "provider",
+            "device"
           ],
           "is_universal": false,
           "logical_key_attributes": [
             "offering",
             "meter",
             "tier",
-            "region"
+            "region",
+            "commitment"
           ],
           "parent_kinds": [
             "plan_section",
@@ -144474,6 +148254,148 @@
         },
         {
           "applicable_document_types": [
+            "arxiv_paper",
+            "tech_report",
+            "conference_paper",
+            "journal_article",
+            "official_blog_post",
+            "aie_talk"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "arxiv_id": {
+                "type": "string"
+              },
+              "doi": {
+                "type": "string"
+              },
+              "ordinal": {
+                "type": "integer"
+              },
+              "ref_key": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ref_key"
+            ],
+            "type": "object"
+          },
+          "code": "reference",
+          "description": "One bibliographic reference of a paper or post (becomes a cites relationship when the target resolves)",
+          "entity_roles": [
+            "paper",
+            "cited"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "ref_key"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section",
+            "list"
+          ],
+          "retrieval_role": "filter",
+          "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "registry_listing_page"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "first_party_inferred": {
+                "type": "boolean"
+              },
+              "is_latest": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              },
+              "namespace": {
+                "type": "string"
+              },
+              "package_identifiers": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "publisher": {
+                "type": "string"
+              },
+              "registry": {
+                "type": "string"
+              },
+              "registry_status": {
+                "type": "string"
+              },
+              "repository_url": {
+                "type": "string"
+              },
+              "transports": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "updated_at": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "website_url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "registry",
+              "name"
+            ],
+            "type": "object"
+          },
+          "code": "registry_listing",
+          "description": "One listing of a server/package in a registry (MCP registry server-version entry)",
+          "entity_roles": [
+            "server",
+            "registry",
+            "publisher"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "registry",
+            "name"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "json_pointer",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
             "changelog",
             "release_notes",
             "github_release"
@@ -144517,6 +148439,60 @@
           ],
           "retrieval_role": "embed",
           "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "openapi_spec",
+            "api_reference"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "property_count": {
+                "type": "integer"
+              },
+              "protocol_version": {
+                "type": "string"
+              },
+              "required": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "code": "schema_component",
+          "description": "One named schema (component) of an API description or protocol schema",
+          "entity_roles": [
+            "api",
+            "protocol_version"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "name"
+          ],
+          "parent_kinds": [
+            "document_root",
+            "section"
+          ],
+          "retrieval_role": "filter",
+          "selector_kind": "json_pointer",
           "status": "active",
           "version": 1
         },
@@ -144613,9 +148589,11 @@
             "type": "object"
           },
           "code": "spec_field",
-          "description": "A specification field of a model page (context window, cutoff, modalities, pricing)",
+          "description": "A specification field of a model page or hardware spec page (context window, cutoff, modalities, memory, bandwidth, TDP)",
           "entity_roles": [
-            "model"
+            "model",
+            "device",
+            "offering"
           ],
           "is_universal": false,
           "logical_key_attributes": [
@@ -144778,7 +148756,7 @@
             "type": "object"
           },
           "code": "talk_resource",
-          "description": "A resource link listed on a talk page (repository, paper, docs)",
+          "description": "A resource link listed on a talk page or inside a slide (repository, paper, docs); slide links are cites candidates",
           "entity_roles": [
             "references"
           ],
@@ -144787,8 +148765,9 @@
             "href"
           ],
           "parent_kinds": [
-            "document_root",
             "section",
+            "document_root",
+            "slide",
             "list"
           ],
           "retrieval_role": "filter",
@@ -144875,7 +148854,7 @@
           "version": 1
         }
       ],
-      "rows_sha256": "sha256:07b73b2e82a29a36531f732ca281c37bbd4fc8fce2fa1e2cf105c835cfa07113",
+      "rows_sha256": "sha256:78a6884e72373d59a4012d3a355ccdf039443f4a4ef6850a321d0e9794096b64",
       "schema": "content",
       "table": "unit_kind"
     },
@@ -145720,12 +149699,52 @@
         },
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "changelog_url": {
+                "type": "string"
+              },
+              "deprecates": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "highlights": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "released_on": {
+                "type": "string"
+              },
+              "schema_url": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "current",
+                  "final",
+                  "draft",
+                  "deprecated",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              "version_label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "version_label"
+            ],
             "type": "object"
           },
           "canonical_schema": "catalog",
           "canonical_table": "entity",
           "code": "ai_protocol_version",
-          "description": "ai_protocol_version",
+          "description": "One revision of a protocol (MCP 2026-07-28); status current/final/draft from the versioning page",
           "is_work": false,
           "label": "Ai Protocol Version",
           "lens": "corpus",
@@ -145735,17 +149754,45 @@
           "attributes_schema": {
             "additionalProperties": true,
             "properties": {
+              "agentic": {
+                "type": "boolean"
+              },
               "canonical_url": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "domain": {
                 "type": "string"
               },
               "higher_is_better": {
                 "type": "boolean"
               },
-              "methodology": {
-                "type": "string"
-              },
               "metric": {
                 "type": "string"
+              },
+              "organizer": {
+                "type": "string"
+              },
+              "score_type": {
+                "enum": [
+                  "accuracy",
+                  "pass_at_k",
+                  "elo_preference",
+                  "throughput",
+                  "cost",
+                  "composite_index",
+                  "latency",
+                  "other"
+                ],
+                "type": "string"
+              },
+              "scoring": {
+                "type": "string"
+              },
+              "task_count": {
+                "type": "integer"
               }
             },
             "type": "object"
@@ -145753,7 +149800,7 @@
           "canonical_schema": "catalog",
           "canonical_table": "entity",
           "code": "benchmark",
-          "description": "benchmark",
+          "description": "A benchmark (task set + metric) that scores models, agents or systems; versions/editions are benchmark_version children",
           "is_work": false,
           "label": "Benchmark",
           "lens": "corpus",
@@ -145774,6 +149821,49 @@
         },
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "canonical_url": {
+                "type": "string"
+              },
+              "changes": {
+                "type": "string"
+              },
+              "released_on": {
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "current",
+                  "archived",
+                  "superseded",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              "task_count": {
+                "type": "integer"
+              },
+              "version_label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "version_label"
+            ],
+            "type": "object"
+          },
+          "canonical_schema": "catalog",
+          "canonical_table": "entity",
+          "code": "benchmark_version",
+          "description": "One edition/cohort of a benchmark (SWE-bench Verified, Terminal-Bench 4.1, ARC-AGI-2, OSWorld v2.1); scores reference the version, never the bare benchmark",
+          "is_work": false,
+          "label": "Benchmark Version",
+          "lens": "corpus",
+          "parent_kind": "benchmark"
+        },
+        {
+          "attributes_schema": {
             "type": "object"
           },
           "canonical_schema": "catalog",
@@ -145787,12 +149877,77 @@
         },
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "announced_on": {
+                "type": "string"
+              },
+              "available_on": {
+                "type": "string"
+              },
+              "bf16_tflops": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "device_class": {
+                "enum": [
+                  "gpu",
+                  "tpu",
+                  "npu",
+                  "cpu",
+                  "system",
+                  "other"
+                ],
+                "type": "string"
+              },
+              "form_factor": {
+                "type": "string"
+              },
+              "fp4_pflops": {
+                "type": "number"
+              },
+              "fp8_tflops": {
+                "type": "number"
+              },
+              "gpus_per_system": {
+                "type": "integer"
+              },
+              "interconnect": {
+                "type": "string"
+              },
+              "interconnect_gbps": {
+                "type": "number"
+              },
+              "memory_bandwidth_tbps": {
+                "type": "number"
+              },
+              "memory_gb": {
+                "type": "number"
+              },
+              "released_on": {
+                "type": "string"
+              },
+              "sparse_figures": {
+                "type": "boolean"
+              },
+              "spec_url": {
+                "type": "string"
+              },
+              "tdp_w": {
+                "type": "number"
+              },
+              "vendor": {
+                "type": "string"
+              }
+            },
             "type": "object"
           },
           "canonical_schema": "catalog",
           "canonical_table": "entity",
           "code": "compute_device",
-          "description": "compute_device",
+          "description": "An accelerator or system (GPU, TPU, NPU, CPU or a multi-GPU system such as GB200 NVL72); specs are attributes with claim locators",
           "is_work": false,
           "label": "Compute Device",
           "lens": "corpus",
@@ -145800,12 +149955,66 @@
         },
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "billing_granularity": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "gpu_count": {
+                "type": "integer"
+              },
+              "gpu_device_slug": {
+                "type": "string"
+              },
+              "memory_gb": {
+                "type": "number"
+              },
+              "offering_class": {
+                "enum": [
+                  "instance_type",
+                  "serverless_gpu",
+                  "sandbox",
+                  "managed_cluster",
+                  "inference_endpoint",
+                  "tpu_slice",
+                  "other"
+                ],
+                "type": "string"
+              },
+              "pricing_url": {
+                "type": "string"
+              },
+              "provider_slug": {
+                "type": "string"
+              },
+              "regions": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "sku": {
+                "type": "string"
+              },
+              "storage_gb": {
+                "type": "number"
+              },
+              "vcpu": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "offering_class"
+            ],
             "type": "object"
           },
           "canonical_schema": "catalog",
           "canonical_table": "entity",
           "code": "compute_offering",
-          "description": "compute_offering",
+          "description": "A sellable compute offering: an instance type, a serverless GPU, a sandbox product, a managed cluster or an inference endpoint (offering_class), priced through offering_price",
           "is_work": false,
           "label": "Compute Offering",
           "lens": "corpus",
@@ -146014,10 +150223,34 @@
               "license": {
                 "type": "string"
               },
+              "over_cap": {
+                "type": "boolean"
+              },
+              "parser": {
+                "type": "string"
+              },
+              "parser_scope": {
+                "type": "string"
+              },
+              "prerelease": {
+                "type": "boolean"
+              },
+              "public_symbol_count": {
+                "type": "integer"
+              },
               "release_url": {
                 "type": "string"
               },
               "released_on": {
+                "type": "string"
+              },
+              "source_tarball_sha256": {
+                "type": "string"
+              },
+              "symbol_count": {
+                "type": "integer"
+              },
+              "tag": {
                 "type": "string"
               },
               "version_label": {
@@ -146048,6 +150281,9 @@
               "description": {
                 "type": "string"
               },
+              "first_party_inferred": {
+                "type": "boolean"
+              },
               "hosting": {
                 "enum": [
                   "local",
@@ -146060,6 +150296,27 @@
               "is_official": {
                 "type": "boolean"
               },
+              "latest_version": {
+                "type": "string"
+              },
+              "namespace": {
+                "type": "string"
+              },
+              "package_identifiers": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "registry_name": {
+                "type": "string"
+              },
+              "registry_status": {
+                "type": "string"
+              },
+              "repository_url": {
+                "type": "string"
+              },
               "tools": {
                 "items": {
                   "type": "string"
@@ -146071,6 +150328,9 @@
                   "type": "string"
                 },
                 "type": "array"
+              },
+              "website_url": {
+                "type": "string"
               }
             },
             "type": "object"
@@ -146305,6 +150565,21 @@
         },
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "api_url": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "registry_kind": {
+                "type": "string"
+              },
+              "website_url": {
+                "type": "string"
+              }
+            },
             "type": "object"
           },
           "canonical_schema": "catalog",
@@ -146360,12 +150635,54 @@
         },
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "affected_range": {
+                "type": "string"
+              },
+              "cve_id": {
+                "type": "string"
+              },
+              "cwe": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "ecosystem": {
+                "type": "string"
+              },
+              "fixed_version": {
+                "type": "string"
+              },
+              "ghsa_id": {
+                "type": "string"
+              },
+              "package": {
+                "type": "string"
+              },
+              "published_at": {
+                "type": "string"
+              },
+              "severity": {
+                "type": "string"
+              },
+              "summary": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
             "type": "object"
           },
           "canonical_schema": "catalog",
           "canonical_table": "entity",
           "code": "security_advisory",
-          "description": "security_advisory",
+          "description": "A published security advisory (GHSA/CVE) affecting software; the record itself, not the vulnerability concept",
           "is_work": false,
           "label": "Security Advisory",
           "lens": "corpus",
@@ -146456,7 +150773,7 @@
           "parent_kind": null
         }
       ],
-      "rows_sha256": "sha256:1f2b8f9ff88fcbc5a6bc3151247dd416ce265f826695b78c4fbcd18716b9d5b9",
+      "rows_sha256": "sha256:78939236e3e12060d61eaed0b8778d5e34c0a5df69c74199cd5e3d7a52fe8ac8",
       "schema": "taxonomy",
       "table": "entity_kind"
     },
@@ -146489,42 +150806,43 @@
           "symmetric": false,
           "temporal": false,
           "to_kinds": [
-            "person",
-            "organization",
-            "product",
-            "product_version",
-            "product_feature",
+            "media_channel",
             "ai_model",
             "ai_model_version",
-            "model_offering",
-            "technique",
-            "dataset",
-            "benchmark",
-            "benchmark_run",
-            "repository",
-            "library",
-            "library_release",
-            "mcp_server",
-            "agent_skill",
-            "ai_protocol",
-            "ai_protocol_version",
-            "ai_protocol_feature",
             "paper",
-            "media_channel",
-            "media_series",
-            "media_work",
-            "event_series",
+            "product_feature",
             "industry_event",
-            "talk",
-            "story",
+            "benchmark_run",
+            "person",
+            "benchmark_version",
+            "compute_offering",
+            "organization",
             "case_study",
-            "concept",
-            "funding_round",
-            "corporate_transaction",
             "registry",
-            "security_advisory",
+            "ai_protocol_feature",
+            "repository",
+            "product_version",
+            "benchmark",
             "compute_device",
-            "compute_offering"
+            "event_series",
+            "ai_protocol",
+            "media_series",
+            "concept",
+            "talk",
+            "agent_skill",
+            "product",
+            "story",
+            "corporate_transaction",
+            "media_work",
+            "ai_protocol_version",
+            "technique",
+            "model_offering",
+            "mcp_server",
+            "dataset",
+            "library",
+            "funding_round",
+            "library_release",
+            "security_advisory"
           ]
         },
         {
@@ -146545,10 +150863,12 @@
           "code": "affected_by_advisory",
           "description": "affected by advisory",
           "from_kinds": [
+            "ai_model",
             "library",
-            "mcp_server",
+            "repository",
             "product",
-            "ai_model"
+            "library_release",
+            "mcp_server"
           ],
           "inverse_label": null,
           "property_schema": {},
@@ -146716,7 +151036,10 @@
           "code": "cites",
           "description": "cites",
           "from_kinds": [
-            "paper"
+            "talk",
+            "story",
+            "paper",
+            "media_work"
           ],
           "inverse_label": null,
           "property_schema": {},
@@ -146994,8 +151317,9 @@
           "code": "implements_protocol",
           "description": "implements protocol",
           "from_kinds": [
-            "product",
             "library",
+            "product",
+            "library_release",
             "mcp_server"
           ],
           "inverse_label": null,
@@ -147042,42 +151366,43 @@
           "code": "instance_of_concept",
           "description": "instance of concept",
           "from_kinds": [
-            "person",
-            "organization",
-            "product",
-            "product_version",
-            "product_feature",
+            "media_channel",
             "ai_model",
             "ai_model_version",
-            "model_offering",
-            "technique",
-            "dataset",
-            "benchmark",
-            "benchmark_run",
-            "repository",
-            "library",
-            "library_release",
-            "mcp_server",
-            "agent_skill",
-            "ai_protocol",
-            "ai_protocol_version",
-            "ai_protocol_feature",
             "paper",
-            "media_channel",
-            "media_series",
-            "media_work",
-            "event_series",
+            "product_feature",
             "industry_event",
-            "talk",
-            "story",
+            "benchmark_run",
+            "person",
+            "benchmark_version",
+            "compute_offering",
+            "organization",
             "case_study",
-            "concept",
-            "funding_round",
-            "corporate_transaction",
             "registry",
-            "security_advisory",
+            "ai_protocol_feature",
+            "repository",
+            "product_version",
+            "benchmark",
             "compute_device",
-            "compute_offering"
+            "event_series",
+            "ai_protocol",
+            "media_series",
+            "concept",
+            "talk",
+            "agent_skill",
+            "product",
+            "story",
+            "corporate_transaction",
+            "media_work",
+            "ai_protocol_version",
+            "technique",
+            "model_offering",
+            "mcp_server",
+            "dataset",
+            "library",
+            "funding_round",
+            "library_release",
+            "security_advisory"
           ],
           "inverse_label": null,
           "property_schema": {},
@@ -147614,9 +151939,10 @@
           "code": "version_of",
           "description": "version of",
           "from_kinds": [
-            "product_version",
             "ai_model_version",
+            "product_version",
             "library_release",
+            "benchmark_version",
             "ai_protocol_version"
           ],
           "inverse_label": null,
@@ -147624,14 +151950,15 @@
           "symmetric": false,
           "temporal": false,
           "to_kinds": [
-            "product",
+            "ai_protocol",
             "ai_model",
             "library",
-            "ai_protocol"
+            "product",
+            "benchmark"
           ]
         }
       ],
-      "rows_sha256": "sha256:c02d807579f86c7e5a88dc4369b25f22e0c64199e33ae263d1c9f51775b59aae",
+      "rows_sha256": "sha256:55d35fc0d61717beba77a0cf2a32daa79777209b661cdc51f32644bf903b7dfe",
       "schema": "taxonomy",
       "table": "relationship_kind"
     },
@@ -149498,13 +153825,59 @@
       "rows": [
         {
           "code": "benchmark_score",
-          "description": "A benchmark result: subject version, ref benchmark, amount+unit, setting and who measured it (first-party self-report vs third party)",
+          "description": "A benchmark result: subject (model version, product version, library release or compute system), ref benchmark_version (or benchmark), amount+unit, and the conditions that make it comparable; scope_key = benchmark_version|harness|setting|reported_by so organizer-run, self-reported and third-party numbers coexist",
           "payload_schema": {
+            "additionalProperties": true,
             "properties": {
+              "attempts": {
+                "type": "integer"
+              },
+              "benchmark_version": {
+                "type": "string"
+              },
+              "ci_high": {
+                "type": "number"
+              },
+              "ci_low": {
+                "type": "number"
+              },
               "comparison": {
                 "type": "string"
               },
+              "context_tokens": {
+                "type": "integer"
+              },
+              "cost_usd": {
+                "type": "number"
+              },
               "harness": {
+                "type": "string"
+              },
+              "harness_version": {
+                "type": "string"
+              },
+              "n_tasks": {
+                "type": "integer"
+              },
+              "pass_k": {
+                "type": "integer"
+              },
+              "reasoning_effort": {
+                "type": "string"
+              },
+              "reported_by": {
+                "enum": [
+                  "organizer",
+                  "self_reported",
+                  "third_party",
+                  "own"
+                ],
+                "type": "string"
+              },
+              "run_date": {
+                "type": "string"
+              },
+              "scenario": {
                 "type": "string"
               },
               "setting": {
@@ -149517,12 +153890,25 @@
                   "own"
                 ],
                 "type": "string"
+              },
+              "source_note": {
+                "type": "string"
+              },
+              "step_budget": {
+                "type": "integer"
+              },
+              "tool_mode": {
+                "type": "string"
+              },
+              "tools": {
+                "type": "string"
               }
             },
             "type": "object"
           },
           "ref_entity_kinds": [
-            "benchmark"
+            "benchmark",
+            "benchmark_version"
           ],
           "requires_amount": true,
           "requires_ref_entity": true,
@@ -149530,35 +153916,23 @@
           "subject_kinds": [
             "ai_model_version",
             "product_version",
-            "library_release"
-          ],
-          "subject_mode": "entity",
-          "unit_values": [
-            "percent",
-            "score",
-            "elo",
-            "pass_at_1",
-            "seconds",
-            "usd",
-            "count"
-          ]
-        },
-        {
-          "code": "compute_offering_price",
-          "description": "compute offering price",
-          "payload_schema": {},
-          "ref_entity_kinds": null,
-          "requires_amount": true,
-          "requires_ref_entity": false,
-          "status_values": null,
-          "subject_kinds": [
+            "paper",
+            "library_release",
+            "compute_device",
             "compute_offering"
           ],
           "subject_mode": "entity",
           "unit_values": [
-            "per_hour",
-            "per_month",
-            "spot_per_hour"
+            "pass_at_1",
+            "tokens_per_second",
+            "usd",
+            "ms",
+            "samples_per_second",
+            "score",
+            "seconds",
+            "count",
+            "elo",
+            "percent"
           ]
         },
         {
@@ -149849,26 +154223,6 @@
           "unit_values": null
         },
         {
-          "code": "model_offering_limit",
-          "description": "model offering limit",
-          "payload_schema": {},
-          "ref_entity_kinds": null,
-          "requires_amount": true,
-          "requires_ref_entity": false,
-          "status_values": null,
-          "subject_kinds": [
-            "model_offering"
-          ],
-          "subject_mode": "entity",
-          "unit_values": [
-            "context_tokens",
-            "max_output_tokens",
-            "rpm",
-            "tpm",
-            "batch_size"
-          ]
-        },
-        {
           "code": "model_version_spec",
           "description": "model version spec",
           "payload_schema": {},
@@ -149883,20 +154237,108 @@
           "unit_values": null
         },
         {
-          "code": "offering_price",
-          "description": "Price of one meter of an offering (input_tokens, output_tokens, cached_input_tokens, batch_input_tokens ...); scope_key = meter|tier|region; amount+currency+unit normalized; observation_bounded from the capture",
+          "code": "offering_limit",
+          "description": "A stated limit of an offering (max session duration, concurrency, memory, rate limits); scope_key = limit_name|plan",
           "payload_schema": {
+            "additionalProperties": true,
             "properties": {
+              "condition": {
+                "type": "string"
+              },
+              "limit_name": {
+                "type": "string"
+              },
+              "plan": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "limit_name"
+            ],
+            "type": "object"
+          },
+          "ref_entity_kinds": null,
+          "requires_amount": true,
+          "requires_ref_entity": false,
+          "status_values": null,
+          "subject_kinds": [
+            "model_offering",
+            "compute_offering"
+          ],
+          "subject_mode": "entity",
+          "unit_values": [
+            "context_tokens",
+            "max_output_tokens",
+            "rpm",
+            "tpm",
+            "batch_size",
+            "seconds",
+            "minutes",
+            "hours",
+            "count",
+            "GiB",
+            "vcpu",
+            "GB"
+          ]
+        },
+        {
+          "code": "offering_price",
+          "description": "Price of one meter of an offering (input_tokens, output_tokens, gpu_hour, vcpu_second, gib_second ...); scope_key = meter|tier|region|commitment; amount+currency+unit normalized; observation_bounded from the capture unless the page states an effective date",
+          "payload_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "commitment": {
+                "enum": [
+                  "on_demand",
+                  "spot",
+                  "preemptible",
+                  "reserved_1y",
+                  "reserved_3y",
+                  "reserved",
+                  "flex_start",
+                  "calendar",
+                  "unknown"
+                ],
+                "type": "string"
+              },
               "condition": {
                 "type": "string"
               },
               "context_band": {
                 "type": "string"
               },
+              "effective_from": {
+                "type": "string"
+              },
+              "gpu_count": {
+                "type": "integer"
+              },
+              "interruptible": {
+                "type": "boolean"
+              },
               "meter": {
                 "type": "string"
               },
+              "per": {
+                "enum": [
+                  "gpu",
+                  "node",
+                  "instance",
+                  "sandbox",
+                  "chip",
+                  "vcpu",
+                  "gib",
+                  "unit"
+                ],
+                "type": "string"
+              },
               "region": {
+                "type": "string"
+              },
+              "section": {
+                "type": "string"
+              },
+              "source_role": {
                 "type": "string"
               },
               "tier": {
@@ -149918,14 +154360,25 @@
           ],
           "subject_mode": "entity",
           "unit_values": [
-            "USD_per_1M_tokens",
-            "USD_per_1K_tokens",
-            "USD_per_request",
+            "USD_per_1K_images",
+            "USD_per_GB_month",
             "USD_per_minute",
+            "USD_per_1M_creations",
             "USD_per_image",
-            "USD_per_hour",
+            "USD_per_GiB_second",
+            "USD_per_GB_hour",
+            "USD_per_month",
             "USD_per_GB",
-            "USD_per_month"
+            "USD_per_1K_tokens",
+            "USD_per_hour",
+            "USD_per_node_hour",
+            "USD_per_GPU_hour",
+            "USD_per_vcpu_second",
+            "USD_per_1M_tokens",
+            "USD_per_chip_hour",
+            "USD_per_vcpu_hour",
+            "USD_per_request",
+            "USD_per_sandbox_hour"
           ]
         },
         {
@@ -150309,7 +154762,7 @@
           "unit_values": null
         }
       ],
-      "rows_sha256": "sha256:4555e99c04e4b483f2db4565ca7a288583ba1669f1d4158fd550b6a0645b7791",
+      "rows_sha256": "sha256:e9aa4edc86ebb9daf511a0ceae56c6c04ac34907fb092c140f2ef3bf98c283c1",
       "schema": "temporal",
       "table": "stream_kind"
     }
@@ -150323,14 +154776,20 @@
       "rel:access.processing_authorization": "unknown",
       "rel:access.provided_credential": "unknown",
       "rel:access.source_restriction": "unknown",
-      "rel:acquisition.fetch": "unknown",
+      "rel:acquisition.fetch": "small",
+      "rel:api.advisories": "unknown",
       "rel:api.agent_skills": "unknown",
+      "rel:api.api_symbols": "unknown",
       "rel:api.benchmark_scores": "unknown",
+      "rel:api.benchmarks": "unknown",
       "rel:api.claim_candidates": "unknown",
       "rel:api.claim_conflicts": "unknown",
+      "rel:api.compute_devices": "unknown",
+      "rel:api.compute_offerings": "unknown",
       "rel:api.concepts": "unknown",
       "rel:api.current_facts": "unknown",
       "rel:api.current_relationships": "unknown",
+      "rel:api.endpoints": "unknown",
       "rel:api.entities": "unknown",
       "rel:api.events": "unknown",
       "rel:api.events_current": "unknown",
@@ -150343,6 +154802,8 @@
       "rel:api.organizations": "unknown",
       "rel:api.papers": "unknown",
       "rel:api.people": "unknown",
+      "rel:api.protocol_versions": "unknown",
+      "rel:api.registry_listings": "unknown",
       "rel:api.repositories": "unknown",
       "rel:api.review_queue": "unknown",
       "rel:api.software": "unknown",
@@ -150370,35 +154831,35 @@
       "rel:authoring.workspace": "unknown",
       "rel:authoring.workspace_member": "unknown",
       "rel:catalog.distribution_kind": "unknown",
-      "rel:catalog.entity": "small",
+      "rel:catalog.entity": "medium",
       "rel:catalog.entity_alias": "unknown",
       "rel:catalog.entity_identifier": "unknown",
       "rel:catalog.entity_merge": "unknown",
       "rel:catalog.license": "unknown",
       "rel:catalog.media_platform": "unknown",
-      "rel:catalog.relationship": "small",
-      "rel:catalog.work": "unknown",
+      "rel:catalog.relationship": "medium",
+      "rel:catalog.work": "small",
       "rel:content.conversion_evaluation": "unknown",
       "rel:content.conversion_finding": "unknown",
-      "rel:content.digest_item": "small",
-      "rel:content.document": "unknown",
+      "rel:content.digest_item": "medium",
+      "rel:content.document": "small",
       "rel:content.document_about_entity": "unknown",
       "rel:content.document_digest": "unknown",
       "rel:content.document_identifier": "unknown",
-      "rel:content.document_kind_assignment": "unknown",
+      "rel:content.document_kind_assignment": "small",
       "rel:content.document_node": "medium",
       "rel:content.document_node_edge": "unknown",
-      "rel:content.document_representation": "unknown",
+      "rel:content.document_representation": "small",
       "rel:content.document_summary": "unknown",
       "rel:content.document_summary_source": "unknown",
       "rel:content.document_type": "unknown",
-      "rel:content.document_version": "unknown",
-      "rel:content.document_version_source_capture": "unknown",
+      "rel:content.document_version": "small",
+      "rel:content.document_version_source_capture": "small",
       "rel:content.format": "unknown",
       "rel:content.refresh_check": "unknown",
       "rel:content.representation_decision": "unknown",
       "rel:content.source_role": "unknown",
-      "rel:content.structure_census": "unknown",
+      "rel:content.structure_census": "small",
       "rel:content.transformation_input": "unknown",
       "rel:content.transformation_kind": "unknown",
       "rel:content.transformation_output": "unknown",
@@ -150407,6 +154868,7 @@
       "rel:content.unit_change": "small",
       "rel:content.unit_entity_role": "medium",
       "rel:content.unit_kind": "unknown",
+      "rel:content.unit_link": "small",
       "rel:conversation.context_item": "unknown",
       "rel:conversation.context_snapshot": "unknown",
       "rel:conversation.message": "unknown",
@@ -150455,25 +154917,25 @@
       "rel:evaluation.verification_benchmark_run": "unknown",
       "rel:evidence.attribution": "unknown",
       "rel:evidence.capture_method": "unknown",
-      "rel:evidence.claim": "small",
+      "rel:evidence.claim": "medium",
       "rel:evidence.claim_conflict": "unknown",
-      "rel:evidence.claim_evidence_link": "small",
+      "rel:evidence.claim_evidence_link": "medium",
       "rel:evidence.claim_record": "unknown",
-      "rel:evidence.claim_subject": "small",
+      "rel:evidence.claim_subject": "medium",
       "rel:evidence.claim_type": "unknown",
       "rel:evidence.conflict_reconciliation": "unknown",
       "rel:evidence.degraded_assurance": "unknown",
-      "rel:evidence.extraction_record": "small",
-      "rel:evidence.extraction_run": "unknown",
+      "rel:evidence.extraction_record": "medium",
+      "rel:evidence.extraction_run": "small",
       "rel:evidence.extraction_signature": "unknown",
       "rel:evidence.locator": "medium",
       "rel:evidence.provider_result": "unknown",
       "rel:evidence.revalidation_event": "unknown",
       "rel:evidence.revalidation_policy": "unknown",
       "rel:evidence.search_provider": "unknown",
-      "rel:evidence.segment_support": "small",
+      "rel:evidence.segment_support": "medium",
       "rel:evidence.source": "small",
-      "rel:evidence.source_capture": "unknown",
+      "rel:evidence.source_capture": "small",
       "rel:evidence.source_encounter": "unknown",
       "rel:evidence.source_provider_attempt": "unknown",
       "rel:evidence.source_query": "unknown",
@@ -150570,7 +155032,7 @@
       "rel:orchestration.work_item_kind": "unknown",
       "rel:ranking.leaderboard": "unknown",
       "rel:ranking.leaderboard_edition": "unknown",
-      "rel:ranking.leaderboard_entry": "unknown",
+      "rel:ranking.leaderboard_entry": "small",
       "rel:retrieval.authorized_publication_execution": "unknown",
       "rel:retrieval.chunk_claim_link": "unknown",
       "rel:retrieval.chunk_edge": "unknown",
@@ -150626,12 +155088,12 @@
       "rel:temporal.event_occurrence": "unknown",
       "rel:temporal.extent": "small",
       "rel:temporal.knowledge_batch": "unknown",
-      "rel:temporal.knowledge_head": "unknown",
+      "rel:temporal.knowledge_head": "small",
       "rel:temporal.segment": "medium",
       "rel:temporal.stream": "medium",
       "rel:temporal.stream_kind": "small",
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+  "workspace_fingerprint": "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 }

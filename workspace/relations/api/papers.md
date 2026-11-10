@@ -6,19 +6,19 @@ name: papers
 domain: api-surface
 lens: corpus
 aliases: []
-tokens: [api, papers, api.papers, paper_id, title, arxiv_id, doi, published_at, canonical_url, authors, publishers, repositories, techniques, talks_about, citations, abstract]
-summary: "L1: papers with identifiers, authors, code repositories, techniques introduced and the talks that discuss them."
+tokens: [api, papers, api.papers, paper_id, title, arxiv_id, doi, published_at, canonical_url, authors, publishers, repositories, techniques, talks_about, cited_by_count, cites_count, citations, abstract, ingestion_level, promotion, document_id, document_type_code, publication_form]
+summary: "L1: papers with authors, code, citing talks/papers, cited papers and the ingestion level (P0 reference / P1 digest / P2 full) with its recorded promotion decision (document linked through document_about_entity role primary)."
 summary_basis: comment
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"papers\"][\"Row\"]"
-defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261109130000_build08_loop2_numbers_compute_apis.sql", "20261109130100_build08_loop2_fixups.sql", "20261109130200_build08_loop2_fixups2.sql", part4_views_seeds.sql]
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # api.papers
 
-view in domain `api-surface`, lens `corpus` — L1: papers with identifiers, authors, code repositories, techniques introduced and the talks that discuss them..
+view in domain `api-surface`, lens `corpus` — L1: papers with authors, code, citing talks/papers, cited papers and the ingestion level (P0 reference / P1 digest / P2 full) with its recorded promotion decision (document linked through document_about_entity role primary)..
 
 ## Columns
 
@@ -35,8 +35,15 @@ view in domain `api-surface`, lens `corpus` — L1: papers with identifiers, aut
 | 9 | `repositories` | `text[]` | yes | — | — |
 | 10 | `techniques` | `text[]` | yes | — | — |
 | 11 | `talks_about` | `bigint` | yes | — | — |
-| 12 | `citations` | `numeric` | yes | — | — |
-| 13 | `abstract` | `text` | yes | — | — |
+| 12 | `cited_by_count` | `bigint` | yes | — | — |
+| 13 | `cites_count` | `bigint` | yes | — | — |
+| 14 | `citations` | `numeric` | yes | — | — |
+| 15 | `abstract` | `text` | yes | — | — |
+| 16 | `ingestion_level` | `text` | yes | — | — |
+| 17 | `promotion` | `jsonb` | yes | — | — |
+| 18 | `document_id` | `uuid` | yes | — | — |
+| 19 | `document_type_code` | `text` | yes | — | — |
+| 20 | `publication_form` | `text` | yes | — | — |
 
 ## Constraints
 
@@ -80,4 +87,4 @@ See [details](papers.details.md).
 
 row: `Database["api"]["Views"]["papers"]["Row"]`
 
-Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `part4_views_seeds.sql`.
+Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `20261109130000_build08_loop2_numbers_compute_apis.sql`, `20261109130100_build08_loop2_fixups.sql`, `20261109130200_build08_loop2_fixups2.sql`, `part4_views_seeds.sql`.

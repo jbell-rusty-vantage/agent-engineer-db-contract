@@ -10,7 +10,7 @@ tasks: [admit-support-for-claim, check-knowledge-head, compare-models, compose-i
 summary: A fact is a segment on a stream with a world interval and a knowledge interval; one home for every number.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # Temporal facts (two clocks)
 

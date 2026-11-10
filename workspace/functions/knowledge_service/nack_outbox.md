@@ -13,7 +13,7 @@ raises: [error class or retry delay is invalid, stale or foreign outbox claim, v
 touches: { reads: [], writes: [knowledge_service.outbox] }
 tokens: [knowledge_service, nack_outbox, knowledge_service.nack_outbox]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # knowledge_service.nack_outbox
 

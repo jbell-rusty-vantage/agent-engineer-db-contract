@@ -10,7 +10,7 @@ tasks: [what-changed-since]
 summary: Every fetch is a ledger row before it becomes a capture; refreshes record unchanged/changed/failed even when nothing moved.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # Acquisition and refresh
 

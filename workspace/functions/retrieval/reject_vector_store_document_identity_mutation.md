@@ -13,7 +13,7 @@ raises: [vector store document identity is immutable]
 touches: { reads: [], writes: [] }
 tokens: [retrieval, reject_vector_store_document_identity_mutation, retrieval.reject_vector_store_document_identity_mutation]
 defined_in: ["20260904013000_vector_store_document_operation_provenance.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # retrieval.reject_vector_store_document_identity_mutation
 

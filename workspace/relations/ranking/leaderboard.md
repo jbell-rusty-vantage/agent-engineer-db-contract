@@ -6,15 +6,15 @@ name: leaderboard
 domain: ranking
 lens: corpus
 aliases: [leaderboard definition]
-tokens: [ranking, leaderboard, ranking.leaderboard, id, tenant_id, slug, created_at, title, definition, description]
+tokens: [ranking, leaderboard, ranking.leaderboard, id, tenant_id, slug, created_at, title, definition, description, publisher_entity_id, benchmark_version_id, source_url, methodology]
 summary: "A named ranked view whose cohort, metric (a stream kind) and policy are data; values come from temporal.segment."
 summary_basis: curated
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, executor_service, service_role]
 writers: []
 typescript: "Database[\"ranking\"][\"Tables\"][\"leaderboard\"][\"Row\"]"
 defined_in: ["20260826000800_ranking.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # ranking.leaderboard
 
@@ -33,6 +33,10 @@ table in domain `ranking`, lens `corpus` — A named ranked view: cohort filter,
 | 7 | `title` | `text` | no | `''::text` | — |
 | 8 | `definition` | `jsonb` | no | `'{}'::jsonb` | _curated:_ cohort filter, metric stream kind, policy. |
 | 9 | `description` | `text` | yes | — | — |
+| 10 | `publisher_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
+| 11 | `benchmark_version_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
+| 12 | `source_url` | `text` | yes | — | — |
+| 13 | `methodology` | `jsonb` | no | `'{}'::jsonb` | — |
 
 ## Constraints
 
@@ -41,7 +45,7 @@ table in domain `ranking`, lens `corpus` — A named ranked view: cohort filter,
 
 ## Relationships
 
-Outbound: none.
+Outbound: `benchmark_version_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `publisher_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
 Inbound: [`ranking.leaderboard_edition`](leaderboard_edition.md).leaderboard_id.
 
 ## Indexes
@@ -59,12 +63,12 @@ Enabled.
 
 ## Grants
 
-`executor_service`: SELECT; `service_role`: SELECT. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `executor_service`: SELECT; `service_role`: SELECT. None: `anon`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Read paths
 
 - Named queries: `q:ranking.leaderboard`.
-- Direct SELECT: `executor_service`.
+- Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path
 

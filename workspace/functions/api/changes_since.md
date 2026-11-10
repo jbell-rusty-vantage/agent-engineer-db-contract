@@ -12,8 +12,8 @@ executors: [anon, app_reader, authenticated, control_plane, executor_service, pi
 raises: []
 touches: { reads: [catalog.entity, content.document, content.document_node, content.document_version, content.unit_change, temporal.event, temporal.event_occurrence, temporal.knowledge_batch, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, changes_since, api.changes_since]
-defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261109130000_build08_loop2_numbers_compute_apis.sql", part4_views_seeds.sql]
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # api.changes_since
 
@@ -21,7 +21,7 @@ Domain `api-surface`, lens `corpus`.
 
 ## changes_since(timestamp with time zone, text[], text[], text[]) → TABLE(change_source text, change_kind text, learned_at timestamp with time zone, knowledge_seq bigint, world_from timestamp with time zone, subject_entity_id uuid, subject text, stream_kind text, scope_key text, old_value jsonb, new_value jsonb, document_id uuid, document_title text, logical_key text, unit_kind text, changed_attributes jsonb, claim_id uuid)
 
-function, stable, security definer, language sql, config `search_path=""`. L2 both clocks: what changed since a date, as facts opened/replaced (with the old value), events, and unit-level diffs of refreshed documents; learned_at is when we recorded it, world_from is when it holds in the world.
+function, stable, security definer, language sql, config `search_path=""`. L2 both clocks: facts opened/replaced, events and unit changes learned after p_since; format-only unit changes (same content, different representation format) are excluded (§14.7 fix a).
 
 | Argument | Type | Default | Mode |
 | --- | --- | --- | --- |
@@ -38,4 +38,4 @@ Named queries: `q:facts.changes_since`.
 
 TypeScript: `Database["api"]["Functions"]["changes_since"]`.
 
-Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `part4_views_seeds.sql`.
+Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `20261109130000_build08_loop2_numbers_compute_apis.sql`, `part4_views_seeds.sql`.

@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_about_entity\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.document_about_entity
 
@@ -61,8 +61,8 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:catalog.talks`, `q:content.talk_segments`.
-- Exposed through: [`api.talks`](../api/talks.md).
+- Named queries: `q:catalog.papers`, `q:catalog.talks`, `q:content.talk_segments`.
+- Exposed through: [`api.papers`](../api/papers.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -13,7 +13,7 @@ raises: [authoring.work_revision is append-only, purge may change only body and 
 touches: { reads: [authoring.work_revision], writes: [] }
 tokens: [product, guard_revision, product.guard_revision]
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # product.guard_revision
 

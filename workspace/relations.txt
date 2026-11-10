@@ -9,13 +9,19 @@ access.source_restriction
 # acquisition  lens=corpus
 acquisition.fetch
 # api (views)  lens=corpus
+api.advisories  # view
 api.agent_skills  # view
+api.api_symbols  # view
 api.benchmark_scores  # view
+api.benchmarks  # view
 api.claim_candidates  # view
 api.claim_conflicts  # view
+api.compute_devices  # view
+api.compute_offerings  # view
 api.concepts  # view
 api.current_facts  # view
 api.current_relationships  # view
+api.endpoints  # view
 api.entities  # view
 api.events  # view
 api.events_current  # view
@@ -28,6 +34,8 @@ api.models  # view
 api.organizations  # view
 api.papers  # view
 api.people  # view
+api.protocol_versions  # view
+api.registry_listings  # view
 api.repositories  # view
 api.review_queue  # view
 api.software  # view
@@ -95,6 +103,7 @@ content.unit_assertion_mapping
 content.unit_change
 content.unit_entity_role
 content.unit_kind
+content.unit_link
 # conversation  lens=private
 conversation.context_item
 conversation.context_snapshot

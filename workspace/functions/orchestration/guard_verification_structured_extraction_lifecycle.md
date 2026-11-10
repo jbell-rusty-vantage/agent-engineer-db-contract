@@ -13,7 +13,7 @@ raises: [structured extraction candidate semantic binding mismatch, structured e
 touches: { reads: [evidence.source_capture, knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt, orchestration.verification_provider_response_capture], writes: [] }
 tokens: [orchestration, guard_verification_structured_extraction_lifecycle, orchestration.guard_verification_structured_extraction_lifecycle]
 defined_in: ["20260906031700_verification_structured_extraction_lifecycle.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # orchestration.guard_verification_structured_extraction_lifecycle
 

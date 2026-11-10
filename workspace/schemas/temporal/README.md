@@ -6,7 +6,7 @@ lens: corpus
 domains: [temporal-facts]
 relations: 9
 functions: 17
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # temporal
 
@@ -19,7 +19,7 @@ Lens `corpus`. Domains: [`temporal-facts`](../../domains/temporal-facts.md).
 | [`event_occurrence`](../../relations/temporal/event_occurrence.md) | table | unknown | K-stamped occurrence of an event (actual, scheduled, or cancelled). | → `temporal.event`, → `temporal.extent`, → `evidence.claim` |
 | [`extent`](../../relations/temporal/extent.md) | table | small | Source text for a date with precision and optional earliest/latest bounds. | → `evidence.locator` |
 | [`knowledge_batch`](../../relations/temporal/knowledge_batch.md) | table | unknown | One sealed admission transaction with receipt, idempotency key, and input digest. | → `knowledge_service.operation`, → `orchestration.operation_receipt` |
-| [`knowledge_head`](../../relations/temporal/knowledge_head.md) | table | unknown | One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an o… | — |
+| [`knowledge_head`](../../relations/temporal/knowledge_head.md) | table | small | One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an o… | — |
 | [`segment`](../../relations/temporal/segment.md) | table | medium | A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to). One ho… | → `temporal.event`, → `temporal.extent`, → `evidence.claim`, → `catalog.entity` |
 | [`stream`](../../relations/temporal/stream.md) | table | medium | Identity of a fact series, unique on kind, subject, and scope_key. | → `temporal.stream_kind`, → `catalog.entity`, → `catalog.relationship` |
 | [`stream_kind`](../../relations/temporal/stream_kind.md) | table | small | Slot rules for a fact series (subject kinds, status values, units, payload schema); offer… | — |

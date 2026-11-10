@@ -60,7 +60,7 @@
       "scripts/schema-workspace/lib/validate.mjs": "cdb457c4797b78b6feb173bb1e49ef1f9ba21d51c5b32fdeebb25ed6ff689312",
       "scripts/schema-workspace/README.md": "a55b40c783afa83ef79f2f64f2613cb7c33eba8aa0f4e9a32108334346ffb3de",
       "scripts/schema-workspace/test/helpers.test.mjs": "0551367c902bce871b9682b8e3a883ef4e839e71326244d35cb7574a680ba27d",
-      "src/api.ts": "baa3e11aa788ab0e6ddccb6eac78919618398ed18440cfffd6545f21fbdacb14",
+      "src/api.ts": "25993e2a0a3afa6f351e00d68bd67f6be07db4da1e4a8caf917fb985eac6b3ca",
       "src/index.ts": "d940fa0c5211020fae288e31b5108b4974609ddc9da29b98a926f1f41b9a1572",
       "supabase/config.toml": "d08bc818a526927d776192c96919ef37eb85352088a02ebfacbdcd87bb7fd509",
       "supabase/tests/legacy_verification_withdrawal.sql": "3c0120fc9d6ab78a432938b8079dc771aac5cab3151f853bae08a87acc4285fa",

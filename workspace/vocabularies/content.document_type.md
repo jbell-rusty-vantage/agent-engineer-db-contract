@@ -3,14 +3,14 @@ id: "voc:content.document_type"
 kind: vocabulary
 schema: content
 name: document_type
-rows: 60
-rows_sha256: "sha256:af259a9b4d3f009222d093ade5d342a8b339f71846e7c9e9f73c19f7bb75574a"
-codes: [agent_skill_manifest, aie_talk, analysis_post, api_reference, arxiv_paper, changelog, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, job_posting, journal_article, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+rows: 63
+rows_sha256: "sha256:acd5740bd74f1859084efe449207b17314d7895302a2caecb159f698dbfa5c41"
+codes: [agent_skill_manifest, aie_talk, analysis_post, api_reference, api_surface, arxiv_paper, changelog, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, job_posting, journal_article, leaderboard_page, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, openapi_spec, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.document_type
 
-Reference data snapshot (60 rows, digest `sha256:af259a9b4d3f009222d093ade5d342a8b339f71846e7c9e9f73c19f7bb75574a`). Codes are enforced wherever a column has a foreign key to [`content.document_type`](../relations/content/document_type.md).
+Reference data snapshot (63 rows, digest `sha256:acd5740bd74f1859084efe449207b17314d7895302a2caecb159f698dbfa5c41`). Codes are enforced wherever a column has a foreign key to [`content.document_type`](../relations/content/document_type.md).
 
 | code | axis_note | default_chunking_slug | default_extraction_kinds | default_spaces | default_summary_kinds | description | family | is_primary_source | promoted_from_census | published_at_is_world_time | status | work_entity_kind |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -18,6 +18,7 @@ Reference data snapshot (60 rows, digest `sha256:af259a9b4d3f009222d093ade5d342a
 | `aie_talk` | — | transcript_window | claim, entity, relationship | units, digests | abstract, key_claims, timeline | An ai.engineer talk page: write-up, resources, slides with timecodes and a timestamped transcript without speaker label… | event_media | yes | no | yes | active | talk |
 | `analysis_post` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | analysis post | editorial | no | no | yes | active | story |
 | `api_reference` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | api reference | vendor | yes | no | yes | active | — |
+| `api_surface` | derived from a first-party tarball; attributes record repository, release_tag, tag_filter, parser and scope | structural_heading | entity | tool_capabilities | technical | Derived document: the public API surface of one repository release (symbols parsed from the tag tarball); the tree itse… | code | yes | no | yes | active | — |
 | `arxiv_paper` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | arxiv paper | research | yes | no | yes | active | paper |
 | `changelog` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | changelog | vendor | yes | no | yes | active | — |
 | `conference_paper` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | conference paper | research | yes | no | yes | active | paper |
@@ -36,6 +37,7 @@ Reference data snapshot (60 rows, digest `sha256:af259a9b4d3f009222d093ade5d342a
 | `investor_letter` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | investor letter | market | yes | no | yes | active | — |
 | `job_posting` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | job posting | market | yes | no | yes | active | — |
 | `journal_article` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | journal article | research | yes | no | yes | active | paper |
+| `leaderboard_page` | primary when organizer-run; aggregator boards are T3 with per-row source labels | structural_heading | measurement, entity | benchmark_intelligence | abstract, technical | A published leaderboard or benchmark results table (HTML, JSON, CSV) from an organizer or an aggregator | research | yes | no | yes | active | — |
 | `livestream_transcript` | — | transcript_window | claim, entity, relationship | source_native_sections, engineering_claims | abstract, timeline, entity_centric | livestream transcript | media_transcript | yes | no | yes | active | media_work |
 | `market_report` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | market report | market | yes | no | yes | active | — |
 | `mcp_server_manifest` | — | structural_heading | claim, entity, relationship | source_native_sections, implementation_examples, tool_capabilities | abstract, technical | mcp server manifest | code | yes | no | yes | active | — |
@@ -46,6 +48,7 @@ Reference data snapshot (60 rows, digest `sha256:af259a9b4d3f009222d093ade5d342a
 | `notebook` | — | structural_heading | claim, entity, relationship | source_native_sections, implementation_examples, tool_capabilities | abstract, technical | notebook | code | yes | no | yes | active | — |
 | `official_blog_post` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | official blog post | vendor | yes | no | yes | active | — |
 | `official_docs_page` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | official docs page | vendor | yes | no | yes | active | — |
+| `openapi_spec` | endpoints, parameters and schema components become typed units; diffs across captures are what the provider added | structural_heading | entity | tool_capabilities | technical | A machine-readable API description (OpenAPI 3 YAML/JSON) published by the provider | vendor | yes | no | yes | active | — |
 | `package_manifest` | — | structural_heading | claim, entity, relationship | source_native_sections, implementation_examples, tool_capabilities | abstract, technical | package manifest | code | yes | no | yes | active | — |
 | `package_version_page` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | package version page | registry | yes | no | yes | active | — |
 | `patent` | — | semantic_boundary | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | patent | regulatory_filing | yes | no | yes | active | — |

@@ -13,7 +13,7 @@ raises: [provider attempt operation scope is immutable, verification provider at
 touches: { reads: [], writes: [] }
 tokens: [orchestration, verification_provider_attempt_scope_guard, orchestration.verification_provider_attempt_scope_guard]
 defined_in: ["20260906031300_verification_provider_operation_scope.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # orchestration.verification_provider_attempt_scope_guard
 

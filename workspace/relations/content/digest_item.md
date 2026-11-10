@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"digest_item\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part2_content.sql]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.digest_item
 
@@ -30,7 +30,7 @@ table in domain `content`, lens `corpus` — One digest item: a key point, an en
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | — |
 | 3 | `digest_id` | `uuid` | no | — | unique (digest_id, ordinal); FK → [`content.document_digest`](document_digest.md).id |
 | 4 | `ordinal` | `integer` | no | — | unique (digest_id, ordinal) |
-| 5 | `item_kind` | `text` | no | — | _curated:_ key_point, entity_role, assertion, change, open_question, limitation, research_direction. |
+| 5 | `item_kind` | `text` | no | — | key_point \| entity_role \| assertion_ref \| change \| open_question \| limitation \| research_direction \| problem \| method \| key_result \| artifact \| practitioner_change (the last five are the P1 structured paper digest of Build 08 §15.3).; _curated:_ key_point, entity_role, assertion, change, open_question, limitation, research_direction. |
 | 6 | `text` | `text` | yes | — | — |
 | 7 | `payload` | `jsonb` | no | `'{}'::jsonb` | — |
 | 8 | `node_ids` | `uuid[]` | no | `'{}'::uuid[]` | _curated:_ content.document_node ids the item is anchored to; cite these, not the text. |

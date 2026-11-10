@@ -13,7 +13,7 @@ raises: [capture must bind a same-tenant registered source artifact with matchin
 touches: { reads: [evidence.source, orchestration.artifact], writes: [] }
 tokens: [evidence, validate_capture_artifact, evidence.validate_capture_artifact]
 defined_in: ["20260905010000_verification_persistence_contract.sql", "20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # evidence.validate_capture_artifact
 

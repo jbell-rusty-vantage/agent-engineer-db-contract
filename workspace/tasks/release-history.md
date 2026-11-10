@@ -7,7 +7,7 @@ queries: [catalog.software, catalog.software_releases, events.current_for_entity
 aliases: [releases, changelog, version history, what shipped, breaking changes]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # Release history of a library, MCP server or model (what shipped when, breaking or not)
 

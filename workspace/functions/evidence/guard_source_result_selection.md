@@ -13,7 +13,7 @@ raises: [selection requires a successful result and available parent-bound recei
 touches: { reads: [evidence.provider_result, evidence.source_provider_attempt, orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [evidence, guard_source_result_selection, evidence.guard_source_result_selection]
 defined_in: ["20260914010400_source_attempt_recovery.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # evidence.guard_source_result_selection
 

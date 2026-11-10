@@ -6,7 +6,7 @@ name: source_role
 rows: 10
 rows_sha256: "sha256:bc978f4afcc6248360cb9d60782ff8550eb48d1b0ce7ee99fcbb355eb0b18591"
 codes: [academic, community, event_organizer, filer, first_party, own, registry, system, third_party_editorial, unknown]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.source_role
 

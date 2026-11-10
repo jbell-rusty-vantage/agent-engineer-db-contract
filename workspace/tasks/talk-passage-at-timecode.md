@@ -7,7 +7,7 @@ queries: [catalog.talks, content.talk_segments, content.document_units, vocab.un
 aliases: [timecode, transcript window, quote from talk, at minute, slide at]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # What was said in talk X between mm:ss and mm:ss (or where was Y said)?
 

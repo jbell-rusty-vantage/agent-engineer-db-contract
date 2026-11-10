@@ -13,7 +13,7 @@ raises: [verification dataset version requires an available marked metadata-back
 touches: { reads: [], writes: [] }
 tokens: [evaluation, validate_verification_dataset_manifest, evaluation.validate_verification_dataset_manifest]
 defined_in: ["20260906019000_verification_evaluation_dataset_manifest.sql", "20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # evaluation.validate_verification_dataset_manifest
 

@@ -6,7 +6,7 @@ name: event_kind
 rows: 38
 rows_sha256: "sha256:0c90f8548e130b1ab4f147dc34cb87d5b5d897b1dd977f8fe60ab5ce322f3aef"
 codes: [advisory_published, benchmark_run_completed, dissolved, event_announced, event_held, founded, funding_announced, funding_closed, hired, left, media_published, model_version_released, offering_deprecated, offering_retired, offering_started, price_changed, product_announced, product_discontinued, product_generally_available, protocol_feature_introduced, protocol_version_published, release_published, release_yanked, renamed, repo_archived, repo_created, repo_made_private, repo_made_public, repo_renamed, repo_transferred, repo_unarchived, story_corrected, story_published, story_retracted, talk_delivered, transaction_announced, transaction_cancelled, transaction_closed]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # temporal.event_kind
 

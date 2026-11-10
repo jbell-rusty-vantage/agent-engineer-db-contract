@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"unit_change\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part2_content.sql]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.unit_change
 
@@ -35,7 +35,7 @@ table in domain `content`, lens `corpus` — A unit-level diff between two versi
 | 7 | `to_version_id` | `uuid` | no | — | — |
 | 8 | `from_node_id` | `uuid` | yes | — | — |
 | 9 | `to_node_id` | `uuid` | yes | — | — |
-| 10 | `change_kind` | `text` | no | — | _curated:_ added, removed, attribute_changed, text_changed, moved. |
+| 10 | `change_kind` | `text` | no | — | added \| removed \| attribute_changed \| text_changed \| moved \| format_only (same logical key, same normalized content, different representation format: excluded from changes_since by default).; _curated:_ added, removed, attribute_changed, text_changed, moved. |
 | 11 | `changed_attributes` | `jsonb` | no | `'{}'::jsonb` | _curated:_ Old and new attribute values for attribute_changed. |
 | 12 | `detected_at` | `timestamp with time zone` | no | `now()` | — |
 | 13 | `refresh_check_id` | `uuid` | yes | — | FK → [`content.refresh_check`](refresh_check.md).id |
@@ -44,7 +44,7 @@ table in domain `content`, lens `corpus` — A unit-level diff between two versi
 ## Constraints
 
 - PK (id)
-- check `unit_change_change_kind_check`: `(change_kind = ANY (ARRAY['added'::text, 'removed'::text, 'attribute_changed'::text, 'text_changed'::text, 'moved'::text]))`
+- check `unit_change_change_kind_check`: `(change_kind = ANY (ARRAY['added'::text, 'removed'::text, 'attribute_changed'::text, 'text_changed'::text, 'moved'::text, 'format_only'::te…`
 - check `unit_change_update_proposal_state_check`: `(update_proposal_state = ANY (ARRAY['none'::text, 'proposed'::text, 'applied'::text, 'rejected'::text]))`
 
 ## Relationships

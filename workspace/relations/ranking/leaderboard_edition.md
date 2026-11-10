@@ -6,15 +6,15 @@ name: leaderboard_edition
 domain: ranking
 lens: corpus
 aliases: []
-tokens: [ranking, leaderboard_edition, ranking.leaderboard_edition, id, leaderboard_id, edition_no, published_at, tenant_id, knowledge_seq, cohort]
+tokens: [ranking, leaderboard_edition, ranking.leaderboard_edition, id, leaderboard_id, edition_no, published_at, tenant_id, knowledge_seq, cohort, capture_id, observed_at, board_date]
 summary: "One frozen edition of a leaderboard: membership and knowledge head at publication."
 summary_basis: comment
 rls: enabled
-readers: [executor_service, service_role]
+readers: [app_reader, executor_service, service_role]
 writers: []
 typescript: "Database[\"ranking\"][\"Tables\"][\"leaderboard_edition\"][\"Row\"]"
 defined_in: ["20260826000800_ranking.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # ranking.leaderboard_edition
 
@@ -31,6 +31,9 @@ table in domain `ranking`, lens `corpus` — One frozen edition of a leaderboard
 | 6 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | — |
 | 7 | `knowledge_seq` | `bigint` | yes | — | — |
 | 8 | `cohort` | `jsonb` | no | `'[]'::jsonb` | — |
+| 9 | `capture_id` | `uuid` | yes | — | FK → [`evidence.source_capture`](../evidence/source_capture.md).id |
+| 10 | `observed_at` | `timestamp with time zone` | yes | — | — |
+| 11 | `board_date` | `date` | yes | — | The date the publisher shows on the board (world time), if any; observed_at is when we captured it (knowledge time). |
 
 ## Constraints
 
@@ -39,7 +42,7 @@ table in domain `ranking`, lens `corpus` — One frozen edition of a leaderboard
 
 ## Relationships
 
-Outbound: `leaderboard_id` → [`ranking.leaderboard`](leaderboard.md)`.id` on delete cascade.
+Outbound: `capture_id` → [`evidence.source_capture`](../evidence/source_capture.md)`.id`; `leaderboard_id` → [`ranking.leaderboard`](leaderboard.md)`.id` on delete cascade.
 Inbound: [`ranking.leaderboard_entry`](leaderboard_entry.md).edition_id.
 
 ## Indexes
@@ -57,12 +60,12 @@ Enabled.
 
 ## Grants
 
-`executor_service`: SELECT; `service_role`: SELECT. None: `anon`, `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
+`app_reader`: SELECT; `executor_service`: SELECT; `service_role`: SELECT. None: `anon`, `authenticated`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Read paths
 
 - Named queries: `q:ranking.leaderboard`.
-- Direct SELECT: `executor_service`.
+- Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path
 

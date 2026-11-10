@@ -10,7 +10,7 @@ tasks: [price-with-locator, what-changed-since]
 summary: "Build 07 research loop (lens ours): a brief is accepted with obligations, outputs are delivered, assertions carry typed support, datasets are revisioned cells."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # Inquiry and datasets (research requests, assertions, support)
 

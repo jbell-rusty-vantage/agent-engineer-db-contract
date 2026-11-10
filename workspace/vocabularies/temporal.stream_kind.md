@@ -3,19 +3,18 @@ id: "voc:temporal.stream_kind"
 kind: vocabulary
 schema: temporal
 name: stream_kind
-rows: 33
-rows_sha256: "sha256:4555e99c04e4b483f2db4565ca7a288583ba1669f1d4158fd550b6a0645b7791"
-codes: [benchmark_score, compute_offering_price, engagement_role, entity_name, library_license, library_maintenance, media_views, model_availability, model_capability, model_context_window, model_knowledge_cutoff, model_max_output_tokens, model_offering_availability, model_offering_limit, model_version_spec, offering_price, organization_headcount, organization_status, ownership_stake, package_downloads, paper_citations, product_feature_availability, protocol_feature_support, registry_listing_status, relationship_active, repository_archival, repository_forks, repository_location, repository_open_issues, repository_stars, repository_visibility, valuation, work_disposition]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+rows: 32
+rows_sha256: "sha256:e9aa4edc86ebb9daf511a0ceae56c6c04ac34907fb092c140f2ef3bf98c283c1"
+codes: [benchmark_score, engagement_role, entity_name, library_license, library_maintenance, media_views, model_availability, model_capability, model_context_window, model_knowledge_cutoff, model_max_output_tokens, model_offering_availability, model_version_spec, offering_limit, offering_price, organization_headcount, organization_status, ownership_stake, package_downloads, paper_citations, product_feature_availability, protocol_feature_support, registry_listing_status, relationship_active, repository_archival, repository_forks, repository_location, repository_open_issues, repository_stars, repository_visibility, valuation, work_disposition]
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # temporal.stream_kind
 
-Reference data snapshot (33 rows, digest `sha256:4555e99c04e4b483f2db4565ca7a288583ba1669f1d4158fd550b6a0645b7791`). Codes are enforced wherever a column has a foreign key to [`temporal.stream_kind`](../relations/temporal/stream_kind.md).
+Reference data snapshot (32 rows, digest `sha256:e9aa4edc86ebb9daf511a0ceae56c6c04ac34907fb092c140f2ef3bf98c283c1`). Codes are enforced wherever a column has a foreign key to [`temporal.stream_kind`](../relations/temporal/stream_kind.md).
 
 | code | description | payload_schema | ref_entity_kinds | requires_amount | requires_ref_entity | status_values | subject_kinds | subject_mode | unit_values |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `benchmark_score` | A benchmark result: subject version, ref benchmark, amount+unit, setting and who measured it (first-party self-report v… | `{"properties":{"comparison":{"type":"string"},"harness":{"type":"string"},"sett…` | benchmark | yes | yes | — | ai_model_version, product_version, library_release | entity | percent, score, elo, pass_at_1, seconds, usd, count |
-| `compute_offering_price` | compute offering price | `{}` | — | yes | no | — | compute_offering | entity | per_hour, per_month, spot_per_hour |
+| `benchmark_score` | A benchmark result: subject (model version, product version, library release or compute system), ref benchmark_version … | `{"additionalProperties":true,"properties":{"attempts":{"type":"integer"},"bench…` | benchmark, benchmark_version | yes | yes | — | ai_model_version, product_version, paper, library_release, compute_device, compute_offering | entity | pass_at_1, tokens_per_second, usd, ms, samples_per_second, score, seconds, count, elo, percent |
 | `engagement_role` | engagement role | `{"properties":{"title":{"type":"string"}},"required":["title"],"type":"object"}` | — | no | no | — | employed_by | relationship | — |
 | `entity_name` | entity name | `{"properties":{"display_name":{"type":"string"},"legal_name":{"type":"string"}}…` | — | no | no | — | person, organization, product, product_version, product_feature, ai_model, ai_model_version, model_offering, technique, dataset, benchmark, benchmark_run, repository, library, library_release, mcp_server, agent_skill, ai_protocol, ai_protocol_version, ai_protocol_feature, paper, media_channel, media_series, media_work, event_series, industry_event, talk, story, case_study, concept, funding_round, corporate_transaction, registry, security_advisory, compute_device, compute_offering | entity | — |
 | `library_license` | License of a software thing or open-weights model (payload spdx), as stated by the publisher | `{"properties":{"license_code":{"type":"string"}},"required":["license_code"],"t…` | — | no | no | — | library, repository, mcp_server, agent_skill, product, ai_model_version | entity | — |
@@ -27,9 +26,9 @@ Reference data snapshot (33 rows, digest `sha256:4555e99c04e4b483f2db4565ca7a288
 | `model_knowledge_cutoff` | Training data cutoff as stated by the developer | `{"properties":{"cutoff_on":{"type":"string"}},"required":["cutoff_on"],"type":"…` | — | no | no | — | ai_model_version | entity | — |
 | `model_max_output_tokens` | Maximum output tokens | `{"type":"object"}` | — | yes | no | — | ai_model_version | entity | tokens |
 | `model_offering_availability` | model offering availability | `{}` | — | no | no | announced, preview, ga, deprecated, retired | model_offering | entity | — |
-| `model_offering_limit` | model offering limit | `{}` | — | yes | no | — | model_offering | entity | context_tokens, max_output_tokens, rpm, tpm, batch_size |
 | `model_version_spec` | model version spec | `{}` | — | no | no | — | ai_model_version | entity | — |
-| `offering_price` | Price of one meter of an offering (input_tokens, output_tokens, cached_input_tokens, batch_input_tokens ...); scope_key… | `{"properties":{"condition":{"type":"string"},"context_band":{"type":"string"},"…` | — | yes | no | — | model_offering, compute_offering | entity | USD_per_1M_tokens, USD_per_1K_tokens, USD_per_request, USD_per_minute, USD_per_image, USD_per_hour, USD_per_GB, USD_per_month |
+| `offering_limit` | A stated limit of an offering (max session duration, concurrency, memory, rate limits); scope_key = limit_name\|plan | `{"additionalProperties":true,"properties":{"condition":{"type":"string"},"limit…` | — | yes | no | — | model_offering, compute_offering | entity | context_tokens, max_output_tokens, rpm, tpm, batch_size, seconds, minutes, hours, count, GiB, vcpu, GB |
+| `offering_price` | Price of one meter of an offering (input_tokens, output_tokens, gpu_hour, vcpu_second, gib_second ...); scope_key = met… | `{"additionalProperties":true,"properties":{"commitment":{"enum":["on_demand","s…` | — | yes | no | — | model_offering, compute_offering | entity | USD_per_1K_images, USD_per_GB_month, USD_per_minute, USD_per_1M_creations, USD_per_image, USD_per_GiB_second, USD_per_GB_hour, USD_per_month, USD_per_GB, USD_per_1K_tokens, USD_per_hour, USD_per_node_hour, USD_per_GPU_hour, USD_per_vcpu_second, USD_per_1M_tokens, USD_per_chip_hour, USD_per_vcpu_hour, USD_per_request, USD_per_sandbox_hour |
 | `organization_headcount` | Headcount at observation | `{"properties":{"source":{"type":"string"}},"type":"object"}` | — | yes | no | — | organization | entity | count |
 | `organization_status` | organization status | `{}` | — | no | no | operating, acquired, merged, dissolved, stealth | organization | entity | — |
 | `ownership_stake` | ownership stake | `{}` | — | yes | no | — | owns_stake_in | relationship | percent |

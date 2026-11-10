@@ -14,7 +14,7 @@ readers: [app_reader, authenticated, service_role]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"mission_progress\"][\"Row\"]"
 defined_in: ["20260826001500_api_and_grants.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # api.mission_progress
 

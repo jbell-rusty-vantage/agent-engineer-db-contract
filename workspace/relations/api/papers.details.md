@@ -4,7 +4,7 @@ kind: details
 schema: api
 name: papers
 of: "rel:api.papers"
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # api.papers — details
 
@@ -30,7 +30,17 @@ Disabled.
 ## View definition
 
 ```sql
-SELECT w.id AS paper_id,
+WITH doc AS (
+         SELECT a.entity_id,
+            d.id AS document_id,
+            d.attributes,
+            d.document_type_code,
+            row_number() OVER (PARTITION BY a.entity_id ORDER BY d.created_at DESC) AS rn
+           FROM content.document_about_entity a
+             JOIN content.document d ON d.id = a.document_id
+          WHERE a.role = 'primary'::text AND (d.document_type_code = ANY (ARRAY['arxiv_paper'::text, 'conference_paper'::text, 'journal_article'::text, 'tech_report'::text, 'model_card'::text, 'system_card'::text, 'dataset_card'::text, 'research_report'::text]))
+        )
+ SELECT w.id AS paper_id,
     w.title,
     w.attributes ->> 'arxiv_id'::text AS arxiv_id,
     w.attributes ->> 'doi'::text AS doi,
@@ -47,10 +57,22 @@ SELECT w.id AS paper_id,
     ( SELECT count(*) AS count
            FROM catalog.relationship r
              JOIN catalog.entity t ON t.id = r.from_entity_id
-          WHERE r.to_entity_id = w.id AND r.kind = 'about'::text AND t.kind = 'talk'::text AND r.k_to IS NULL) AS talks_about,
+          WHERE r.to_entity_id = w.id AND (r.kind = ANY (ARRAY['about'::text, 'cites'::text])) AND t.kind = 'talk'::text AND r.k_to IS NULL) AS talks_about,
+    ( SELECT count(*) AS count
+           FROM catalog.relationship r
+          WHERE r.to_entity_id = w.id AND r.kind = 'cites'::text AND r.k_to IS NULL) AS cited_by_count,
+    ( SELECT count(*) AS count
+           FROM catalog.relationship r
+          WHERE r.from_entity_id = w.id AND r.kind = 'cites'::text AND r.k_to IS NULL) AS cites_count,
     api.fact_amount(w.id, 'paper_citations'::text) AS citations,
-    w.abstract
+    w.abstract,
+    COALESCE(doc.attributes ->> 'ingestion_level'::text, w.attributes ->> 'ingestion_level'::text, 'P0'::text) AS ingestion_level,
+    COALESCE(doc.attributes -> 'promotion'::text, w.attributes -> 'promotion'::text) AS promotion,
+    doc.document_id,
+    doc.document_type_code,
+    w.attributes ->> 'publication_form'::text AS publication_form
    FROM catalog.work w
      JOIN catalog.entity e ON e.id = w.id
+     LEFT JOIN doc ON doc.entity_id = w.id AND doc.rn = 1
   WHERE w.tenant_id = util.current_tenant_id() AND w.kind = 'paper'::text AND e.lifecycle = 'active'::text;
 ```

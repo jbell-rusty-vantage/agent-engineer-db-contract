@@ -10,7 +10,7 @@ tasks: [admit-support-for-claim, build-evidence-packet, compose-ingestion-intent
 summary: Source to capture to locator to claim; facts attach through segment_support; verified use is admitted in verification.use_admission.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # Source, evidence and admission
 

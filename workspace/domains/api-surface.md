@@ -10,7 +10,7 @@ tasks: [cheapest-qualified-model, check-knowledge-head, compare-models, modules-
 summary: The only surface apps and agents see; invoker views and definer RPCs organised as the L1–L3 knowledge continuum.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # API surface (L1 views, L2 and L3 functions)
 
@@ -62,8 +62,8 @@ The only surface apps and agents see; invoker views and definer RPCs organised a
 | [`api.organizations`](../relations/api/organizations.md) | L1: organizations with kind, site, country, founding date and counts of what they develop, sell and employ. | — | helpers only |
 | [`api.events`](../relations/api/events.md) | L1: industry events (conference editions) with dates, place, series, organizers, tracks and talk counts. | — | helpers only |
 | [`api.concepts`](../relations/api/concepts.md) | L1: concepts and techniques (RAG, context engineering, harness, sandbox, MCP, skills ...) with how many works… | — | helpers only |
-| [`api.papers`](../relations/api/papers.md) | L1: papers with identifiers, authors, code repositories, techniques introduced and the talks that discuss the… | — | helpers only |
-| [`api.benchmark_scores`](../relations/api/benchmark_scores.md) | L1: benchmark results as facts (one home for numbers): subject version, benchmark, score/unit, setting, who m… | — | helpers only |
+| [`api.papers`](../relations/api/papers.md) | L1: papers with authors, code, citing talks/papers, cited papers and the ingestion level (P0 reference / P1 d… | — | helpers only |
+| [`api.benchmark_scores`](../relations/api/benchmark_scores.md) | L1: current conditioned benchmark scores: subject, benchmark version and parent benchmark, harness, who measu… | — | helpers only |
 | [`api.works_authored`](../relations/api/works_authored.md) | L1 (lens ours, tier 1) — our courses, modules, lessons, activities, reports and templates at head revision, r… | — | helpers only |
 | [`api.guidance_items`](../relations/api/guidance_items.md) | L1 — expert guidance items with their subject entities. | — | helpers only |
 | [`api.libraries`](../relations/api/libraries.md) | view | — | helpers only |

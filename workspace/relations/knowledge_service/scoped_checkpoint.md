@@ -14,7 +14,7 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"scoped_checkpoint\"][\"Row\"]"
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # knowledge_service.scoped_checkpoint
 

@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_node\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.document_node
 
@@ -63,7 +63,7 @@ table in domain `content`, lens `corpus` — A typed unit of a representation: u
 
 ## Relationships
 
-5 outbound and 16 inbound foreign keys; full list in [details](document_node.details.md).
+5 outbound and 19 inbound foreign keys; full list in [details](document_node.details.md).
 
 ## Indexes
 
@@ -84,7 +84,7 @@ Enabled; 1 policies in [details](document_node.details.md).
 ## Read paths
 
 - Named queries: `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`, `q:facts.locators`, `q:retrieval.evidence_packet`.
-- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md).
+- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.endpoints`](../api/endpoints.md).
 - Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path

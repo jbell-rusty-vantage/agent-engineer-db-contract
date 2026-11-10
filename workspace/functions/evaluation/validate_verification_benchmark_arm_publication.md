@@ -13,7 +13,7 @@ raises: [benchmark arm publication artifact binding mismatch, benchmark arm publ
 touches: { reads: [evaluation.eval_dataset_version, evaluation.eval_run, evaluation.experiment, evaluation.experiment_arm, evaluation.verification_benchmark_run, knowledge_service.operation], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_arm_publication, evaluation.validate_verification_benchmark_arm_publication]
 defined_in: ["20260906030000_verification_benchmark_arm_publication.sql", "20260906030200_verification_benchmark_publication_dataset_binding.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # evaluation.validate_verification_benchmark_arm_publication
 

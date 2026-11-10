@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, temporal.knowledge_head], writes: [retrieval.projection_procedure, retrieval.projection_target, retrieval.search_projection] }
 tokens: [retrieval, project_entity_timeline, retrieval.project_entity_timeline]
 defined_in: ["20260912011200_km_12_projection_workers.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # retrieval.project_entity_timeline
 

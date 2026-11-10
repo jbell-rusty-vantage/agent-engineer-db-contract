@@ -8,7 +8,7 @@ call: api.product_command
 lens: ours
 relations: [learning.appeal, learning.assessment_result, learning.attempt, learning.enrollment, learning.submission]
 tokens: [resolve_appeal, command, api.product_command]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # resolve_appeal
 

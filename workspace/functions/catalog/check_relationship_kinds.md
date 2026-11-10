@@ -12,8 +12,8 @@ executors: []
 raises: [invalid relationship endpoint kinds, invalid version pair]
 touches: { reads: [catalog.entity, taxonomy.relationship_kind], writes: [] }
 tokens: [catalog, check_relationship_kinds, catalog.check_relationship_kinds]
-defined_in: []
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql", "20261109130300_build08_loop2_fixups3.sql"]
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # catalog.check_relationship_kinds
 
@@ -21,7 +21,7 @@ Domain `relationships`, lens `machinery`.
 
 ## check_relationship_kinds() → trigger
 
-function, volatile, security invoker, language plpgsql, config `search_path=""`.
+function, volatile, security invoker, language plpgsql, config `search_path=""`. Relationship endpoints must match the kind vocabulary; version_of pairs are enumerated: product_version→product, ai_model_version→ai_model, library_release→library, ai_protocol_version→ai_protocol, benchmark_version→benchmark (loop 2).
 
 No arguments.
 
@@ -31,4 +31,4 @@ Raises (mechanically extracted): `invalid relationship endpoint kinds`; `invalid
 
 Touches (best effort): reads [`catalog.entity`](../../relations/catalog/entity.md), [`taxonomy.relationship_kind`](../../relations/taxonomy/relationship_kind.md); writes —; calls —.
 
-Defined in: unknown.
+Defined in: `20261109130000_build08_loop2_numbers_compute_apis.sql`, `20261109130300_build08_loop2_fixups3.sql`.

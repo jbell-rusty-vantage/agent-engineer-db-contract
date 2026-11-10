@@ -7,7 +7,7 @@ queries: [facts.changes_since, content.unit_changes, content.refresh_checks, cat
 aliases: [changes since, "what's new", delta since date, recent changes, refresh results]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # What changed since <date> (facts, events, refreshed documents)?
 

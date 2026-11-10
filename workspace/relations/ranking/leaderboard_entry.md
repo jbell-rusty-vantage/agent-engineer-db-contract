@@ -6,7 +6,7 @@ name: leaderboard_entry
 domain: ranking
 lens: corpus
 aliases: [leaderboard row]
-tokens: [ranking, leaderboard_entry, ranking.leaderboard_entry, tenant_id, edition_id, rank, entity_id, score, unit, explanation, source_segment_ids]
+tokens: [ranking, leaderboard_entry, ranking.leaderboard_entry, tenant_id, edition_id, rank, entity_id, score, unit, explanation, source_segment_ids, conditions, subject_label, node_id]
 summary: Ranked row of an edition with the fact segments that produced the score.
 summary_basis: curated
 rls: disabled
@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: []
 typescript: "Database[\"ranking\"][\"Tables\"][\"leaderboard_entry\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # ranking.leaderboard_entry
 
@@ -34,6 +34,9 @@ table in domain `ranking`, lens `corpus` — Ranked row of an edition with the f
 | 6 | `unit` | `text` | yes | — | — |
 | 7 | `explanation` | `jsonb` | no | `'{}'::jsonb` | _curated:_ How the policy produced the score. |
 | 8 | `source_segment_ids` | `uuid[]` | no | `'{}'::uuid[]` | _curated:_ temporal.segment ids behind the score; cite them. |
+| 9 | `conditions` | `jsonb` | no | `'{}'::jsonb` | harness, reported_by, effort, tool_mode, step_budget ... as the board states them; the same conditions are on the benchmark_score segment payload. |
+| 10 | `subject_label` | `text` | yes | — | — |
+| 11 | `node_id` | `uuid` | yes | — | FK → [`content.document_node`](../content/document_node.md).id |
 
 ## Constraints
 
@@ -42,7 +45,7 @@ table in domain `ranking`, lens `corpus` — Ranked row of an edition with the f
 
 ## Relationships
 
-Outbound: `edition_id` → [`ranking.leaderboard_edition`](leaderboard_edition.md)`.id` on delete restrict; `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
+Outbound: `edition_id` → [`ranking.leaderboard_edition`](leaderboard_edition.md)`.id` on delete restrict; `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `node_id` → [`content.document_node`](../content/document_node.md)`.id`.
 Inbound: none.
 
 ## Indexes

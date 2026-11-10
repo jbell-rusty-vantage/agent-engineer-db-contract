@@ -4,7 +4,7 @@ kind: details
 schema: content
 name: document_node
 of: "rel:content.document_node"
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # content.document_node — details
 
@@ -27,7 +27,7 @@ Spill-over from [the main page](document_node.md).
 ## Relationships
 
 Outbound: `speaker_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `tenant_id,artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict; `tenant_id,parent_id` → [`content.document_node`](document_node.md)`.tenant_id,id` on delete restrict; `tenant_id,representation_id` → [`content.document_representation`](document_representation.md)`.tenant_id,id` on delete restrict; `unit_kind,unit_kind_version` → [`content.unit_kind`](unit_kind.md)`.code,version`.
-Inbound: [`content.conversion_finding`](conversion_finding.md).node_id, [`content.document_digest`](document_digest.md).scope_node_id, [`content.document_node`](document_node.md).parent_id, [`content.document_node_edge`](document_node_edge.md).from_node_id|to_node_id, [`content.document_summary`](document_summary.md).scope_node_id, [`content.document_summary_source`](document_summary_source.md).node_id, [`content.unit_change`](unit_change.md).from_node_id|to_node_id, [`content.unit_entity_role`](unit_entity_role.md).node_id, [`evidence.extraction_record`](../evidence/extraction_record.md).document_node_id, [`retrieval.chunk_span`](../retrieval/chunk_span.md).document_node_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id,source_document_node_id, [`retrieval.projection_target`](../retrieval/projection_target.md).document_node_id.
+Inbound: [`content.conversion_finding`](conversion_finding.md).node_id, [`content.document_digest`](document_digest.md).scope_node_id, [`content.document_node`](document_node.md).parent_id, [`content.document_node_edge`](document_node_edge.md).from_node_id|to_node_id, [`content.document_summary`](document_summary.md).scope_node_id, [`content.document_summary_source`](document_summary_source.md).node_id, [`content.unit_change`](unit_change.md).from_node_id|to_node_id, [`content.unit_entity_role`](unit_entity_role.md).node_id, [`content.unit_link`](unit_link.md).from_node_id|to_node_id, [`evidence.extraction_record`](../evidence/extraction_record.md).document_node_id, [`ranking.leaderboard_entry`](../ranking/leaderboard_entry.md).node_id, [`retrieval.chunk_span`](../retrieval/chunk_span.md).document_node_id, [`retrieval.packet_member`](../retrieval/packet_member.md).source_representation_id,source_document_node_id, [`retrieval.projection_target`](../retrieval/projection_target.md).document_node_id.
 
 ## Indexes
 

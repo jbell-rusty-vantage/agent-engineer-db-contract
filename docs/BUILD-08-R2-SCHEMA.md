@@ -41,6 +41,8 @@ Knowledge-side tables after the migration: 171 (catalog 9, content 29, temporal 
 - `platform/knowledge-services/packages/knowledge-db` references `corpus.` (about 62) and `research.report*` (about 20) and breaks against this schema. Recorded for RV21; not fixed here.
 - `ai-engineer-service`: search payload/response compatible by inspection; its lab proof was not re-run.
 
+**Loop 2 (2026-11-10):** the follow-on migration `20261109130000_build08_loop2_numbers_compute_apis.sql` (benchmarks, compute, symbols, APIs, advisories, registry, paper levels) is recorded in [BUILD-08-LOOP2-SCHEMA](BUILD-08-LOOP2-SCHEMA.md).
+
 ## E. Deferred (recorded in the cycle record)
 
 `knowledge_service` → `ks`; `evidence` 26 → 12 split; 65 → 45 relationship verbs; materialized L1 views; PostgREST-facing tenant resolution for the L1 views; paper grammar; format-change diff suppression; page-section labels for duplicate pricing tables.

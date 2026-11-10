@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [access.provided_credential, authoring.event, authoring.publisher_grant, authoring.revision_binding, curriculum.requirement, curriculum.requirement_option, orchestration.artifact], writes: [access.client_grant, access.guardian_link, access.processing_authorization, authoring.asset_scope, authoring.deployment, authoring.distribution, authoring.distribution_member, authoring.distribution_offer, authoring.file_set, authoring.file_set_entry, authoring.release, authoring.release_item, authoring.work, authoring.work_revision, authoring.workspace, authoring.workspace_member, conversation.context_item, conversation.context_snapshot, conversation.message, conversation.thread, learning.appeal, learning.assessment_result, learning.attempt, learning.enrollment, learning.environment_session, learning.equivalence_request, learning.evidence_grant, learning.evidence_item, learning.release_adoption, learning.submission, library.connected_item, library.connection, library.passage, library.removal, library.resource_control] }
 tokens: [product, dispatch_command, product.dispatch_command]
 defined_in: ["20261105010300_product_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", "20261108120100_build08_r2_fixups.sql"]
-workspace_fingerprint: "sha256:0bdaf1f915461feecb08d7ad5612fcb8db9039b883dd9c6e7e9be6d621251eee"
+workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
 ---
 # product.dispatch_command
 
