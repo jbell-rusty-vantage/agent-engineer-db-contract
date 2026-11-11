@@ -13,7 +13,7 @@ raises: [receipt tenant mismatch]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt], writes: [catalog.entity, catalog.entity_identifier, content.document, content.document_identifier, evidence.source] }
 tokens: [catalog, import_research_starter_catalog, catalog.import_research_starter_catalog]
 defined_in: []
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # catalog.import_research_starter_catalog
 

@@ -13,7 +13,7 @@ raises: [VERIFIED_CLAIM_REQUIRES_ADMITTED_USE]
 touches: { reads: [orchestration.operation_receipt], writes: [] }
 tokens: [evidence, enforce_verified_claim_gate, evidence.enforce_verified_claim_gate]
 defined_in: ["20260829194310_harden_claim_extraction_and_verification_contract.sql", "20260829194915_require_direct_same_run_claim_verification.sql", "20260829194954_normalize_append_only_claim_evidence_assessments.sql", "20260915010000_official_claim_verification.sql", "20261025010000_withdraw_legacy_verification_truth.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # evidence.enforce_verified_claim_gate
 

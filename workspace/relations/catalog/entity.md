@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"catalog\"][\"Tables\"][\"entity\"][\"Row\"]"
 defined_in: []
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # catalog.entity
 
@@ -23,9 +23,8 @@ table in domain `identity`, lens `corpus` — One canonical row per industry ide
 > curated (model_assisted, unreviewed) — Build 08 dropped the thirty-six thin typed tables (corpus.organization, corpus.person,
 > corpus.ai_model, corpus.ai_model_version, corpus.model_offering, …). What they carried now
 > lives in `attributes`, validated per kind by `catalog.validate_entity_attributes`:
-> organization → legal_name, org_kind (frontier_lab, model_provider, cloud, tooling_vendor,
-> startup, enterprise, academic, nonprofit, media, event_organizer, investor, other),
-> website_url, country_code, founded_on; person → given_name, family_name, title,
+> organization → legal_name, org_kind (enum in the kind's schema), website_url,
+> country_code, founded_on; person → given_name, family_name, title,
 > affiliation_text, orcid, profile_url (also store scheme orcid on entity_identifier);
 > ai_model → model_family, modalities, description; ai_model_version (parent ai_model) →
 > version_label (required), provider_model_id, modalities, open_weights, model_page_url;
@@ -33,7 +32,7 @@ table in domain `identity`, lens `corpus` — One canonical row per industry ide
 > or API model id), region, tier, pricing_url, provider_model_id; library → ecosystem,
 > package_name, repository_url, docs_url, category; paper → arxiv_id, doi, published_on,
 > venue; talk → talk_kind, track, level, session_id, video_url, slides_url, edition.
-> Anything that changes over time (price, context window, stars, headcount, availability)
+> Anything that changes over time (price, context window, stars)
 > is a fact stream, never an attribute. Work kinds also have a `catalog.work` row.
 
 ## Columns
@@ -73,7 +72,7 @@ Enabled; 1 policies in [details](entity.details.md).
 ## Read paths
 
 - Named queries: `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.software_releases`, `q:catalog.talks`, `q:content.document_digest`, `q:entity.at`, `q:entity.attributes`, `q:entity.by_identifier`, `q:entity.card`, `q:entity.resolve`, `q:facts.changes_since`, `q:ours.works_authored`, `q:ranking.leaderboard`.
-- Exposed through: [`api.advisories`](../api/advisories.md), [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.benchmarks`](../api/benchmarks.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.compute_devices`](../api/compute_devices.md), [`api.compute_offerings`](../api/compute_offerings.md), [`api.concepts`](../api/concepts.md), [`api.entities`](../api/entities.md), [`api.events`](../api/events.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.protocol_versions`](../api/protocol_versions.md), [`api.registry_listings`](../api/registry_listings.md), [`api.software`](../api/software.md), [`api.software_releases`](../api/software_releases.md), [`api.talks`](../api/talks.md), [`api.works_authored`](../api/works_authored.md).
+- Exposed through: [`api.advisories`](../api/advisories.md), [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.benchmarks`](../api/benchmarks.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.compute_devices`](../api/compute_devices.md), [`api.compute_offerings`](../api/compute_offerings.md), [`api.concepts`](../api/concepts.md), [`api.digest_items`](../api/digest_items.md), [`api.entities`](../api/entities.md), [`api.events`](../api/events.md), [`api.hook_entries`](../api/hook_entries.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.protocol_versions`](../api/protocol_versions.md), [`api.registry_listings`](../api/registry_listings.md), [`api.software`](../api/software.md), [`api.software_releases`](../api/software_releases.md), [`api.talks`](../api/talks.md), [`api.works_authored`](../api/works_authored.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -8,7 +8,7 @@ call: api.product_command
 lens: ours
 relations: [authoring.distribution_offer, authoring.release_item, authoring.work_revision, conversation.context_item, conversation.context_snapshot, conversation.message, conversation.thread]
 tokens: [append_message, command, api.product_command]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # append_message
 

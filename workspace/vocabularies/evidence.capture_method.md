@@ -6,7 +6,7 @@ name: capture_method
 rows: 14
 rows_sha256: "sha256:dd2cc7352956d9510e44a461e36198da4a216c8c3745d22096f8d9c672d851ea"
 codes: [api, apify_actor, browser, firecrawl, http, https_acquire, manual, native_harness_http, other, repository, whisper_upload, youtube_captions, youtube_transcript, yt_dlp]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # evidence.capture_method
 

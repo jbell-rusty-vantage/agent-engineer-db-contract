@@ -10,7 +10,7 @@ tasks: [cheapest-qualified-model, check-knowledge-head, compare-models, modules-
 summary: The only surface apps and agents see; invoker views and definer RPCs organised as the L1–L3 knowledge continuum.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # API surface (L1 views, L2 and L3 functions)
 

@@ -231,7 +231,7 @@ domains:
     aliases: [documents, units, nodes, grammar, census, digests, summaries, transcripts, refresh]
     schemas: [content]
     relations: [content.document, content.document_version, content.document_representation, content.document_node, content.unit_kind, content.document_type, content.document_kind_assignment, content.format, content.source_role, content.structure_census, content.unit_entity_role, content.unit_assertion_mapping, content.unit_change, content.refresh_check, content.document_digest, content.digest_item, content.document_summary, content.document_summary_source, content.document_about_entity, content.transformation_run]
-    functions: [api.document_units, api.document_digest, api.talk_segments, api.summary_evidence, content.validate_unit_attributes, content.validate_unit_entity_role, content.current_kind]
+    functions: [api.document_units, api.document_digest, api.talk_segments, api.digest_item_passages, api.talks_about, api.release_digest, api.unit_entities, api.symbol_history, api.summary_evidence, content.validate_unit_attributes, content.validate_unit_entity_role, content.current_kind]
     tasks: [talk-passage-at-timecode, talks-on-topic, price-with-locator, what-changed-since, build-evidence-packet]
     queries: [content.document_units, content.document_digest, content.talk_segments, content.refresh_checks, content.unit_changes, vocab.unit_kind, retrieval.evidence_packet]
     summary: Faithful documents decomposed into typed units with stable logical keys; census before kind, digests anchored to units, refresh as data.
@@ -348,13 +348,13 @@ domains:
     title: Leaderboards
     provenance: model_assisted
     reviewed: null
-    aliases: [leaderboard, ranking, editions, scores]
+    aliases: [leaderboard, ranking, editions, scores, benchmark versions, benchmark edition, leaderboard diff, what changed on a leaderboard, leaderboard capture]
     schemas: [ranking]
     relations: [ranking.leaderboard, ranking.leaderboard_edition, ranking.leaderboard_entry, temporal.segment]
-    functions: [api.leaderboard]
+    functions: [api.leaderboard, api.leaderboard_diff]
     tasks: [compare-models, cheapest-qualified-model]
     queries: [ranking.leaderboard, catalog.benchmark_scores]
-    summary: A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head.
+    summary: A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head. Benchmark versions are in `api.benchmarks`; `api.leaderboard_diff(slug, edition_a, edition_b)` shows what entered, left or moved between two captures of a leaderboard.
     body: |
       Build 08 reduced `ranking` to three tables. `ranking.leaderboard` names a ranked view:
       the cohort filter, the metric (a `temporal.stream_kind`) and the policy are data in

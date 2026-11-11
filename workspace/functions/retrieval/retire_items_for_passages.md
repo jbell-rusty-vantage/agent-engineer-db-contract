@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [retrieval.projection_target], writes: [retrieval.vector_item] }
 tokens: [retrieval, retire_items_for_passages, retrieval.retire_items_for_passages]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # retrieval.retire_items_for_passages
 

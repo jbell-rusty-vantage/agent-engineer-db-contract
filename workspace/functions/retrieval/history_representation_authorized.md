@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document_representation, content.document_version, content.representation_decision, content.transformation_run, knowledge_service.operation, knowledge_service.review_decision, knowledge_service.review_subject, orchestration.artifact, orchestration.attempt], writes: [] }
 tokens: [retrieval, history_representation_authorized, retrieval.history_representation_authorized]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # retrieval.history_representation_authorized
 

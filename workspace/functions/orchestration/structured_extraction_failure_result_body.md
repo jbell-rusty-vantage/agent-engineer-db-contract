@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_structured_extraction, orchestration.verification_structured_extraction_execution, orchestration.verification_structured_extraction_failure], writes: [] }
 tokens: [orchestration, structured_extraction_failure_result_body, orchestration.structured_extraction_failure_result_body]
 defined_in: ["20260906032600_verification_structured_extraction_failure_terminal.sql", "20260914010000_artifact_logical_custody.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # orchestration.structured_extraction_failure_result_body
 

@@ -6,19 +6,19 @@ name: api_symbols
 domain: api-surface
 lens: corpus
 aliases: []
-tokens: [api, api_symbols, api.api_symbols, node_id, document_id, repository, release_tag, package, qualified_name, symbol_kind, signature, module, is_public, deprecated, docstring_head, path, lineno, release_id, docs_links]
-summary: "L1: public symbols per repository release (R3), with how many docs sections document each symbol (R4)."
+tokens: [api, api_symbols, api.api_symbols, node_id, document_id, repository, release_tag, package, qualified_name, symbol_kind, signature, module, is_public, deprecated, docstring_head, path, lineno, release_id, docs_links, overloads, uses_external, released_on, embedded]
+summary: "L1: public API symbols per repository release (R3). When a release surface was parsed more than once, only the newest document with units is read."
 summary_basis: comment
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"api_symbols\"][\"Row\"]"
-defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261110140100_build08_loop3_fixups.sql", "20261110140200_build08_loop3_fixups2.sql"]
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # api.api_symbols
 
-view in domain `api-surface`, lens `corpus` — L1: public symbols per repository release (R3), with how many docs sections document each symbol (R4)..
+view in domain `api-surface`, lens `corpus` — L1: public API symbols per repository release (R3). When a release surface was parsed more than once, only the newest document with units is read..
 
 ## Columns
 
@@ -40,6 +40,10 @@ view in domain `api-surface`, lens `corpus` — L1: public symbols per repositor
 | 14 | `lineno` | `integer` | yes | — | — |
 | 15 | `release_id` | `uuid` | yes | — | — |
 | 16 | `docs_links` | `bigint` | yes | — | — |
+| 17 | `overloads` | `jsonb` | yes | — | — |
+| 18 | `uses_external` | `jsonb` | yes | — | — |
+| 19 | `released_on` | `text` | yes | — | — |
+| 20 | `embedded` | `boolean` | yes | — | — |
 
 ## Constraints
 
@@ -82,4 +86,4 @@ See [details](api_symbols.details.md).
 
 row: `Database["api"]["Views"]["api_symbols"]["Row"]`
 
-Defined in: `20261109130000_build08_loop2_numbers_compute_apis.sql`.
+Defined in: `20261109130000_build08_loop2_numbers_compute_apis.sql`, `20261110140000_build08_loop3_libraries_talks_capabilities.sql`, `20261110140100_build08_loop3_fixups.sql`, `20261110140200_build08_loop3_fixups2.sql`.

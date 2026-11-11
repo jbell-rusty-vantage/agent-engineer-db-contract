@@ -6,7 +6,7 @@ name: format
 rows: 14
 rows_sha256: "sha256:6ac5f27f154c0f92d4412bcfc864356a4dde1ed6177b18709917f184ca7e8551"
 codes: [archive, audio, code, html, image, json, markdown, pdf, slides, tabular, text, timed_text, unknown, video]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.format
 

@@ -10,7 +10,7 @@ tasks: [assert-relationship, compose-ingestion-intent, talk-to-repo-to-paper, wh
 summary: One relationship table; kinds constrain endpoints and may carry a relationship_active stream.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # Relationships and taxonomy
 

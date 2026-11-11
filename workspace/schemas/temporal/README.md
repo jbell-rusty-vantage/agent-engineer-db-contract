@@ -6,7 +6,7 @@ lens: corpus
 domains: [temporal-facts]
 relations: 9
 functions: 17
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # temporal
 
@@ -14,9 +14,9 @@ Lens `corpus`. Domains: [`temporal-facts`](../../domains/temporal-facts.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
-| [`event`](../../relations/temporal/event.md) | table | unknown | Event identity (kind, subject, optional object/relationship, dedupe_key). | → `temporal.event_kind`, → `catalog.entity`, → `catalog.relationship` |
+| [`event`](../../relations/temporal/event.md) | table | small | Event identity (kind, subject, optional object/relationship, dedupe_key). | → `temporal.event_kind`, → `catalog.entity`, → `catalog.relationship` |
 | [`event_kind`](../../relations/temporal/event_kind.md) | table | unknown | Event vocabulary with subject and object kinds and optional start/end stream kinds. | → `temporal.stream_kind` |
-| [`event_occurrence`](../../relations/temporal/event_occurrence.md) | table | unknown | K-stamped occurrence of an event (actual, scheduled, or cancelled). | → `temporal.event`, → `temporal.extent`, → `evidence.claim` |
+| [`event_occurrence`](../../relations/temporal/event_occurrence.md) | table | small | K-stamped occurrence of an event (actual, scheduled, or cancelled). | → `temporal.event`, → `temporal.extent`, → `evidence.claim` |
 | [`extent`](../../relations/temporal/extent.md) | table | small | Source text for a date with precision and optional earliest/latest bounds. | → `evidence.locator` |
 | [`knowledge_batch`](../../relations/temporal/knowledge_batch.md) | table | unknown | One sealed admission transaction with receipt, idempotency key, and input digest. | → `knowledge_service.operation`, → `orchestration.operation_receipt` |
 | [`knowledge_head`](../../relations/temporal/knowledge_head.md) | table | small | One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an o… | — |

@@ -471,6 +471,13 @@ export type Database = {
             foreignKeyName: "relationship_from_entity_id_fkey"
             columns: ["software_id"]
             isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
+          },
+          {
+            foreignKeyName: "relationship_from_entity_id_fkey"
+            columns: ["software_id"]
+            isOneToOne: false
             referencedRelation: "compute_devices"
             referencedColumns: ["device_id"]
           },
@@ -593,6 +600,13 @@ export type Database = {
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
           },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       agent_skills: {
@@ -628,18 +642,22 @@ export type Database = {
           docs_links: number | null
           docstring_head: string | null
           document_id: string | null
+          embedded: boolean | null
           is_public: boolean | null
           lineno: number | null
           module: string | null
           node_id: string | null
+          overloads: Json | null
           package: string | null
           path: string | null
           qualified_name: string | null
           release_id: string | null
           release_tag: string | null
+          released_on: string | null
           repository: string | null
           signature: string | null
           symbol_kind: string | null
+          uses_external: Json | null
         }
         Relationships: []
       }
@@ -694,6 +712,13 @@ export type Database = {
             referencedColumns: ["other_claim_id"]
           },
           {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
             foreignKeyName: "segment_ref_entity_id_fkey"
             columns: ["benchmark_version_id"]
             isOneToOne: false
@@ -713,6 +738,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "benchmarks"
             referencedColumns: ["benchmark_id"]
+          },
+          {
+            foreignKeyName: "segment_ref_entity_id_fkey"
+            columns: ["benchmark_version_id"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
           },
           {
             foreignKeyName: "segment_ref_entity_id_fkey"
@@ -839,6 +871,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "benchmarks"
             referencedColumns: ["benchmark_id"]
+          },
+          {
+            foreignKeyName: "stream_subject_entity_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
           },
           {
             foreignKeyName: "stream_subject_entity_id_fkey"
@@ -992,6 +1031,49 @@ export type Database = {
         }
         Relationships: []
       }
+      bundle_files: {
+        Row: {
+          capability: string | null
+          capability_id: string | null
+          commit: string | null
+          custody_level: string | null
+          document_id: string | null
+          executable: boolean | null
+          file_role: string | null
+          git_blob_id: string | null
+          mode: string | null
+          node_id: string | null
+          path: string | null
+          sha256: string | null
+          size: number | null
+          version_label: string | null
+        }
+        Relationships: []
+      }
+      capabilities: {
+        Row: {
+          bundled_in: string[] | null
+          bundles: string[] | null
+          capability: string | null
+          capability_id: string | null
+          commit: string | null
+          compatible_with: string[] | null
+          custody_level: string | null
+          description: string | null
+          executable_files: number | null
+          files: number | null
+          hooks: number | null
+          identifiers: Json | null
+          kind: string | null
+          listed_in: string[] | null
+          manifest_document_id: string | null
+          repositories: string[] | null
+          slug: string | null
+          tools: number | null
+          version_label: string | null
+        }
+        Relationships: []
+      }
       claim_candidates: {
         Row: {
           agrees_with_first_party_claim: string | null
@@ -1061,6 +1143,69 @@ export type Database = {
           other_statement: string | null
           other_status: string | null
           reconciliation: string | null
+        }
+        Relationships: []
+      }
+      claim_surfaces: {
+        Row: {
+          assertion_mode: string | null
+          claim_id: string | null
+          claim_type: string | null
+          compared_by: string | null
+          conflicts: number | null
+          consistency: string | null
+          consistency_note: string | null
+          deep_link: string | null
+          path: string | null
+          quote: string | null
+          speakers: Json | null
+          start_ms: number | null
+          statement: string | null
+          status: string | null
+          subjects: string[] | null
+          surfaces: Json | null
+          talk: string | null
+          talk_id: string | null
+        }
+        Insert: {
+          assertion_mode?: never
+          claim_id?: string | null
+          claim_type?: string | null
+          compared_by?: never
+          conflicts?: never
+          consistency?: never
+          consistency_note?: never
+          deep_link?: never
+          path?: never
+          quote?: never
+          speakers?: never
+          start_ms?: never
+          statement?: string | null
+          status?: never
+          subjects?: never
+          surfaces?: never
+          talk?: never
+          talk_id?: never
+        }
+        Update: {
+          assertion_mode?: never
+          claim_id?: string | null
+          claim_type?: string | null
+          compared_by?: never
+          conflicts?: never
+          consistency?: never
+          consistency_note?: never
+          deep_link?: never
+          path?: never
+          quote?: never
+          speakers?: never
+          start_ms?: never
+          statement?: string | null
+          status?: never
+          subjects?: never
+          surfaces?: never
+          talk?: never
+          talk_id?: never
         }
         Relationships: []
       }
@@ -1174,6 +1319,13 @@ export type Database = {
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
           },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       concepts: {
@@ -1265,6 +1417,201 @@ export type Database = {
           to_entity_id: string | null
         }
         Relationships: []
+      }
+      digest_items: {
+        Row: {
+          anchor_count: number | null
+          claim_id: string | null
+          confidence: number | null
+          deep_link: string | null
+          digest_id: string | null
+          document_id: string | null
+          document_title: string | null
+          document_type_code: string | null
+          document_version_id: string | null
+          end_ms: number | null
+          entity: string | null
+          entity_id: string | null
+          entity_role: string | null
+          item_id: string | null
+          item_kind: string | null
+          node_ids: string[] | null
+          ordinal: number | null
+          payload: Json | null
+          producer_identity: string | null
+          producer_kind: string | null
+          scope: string | null
+          scope_heading: string | null
+          scope_node_id: string | null
+          start_ms: number | null
+          text: string | null
+          unit_change_id: string | null
+          version_label: string | null
+          work_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_candidates"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_conflicts"
+            referencedColumns: ["first_party_claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_conflicts"
+            referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "advisories"
+            referencedColumns: ["advisory_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "agent_skills"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "benchmarks"
+            referencedColumns: ["benchmark_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "compute_devices"
+            referencedColumns: ["device_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "compute_offerings"
+            referencedColumns: ["offering_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "concepts"
+            referencedColumns: ["concept_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["event_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "libraries"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "mcp_servers"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "protocol_versions"
+            referencedColumns: ["version_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "registry_listings"
+            referencedColumns: ["server_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "software"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "software_releases"
+            referencedColumns: ["release_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "software_releases"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "talks"
+            referencedColumns: ["event_id"]
+          },
+        ]
       }
       endpoints: {
         Row: {
@@ -1428,7 +1775,29 @@ export type Database = {
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
           },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
         ]
+      }
+      hook_entries: {
+        Row: {
+          command: string | null
+          config_path: string | null
+          document_id: string | null
+          event: string | null
+          hook_type: string | null
+          matcher: string | null
+          node_id: string | null
+          plugin: string | null
+          plugin_id: string | null
+          version_label: string | null
+        }
+        Relationships: []
       }
       libraries: {
         Row: {
@@ -1457,6 +1826,32 @@ export type Database = {
         }
         Relationships: []
       }
+      mcp_prompts: {
+        Row: {
+          arguments: Json | null
+          description: string | null
+          document_id: string | null
+          name: string | null
+          node_id: string | null
+          server: string | null
+          server_id: string | null
+          version_label: string | null
+        }
+        Relationships: []
+      }
+      mcp_resources: {
+        Row: {
+          description: string | null
+          document_id: string | null
+          name: string | null
+          node_id: string | null
+          server: string | null
+          server_id: string | null
+          uri_template: string | null
+          version_label: string | null
+        }
+        Relationships: []
+      }
       mcp_servers: {
         Row: {
           category: string | null
@@ -1481,6 +1876,26 @@ export type Database = {
           software_id: string | null
           stars: number | null
           summary: string | null
+        }
+        Relationships: []
+      }
+      mcp_tools: {
+        Row: {
+          availability: string | null
+          custody_level: string | null
+          description: string | null
+          document_id: string | null
+          document_version_id: string | null
+          input_schema: Json | null
+          logical_key: string | null
+          name: string | null
+          node_id: string | null
+          required: Json | null
+          scopes: Json | null
+          server: string | null
+          server_id: string | null
+          toolset: string | null
+          version_label: string | null
         }
         Relationships: []
       }
@@ -1645,6 +2060,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "benchmarks"
             referencedColumns: ["benchmark_id"]
+          },
+          {
+            foreignKeyName: "work_id_fkey"
+            columns: ["paper_id"]
+            isOneToOne: true
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
           },
           {
             foreignKeyName: "work_id_fkey"
@@ -1940,6 +2362,13 @@ export type Database = {
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
           },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       software: {
@@ -1983,6 +2412,31 @@ export type Database = {
           software_id: string | null
           software_kind: string | null
           version_label: string | null
+        }
+        Relationships: []
+      }
+      symbol_docs: {
+        Row: {
+          confidence: number | null
+          docs_node_id: string | null
+          docs_unit_kind: string | null
+          document_id: string | null
+          document_title: string | null
+          document_type_code: string | null
+          excerpt: string | null
+          heading: string | null
+          link_kind: string | null
+          link_method: string | null
+          package: string | null
+          qualified_name: string | null
+          release_tag: string | null
+          repository: string | null
+          section_path: string | null
+          symbol_kind: string | null
+          symbol_node_id: string | null
+          url: string | null
+          version_label: string | null
+          version_note: string | null
         }
         Relationships: []
       }
@@ -2031,6 +2485,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "benchmarks"
             referencedColumns: ["benchmark_id"]
+          },
+          {
+            foreignKeyName: "work_id_fkey"
+            columns: ["talk_id"]
+            isOneToOne: true
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
           },
           {
             foreignKeyName: "work_id_fkey"
@@ -2273,6 +2734,19 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      digest_item_passages: {
+        Args: { p_item: string }
+        Returns: {
+          deep_link: string
+          document_id: string
+          end_ms: number
+          logical_key: string
+          node_id: string
+          start_ms: number
+          text: string
+          unit_kind: string
+        }[]
+      }
       document_digest: {
         Args: { p_document: string }
         Returns: {
@@ -2305,6 +2779,7 @@ export type Database = {
           version_label: string
         }[]
       }
+      document_work: { Args: { p_document: string }; Returns: string }
       entity_aliases: { Args: { p_entity: string }; Returns: string[] }
       entity_at: {
         Args: { p_at?: string; p_entity: string; p_k?: number }
@@ -2649,6 +3124,19 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      release_digest: {
+        Args: { p_release: string }
+        Returns: {
+          change_items: Json
+          document_id: string
+          item_id: string
+          item_kind: string
+          ordinal: number
+          symbols: Json
+          text: string
+        }[]
+      }
+      release_order: { Args: { p_tag: string }; Returns: number[] }
       resolve_entity: {
         Args: { p_text: string }
         Returns: {
@@ -2746,6 +3234,21 @@ export type Database = {
           to_node_id: string
         }[]
       }
+      symbol_history: {
+        Args: { p_package?: string; p_repository: string }
+        Returns: {
+          first_released_on: string
+          first_tag: string
+          in_latest: boolean
+          last_tag: string
+          latest_node_id: string
+          package: string
+          qualified_name: string
+          releases_present: number
+          releases_total: number
+          symbol_kind: string
+        }[]
+      }
       talk_segments: {
         Args: {
           p_from_ms?: number
@@ -2754,6 +3257,7 @@ export type Database = {
           p_to_ms?: number
         }
         Returns: {
+          deep_link: string
           document_id: string
           end_ms: number
           logical_key: string
@@ -2763,6 +3267,38 @@ export type Database = {
           start_ms: number
           text: string
           unit_kind: string
+        }[]
+      }
+      talks_about: {
+        Args: { p_entity: string }
+        Returns: {
+          deep_link: string
+          document_id: string
+          end_ms: number
+          entity_role: string
+          item_id: string
+          item_kind: string
+          level: string
+          node_id: string
+          start_ms: number
+          talk: string
+          talk_id: string
+          text: string
+        }[]
+      }
+      timecode_link: {
+        Args: { p_start_ms: number; p_url: string }
+        Returns: string
+      }
+      unit_entities: {
+        Args: { p_node: string }
+        Returns: {
+          confidence: number
+          entity: string
+          entity_id: string
+          entity_kind: string
+          method: string
+          role: string
         }[]
       }
       what_changed: {
@@ -17882,6 +18418,7 @@ export type Database = {
           chunk_id: string | null
           claim_id: string | null
           digest_id: string | null
+          digest_item_id: string | null
           document_node_id: string | null
           entity_id: string | null
           id: string
@@ -17898,6 +18435,7 @@ export type Database = {
           chunk_id?: string | null
           claim_id?: string | null
           digest_id?: string | null
+          digest_item_id?: string | null
           document_node_id?: string | null
           entity_id?: string | null
           id?: string
@@ -17914,6 +18452,7 @@ export type Database = {
           chunk_id?: string | null
           claim_id?: string | null
           digest_id?: string | null
+          digest_item_id?: string | null
           document_node_id?: string | null
           entity_id?: string | null
           id?: string
@@ -19957,6 +20496,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      supersede_duplicate_items: { Args: never; Returns: number }
       transition_vector_store_lifecycle: {
         Args: {
           p_actor_identity: string

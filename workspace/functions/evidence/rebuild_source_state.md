@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [evidence.source_encounter, temporal.knowledge_head], writes: [evidence.source] }
 tokens: [evidence, rebuild_source_state, evidence.rebuild_source_state]
 defined_in: ["20260912011200_km_12_projection_workers.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # evidence.rebuild_source_state
 

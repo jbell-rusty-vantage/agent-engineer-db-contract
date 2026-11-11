@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_representation\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.document_representation
 
@@ -58,18 +58,15 @@ Inbound: [`content.conversion_evaluation`](conversion_evaluation.md).representat
 
 ## Indexes
 
-`document_representation_tenant_id_id_key` unique; `representation_version_idx`
+2 indexes; see [details](document_representation.details.md).
 
 ## Triggers
 
-- `artifact_retirement_b4c43d45f45a0674ce9260bf` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
-- `document_representation_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
-- `predecessor_direction` → [`util.validate_predecessor`](../../functions/util/validate_predecessor.md)
+3 triggers; see [details](document_representation.details.md).
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](document_representation.details.md).
 
 ## Grants
 
@@ -78,7 +75,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:content.document_units`, `q:content.talk_segments`.
-- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.endpoints`](../api/endpoints.md).
+- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.bundle_files`](../api/bundle_files.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.endpoints`](../api/endpoints.md), [`api.hook_entries`](../api/hook_entries.md), [`api.mcp_prompts`](../api/mcp_prompts.md), [`api.mcp_resources`](../api/mcp_resources.md), [`api.mcp_tools`](../api/mcp_tools.md), [`api.symbol_docs`](../api/symbol_docs.md).
 - Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path

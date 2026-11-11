@@ -3,17 +3,18 @@ id: "voc:content.document_type"
 kind: vocabulary
 schema: content
 name: document_type
-rows: 63
-rows_sha256: "sha256:acd5740bd74f1859084efe449207b17314d7895302a2caecb159f698dbfa5c41"
-codes: [agent_skill_manifest, aie_talk, analysis_post, api_reference, api_surface, arxiv_paper, changelog, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, job_posting, journal_article, leaderboard_page, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, openapi_spec, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+rows: 64
+rows_sha256: "sha256:d6bd77e3116a21321de34706b3be32a3d04bd826b7383296bede8e177bbaea4c"
+codes: [agent_plugin_manifest, agent_skill_manifest, aie_talk, analysis_post, api_reference, api_surface, arxiv_paper, changelog, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, job_posting, journal_article, leaderboard_page, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, openapi_spec, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.document_type
 
-Reference data snapshot (63 rows, digest `sha256:acd5740bd74f1859084efe449207b17314d7895302a2caecb159f698dbfa5c41`). Codes are enforced wherever a column has a foreign key to [`content.document_type`](../relations/content/document_type.md).
+Reference data snapshot (64 rows, digest `sha256:d6bd77e3116a21321de34706b3be32a3d04bd826b7383296bede8e177bbaea4c`). Codes are enforced wherever a column has a foreign key to [`content.document_type`](../relations/content/document_type.md).
 
 | code | axis_note | default_chunking_slug | default_extraction_kinds | default_spaces | default_summary_kinds | description | family | is_primary_source | promoted_from_census | published_at_is_world_time | status | work_entity_kind |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `agent_plugin_manifest` | capability manifest: attributes carry identifier, commit, custody_level (C0\|C1\|C2) | structural_heading | claim, entity, relationship | source_native_sections, implementation_examples, tool_capabilities | abstract, technical | The manifest of a harness plugin at one commit (plugin.json, hooks, commands, MCP configuration) with its file manifest… | code | yes | no | yes | active | — |
 | `agent_skill_manifest` | — | structural_heading | claim, entity, relationship | source_native_sections, implementation_examples, tool_capabilities | abstract, technical | agent skill manifest | code | yes | no | yes | active | — |
 | `aie_talk` | — | transcript_window | claim, entity, relationship | units, digests | abstract, key_claims, timeline | An ai.engineer talk page: write-up, resources, slides with timecodes and a timestamped transcript without speaker label… | event_media | yes | no | yes | active | talk |
 | `analysis_post` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | analysis post | editorial | no | no | yes | active | story |

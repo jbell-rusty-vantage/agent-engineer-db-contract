@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"catalog\"][\"Tables\"][\"work\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # catalog.work
 
@@ -70,8 +70,8 @@ No role has privileges. None: `anon`, `app_reader`, `authenticated`, `control_pl
 
 ## Read paths
 
-- Named queries: `q:catalog.papers`, `q:catalog.talks`.
-- Exposed through: [`api.papers`](../api/papers.md), [`api.talks`](../api/talks.md).
+- Named queries: `q:catalog.papers`, `q:catalog.talks`, `q:content.talk_segments`.
+- Exposed through: [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.digest_items`](../api/digest_items.md), [`api.papers`](../api/papers.md), [`api.talks`](../api/talks.md).
 - No agent role may SELECT directly.
 
 ## Write path

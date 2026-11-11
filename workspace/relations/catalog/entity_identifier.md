@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"catalog\"][\"Tables\"][\"entity_identifier\"][\"Row\"]"
 defined_in: []
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # catalog.entity_identifier
 
@@ -29,7 +29,7 @@ table in domain `identity`, lens `corpus`.
 | 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id) |
 | 2 | `tenant_id` | `uuid` | no | `util.current_tenant_id()` | unique (tenant_id, id); unique (tenant_id, scheme, value) |
 | 3 | `entity_id` | `uuid` | no | — | FK → [`catalog.entity`](entity.md).id |
-| 4 | `scheme` | `text` | no | — | unique (tenant_id, scheme, value); _curated:_ Closed check list (github, doi, arxiv, youtube_video, other, …). |
+| 4 | `scheme` | `text` | no | — | unique (tenant_id, scheme, value); Upstream identifier scheme. Capabilities share identity with Mission Control by (scheme, value): mcp_registry, skills_sh, github (owner/repo#path), npm, pypi, oci, belllabs (CAP-D1). No foreign key crosses databases.; _curated:_ Closed check list (github, doi, arxiv, youtube_video, other, …). |
 | 5 | `value` | `text` | no | — | unique (tenant_id, scheme, value); _curated:_ Exact match; resolve_entity treats an exact value as score 1.0. |
 
 ## Constraints
@@ -64,6 +64,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:entity.by_identifier`, `q:entity.resolve`.
+- Exposed through: [`api.capabilities`](../api/capabilities.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

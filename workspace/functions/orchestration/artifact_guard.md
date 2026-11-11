@@ -13,7 +13,7 @@ raises: [artifact immutable identity changed, artifact storage metadata requires
 touches: { reads: [orchestration.artifact, orchestration.artifact_tombstone], writes: [] }
 tokens: [orchestration, artifact_guard, orchestration.artifact_guard]
 defined_in: ["20260826000200_orchestration.sql", "20260903010200_knowledge_runtime_security.sql", "20260905011000_artifact_registration_lifecycle.sql", "20260914010600_checkpoint_retirement_compatibility.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # orchestration.artifact_guard
 

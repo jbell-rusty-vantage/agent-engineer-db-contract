@@ -9,9 +9,8 @@ relations:
       Build 08 dropped the thirty-six thin typed tables (corpus.organization, corpus.person,
       corpus.ai_model, corpus.ai_model_version, corpus.model_offering, …). What they carried now
       lives in `attributes`, validated per kind by `catalog.validate_entity_attributes`:
-      organization → legal_name, org_kind (frontier_lab, model_provider, cloud, tooling_vendor,
-      startup, enterprise, academic, nonprofit, media, event_organizer, investor, other),
-      website_url, country_code, founded_on; person → given_name, family_name, title,
+      organization → legal_name, org_kind (enum in the kind's schema), website_url,
+      country_code, founded_on; person → given_name, family_name, title,
       affiliation_text, orcid, profile_url (also store scheme orcid on entity_identifier);
       ai_model → model_family, modalities, description; ai_model_version (parent ai_model) →
       version_label (required), provider_model_id, modalities, open_weights, model_page_url;
@@ -19,7 +18,7 @@ relations:
       or API model id), region, tier, pricing_url, provider_model_id; library → ecosystem,
       package_name, repository_url, docs_url, category; paper → arxiv_id, doi, published_on,
       venue; talk → talk_kind, track, level, session_id, video_url, slides_url, edition.
-      Anything that changes over time (price, context window, stars, headcount, availability)
+      Anything that changes over time (price, context window, stars)
       is a fact stream, never an attribute. Work kinds also have a `catalog.work` row.
     column_notes:
       kind: "FK to taxonomy.entity_kind; selects the attributes_schema and parent_kind."

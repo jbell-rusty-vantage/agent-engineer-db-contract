@@ -12,8 +12,8 @@ executors: [anon, app_reader, authenticated, control_plane, executor_service, pi
 raises: [empty text cannot be indexed, private items need a workspace, "unknown vector space %"]
 touches: { reads: [catalog.entity, retrieval.projection_procedure, retrieval.vector_space, retrieval.vector_space_version], writes: [retrieval.projection_target, retrieval.search_projection, retrieval.vector_item] }
 tokens: [retrieval, index_text_item, retrieval.index_text_item]
-defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", part3_retrieval.sql]
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # retrieval.index_text_item
 
@@ -57,4 +57,4 @@ Touches (best effort): reads [`catalog.entity`](../../relations/catalog/entity.m
 
 TypeScript: `Database["retrieval"]["Functions"]["index_text_item"]`.
 
-Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `part3_retrieval.sql`.
+Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `20261110140000_build08_loop3_libraries_talks_capabilities.sql`, `part3_retrieval.sql`.

@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: []
 typescript: "Database[\"content\"][\"Tables\"][\"unit_link\"][\"Row\"]"
 defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.unit_link
 
@@ -27,7 +27,7 @@ table in domain `content`, lens `corpus` — R4: typed edge between two units (a
 | 1 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | — |
 | 2 | `from_node_id` | `uuid` | no | — | PK; FK → [`content.document_node`](document_node.md).id |
 | 3 | `to_node_id` | `uuid` | no | — | PK; FK → [`content.document_node`](document_node.md).id |
-| 4 | `kind` | `text` | no | — | PK |
+| 4 | `kind` | `text` | no | — | PK; documents \| cites \| supersedes \| implements \| mentions \| same_symbol \| imports (a symbol whose body uses a symbol of another library; loop 3). |
 | 5 | `method` | `text` | no | `'rule'::text` | — |
 | 6 | `confidence` | `numeric(5,4)` | no | `1.0` | — |
 | 7 | `created_at` | `timestamp with time zone` | no | `now()` | — |
@@ -35,7 +35,7 @@ table in domain `content`, lens `corpus` — R4: typed edge between two units (a
 ## Constraints
 
 - PK (from_node_id, to_node_id, kind)
-- check `unit_link_kind_check`: `(kind = ANY (ARRAY['documents'::text, 'cites'::text, 'supersedes'::text, 'implements'::text, 'mentions'::text, 'same_symbol'::text]))`
+- check `unit_link_kind_check`: `(kind = ANY (ARRAY['documents'::text, 'cites'::text, 'supersedes'::text, 'implements'::text, 'mentions'::text, 'same_symbol'::text, 'import…`
 
 ## Relationships
 
@@ -61,7 +61,7 @@ Enabled.
 
 ## Read paths
 
-- Exposed through: [`api.api_symbols`](../api/api_symbols.md).
+- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.symbol_docs`](../api/symbol_docs.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

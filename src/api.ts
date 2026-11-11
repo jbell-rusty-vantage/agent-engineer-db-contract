@@ -41,3 +41,20 @@ export type ApiLeaderboardDiffRow = ApiFunctionRows<"leaderboard_diff">[number];
 export type ApiCheapestComputeRow = ApiFunctionRows<"cheapest_compute">[number];
 export type ApiSymbolChange = ApiFunctionRows<"symbol_changes">[number];
 export type ApiAdvisoryForRow = ApiFunctionRows<"advisories_for">[number];
+// Build 08 loop 3 (2026-11-11): symbol history and docs links, digest items as retrieval targets with passages and video deep
+// links, talks by entity at two levels, release digests, unverified claim candidates with their library surfaces, capabilities
+// (MCP tools/prompts/resources, bundle file manifests, hook entries) with custody levels.
+export type ApiSymbolDoc = ApiView<"symbol_docs">;
+export type ApiDigestItem = ApiView<"digest_items">;
+export type ApiClaimSurface = ApiView<"claim_surfaces">;
+export type ApiMcpTool = ApiView<"mcp_tools">;
+export type ApiMcpPrompt = ApiView<"mcp_prompts">;
+export type ApiMcpResource = ApiView<"mcp_resources">;
+export type ApiBundleFile = ApiView<"bundle_files">;
+export type ApiHookEntry = ApiView<"hook_entries">;
+export type ApiCapability = ApiView<"capabilities">;
+export type ApiSymbolHistoryRow = ApiFunctionRows<"symbol_history">[number];
+export type ApiDigestItemPassage = ApiFunctionRows<"digest_item_passages">[number];
+export type ApiTalkAbout = ApiFunctionRows<"talks_about">[number];
+export type ApiReleaseDigestItem = ApiFunctionRows<"release_digest">[number];
+export type ApiUnitEntity = ApiFunctionRows<"unit_entities">[number];

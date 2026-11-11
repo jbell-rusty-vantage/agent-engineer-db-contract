@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, set_updated_at, util.set_updated_at]
 defined_in: ["20260826000100_foundation.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # util.set_updated_at
 

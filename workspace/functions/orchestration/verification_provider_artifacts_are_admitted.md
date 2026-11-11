@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, verification_provider_artifacts_are_admitted, orchestration.verification_provider_artifacts_are_admitted]
 defined_in: ["20260906021000_verification_artifact_consumer_admission.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # orchestration.verification_provider_artifacts_are_admitted
 

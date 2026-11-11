@@ -1,9 +1,9 @@
 {
   "build": {
     "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:370afc0438a55a50b597b959cf075618fb5b3a495ba30a82e349475616964384",
-    "generated_types_sha256": "sha256:6224b9e2db82996051df788a75f3848fd787265b1a4b231ba2b706e094546d6a",
-    "migration_head": "20261109130500",
+    "enrichment_sha256": "sha256:941fbdc6b005f643f94b302af353feffc302810d8147e84343bad2f01f6de832",
+    "generated_types_sha256": "sha256:b5b4588b095c0ce2a7cd956f804c119b4b75e77383854af2dea46537c70a27f2",
+    "migration_head": "20261110140200",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -29,11 +29,17 @@
       "api.current_relationship_rows": [
         "fn:api.current_relationship_rows()"
       ],
+      "api.digest_item_passages": [
+        "fn:api.digest_item_passages(uuid)"
+      ],
       "api.document_digest": [
         "fn:api.document_digest(uuid)"
       ],
       "api.document_units": [
         "fn:api.document_units(uuid,text[])"
+      ],
+      "api.document_work": [
+        "fn:api.document_work(uuid)"
       ],
       "api.entity_aliases": [
         "fn:api.entity_aliases(uuid)"
@@ -116,6 +122,12 @@
       "api.relationships": [
         "fn:api.relationships(uuid,text,timestamptz,int8,text)"
       ],
+      "api.release_digest": [
+        "fn:api.release_digest(uuid)"
+      ],
+      "api.release_order": [
+        "fn:api.release_order(text)"
+      ],
       "api.resolve_entity": [
         "fn:api.resolve_entity(text)"
       ],
@@ -134,8 +146,20 @@
       "api.symbol_changes": [
         "fn:api.symbol_changes(text,text,text)"
       ],
+      "api.symbol_history": [
+        "fn:api.symbol_history(text,text)"
+      ],
       "api.talk_segments": [
         "fn:api.talk_segments(uuid,int4,int4,text)"
+      ],
+      "api.talks_about": [
+        "fn:api.talks_about(uuid)"
+      ],
+      "api.timecode_link": [
+        "fn:api.timecode_link(text,int4)"
+      ],
+      "api.unit_entities": [
+        "fn:api.unit_entities(uuid)"
       ],
       "api.what_changed": [
         "fn:api.what_changed(uuid,int8,int8)"
@@ -655,6 +679,9 @@
       ],
       "retrieval.store_embedding": [
         "fn:retrieval.store_embedding(uuid,halfvec,text)"
+      ],
+      "retrieval.supersede_duplicate_items": [
+        "fn:retrieval.supersede_duplicate_items()"
       ],
       "retrieval.transition_vector_store_lifecycle": [
         "fn:retrieval.transition_vector_store_lifecycle(uuid,text,text,text,uuid)"
@@ -2440,6 +2467,7 @@
         "id": "poly:catalog.entity.kind",
         "relation": "rel:catalog.entity",
         "targets_by_value": {
+          "agent_plugin": "rel:catalog.entity",
           "agent_skill": "rel:catalog.entity",
           "ai_model": "rel:catalog.entity",
           "ai_model_version": "rel:catalog.entity",
@@ -2486,6 +2514,7 @@
         "id": "poly:content.document_type.work_entity_kind",
         "relation": "rel:content.document_type",
         "targets_by_value": {
+          "agent_plugin": "rel:catalog.entity",
           "agent_skill": "rel:catalog.entity",
           "ai_model": "rel:catalog.entity",
           "ai_model_version": "rel:catalog.entity",
@@ -2600,6 +2629,7 @@
         "id": "poly:orchestration.operation_receipt_target.entity_kind",
         "relation": "rel:orchestration.operation_receipt_target",
         "targets_by_value": {
+          "agent_plugin": "rel:catalog.entity",
           "agent_skill": "rel:catalog.entity",
           "ai_model": "rel:catalog.entity",
           "ai_model_version": "rel:catalog.entity",
@@ -2651,14 +2681,16 @@
           "document_node_id",
           "digest_id",
           "authored_revision_id",
-          "passage_id"
+          "passage_id",
+          "digest_item_id"
         ],
-        "discriminator": "(num_nonnulls(entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id) = 1)",
+        "discriminator": "(num_nonnulls(entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id, digest_item_id) = 1)",
         "id": "poly:retrieval.projection_target.projection_target_exactly_one",
         "relation": "rel:retrieval.projection_target",
         "targets": [
           "rel:authoring.work_revision",
           "rel:catalog.entity",
+          "rel:content.digest_item",
           "rel:content.document_digest",
           "rel:content.document_summary",
           "rel:evidence.claim",
@@ -2672,6 +2704,7 @@
         "id": "poly:staging.candidate.proposed_kind",
         "relation": "rel:staging.candidate",
         "targets_by_value": {
+          "agent_plugin": "rel:catalog.entity",
           "agent_skill": "rel:catalog.entity",
           "ai_model": "rel:catalog.entity",
           "ai_model_version": "rel:catalog.entity",
@@ -2733,6 +2766,7 @@
         "id": "poly:taxonomy.entity_kind.parent_kind",
         "relation": "rel:taxonomy.entity_kind",
         "targets_by_value": {
+          "agent_plugin": "rel:catalog.entity",
           "agent_skill": "rel:catalog.entity",
           "ai_model": "rel:catalog.entity",
           "ai_model_version": "rel:catalog.entity",
@@ -2779,6 +2813,7 @@
         "id": "poly:taxonomy.term_target_kind.entity_kind_code",
         "relation": "rel:taxonomy.term_target_kind",
         "targets_by_value": {
+          "agent_plugin": "rel:catalog.entity",
           "agent_skill": "rel:catalog.entity",
           "ai_model": "rel:catalog.entity",
           "ai_model_version": "rel:catalog.entity",
@@ -3625,7 +3660,9 @@
         "rel:content.document_representation",
         "rel:content.document_version",
         "rel:content.unit_entity_role",
-        "rel:content.unit_link"
+        "rel:content.unit_link",
+        "rel:retrieval.projection_target",
+        "rel:retrieval.vector_item"
       ],
       "rel:api.benchmark_scores": [
         "fn:util.current_tenant_id()",
@@ -3639,6 +3676,28 @@
         "rel:api.benchmark_scores",
         "rel:catalog.entity",
         "rel:catalog.relationship"
+      ],
+      "rel:api.bundle_files": [
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role"
+      ],
+      "rel:api.capabilities": [
+        "fn:api.names(uuid[])",
+        "fn:api.related(uuid,text,text,timestamptz)",
+        "fn:util.current_tenant_id()",
+        "rel:api.bundle_files",
+        "rel:api.hook_entries",
+        "rel:api.mcp_tools",
+        "rel:catalog.entity",
+        "rel:catalog.entity_identifier",
+        "rel:content.document",
+        "rel:content.document_about_entity",
+        "rel:content.document_version"
       ],
       "rel:api.claim_candidates": [
         "fn:api.names(uuid[])",
@@ -3656,6 +3715,21 @@
         "rel:evidence.claim",
         "rel:evidence.claim_conflict",
         "rel:evidence.conflict_reconciliation"
+      ],
+      "rel:api.claim_surfaces": [
+        "fn:api.names(uuid[])",
+        "fn:util.current_tenant_id()",
+        "rel:catalog.work",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:evidence.claim",
+        "rel:evidence.claim_conflict",
+        "rel:evidence.claim_evidence_link",
+        "rel:evidence.claim_subject",
+        "rel:evidence.locator",
+        "rel:evidence.source"
       ],
       "rel:api.compute_devices": [
         "fn:api.names(uuid[])",
@@ -3686,6 +3760,18 @@
         "fn:api.current_relationship_rows()",
         "rel:catalog.relationship"
       ],
+      "rel:api.digest_items": [
+        "fn:api.document_work(uuid)",
+        "fn:api.timecode_link(text,int4)",
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:catalog.work",
+        "rel:content.digest_item",
+        "rel:content.document",
+        "rel:content.document_digest",
+        "rel:content.document_node",
+        "rel:content.document_version"
+      ],
       "rel:api.endpoints": [
         "fn:util.current_tenant_id()",
         "rel:content.document",
@@ -3713,11 +3799,44 @@
         "rel:guidance.item",
         "rel:guidance.item_subject"
       ],
+      "rel:api.hook_entries": [
+        "fn:util.current_tenant_id()",
+        "rel:catalog.entity",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role"
+      ],
       "rel:api.libraries": [
         "rel:api.software"
       ],
+      "rel:api.mcp_prompts": [
+        "fn:util.current_tenant_id()",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role"
+      ],
+      "rel:api.mcp_resources": [
+        "fn:util.current_tenant_id()",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role"
+      ],
       "rel:api.mcp_servers": [
         "rel:api.software"
+      ],
+      "rel:api.mcp_tools": [
+        "fn:util.current_tenant_id()",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_entity_role"
       ],
       "rel:api.mission_progress": [
         "rel:observability.usage_rollup",
@@ -3787,6 +3906,15 @@
         "rel:catalog.relationship",
         "rel:temporal.event",
         "rel:temporal.event_occurrence"
+      ],
+      "rel:api.symbol_docs": [
+        "fn:util.current_tenant_id()",
+        "rel:content.document",
+        "rel:content.document_node",
+        "rel:content.document_representation",
+        "rel:content.document_version",
+        "rel:content.unit_link",
+        "rel:evidence.source"
       ],
       "rel:api.talks": [
         "fn:api.names(uuid[])",
@@ -3898,12 +4026,27 @@
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:api.bundle_files": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.capabilities": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:api.claim_candidates": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
       },
       "rel:api.claim_conflicts": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.claim_surfaces": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -3933,6 +4076,11 @@
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:api.digest_items": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:api.endpoints": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
@@ -3958,12 +4106,32 @@
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:api.hook_entries": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:api.libraries": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:api.mcp_prompts": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.mcp_resources": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:api.mcp_servers": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.mcp_tools": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -4024,6 +4192,11 @@
         "via_functions": []
       },
       "rel:api.software_releases": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.symbol_docs": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -6039,7 +6212,8 @@
         ],
         "via_functions": [
           "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)",
-          "fn:retrieval.retire_items_for_passages(uuid[])"
+          "fn:retrieval.retire_items_for_passages(uuid[])",
+          "fn:retrieval.supersede_duplicate_items()"
         ]
       },
       "rel:retrieval.vector_item_embedding_1536": {
@@ -6565,6 +6739,11 @@
           "fn:api.document_units(uuid,text[])",
           "fn:api.document_digest(uuid)",
           "fn:api.talk_segments(uuid,int4,int4,text)",
+          "fn:api.digest_item_passages(uuid)",
+          "fn:api.talks_about(uuid)",
+          "fn:api.release_digest(uuid)",
+          "fn:api.unit_entities(uuid)",
+          "fn:api.symbol_history(text,text)",
           "fn:api.summary_evidence(uuid)",
           "fn:content.validate_unit_attributes()",
           "fn:content.validate_unit_entity_role()",
@@ -7163,11 +7342,17 @@
           "leaderboard",
           "ranking",
           "editions",
-          "scores"
+          "scores",
+          "benchmark versions",
+          "benchmark edition",
+          "leaderboard diff",
+          "what changed on a leaderboard",
+          "leaderboard capture"
         ],
         "body": "Build 08 reduced `ranking` to three tables. `ranking.leaderboard` names a ranked view:\nthe cohort filter, the metric (a `temporal.stream_kind`) and the policy are data in\n`definition`; the values come from `temporal.segment`, never from a metric table of their\nown. `ranking.leaderboard_edition` freezes one publication (membership, `knowledge_seq`,\n`cohort`); `ranking.leaderboard_entry` is a ranked row with `score`, `unit`,\n`explanation` and the `source_segment_ids` that produced it.\n\n`q:ranking.leaderboard` (`api.leaderboard(p_slug, p_limit)`) returns the latest published\nedition for `app_reader`. For ad-hoc comparison use the L1 views directly:\n`q:catalog.models` (min price, capabilities), `q:catalog.benchmark_scores` (benchmark facts).\nTrap: treating an edition as current world facts — it is a snapshot at its knowledge head;\ncite the segments in `source_segment_ids` when you quote a score.\n",
         "functions": [
-          "fn:api.leaderboard(text,int4)"
+          "fn:api.leaderboard(text,int4)",
+          "fn:api.leaderboard_diff(text,int4,int4)"
         ],
         "lens": null,
         "provenance": "model_assisted",
@@ -7186,7 +7371,7 @@
           "ranking"
         ],
         "slug": "ranking",
-        "summary": "A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head.",
+        "summary": "A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head. Benchmark versions are in `api.benchmarks`; `api.leaderboard_diff(slug, edition_a, edition_b)` shows what entered, left or moved between two captures of a leaderboard.",
         "tasks": [
           "compare-models",
           "cheapest-qualified-model"
@@ -12275,7 +12460,7 @@
           }
         ],
         "lens": null,
-        "notes": "Build 08 dropped the thirty-six thin typed tables (corpus.organization, corpus.person,\ncorpus.ai_model, corpus.ai_model_version, corpus.model_offering, …). What they carried now\nlives in `attributes`, validated per kind by `catalog.validate_entity_attributes`:\norganization → legal_name, org_kind (frontier_lab, model_provider, cloud, tooling_vendor,\nstartup, enterprise, academic, nonprofit, media, event_organizer, investor, other),\nwebsite_url, country_code, founded_on; person → given_name, family_name, title,\naffiliation_text, orcid, profile_url (also store scheme orcid on entity_identifier);\nai_model → model_family, modalities, description; ai_model_version (parent ai_model) →\nversion_label (required), provider_model_id, modalities, open_weights, model_page_url;\nmodel_offering (parent ai_model_version) → offering_key (required; the provider-side SKU\nor API model id), region, tier, pricing_url, provider_model_id; library → ecosystem,\npackage_name, repository_url, docs_url, category; paper → arxiv_id, doi, published_on,\nvenue; talk → talk_kind, track, level, session_id, video_url, slides_url, edition.\nAnything that changes over time (price, context window, stars, headcount, availability)\nis a fact stream, never an attribute. Work kinds also have a `catalog.work` row.\n",
+        "notes": "Build 08 dropped the thirty-six thin typed tables (corpus.organization, corpus.person,\ncorpus.ai_model, corpus.ai_model_version, corpus.model_offering, …). What they carried now\nlives in `attributes`, validated per kind by `catalog.validate_entity_attributes`:\norganization → legal_name, org_kind (enum in the kind's schema), website_url,\ncountry_code, founded_on; person → given_name, family_name, title,\naffiliation_text, orcid, profile_url (also store scheme orcid on entity_identifier);\nai_model → model_family, modalities, description; ai_model_version (parent ai_model) →\nversion_label (required), provider_model_id, modalities, open_weights, model_page_url;\nmodel_offering (parent ai_model_version) → offering_key (required; the provider-side SKU\nor API model id), region, tier, pricing_url, provider_model_id; library → ecosystem,\npackage_name, repository_url, docs_url, category; paper → arxiv_id, doi, published_on,\nvenue; talk → talk_kind, track, level, session_id, video_url, slides_url, edition.\nAnything that changes over time (price, context window, stars)\nis a fact stream, never an attribute. Work kinds also have a `catalog.work` row.\n",
         "provenance": "model_assisted",
         "reviewed": null,
         "summary": "One row per canonical identity; kind-specific attributes are a jsonb validated by taxonomy.entity_kind.attributes_schema."
@@ -14031,7 +14216,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:370afc0438a55a50b597b959cf075618fb5b3a495ba30a82e349475616964384",
+    "sha256": "sha256:941fbdc6b005f643f94b302af353feffc302810d8147e84343bad2f01f6de832",
     "tasks": [
       {
         "aliases": [
@@ -15764,7 +15949,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:f232c28f29fe2ddb9a811f3f3f81555dc24724eed5075493b79f2922b8d1a411",
+  "fingerprint": "sha256:f93bbdcc27115b5a2320a6769298666e4cb870ec200fd9125f04a9cf28825c9e",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -16254,6 +16439,89 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"current_relationship_rows\"]",
       "volatility": "stable"
     },
+    "fn:api.digest_item_passages(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_item",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:03523ca44d963e43c5c9a71d6b89fa42cbe23785edf02003023600d1cbdce7ec",
+      "comment": "Open the passage behind a digest item: its anchor units in source order, with a timecode deep link for talks.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.digest_item_passages(uuid)",
+      "identity_arguments": "p_item uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "digest_item_passages",
+      "raises": [],
+      "returns": "TABLE(node_id uuid, unit_kind text, start_ms integer, end_ms integer, text text, logical_key text, document_id uuid, deep_link text)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "api.document_work",
+          "api.timecode_link",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.work",
+          "content.digest_item",
+          "content.document",
+          "content.document_node",
+          "content.document_representation",
+          "content.document_version"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"digest_item_passages\"]",
+      "volatility": "stable"
+    },
     "fn:api.document_digest(uuid)": {
       "arguments": [
         {
@@ -16418,6 +16686,82 @@
         "writes": []
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"document_units\"]",
+      "volatility": "stable"
+    },
+    "fn:api.document_work(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_document",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:7beebd23e80bee9cee85a473552e7e2d39a408e8f2543c7a2866a396d68ec52c",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.document_work(uuid)",
+      "identity_arguments": "p_document uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "document_work",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "catalog.work",
+          "content.document",
+          "content.document_about_entity"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"document_work\"]",
       "volatility": "stable"
     },
     "fn:api.entity_aliases(uuid)": {
@@ -18798,6 +19142,158 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"relationships\"]",
       "volatility": "stable"
     },
+    "fn:api.release_digest(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_release",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:2e768ddc198041ba7b5df474e8d1a0f8d35354e1e9d6250c406a9d8304a96784",
+      "comment": "What changed in a release, as digest items anchored to change_item units and to the changed api_symbol units.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.release_digest(uuid)",
+      "identity_arguments": "p_release uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "release_digest",
+      "raises": [],
+      "returns": "TABLE(item_id uuid, ordinal integer, item_kind text, text text, change_items jsonb, symbols jsonb, document_id uuid)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "content.digest_item",
+          "content.document_digest",
+          "content.document_node",
+          "content.document_version",
+          "content.unit_entity_role"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"release_digest\"]",
+      "volatility": "stable"
+    },
+    "fn:api.release_order(text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_tag",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:1373848323869377e32b5f85087b1399782af7c1c6703308e3f883175fee87f2",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.release_order(text)",
+      "identity_arguments": "p_tag text",
+      "kind": "function",
+      "language": "sql",
+      "name": "release_order",
+      "raises": [],
+      "returns": "integer[]",
+      "returns_set": false,
+      "schema": "api",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"release_order\"]",
+      "volatility": "immutable"
+    },
     "fn:api.resolve_entity(text)": {
       "arguments": [
         {
@@ -19039,7 +19535,7 @@
           "type": "integer"
         }
       ],
-      "body_sha256": "sha256:f821a4517722f6d1f2afdff9675db7b93de33b71e00dd08206ad272d8fc843e6",
+      "body_sha256": "sha256:440a31f91bd9cebf49015f267745fbeb39a074eefbf916917e94fdf3a60e741f",
       "comment": "L3 scoped semantic search over the one stack: resolve the scope first (lens, tier, space, document kind, unit kind, entity, as-of, workspace for private), then fuse english full-text, trigram and ANN (if an embedding is given) with RRF; tier is a mild boost. Private items are returned only for the workspaces passed in.",
       "config": [
         "search_path=\"\""
@@ -19047,6 +19543,7 @@
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
         "20261108120100_build08_r2_fixups.sql",
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
         "part3_retrieval.sql"
       ],
       "executors": [
@@ -19371,6 +19868,90 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"symbol_changes\"]",
       "volatility": "stable"
     },
+    "fn:api.symbol_history(text,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_repository",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_package",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:c289aea86450a6b90592f9cf454b7c5a3542b6f12f1af543617ede10e4a0d594",
+      "comment": "L2: per public symbol of a repository, the first and the last ingested release that defines it. Releases are ordered by release date when recorded, then by tag digits. Only as complete as the releases ingested as api_surface documents.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
+        "20261110140100_build08_loop3_fixups.sql",
+        "20261110140200_build08_loop3_fixups2.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.symbol_history(text,text)",
+      "identity_arguments": "p_repository text, p_package text",
+      "kind": "function",
+      "language": "sql",
+      "name": "symbol_history",
+      "raises": [],
+      "returns": "TABLE(qualified_name text, symbol_kind text, package text, first_tag text, first_released_on text, last_tag text, releases_present integer, releases_total integer, in_latest boolean, latest_node_id uuid)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "api.release_order"
+        ],
+        "reads": [
+          "api.api_symbols"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"symbol_history\"]",
+      "volatility": "stable"
+    },
     "fn:api.talk_segments(uuid,int4,int4,text)": {
       "arguments": [
         {
@@ -19398,14 +19979,15 @@
           "type": "text"
         }
       ],
-      "body_sha256": "sha256:17bb43dd6a031910e39ef57f74f652c78f40006bd005ce9b5dd5d709006b2d7c",
-      "comment": "L3 exact: the transcript segments and slides of a talk inside a timecode window, optionally filtered by text; the speaker is the talk's presenter unless the segment carries a speaker attribute (ai.engineer transcripts have none).",
+      "body_sha256": "sha256:e3c94b2b476b3689faede7f4ac4c8ab9cb5dde9165c9b10dab4a4797ea7cb282",
+      "comment": "Transcript segments, slides and write-up chapters of a talk in time order; deep_link is the video URL at the segment start (the video is a link, never bytes).",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
         "20261108120400_build08_r2_fixups4.sql",
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
         "part4_views_seeds.sql"
       ],
       "executors": [
@@ -19450,16 +20032,18 @@
       "language": "sql",
       "name": "talk_segments",
       "raises": [],
-      "returns": "TABLE(node_id uuid, unit_kind text, start_ms integer, end_ms integer, slide_n integer, text text, document_id uuid, representation_id uuid, logical_key text)",
+      "returns": "TABLE(node_id uuid, unit_kind text, start_ms integer, end_ms integer, slide_n integer, text text, document_id uuid, representation_id uuid, logical_key text, deep_link text)",
       "returns_set": true,
       "schema": "api",
       "security": "definer",
       "touches": {
         "basis": "best_effort",
         "calls": [
+          "api.timecode_link",
           "util.current_tenant_id"
         ],
         "reads": [
+          "catalog.work",
           "content.document",
           "content.document_about_entity",
           "content.document_node",
@@ -19469,6 +20053,247 @@
         "writes": []
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"talk_segments\"]",
+      "volatility": "stable"
+    },
+    "fn:api.talks_about(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_entity",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:b14c3cf6b6a7248c116d12486acd9bd9c2fc81ccd3fab14347a1e456b4d1da94",
+      "comment": "Two levels in one call: level document/summary = the talk is about the entity in a stated role (document_about_entity, digest items of kind entity_role); level passage = the entity is mentioned in that transcript segment (unit_entity_role), with timecode and deep link.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.talks_about(uuid)",
+      "identity_arguments": "p_entity uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "talks_about",
+      "raises": [],
+      "returns": "TABLE(talk_id uuid, talk text, level text, entity_role text, item_kind text, text text, start_ms integer, end_ms integer, deep_link text, item_id uuid, node_id uuid, document_id uuid)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "api.document_work",
+          "api.timecode_link",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "api.digest_items",
+          "catalog.work",
+          "content.document",
+          "content.document_about_entity",
+          "content.document_node",
+          "content.document_representation",
+          "content.document_version",
+          "content.unit_entity_role"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"talks_about\"]",
+      "volatility": "stable"
+    },
+    "fn:api.timecode_link(text,int4)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_url",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_start_ms",
+          "type": "integer"
+        }
+      ],
+      "body_sha256": "sha256:a3635604b3da3d314beed415287c68a1260f95ae7c34b910ad3b387ae1c2f2dd",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.timecode_link(text,int4)",
+      "identity_arguments": "p_url text, p_start_ms integer",
+      "kind": "function",
+      "language": "sql",
+      "name": "timecode_link",
+      "raises": [],
+      "returns": "text",
+      "returns_set": false,
+      "schema": "api",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"timecode_link\"]",
+      "volatility": "immutable"
+    },
+    "fn:api.unit_entities(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_node",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:107785c3cb701b5342912ef311274fb4cba569fb8efab6827d73d306f6dda75e",
+      "comment": "L3 full-content level: the entities one unit (transcript segment, docs section, symbol, file) names or belongs to, with the role and how the link was made.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
+        "20261110140200_build08_loop3_fixups2.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.unit_entities(uuid)",
+      "identity_arguments": "p_node uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "unit_entities",
+      "raises": [],
+      "returns": "TABLE(entity_id uuid, entity text, entity_kind text, role text, method text, confidence numeric)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.entity",
+          "content.unit_entity_role"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"unit_entities\"]",
       "volatility": "stable"
     },
     "fn:api.what_changed(uuid,int8,int8)": {
@@ -30163,13 +30988,14 @@
           "type": "smallint"
         }
       ],
-      "body_sha256": "sha256:65c22c7fc49f42b1cad96fb99e69a323694c82d3c3c9ba6c0e40bf778fc665cc",
+      "body_sha256": "sha256:3558882620d9ad6c315ef0517b4fff08a2398c939dc35caaad33a05a0f758223",
       "comment": "The one way a text becomes searchable: upserts the projection target, the search projection and an active vector item in the named space with lens/tier/facets. Idempotent on identical text.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
         "part3_retrieval.sql"
       ],
       "executors": [
@@ -30934,6 +31760,55 @@
         ]
       },
       "typescript": "Database[\"retrieval\"][\"Functions\"][\"store_embedding\"]",
+      "volatility": "volatile"
+    },
+    "fn:retrieval.supersede_duplicate_items()": {
+      "arguments": [],
+      "body_sha256": "sha256:9dc2fe8871c66930c45b7c7447857752d69df2a55c45599bde7222ec65b6ab5f",
+      "comment": "Repair for D-40 (Build 08 loop 2): keeps the newest active vector item per target and space and marks the older ones superseded. Idempotent.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:retrieval.supersede_duplicate_items()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "supersede_duplicate_items",
+      "raises": [],
+      "returns": "integer",
+      "returns_set": false,
+      "schema": "retrieval",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "retrieval.projection_target"
+        ],
+        "writes": [
+          "retrieval.vector_item"
+        ]
+      },
+      "typescript": "Database[\"retrieval\"][\"Functions\"][\"supersede_duplicate_items\"]",
       "volatility": "volatile"
     },
     "fn:retrieval.transition_vector_store_lifecycle(uuid,text,text,text,uuid)": {
@@ -36583,11 +37458,62 @@
           "nullable": true,
           "position": 16,
           "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.overloads",
+          "identity": null,
+          "name": "overloads",
+          "nullable": true,
+          "position": 17,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.uses_external",
+          "identity": null,
+          "name": "uses_external",
+          "nullable": true,
+          "position": 18,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.released_on",
+          "identity": null,
+          "name": "released_on",
+          "nullable": true,
+          "position": 19,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.api_symbols.embedded",
+          "identity": null,
+          "name": "embedded",
+          "nullable": true,
+          "position": 20,
+          "type": "boolean"
         }
       ],
-      "comment": "L1: public symbols per repository release (R3), with how many docs sections document each symbol (R4).",
+      "comment": "L1: public API symbols per repository release (R3). When a release surface was parsed more than once, only the newest document with units is read.",
       "defined_in": [
-        "20261109130000_build08_loop2_numbers_compute_apis.sql"
+        "20261109130000_build08_loop2_numbers_compute_apis.sql",
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
+        "20261110140100_build08_loop3_fixups.sql",
+        "20261110140200_build08_loop3_fixups2.sql"
       ],
       "exclusions": [],
       "foreign_keys": [],
@@ -36642,7 +37568,7 @@
         "row": "Database[\"api\"][\"Views\"][\"api_symbols\"][\"Row\"]"
       },
       "unique": [],
-      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    d.attributes ->> 'repository'::text AS repository,\n    d.attributes ->> 'release_tag'::text AS release_tag,\n    d.attributes ->> 'package'::text AS package,\n    n.attributes ->> 'qualified_name'::text AS qualified_name,\n    n.attributes ->> 'kind'::text AS symbol_kind,\n    n.attributes ->> 'signature'::text AS signature,\n    n.attributes ->> 'module'::text AS module,\n    (n.attributes ->> 'is_public'::text)::boolean AS is_public,\n    (n.attributes ->> 'deprecated'::text)::boolean AS deprecated,\n    n.attributes ->> 'docstring_head'::text AS docstring_head,\n    n.attributes ->> 'path'::text AS path,\n    (n.attributes ->> 'lineno'::text)::integer AS lineno,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'release'::text\n         LIMIT 1) AS release_id,\n    ( SELECT count(*) AS count\n           FROM content.unit_link l\n          WHERE l.to_node_id = n.id AND l.kind = 'documents'::text) AS docs_links\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND d.document_type_code = 'api_surface'::text AND n.unit_kind = 'api_symbol'::text;",
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    d.attributes ->> 'repository'::text AS repository,\n    d.attributes ->> 'release_tag'::text AS release_tag,\n    d.attributes ->> 'package'::text AS package,\n    n.attributes ->> 'qualified_name'::text AS qualified_name,\n    n.attributes ->> 'kind'::text AS symbol_kind,\n    n.attributes ->> 'signature'::text AS signature,\n    n.attributes ->> 'module'::text AS module,\n    (n.attributes ->> 'is_public'::text)::boolean AS is_public,\n    (n.attributes ->> 'deprecated'::text)::boolean AS deprecated,\n    n.attributes ->> 'docstring_head'::text AS docstring_head,\n    n.attributes ->> 'path'::text AS path,\n    (n.attributes ->> 'lineno'::text)::integer AS lineno,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'release'::text\n         LIMIT 1) AS release_id,\n    ( SELECT count(*) AS count\n           FROM content.unit_link l\n          WHERE l.to_node_id = n.id AND l.kind = 'documents'::text) AS docs_links,\n    n.attributes -> 'overloads'::text AS overloads,\n    n.attributes -> 'uses_external'::text AS uses_external,\n    d.attributes ->> 'released_on'::text AS released_on,\n    (EXISTS ( SELECT 1\n           FROM retrieval.projection_target pt\n             JOIN retrieval.vector_item vi ON vi.projection_target_id = pt.id\n          WHERE pt.document_node_id = n.id AND vi.lifecycle = 'active'::text)) AS embedded\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND d.document_type_code = 'api_surface'::text AND n.unit_kind = 'api_symbol'::text AND NOT (EXISTS ( SELECT 1\n           FROM content.document d2\n          WHERE d2.tenant_id = d.tenant_id AND d2.document_type_code = 'api_surface'::text AND d2.id <> d.id AND d2.created_at > d.created_at AND (d2.attributes ->> 'repository'::text) = (d.attributes ->> 'repository'::text) AND (d2.attributes ->> 'release_tag'::text) = (d.attributes ->> 'release_tag'::text) AND COALESCE(d2.attributes ->> 'package'::text, ''::text) = COALESCE(d.attributes ->> 'package'::text, ''::text) AND (EXISTS ( SELECT 1\n                   FROM content.document_version v2\n                     JOIN content.document_representation r2 ON r2.document_version_id = v2.id\n                     JOIN content.document_node n2 ON n2.representation_id = r2.id\n                  WHERE v2.document_id = d2.id))));",
       "writers": []
     },
     "rel:api.benchmark_scores": {
@@ -37219,6 +38145,530 @@
       "view_definition": " SELECT id AS benchmark_id,\n    display_name AS benchmark,\n    slug,\n    attributes ->> 'organizer'::text AS organizer,\n    attributes ->> 'metric'::text AS metric,\n    attributes ->> 'score_type'::text AS score_type,\n    attributes ->> 'domain'::text AS domain,\n    (attributes ->> 'agentic'::text)::boolean AS agentic,\n    attributes ->> 'canonical_url'::text AS canonical_url,\n    COALESCE(( SELECT array_agg(v.display_name ORDER BY v.display_name) AS array_agg\n           FROM catalog.relationship r\n             JOIN catalog.entity v ON v.id = r.from_entity_id\n          WHERE r.to_entity_id = b.id AND r.kind = 'version_of'::text AND r.k_to IS NULL AND v.kind = 'benchmark_version'::text), '{}'::text[]) AS versions,\n    ( SELECT count(*) AS count\n           FROM api.benchmark_scores sc\n          WHERE sc.benchmark_id = b.id) AS score_count,\n    ( SELECT array_agg(DISTINCT sc.reported_by) AS array_agg\n           FROM api.benchmark_scores sc\n          WHERE sc.benchmark_id = b.id) AS reported_by_kinds\n   FROM catalog.entity b\n  WHERE tenant_id = util.current_tenant_id() AND kind = 'benchmark'::text AND lifecycle = 'active'::text;",
       "writers": []
     },
+    "rel:api.bundle_files": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.capability_id",
+          "identity": null,
+          "name": "capability_id",
+          "nullable": true,
+          "position": 4,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.capability",
+          "identity": null,
+          "name": "capability",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.path",
+          "identity": null,
+          "name": "path",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.size",
+          "identity": null,
+          "name": "size",
+          "nullable": true,
+          "position": 7,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.mode",
+          "identity": null,
+          "name": "mode",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.executable",
+          "identity": null,
+          "name": "executable",
+          "nullable": true,
+          "position": 9,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.git_blob_id",
+          "identity": null,
+          "name": "git_blob_id",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.sha256",
+          "identity": null,
+          "name": "sha256",
+          "nullable": true,
+          "position": 11,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.file_role",
+          "identity": null,
+          "name": "file_role",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.commit",
+          "identity": null,
+          "name": "commit",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.bundle_files.custody_level",
+          "identity": null,
+          "name": "custody_level",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        }
+      ],
+      "comment": "L1: the C1 file manifest of a capability bundle at a pinned commit (path, size, mode, executable, git blob id; sha256 only when bytes were fetched). A later materialize can verify fetched bytes against git_blob_id.",
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.bundle_files",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "bundle_files",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"bundle_files\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    v.version_label,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'capability'::text\n         LIMIT 1) AS capability_id,\n    ( SELECT e.display_name\n           FROM content.unit_entity_role r_1\n             JOIN catalog.entity e ON e.id = r_1.entity_id\n          WHERE r_1.node_id = n.id AND r_1.role = 'capability'::text\n         LIMIT 1) AS capability,\n    n.attributes ->> 'path'::text AS path,\n    (n.attributes ->> 'size'::text)::bigint AS size,\n    n.attributes ->> 'mode'::text AS mode,\n    (n.attributes ->> 'executable'::text)::boolean AS executable,\n    n.attributes ->> 'git_blob_id'::text AS git_blob_id,\n    n.attributes ->> 'sha256'::text AS sha256,\n    n.attributes ->> 'role'::text AS file_role,\n    n.attributes ->> 'commit'::text AS commit,\n    d.attributes ->> 'custody_level'::text AS custody_level\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND n.unit_kind = 'bundle_file'::text;",
+      "writers": []
+    },
+    "rel:api.capabilities": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.capability_id",
+          "identity": null,
+          "name": "capability_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.kind",
+          "identity": null,
+          "name": "kind",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.capability",
+          "identity": null,
+          "name": "capability",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.slug",
+          "identity": null,
+          "name": "slug",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.identifiers",
+          "identity": null,
+          "name": "identifiers",
+          "nullable": true,
+          "position": 5,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.custody_level",
+          "identity": null,
+          "name": "custody_level",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.manifest_document_id",
+          "identity": null,
+          "name": "manifest_document_id",
+          "nullable": true,
+          "position": 7,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.commit",
+          "identity": null,
+          "name": "commit",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.description",
+          "identity": null,
+          "name": "description",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.files",
+          "identity": null,
+          "name": "files",
+          "nullable": true,
+          "position": 11,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.executable_files",
+          "identity": null,
+          "name": "executable_files",
+          "nullable": true,
+          "position": 12,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.tools",
+          "identity": null,
+          "name": "tools",
+          "nullable": true,
+          "position": 13,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.hooks",
+          "identity": null,
+          "name": "hooks",
+          "nullable": true,
+          "position": 14,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.bundles",
+          "identity": null,
+          "name": "bundles",
+          "nullable": true,
+          "position": 15,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.bundled_in",
+          "identity": null,
+          "name": "bundled_in",
+          "nullable": true,
+          "position": 16,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.compatible_with",
+          "identity": null,
+          "name": "compatible_with",
+          "nullable": true,
+          "position": 17,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.listed_in",
+          "identity": null,
+          "name": "listed_in",
+          "nullable": true,
+          "position": 18,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.capabilities.repositories",
+          "identity": null,
+          "name": "repositories",
+          "nullable": true,
+          "position": 19,
+          "type": "text[]"
+        }
+      ],
+      "comment": "L1: researched capabilities (skills, MCP servers, plugins) with shared upstream identifiers and the custody level of the latest manifest (C0 reference, C1 manifest, C2 bundle; recorded on the manifest document like ingestion_level).",
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.capabilities",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "capabilities",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"capabilities\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT e.id AS capability_id,\n    e.kind,\n    e.display_name AS capability,\n    e.slug,\n    ( SELECT jsonb_agg(jsonb_build_object('scheme', i.scheme, 'value', i.value) ORDER BY i.scheme) AS jsonb_agg\n           FROM catalog.entity_identifier i\n          WHERE i.entity_id = e.id) AS identifiers,\n    COALESCE(m.custody_level, 'C0'::text) AS custody_level,\n    m.document_id AS manifest_document_id,\n    m.commit,\n    m.version_label,\n    e.attributes ->> 'description'::text AS description,\n    ( SELECT count(*) AS count\n           FROM api.bundle_files f\n          WHERE f.capability_id = e.id AND f.document_id = m.document_id) AS files,\n    ( SELECT count(*) AS count\n           FROM api.bundle_files f\n          WHERE f.capability_id = e.id AND f.document_id = m.document_id AND f.executable) AS executable_files,\n    ( SELECT count(*) AS count\n           FROM api.mcp_tools t\n          WHERE t.server_id = e.id AND t.document_version_id = m.document_version_id) AS tools,\n    ( SELECT count(*) AS count\n           FROM api.hook_entries h\n          WHERE h.plugin_id = e.id) AS hooks,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(e.id, 'bundles'::text, 'outgoing'::text) x(x))) AS bundles,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(e.id, 'bundles'::text, 'incoming'::text) x(x))) AS bundled_in,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(e.id, 'compatible_with'::text, 'outgoing'::text) x(x))) AS compatible_with,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(e.id, 'listed_in'::text, 'outgoing'::text) x(x))) AS listed_in,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(e.id, 'backed_by_repository'::text, 'outgoing'::text) x(x))) AS repositories\n   FROM catalog.entity e\n     LEFT JOIN LATERAL ( SELECT d.id AS document_id,\n            d.attributes ->> 'custody_level'::text AS custody_level,\n            d.attributes ->> 'commit'::text AS commit,\n            v.id AS document_version_id,\n            v.version_label\n           FROM content.document_about_entity a\n             JOIN content.document d ON d.id = a.document_id\n             JOIN content.document_version v ON v.document_id = d.id\n          WHERE a.entity_id = e.id AND a.role = 'primary'::text AND (d.document_type_code = ANY (ARRAY['agent_skill_manifest'::text, 'mcp_server_manifest'::text, 'agent_plugin_manifest'::text]))\n          ORDER BY v.created_at DESC\n         LIMIT 1) m ON true\n  WHERE e.tenant_id = util.current_tenant_id() AND (e.kind = ANY (ARRAY['agent_skill'::text, 'mcp_server'::text, 'agent_plugin'::text])) AND e.lifecycle = 'active'::text;",
+      "writers": []
+    },
     "rel:api.claim_candidates": {
       "checks": [],
       "columns": [
@@ -37683,6 +39133,286 @@
       },
       "unique": [],
       "view_definition": " SELECT x.id AS conflict_id,\n    x.conflict_kind,\n    x.detected_by,\n    x.detected_at,\n    a.id AS first_party_claim_id,\n    a.statement AS first_party_statement,\n    a.status::text AS first_party_status,\n    b.id AS other_claim_id,\n    b.statement AS other_statement,\n    b.status::text AS other_status,\n    b.structured ->> 'source_role'::text AS other_source_role,\n    b.structured ->> 'provenance'::text AS other_provenance,\n    ( SELECT r.outcome\n           FROM evidence.conflict_reconciliation r\n          WHERE r.conflict_id = x.id\n          ORDER BY r.decided_at DESC\n         LIMIT 1) AS reconciliation\n   FROM evidence.claim_conflict x\n     JOIN evidence.claim a ON a.id = x.claim_a_id\n     JOIN evidence.claim b ON b.id = x.claim_b_id\n  WHERE a.tenant_id = util.current_tenant_id();",
+      "writers": []
+    },
+    "rel:api.claim_surfaces": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.claim_type",
+          "identity": null,
+          "name": "claim_type",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.statement",
+          "identity": null,
+          "name": "statement",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.status",
+          "identity": null,
+          "name": "status",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.path",
+          "identity": null,
+          "name": "path",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.assertion_mode",
+          "identity": null,
+          "name": "assertion_mode",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.speakers",
+          "identity": null,
+          "name": "speakers",
+          "nullable": true,
+          "position": 7,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.quote",
+          "identity": null,
+          "name": "quote",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.start_ms",
+          "identity": null,
+          "name": "start_ms",
+          "nullable": true,
+          "position": 9,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.deep_link",
+          "identity": null,
+          "name": "deep_link",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.talk_id",
+          "identity": null,
+          "name": "talk_id",
+          "nullable": true,
+          "position": 11,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.talk",
+          "identity": null,
+          "name": "talk",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.consistency",
+          "identity": null,
+          "name": "consistency",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.consistency_note",
+          "identity": null,
+          "name": "consistency_note",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.compared_by",
+          "identity": null,
+          "name": "compared_by",
+          "nullable": true,
+          "position": 15,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.subjects",
+          "identity": null,
+          "name": "subjects",
+          "nullable": true,
+          "position": 16,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.surfaces",
+          "identity": null,
+          "name": "surfaces",
+          "nullable": true,
+          "position": 17,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_surfaces.conflicts",
+          "identity": null,
+          "name": "conflicts",
+          "nullable": true,
+          "position": 18,
+          "type": "bigint"
+        }
+      ],
+      "comment": "Claim candidates from talks (speaker, timecode, exact quote; always proposed, never adjudicated) with the library surfaces they concern (evidence links of role context) and the recorded reading: appears_consistent | appears_inconsistent | not_addressed | not_compared.",
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.claim_surfaces",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "claim_surfaces",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"claim_surfaces\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT id AS claim_id,\n    claim_type,\n    statement,\n    status::text AS status,\n    structured ->> 'path'::text AS path,\n    structured ->> 'assertion_mode'::text AS assertion_mode,\n    structured -> 'speakers'::text AS speakers,\n    structured ->> 'quote'::text AS quote,\n    (structured ->> 't0_ms'::text)::integer AS start_ms,\n    structured ->> 'deep_link'::text AS deep_link,\n    (structured ->> 'talk_id'::text)::uuid AS talk_id,\n    ( SELECT w.title\n           FROM catalog.work w\n          WHERE w.id = ((c.structured ->> 'talk_id'::text)::uuid)) AS talk,\n    structured ->> 'consistency'::text AS consistency,\n    structured ->> 'consistency_note'::text AS consistency_note,\n    structured ->> 'compared_by'::text AS compared_by,\n    api.names(( SELECT array_agg(s.entity_id) AS array_agg\n           FROM evidence.claim_subject s\n          WHERE s.claim_id = c.id)) AS subjects,\n    ( SELECT jsonb_agg(jsonb_build_object('node_id', n.id, 'unit_kind', n.unit_kind, 'label', COALESCE(n.attributes ->> 'qualified_name'::text, n.attributes ->> 'heading'::text, \"left\"(n.inline_text, 80)), 'document', d.canonical_title, 'url', src.canonical_url, 'role', l.role) ORDER BY d.canonical_title) AS jsonb_agg\n           FROM evidence.claim_evidence_link l\n             JOIN evidence.locator lo ON lo.id = l.locator_id\n             JOIN content.document_node n ON n.id = ((lo.selector ->> 'node_id'::text)::uuid)\n             JOIN content.document_representation r ON r.id = n.representation_id\n             JOIN content.document_version v ON v.id = r.document_version_id\n             JOIN content.document d ON d.id = v.document_id\n             LEFT JOIN evidence.source src ON src.id = d.canonical_source_id\n          WHERE l.claim_id = c.id AND l.role = 'context'::text) AS surfaces,\n    ( SELECT count(*) AS count\n           FROM evidence.claim_conflict x\n          WHERE x.claim_a_id = c.id OR x.claim_b_id = c.id) AS conflicts\n   FROM evidence.claim c\n  WHERE tenant_id = util.current_tenant_id() AND (structured ->> 'path'::text) = 'L1_candidate'::text AND structured ? 'quote'::text;",
       "writers": []
     },
     "rel:api.compute_devices": {
@@ -39052,6 +40782,406 @@
       "view_definition": " SELECT id,\n    tenant_id,\n    kind,\n    from_entity_id,\n    to_entity_id,\n    qualifier,\n    episode,\n    properties,\n    primary_claim_id,\n    k_from,\n    k_to,\n    created_at\n   FROM api.current_relationship_rows() current_relationship_rows(id, tenant_id, kind, from_entity_id, to_entity_id, qualifier, episode, properties, primary_claim_id, k_from, k_to, created_at);",
       "writers": []
     },
+    "rel:api.digest_items": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.item_id",
+          "identity": null,
+          "name": "item_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.digest_id",
+          "identity": null,
+          "name": "digest_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.scope",
+          "identity": null,
+          "name": "scope",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.scope_node_id",
+          "identity": null,
+          "name": "scope_node_id",
+          "nullable": true,
+          "position": 4,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.scope_heading",
+          "identity": null,
+          "name": "scope_heading",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 6,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.document_title",
+          "identity": null,
+          "name": "document_title",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.document_type_code",
+          "identity": null,
+          "name": "document_type_code",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.document_version_id",
+          "identity": null,
+          "name": "document_version_id",
+          "nullable": true,
+          "position": 9,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.ordinal",
+          "identity": null,
+          "name": "ordinal",
+          "nullable": true,
+          "position": 11,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.item_kind",
+          "identity": null,
+          "name": "item_kind",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.text",
+          "identity": null,
+          "name": "text",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.payload",
+          "identity": null,
+          "name": "payload",
+          "nullable": true,
+          "position": 14,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.node_ids",
+          "identity": null,
+          "name": "node_ids",
+          "nullable": true,
+          "position": 15,
+          "type": "uuid[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.anchor_count",
+          "identity": null,
+          "name": "anchor_count",
+          "nullable": true,
+          "position": 16,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.entity_id",
+          "identity": null,
+          "name": "entity_id",
+          "nullable": true,
+          "position": 17,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.entity",
+          "identity": null,
+          "name": "entity",
+          "nullable": true,
+          "position": 18,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.entity_role",
+          "identity": null,
+          "name": "entity_role",
+          "nullable": true,
+          "position": 19,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 20,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.unit_change_id",
+          "identity": null,
+          "name": "unit_change_id",
+          "nullable": true,
+          "position": 21,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.confidence",
+          "identity": null,
+          "name": "confidence",
+          "nullable": true,
+          "position": 22,
+          "type": "numeric"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.producer_kind",
+          "identity": null,
+          "name": "producer_kind",
+          "nullable": true,
+          "position": 23,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.producer_identity",
+          "identity": null,
+          "name": "producer_identity",
+          "nullable": true,
+          "position": 24,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.start_ms",
+          "identity": null,
+          "name": "start_ms",
+          "nullable": true,
+          "position": 25,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.end_ms",
+          "identity": null,
+          "name": "end_ms",
+          "nullable": true,
+          "position": 26,
+          "type": "integer"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.work_id",
+          "identity": null,
+          "name": "work_id",
+          "nullable": true,
+          "position": 27,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.digest_items.deep_link",
+          "identity": null,
+          "name": "deep_link",
+          "nullable": true,
+          "position": 28,
+          "type": "text"
+        }
+      ],
+      "comment": "L3 summary level: one row per structured digest item with its anchor units, entity role, claim candidate, timecode range and (for talks) a video deep link. The item, not a prose summary, is the unit of retrieval.",
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.digest_items",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "digest_items",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"digest_items\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT i.id AS item_id,\n    g.id AS digest_id,\n    g.scope,\n    g.scope_node_id,\n    ( SELECT sn.attributes ->> 'heading'::text\n           FROM content.document_node sn\n          WHERE sn.id = g.scope_node_id) AS scope_heading,\n    d.id AS document_id,\n    d.canonical_title AS document_title,\n    d.document_type_code,\n    v.id AS document_version_id,\n    v.version_label,\n    i.ordinal,\n    i.item_kind,\n    i.text,\n    i.payload,\n    i.node_ids,\n    cardinality(i.node_ids) AS anchor_count,\n    i.entity_id,\n    ( SELECT e.display_name\n           FROM catalog.entity e\n          WHERE e.id = i.entity_id) AS entity,\n    i.payload ->> 'role'::text AS entity_role,\n    i.claim_id,\n    i.unit_change_id,\n    i.confidence,\n    g.producer_kind,\n    g.producer_identity,\n    ( SELECT min(n.start_ms) AS min\n           FROM content.document_node n\n          WHERE n.id = ANY (i.node_ids)) AS start_ms,\n    ( SELECT max(COALESCE(n.end_ms, n.start_ms)) AS max\n           FROM content.document_node n\n          WHERE n.id = ANY (i.node_ids)) AS end_ms,\n    api.document_work(d.id) AS work_id,\n    api.timecode_link(( SELECT w.canonical_url\n           FROM catalog.work w\n          WHERE w.id = api.document_work(d.id)), ( SELECT min(n.start_ms) AS min\n           FROM content.document_node n\n          WHERE n.id = ANY (i.node_ids))) AS deep_link\n   FROM content.digest_item i\n     JOIN content.document_digest g ON g.id = i.digest_id\n     JOIN content.document_version v ON v.id = g.document_version_id\n     JOIN content.document d ON d.id = v.document_id\n  WHERE i.tenant_id = util.current_tenant_id() AND g.lifecycle = 'active'::text;",
+      "writers": []
+    },
     "rel:api.endpoints": {
       "checks": [],
       "columns": [
@@ -40106,6 +42236,190 @@
       "view_definition": " SELECT id,\n    tenant_id,\n    kind,\n    title,\n    statement,\n    scope,\n    assurance_level,\n    payload,\n    provenance_claim_id,\n    created_at,\n    ( SELECT array_agg(s.entity_id) AS array_agg\n           FROM guidance.item_subject s\n          WHERE s.item_id = i.id) AS subject_entity_ids\n   FROM guidance.item i\n  WHERE tenant_id = util.current_tenant_id();",
       "writers": []
     },
+    "rel:api.hook_entries": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.plugin_id",
+          "identity": null,
+          "name": "plugin_id",
+          "nullable": true,
+          "position": 4,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.plugin",
+          "identity": null,
+          "name": "plugin",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.event",
+          "identity": null,
+          "name": "event",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.matcher",
+          "identity": null,
+          "name": "matcher",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.hook_type",
+          "identity": null,
+          "name": "hook_type",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.command",
+          "identity": null,
+          "name": "command",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.hook_entries.config_path",
+          "identity": null,
+          "name": "config_path",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        }
+      ],
+      "comment": null,
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.hook_entries",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "hook_entries",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"hook_entries\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    v.version_label,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'capability'::text\n         LIMIT 1) AS plugin_id,\n    ( SELECT e.display_name\n           FROM content.unit_entity_role r_1\n             JOIN catalog.entity e ON e.id = r_1.entity_id\n          WHERE r_1.node_id = n.id AND r_1.role = 'capability'::text\n         LIMIT 1) AS plugin,\n    n.attributes ->> 'event'::text AS event,\n    n.attributes ->> 'matcher'::text AS matcher,\n    n.attributes ->> 'hook_type'::text AS hook_type,\n    n.attributes ->> 'command'::text AS command,\n    n.attributes ->> 'config_path'::text AS config_path\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND n.unit_kind = 'hook_entry'::text;",
+      "writers": []
+    },
     "rel:api.libraries": {
       "checks": [],
       "columns": [
@@ -40435,6 +42749,326 @@
       "view_definition": " SELECT software_id,\n    kind,\n    software,\n    slug,\n    ecosystem,\n    package_name,\n    category,\n    docs_url,\n    repository_url,\n    developers,\n    maintainers,\n    latest_release,\n    latest_release_on,\n    license,\n    stars,\n    downloads,\n    mcp_hosting,\n    mcp_auth,\n    mcp_is_official,\n    protocols,\n    concepts,\n    summary\n   FROM api.software\n  WHERE kind = 'library'::text;",
       "writers": []
     },
+    "rel:api.mcp_prompts": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.server",
+          "identity": null,
+          "name": "server",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.name",
+          "identity": null,
+          "name": "name",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.description",
+          "identity": null,
+          "name": "description",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.arguments",
+          "identity": null,
+          "name": "arguments",
+          "nullable": true,
+          "position": 7,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_prompts.server_id",
+          "identity": null,
+          "name": "server_id",
+          "nullable": true,
+          "position": 8,
+          "type": "uuid"
+        }
+      ],
+      "comment": null,
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.mcp_prompts",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "mcp_prompts",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"mcp_prompts\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    v.version_label,\n    n.attributes ->> 'server'::text AS server,\n    n.attributes ->> 'name'::text AS name,\n    n.attributes ->> 'description'::text AS description,\n    n.attributes -> 'arguments'::text AS arguments,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'server'::text\n         LIMIT 1) AS server_id\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND n.unit_kind = 'mcp_prompt'::text;",
+      "writers": []
+    },
+    "rel:api.mcp_resources": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.server",
+          "identity": null,
+          "name": "server",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.name",
+          "identity": null,
+          "name": "name",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.description",
+          "identity": null,
+          "name": "description",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.uri_template",
+          "identity": null,
+          "name": "uri_template",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_resources.server_id",
+          "identity": null,
+          "name": "server_id",
+          "nullable": true,
+          "position": 8,
+          "type": "uuid"
+        }
+      ],
+      "comment": null,
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.mcp_resources",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "mcp_resources",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"mcp_resources\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    v.version_label,\n    n.attributes ->> 'server'::text AS server,\n    n.attributes ->> 'name'::text AS name,\n    n.attributes ->> 'description'::text AS description,\n    n.attributes ->> 'uri_template'::text AS uri_template,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'server'::text\n         LIMIT 1) AS server_id\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND n.unit_kind = 'mcp_resource'::text;",
+      "writers": []
+    },
     "rel:api.mcp_servers": {
       "checks": [],
       "columns": [
@@ -40762,6 +43396,250 @@
       },
       "unique": [],
       "view_definition": " SELECT software_id,\n    kind,\n    software,\n    slug,\n    ecosystem,\n    package_name,\n    category,\n    docs_url,\n    repository_url,\n    developers,\n    maintainers,\n    latest_release,\n    latest_release_on,\n    license,\n    stars,\n    downloads,\n    mcp_hosting,\n    mcp_auth,\n    mcp_is_official,\n    protocols,\n    concepts,\n    summary\n   FROM api.software\n  WHERE kind = 'mcp_server'::text;",
+      "writers": []
+    },
+    "rel:api.mcp_tools": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.node_id",
+          "identity": null,
+          "name": "node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.document_version_id",
+          "identity": null,
+          "name": "document_version_id",
+          "nullable": true,
+          "position": 3,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.server",
+          "identity": null,
+          "name": "server",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.name",
+          "identity": null,
+          "name": "name",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.description",
+          "identity": null,
+          "name": "description",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.toolset",
+          "identity": null,
+          "name": "toolset",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.input_schema",
+          "identity": null,
+          "name": "input_schema",
+          "nullable": true,
+          "position": 9,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.required",
+          "identity": null,
+          "name": "required",
+          "nullable": true,
+          "position": 10,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.scopes",
+          "identity": null,
+          "name": "scopes",
+          "nullable": true,
+          "position": 11,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.availability",
+          "identity": null,
+          "name": "availability",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.server_id",
+          "identity": null,
+          "name": "server_id",
+          "nullable": true,
+          "position": 13,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.custody_level",
+          "identity": null,
+          "name": "custody_level",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.mcp_tools.logical_key",
+          "identity": null,
+          "name": "logical_key",
+          "nullable": true,
+          "position": 15,
+          "type": "text"
+        }
+      ],
+      "comment": "L1: tools an MCP server exposes per captured version (from a published manifest). Version diffs: content.unit_change by logical key.",
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.mcp_tools",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "mcp_tools",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"mcp_tools\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT n.id AS node_id,\n    d.id AS document_id,\n    v.id AS document_version_id,\n    v.version_label,\n    n.attributes ->> 'server'::text AS server,\n    n.attributes ->> 'name'::text AS name,\n    n.attributes ->> 'description'::text AS description,\n    n.attributes ->> 'toolset'::text AS toolset,\n    n.attributes -> 'input_schema'::text AS input_schema,\n    n.attributes -> 'required'::text AS required,\n    n.attributes -> 'scopes'::text AS scopes,\n    n.attributes ->> 'availability'::text AS availability,\n    ( SELECT r_1.entity_id\n           FROM content.unit_entity_role r_1\n          WHERE r_1.node_id = n.id AND r_1.role = 'server'::text\n         LIMIT 1) AS server_id,\n    d.attributes ->> 'custody_level'::text AS custody_level,\n    n.logical_key\n   FROM content.document d\n     JOIN content.document_version v ON v.document_id = d.id\n     JOIN content.document_representation r ON r.document_version_id = v.id\n     JOIN content.document_node n ON n.representation_id = r.id\n  WHERE d.tenant_id = util.current_tenant_id() AND n.unit_kind = 'mcp_tool'::text;",
       "writers": []
     },
     "rel:api.mission_progress": {
@@ -43884,6 +46762,310 @@
       },
       "unique": [],
       "view_definition": " SELECT r.id AS release_id,\n    r.display_name AS release,\n    s.id AS software_id,\n    s.display_name AS software,\n    s.kind AS software_kind,\n    r.attributes ->> 'version_label'::text AS version_label,\n    COALESCE(( SELECT lower(o.occurred_during) AS lower\n           FROM temporal.event e\n             JOIN temporal.event_occurrence o ON o.event_id = e.id\n          WHERE e.subject_entity_id = r.id AND e.kind = 'release_published'::text AND o.k_to IS NULL\n          ORDER BY (lower(o.occurred_during))\n         LIMIT 1), (r.attributes ->> 'released_on'::text)::timestamp with time zone) AS released_at,\n    COALESCE((r.attributes ->> 'breaking'::text)::boolean, false) AS breaking,\n    COALESCE(( SELECT array_agg(x.value) AS array_agg\n           FROM jsonb_array_elements_text(COALESCE(r.attributes -> 'highlights'::text, '[]'::jsonb)) x(value)), '{}'::text[]) AS highlights,\n    r.attributes ->> 'release_url'::text AS release_url,\n    ( SELECT o.k_from\n           FROM temporal.event e\n             JOIN temporal.event_occurrence o ON o.event_id = e.id\n          WHERE e.subject_entity_id = r.id AND e.kind = 'release_published'::text AND o.k_to IS NULL\n         LIMIT 1) AS learned_k,\n    r.created_at AS observed_at\n   FROM catalog.entity r\n     JOIN catalog.relationship rel ON rel.from_entity_id = r.id AND rel.kind = 'version_of'::text AND rel.k_to IS NULL\n     JOIN catalog.entity s ON s.id = rel.to_entity_id\n  WHERE r.tenant_id = util.current_tenant_id() AND r.kind = 'library_release'::text AND r.lifecycle = 'active'::text;",
+      "writers": []
+    },
+    "rel:api.symbol_docs": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.symbol_node_id",
+          "identity": null,
+          "name": "symbol_node_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.repository",
+          "identity": null,
+          "name": "repository",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.release_tag",
+          "identity": null,
+          "name": "release_tag",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.package",
+          "identity": null,
+          "name": "package",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.qualified_name",
+          "identity": null,
+          "name": "qualified_name",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.symbol_kind",
+          "identity": null,
+          "name": "symbol_kind",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.link_kind",
+          "identity": null,
+          "name": "link_kind",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.link_method",
+          "identity": null,
+          "name": "link_method",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.confidence",
+          "identity": null,
+          "name": "confidence",
+          "nullable": true,
+          "position": 9,
+          "type": "numeric(5,4)"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.docs_node_id",
+          "identity": null,
+          "name": "docs_node_id",
+          "nullable": true,
+          "position": 10,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.docs_unit_kind",
+          "identity": null,
+          "name": "docs_unit_kind",
+          "nullable": true,
+          "position": 11,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.heading",
+          "identity": null,
+          "name": "heading",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.section_path",
+          "identity": null,
+          "name": "section_path",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.excerpt",
+          "identity": null,
+          "name": "excerpt",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.document_id",
+          "identity": null,
+          "name": "document_id",
+          "nullable": true,
+          "position": 15,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.document_title",
+          "identity": null,
+          "name": "document_title",
+          "nullable": true,
+          "position": 16,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.document_type_code",
+          "identity": null,
+          "name": "document_type_code",
+          "nullable": true,
+          "position": 17,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.url",
+          "identity": null,
+          "name": "url",
+          "nullable": true,
+          "position": 18,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.version_label",
+          "identity": null,
+          "name": "version_label",
+          "nullable": true,
+          "position": 19,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.symbol_docs.version_note",
+          "identity": null,
+          "name": "version_note",
+          "nullable": true,
+          "position": 20,
+          "type": "text"
+        }
+      ],
+      "comment": "L3: the docs sections and code examples that document or mention a public API symbol (R4), one call: filter by qualified_name or repository.",
+      "defined_in": [
+        "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.symbol_docs",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "symbol_docs",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"symbol_docs\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT s.id AS symbol_node_id,\n    sd.attributes ->> 'repository'::text AS repository,\n    sd.attributes ->> 'release_tag'::text AS release_tag,\n    sd.attributes ->> 'package'::text AS package,\n    s.attributes ->> 'qualified_name'::text AS qualified_name,\n    s.attributes ->> 'kind'::text AS symbol_kind,\n    l.kind AS link_kind,\n    l.method AS link_method,\n    l.confidence,\n    n.id AS docs_node_id,\n    n.unit_kind AS docs_unit_kind,\n    n.attributes ->> 'heading'::text AS heading,\n    n.attributes ->> 'path'::text AS section_path,\n    \"left\"(n.inline_text, 400) AS excerpt,\n    d.id AS document_id,\n    d.canonical_title AS document_title,\n    d.document_type_code,\n    src.canonical_url AS url,\n    v.version_label,\n    n.attributes ->> 'version_note'::text AS version_note\n   FROM content.unit_link l\n     JOIN content.document_node s ON s.id = l.to_node_id AND s.unit_kind = 'api_symbol'::text\n     JOIN content.document_representation sr ON sr.id = s.representation_id\n     JOIN content.document_version sv ON sv.id = sr.document_version_id\n     JOIN content.document sd ON sd.id = sv.document_id\n     JOIN content.document_node n ON n.id = l.from_node_id\n     JOIN content.document_representation r ON r.id = n.representation_id\n     JOIN content.document_version v ON v.id = r.document_version_id\n     JOIN content.document d ON d.id = v.document_id\n     LEFT JOIN evidence.source src ON src.id = d.canonical_source_id\n  WHERE l.tenant_id = util.current_tenant_id() AND (l.kind = ANY (ARRAY['documents'::text, 'mentions'::text]));",
       "writers": []
     },
     "rel:api.talks": {
@@ -54200,7 +57382,7 @@
     "rel:catalog.entity_identifier": {
       "checks": [
         {
-          "expression": "(scheme = ANY (ARRAY['wikidata'::text, 'ror'::text, 'orcid'::text, 'github'::text, 'huggingface'::text, 'npm'::text, 'pypi'::text, 'crates'::text, 'go_module'::text, 'doi'::text, 'arxiv'::text, 'openreview'::text, 'mcp_registry'::text, 'cve'::text, 'ghsa'::text, 'spdx'::text, 'crunchbase'::text, 'pitchbook'::text, 'linkedin'::text, 'x'::text, 'youtube_channel'::text, 'youtube_playlist'::text, 'youtube_video'::text, 'spotify'::text, 'apple_podcasts'::text, 'domain'::text, 'sec_cik'::text, 'lei'::text, 'isin'::text, 'other'::text]))",
+          "expression": "(scheme = ANY (ARRAY['wikidata'::text, 'ror'::text, 'orcid'::text, 'github'::text, 'huggingface'::text, 'npm'::text, 'pypi'::text, 'crates'::text, 'go_module'::text, 'doi'::text, 'arxiv'::text, 'openreview'::text, 'mcp_registry'::text, 'cve'::text, 'ghsa'::text, 'spdx'::text, 'crunchbase'::text, 'pitchbook'::text, 'linkedin'::text, 'x'::text, 'youtube_channel'::text, 'youtube_playlist'::text, 'youtube_video'::text, 'spotify'::text, 'apple_podcasts'::text, 'domain'::text, 'sec_cik'::text, 'lei'::text, 'isin'::text, 'skills_sh'::text, 'oci'::text, 'belllabs'::text, 'other'::text]))",
           "name": "entity_identifier_scheme_check"
         }
       ],
@@ -54248,7 +57430,7 @@
           "type": "uuid"
         },
         {
-          "comment": null,
+          "comment": "Upstream identifier scheme. Capabilities share identity with Mission Control by (scheme, value): mcp_registry, skills_sh, github (owner/repo#path), npm, pypi, oci, belllabs (CAP-D1). No foreign key crosses databases.",
           "default": null,
           "fk": null,
           "generated": null,
@@ -56395,7 +59577,7 @@
           "name": "digest_item_confidence_check"
         },
         {
-          "expression": "(item_kind = ANY (ARRAY['key_point'::text, 'entity_role'::text, 'assertion_ref'::text, 'change'::text, 'open_question'::text, 'limitation'::text, 'research_direction'::text, 'problem'::text, 'method'::text, 'key_result'::text, 'artifact'::text, 'practitioner_change'::text]))",
+          "expression": "(item_kind = ANY (ARRAY['key_point'::text, 'entity_role'::text, 'assertion_ref'::text, 'change'::text, 'open_question'::text, 'limitation'::text, 'research_direction'::text, 'problem'::text, 'method'::text, 'key_result'::text, 'artifact'::text, 'practitioner_change'::text, 'recommendation'::text]))",
           "name": "digest_item_item_kind_check"
         },
         {
@@ -56459,7 +59641,7 @@
           "type": "integer"
         },
         {
-          "comment": "key_point | entity_role | assertion_ref | change | open_question | limitation | research_direction | problem | method | key_result | artifact | practitioner_change (the last five are the P1 structured paper digest of Build 08 §15.3).",
+          "comment": "key_point | entity_role | assertion_ref | change | open_question | limitation | research_direction | problem | method | key_result | artifact | practitioner_change | recommendation (what a source recommends doing, kept apart from what it asserts; loop 3).",
           "default": null,
           "fk": null,
           "generated": null,
@@ -56660,7 +59842,18 @@
         ]
       },
       "id": "rel:content.digest_item",
-      "inbound_foreign_keys": [],
+      "inbound_foreign_keys": [
+        {
+          "columns": [
+            "digest_item_id"
+          ],
+          "constraint": "projection_target_digest_item_id_fkey",
+          "from": "rel:retrieval.projection_target",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
       "indexes": [
         {
           "definition": "CREATE UNIQUE INDEX digest_item_digest_id_ordinal_key ON content.digest_item USING btree (digest_id, ordinal)",
@@ -65541,7 +68734,7 @@
     "rel:content.unit_link": {
       "checks": [
         {
-          "expression": "(kind = ANY (ARRAY['documents'::text, 'cites'::text, 'supersedes'::text, 'implements'::text, 'mentions'::text, 'same_symbol'::text]))",
+          "expression": "(kind = ANY (ARRAY['documents'::text, 'cites'::text, 'supersedes'::text, 'implements'::text, 'mentions'::text, 'same_symbol'::text, 'imports'::text]))",
           "name": "unit_link_kind_check"
         }
       ],
@@ -65595,7 +68788,7 @@
           "type": "uuid"
         },
         {
-          "comment": null,
+          "comment": "documents | cites | supersedes | implements | mentions | same_symbol | imports (a symbol whose body uses a symbol of another library; loop 3).",
           "default": null,
           "fk": null,
           "generated": null,
@@ -129005,15 +132198,15 @@
     "rel:retrieval.projection_target": {
       "checks": [
         {
-          "expression": "(num_nonnulls(entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id) = 1)",
+          "expression": "(num_nonnulls(entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id, digest_item_id) = 1)",
           "name": "projection_target_exactly_one"
         },
         {
-          "expression": "(((target_kind = 'entity'::text) AND (entity_id IS NOT NULL)) OR ((target_kind = 'record'::text) AND (record_id IS NOT NULL)) OR ((target_kind = 'chunk'::text) AND (chunk_id IS NOT NULL)) OR ((target_kind = 'claim'::text) AND (claim_id IS NOT NULL)) OR ((target_kind = 'summary'::text) AND (summary_id IS NOT NULL)) OR ((target_kind = 'unit'::text) AND (document_node_id IS NOT NULL)) OR ((target_kind = 'digest'::text) AND (digest_id IS NOT NULL)) OR ((target_kind = 'authored'::text) AND (authored_revision_id IS NOT NULL)) OR ((target_kind = 'passage'::text) AND (passage_id IS NOT NULL)))",
+          "expression": "(((target_kind = 'entity'::text) AND (entity_id IS NOT NULL)) OR ((target_kind = 'record'::text) AND (record_id IS NOT NULL)) OR ((target_kind = 'chunk'::text) AND (chunk_id IS NOT NULL)) OR ((target_kind = 'claim'::text) AND (claim_id IS NOT NULL)) OR ((target_kind = 'summary'::text) AND (summary_id IS NOT NULL)) OR ((target_kind = 'unit'::text) AND (document_node_id IS NOT NULL)) OR ((target_kind = 'digest'::text) AND (digest_id IS NOT NULL)) OR ((target_kind = 'authored'::text) AND (authored_revision_id IS NOT NULL)) OR ((target_kind = 'passage'::text) AND (passage_id IS NOT NULL)) OR ((target_kind = 'digest_item'::text) AND (digest_item_id IS NOT NULL)))",
           "name": "projection_target_kind_matches"
         },
         {
-          "expression": "(target_kind = ANY (ARRAY['entity'::text, 'record'::text, 'chunk'::text, 'claim'::text, 'summary'::text, 'unit'::text, 'digest'::text, 'authored'::text, 'passage'::text]))",
+          "expression": "(target_kind = ANY (ARRAY['entity'::text, 'record'::text, 'chunk'::text, 'claim'::text, 'summary'::text, 'unit'::text, 'digest'::text, 'authored'::text, 'passage'::text, 'digest_item'::text]))",
           "name": "projection_target_target_kind_check"
         }
       ],
@@ -129227,6 +132420,24 @@
           "nullable": true,
           "position": 14,
           "type": "uuid"
+        },
+        {
+          "comment": "One digest item is one retrieval target (loop 3, owner refinement 2a.1): the item resolves to its anchor units through content.digest_item.node_ids.",
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "projection_target_digest_item_id_fkey",
+            "to": "rel:content.digest_item"
+          },
+          "generated": null,
+          "id": "col:retrieval.projection_target.digest_item_id",
+          "identity": null,
+          "name": "digest_item_id",
+          "nullable": true,
+          "position": 15,
+          "type": "uuid"
         }
       ],
       "comment": "What a search projection is about: an entity card, a guidance item, a chunk, a claim, a summary, a typed unit, a digest, one of our authored revisions or a private passage. Exactly one target per row.",
@@ -129284,6 +132495,19 @@
           "name": "projection_target_digest_id_fkey",
           "on_delete": "no action",
           "to": "rel:content.document_digest",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "digest_item_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "projection_target_digest_item_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:content.digest_item",
           "to_columns": [
             "id"
           ]
@@ -129483,7 +132707,7 @@
       ],
       "indexes": [
         {
-          "definition": "CREATE UNIQUE INDEX projection_target_one_row_per_target ON retrieval.projection_target USING btree (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id) NULLS NOT DISTINCT",
+          "definition": "CREATE UNIQUE INDEX projection_target_one_row_per_target ON retrieval.projection_target USING btree (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id, digest_item_id) NULLS NOT DISTINCT",
           "id": "idx:retrieval.projection_target_one_row_per_target",
           "method": "btree",
           "name": "projection_target_one_row_per_target",
@@ -129562,7 +132786,8 @@
           "document_node_id",
           "digest_id",
           "authored_revision_id",
-          "passage_id"
+          "passage_id",
+          "digest_item_id"
         ],
         [
           "tenant_id",
@@ -143639,8 +146864,10 @@
         "fn:api.current_event_rows()",
         "fn:api.current_fact_rows()",
         "fn:api.current_relationship_rows()",
+        "fn:api.digest_item_passages(uuid)",
         "fn:api.document_digest(uuid)",
         "fn:api.document_units(uuid,text[])",
+        "fn:api.document_work(uuid)",
         "fn:api.entity_aliases(uuid)",
         "fn:api.entity_at(uuid,timestamptz,int8)",
         "fn:api.entity_card(uuid)",
@@ -143668,13 +146895,19 @@
         "fn:api.product_worker(text,jsonb)",
         "fn:api.related(uuid,text,text,timestamptz)",
         "fn:api.relationships(uuid,text,timestamptz,int8,text)",
+        "fn:api.release_digest(uuid)",
+        "fn:api.release_order(text)",
         "fn:api.resolve_entity(text)",
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)",
         "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
         "fn:api.summary_evidence(uuid)",
         "fn:api.symbol_changes(text,text,text)",
+        "fn:api.symbol_history(text,text)",
         "fn:api.talk_segments(uuid,int4,int4,text)",
+        "fn:api.talks_about(uuid)",
+        "fn:api.timecode_link(text,int4)",
+        "fn:api.unit_entities(uuid)",
         "fn:api.what_changed(uuid,int8,int8)"
       ],
       "id": "sch:api",
@@ -143685,20 +146918,28 @@
         "rel:api.api_symbols",
         "rel:api.benchmark_scores",
         "rel:api.benchmarks",
+        "rel:api.bundle_files",
+        "rel:api.capabilities",
         "rel:api.claim_candidates",
         "rel:api.claim_conflicts",
+        "rel:api.claim_surfaces",
         "rel:api.compute_devices",
         "rel:api.compute_offerings",
         "rel:api.concepts",
         "rel:api.current_facts",
         "rel:api.current_relationships",
+        "rel:api.digest_items",
         "rel:api.endpoints",
         "rel:api.entities",
         "rel:api.events",
         "rel:api.events_current",
         "rel:api.guidance_items",
+        "rel:api.hook_entries",
         "rel:api.libraries",
+        "rel:api.mcp_prompts",
+        "rel:api.mcp_resources",
         "rel:api.mcp_servers",
+        "rel:api.mcp_tools",
         "rel:api.mission_progress",
         "rel:api.model_offerings",
         "rel:api.models",
@@ -143711,6 +146952,7 @@
         "rel:api.review_queue",
         "rel:api.software",
         "rel:api.software_releases",
+        "rel:api.symbol_docs",
         "rel:api.talks",
         "rel:api.works_authored"
       ],
@@ -144338,6 +147580,7 @@
         "fn:retrieval.retire_items_for_passages(uuid[])",
         "fn:retrieval.rollback_vector_space(uuid,uuid,text,text,text,text,uuid)",
         "fn:retrieval.store_embedding(uuid,halfvec,text)",
+        "fn:retrieval.supersede_duplicate_items()",
         "fn:retrieval.transition_vector_store_lifecycle(uuid,text,text,text,uuid)",
         "fn:retrieval.validate_chunk_projection_target(uuid,uuid)",
         "fn:retrieval.validate_embedding_item()",
@@ -145157,6 +148400,32 @@
       "id": "voc:content.document_type",
       "key": "code",
       "rows": [
+        {
+          "axis_note": "capability manifest: attributes carry identifier, commit, custody_level (C0|C1|C2)",
+          "code": "agent_plugin_manifest",
+          "default_chunking_slug": "structural_heading",
+          "default_extraction_kinds": [
+            "claim",
+            "entity",
+            "relationship"
+          ],
+          "default_spaces": [
+            "source_native_sections",
+            "implementation_examples",
+            "tool_capabilities"
+          ],
+          "default_summary_kinds": [
+            "abstract",
+            "technical"
+          ],
+          "description": "The manifest of a harness plugin at one commit (plugin.json, hooks, commands, MCP configuration) with its file manifest; custody level recorded in attributes",
+          "family": "code",
+          "is_primary_source": true,
+          "promoted_from_census": false,
+          "published_at_is_world_time": true,
+          "status": "active",
+          "work_entity_kind": null
+        },
         {
           "axis_note": null,
           "code": "agent_skill_manifest",
@@ -146727,7 +149996,7 @@
           "work_entity_kind": "media_work"
         }
       ],
-      "rows_sha256": "sha256:acd5740bd74f1859084efe449207b17314d7895302a2caecb159f698dbfa5c41",
+      "rows_sha256": "sha256:d6bd77e3116a21321de34706b3be32a3d04bd826b7383296bede8e177bbaea4c",
       "schema": "content",
       "table": "document_type"
     },
@@ -147057,6 +150326,15 @@
               "module": {
                 "type": "string"
               },
+              "overload_count": {
+                "type": "integer"
+              },
+              "overloads": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
               "path": {
                 "type": "string"
               },
@@ -147065,6 +150343,12 @@
               },
               "signature": {
                 "type": "string"
+              },
+              "uses_external": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
               }
             },
             "required": [
@@ -147089,6 +150373,76 @@
             "section"
           ],
           "retrieval_role": "embed",
+          "selector_kind": "repository",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "agent_skill_manifest",
+            "agent_plugin_manifest",
+            "mcp_server_manifest"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "commit": {
+                "type": "string"
+              },
+              "executable": {
+                "type": "boolean"
+              },
+              "git_blob_id": {
+                "type": "string"
+              },
+              "mode": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "role": {
+                "enum": [
+                  "entry",
+                  "instructions",
+                  "script",
+                  "cli",
+                  "asset",
+                  "config",
+                  "binary",
+                  "other"
+                ],
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              },
+              "size": {
+                "type": "integer"
+              },
+              "symlink": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "type": "object"
+          },
+          "code": "bundle_file",
+          "description": "One file of a capability bundle (skill or plugin directory) at a pinned commit: the C1 file manifest (CAP-D3). A stated exception to rule R1, limited to capability bundles",
+          "entity_roles": [
+            "capability"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "path"
+          ],
+          "parent_kinds": [
+            "section",
+            "document_root"
+          ],
+          "retrieval_role": "filter",
           "selector_kind": "repository",
           "status": "active",
           "version": 1
@@ -147179,9 +150533,12 @@
         },
         {
           "applicable_document_types": [
+            "agent_skill_manifest",
             "framework_docs_page",
+            "agent_plugin_manifest",
+            "repository_readme",
             "official_docs_page",
-            "repository_readme"
+            "mcp_server_manifest"
           ],
           "attributes_schema": {
             "properties": {
@@ -147219,8 +150576,11 @@
         },
         {
           "applicable_document_types": [
+            "agent_skill_manifest",
             "framework_docs_page",
+            "agent_plugin_manifest",
             "official_docs_page",
+            "mcp_server_manifest",
             "api_reference"
           ],
           "attributes_schema": {
@@ -147454,6 +150814,61 @@
         },
         {
           "applicable_document_types": [
+            "agent_plugin_manifest"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "config_path": {
+                "type": "string"
+              },
+              "event": {
+                "type": "string"
+              },
+              "hook_type": {
+                "type": "string"
+              },
+              "matcher": {
+                "type": "string"
+              },
+              "ordinal": {
+                "type": "integer"
+              },
+              "timeout": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "event"
+            ],
+            "type": "object"
+          },
+          "code": "hook_entry",
+          "description": "One hook registration inside a plugin or harness configuration: event, matcher, command (CAP-D6)",
+          "entity_roles": [
+            "capability"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "config_path",
+            "event",
+            "matcher",
+            "ordinal"
+          ],
+          "parent_kinds": [
+            "section",
+            "document_root"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "json_pointer",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
             "leaderboard_page"
           ],
           "attributes_schema": {
@@ -147661,6 +151076,165 @@
           "logical_key_attributes": [],
           "parent_kinds": [
             "list"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "mcp_server_manifest"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "arguments": {
+                "type": "array"
+              },
+              "description": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "server": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "server",
+              "name"
+            ],
+            "type": "object"
+          },
+          "code": "mcp_prompt",
+          "description": "One prompt an MCP server exposes at one version, keyed by server and name",
+          "entity_roles": [
+            "server"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "server",
+            "name"
+          ],
+          "parent_kinds": [
+            "section",
+            "document_root"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "mcp_server_manifest"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "description": {
+                "type": "string"
+              },
+              "mime_type": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "server": {
+                "type": "string"
+              },
+              "uri_template": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "server",
+              "name"
+            ],
+            "type": "object"
+          },
+          "code": "mcp_resource",
+          "description": "One resource or resource template an MCP server exposes at one version, keyed by server and name",
+          "entity_roles": [
+            "server"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "server",
+            "name"
+          ],
+          "parent_kinds": [
+            "section",
+            "document_root"
+          ],
+          "retrieval_role": "embed",
+          "selector_kind": "text_quote",
+          "status": "active",
+          "version": 1
+        },
+        {
+          "applicable_document_types": [
+            "mcp_server_manifest"
+          ],
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "availability": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "input_schema": {
+                "type": "object"
+              },
+              "name": {
+                "type": "string"
+              },
+              "read_only": {
+                "type": "boolean"
+              },
+              "required": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "scopes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "server": {
+                "type": "string"
+              },
+              "toolset": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "server",
+              "name"
+            ],
+            "type": "object"
+          },
+          "code": "mcp_tool",
+          "description": "One tool an MCP server exposes at one version, keyed by server and name so version diffs work (CAP-D5). From a published manifest; a live tool list is a Mission Control inspection",
+          "entity_roles": [
+            "server"
+          ],
+          "is_universal": false,
+          "logical_key_attributes": [
+            "server",
+            "name"
+          ],
+          "parent_kinds": [
+            "section",
+            "document_root"
           ],
           "retrieval_role": "embed",
           "selector_kind": "text_quote",
@@ -148854,7 +152428,7 @@
           "version": 1
         }
       ],
-      "rows_sha256": "sha256:78a6884e72373d59a4012d3a355ccdf039443f4a4ef6850a321d0e9794096b64",
+      "rows_sha256": "sha256:d6d5586f23831cbc2386093703f835046d3ec61e77b53c36edea146a59997d3d",
       "schema": "content",
       "table": "unit_kind"
     },
@@ -149595,6 +153169,88 @@
       "rows": [
         {
           "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "author": {
+                "type": "string"
+              },
+              "components": {
+                "type": "object"
+              },
+              "description": {
+                "type": "string"
+              },
+              "harnesses": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "license": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "source_path": {
+                "type": "string"
+              },
+              "source_repository": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "canonical_schema": "catalog",
+          "canonical_table": "entity",
+          "code": "agent_plugin",
+          "description": "A harness plugin: a named bundle of skills, MCP servers, hooks, commands and prompts installed as one unit (CAP-D6). Hooks and commands are units of its manifest, not entities",
+          "is_work": false,
+          "label": "Agent Plugin",
+          "lens": "corpus",
+          "parent_kind": null
+        },
+        {
+          "attributes_schema": {
+            "additionalProperties": true,
+            "properties": {
+              "declared_clis": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "declared_tools": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "description": {
+                "type": "string"
+              },
+              "entry_path": {
+                "type": "string"
+              },
+              "license": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "shipped_with": {
+                "type": "string"
+              },
+              "source_path": {
+                "type": "string"
+              },
+              "source_repository": {
+                "type": "string"
+              }
+            },
             "type": "object"
           },
           "canonical_schema": "catalog",
@@ -150773,7 +154429,7 @@
           "parent_kind": null
         }
       ],
-      "rows_sha256": "sha256:78939236e3e12060d61eaed0b8778d5e34c0a5df69c74199cd5e3d7a52fe8ac8",
+      "rows_sha256": "sha256:de674e177f9c6641e132347359c3753ca6d2eda35f83b2fcda04b941f17840f6",
       "schema": "taxonomy",
       "table": "entity_kind"
     },
@@ -150809,39 +154465,40 @@
             "media_channel",
             "ai_model",
             "ai_model_version",
-            "paper",
             "product_feature",
-            "industry_event",
-            "benchmark_run",
+            "paper",
             "person",
+            "benchmark_run",
+            "industry_event",
             "benchmark_version",
             "compute_offering",
             "organization",
             "case_study",
             "registry",
-            "ai_protocol_feature",
-            "repository",
             "product_version",
+            "repository",
+            "ai_protocol_feature",
             "benchmark",
             "compute_device",
             "event_series",
             "ai_protocol",
             "media_series",
-            "concept",
             "talk",
+            "concept",
             "agent_skill",
             "product",
             "story",
             "corporate_transaction",
             "media_work",
-            "ai_protocol_version",
-            "technique",
             "model_offering",
+            "technique",
+            "ai_protocol_version",
             "mcp_server",
             "dataset",
             "library",
-            "funding_round",
+            "agent_plugin",
             "library_release",
+            "funding_round",
             "security_advisory"
           ]
         },
@@ -150914,10 +154571,11 @@
           "code": "backed_by_repository",
           "description": "backed by repository",
           "from_kinds": [
-            "product",
             "library",
-            "mcp_server",
-            "agent_skill"
+            "agent_skill",
+            "product",
+            "agent_plugin",
+            "mcp_server"
           ],
           "inverse_label": null,
           "property_schema": {},
@@ -151001,6 +154659,31 @@
           ]
         },
         {
+          "code": "bundles",
+          "description": "A plugin bundles a skill or an MCP server (exact member, by identifier)",
+          "from_kinds": [
+            "agent_plugin"
+          ],
+          "inverse_label": "bundled_in",
+          "property_schema": {
+            "properties": {
+              "config_path": {
+                "type": "string"
+              },
+              "transport": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "symmetric": false,
+          "temporal": false,
+          "to_kinds": [
+            "agent_skill",
+            "mcp_server"
+          ]
+        },
+        {
           "code": "case_study_uses",
           "description": "case study uses",
           "from_kinds": [
@@ -151053,9 +154736,11 @@
           "code": "compatible_with",
           "description": "A stated compatibility between versions (constraint in properties)",
           "from_kinds": [
-            "library_release",
-            "product_version",
             "ai_model_version",
+            "agent_skill",
+            "product_version",
+            "agent_plugin",
+            "library_release",
             "mcp_server"
           ],
           "inverse_label": "compatible_with",
@@ -151073,9 +154758,10 @@
           "symmetric": false,
           "temporal": false,
           "to_kinds": [
-            "library_release",
-            "product_version",
             "ai_model_version",
+            "product",
+            "product_version",
+            "library_release",
             "ai_protocol_version"
           ]
         },
@@ -151153,11 +154839,12 @@
           "symmetric": false,
           "temporal": true,
           "to_kinds": [
-            "product",
             "ai_model",
             "library",
-            "mcp_server",
-            "agent_skill"
+            "agent_skill",
+            "product",
+            "agent_plugin",
+            "mcp_server"
           ]
         },
         {
@@ -151369,39 +155056,40 @@
             "media_channel",
             "ai_model",
             "ai_model_version",
-            "paper",
             "product_feature",
-            "industry_event",
-            "benchmark_run",
+            "paper",
             "person",
+            "benchmark_run",
+            "industry_event",
             "benchmark_version",
             "compute_offering",
             "organization",
             "case_study",
             "registry",
-            "ai_protocol_feature",
-            "repository",
             "product_version",
+            "repository",
+            "ai_protocol_feature",
             "benchmark",
             "compute_device",
             "event_series",
             "ai_protocol",
             "media_series",
-            "concept",
             "talk",
+            "concept",
             "agent_skill",
             "product",
             "story",
             "corporate_transaction",
             "media_work",
-            "ai_protocol_version",
-            "technique",
             "model_offering",
+            "technique",
+            "ai_protocol_version",
             "mcp_server",
             "dataset",
             "library",
-            "funding_round",
+            "agent_plugin",
             "library_release",
+            "funding_round",
             "security_advisory"
           ],
           "inverse_label": null,
@@ -151472,11 +155160,12 @@
           "code": "listed_in",
           "description": "listed in",
           "from_kinds": [
-            "library",
-            "mcp_server",
-            "agent_skill",
+            "dataset",
             "ai_model",
-            "dataset"
+            "library",
+            "agent_skill",
+            "agent_plugin",
+            "mcp_server"
           ],
           "inverse_label": null,
           "property_schema": {},
@@ -151958,7 +155647,7 @@
           ]
         }
       ],
-      "rows_sha256": "sha256:55d35fc0d61717beba77a0cf2a32daa79777209b661cdc51f32644bf903b7dfe",
+      "rows_sha256": "sha256:c4c245857169c169b14e4cc156571a994ac785da52503ae8d2d8f22e3bba8ca3",
       "schema": "taxonomy",
       "table": "relationship_kind"
     },
@@ -154782,20 +158471,28 @@
       "rel:api.api_symbols": "unknown",
       "rel:api.benchmark_scores": "unknown",
       "rel:api.benchmarks": "unknown",
+      "rel:api.bundle_files": "unknown",
+      "rel:api.capabilities": "unknown",
       "rel:api.claim_candidates": "unknown",
       "rel:api.claim_conflicts": "unknown",
+      "rel:api.claim_surfaces": "unknown",
       "rel:api.compute_devices": "unknown",
       "rel:api.compute_offerings": "unknown",
       "rel:api.concepts": "unknown",
       "rel:api.current_facts": "unknown",
       "rel:api.current_relationships": "unknown",
+      "rel:api.digest_items": "unknown",
       "rel:api.endpoints": "unknown",
       "rel:api.entities": "unknown",
       "rel:api.events": "unknown",
       "rel:api.events_current": "unknown",
       "rel:api.guidance_items": "unknown",
+      "rel:api.hook_entries": "unknown",
       "rel:api.libraries": "unknown",
+      "rel:api.mcp_prompts": "unknown",
+      "rel:api.mcp_resources": "unknown",
       "rel:api.mcp_servers": "unknown",
+      "rel:api.mcp_tools": "unknown",
       "rel:api.mission_progress": "unknown",
       "rel:api.model_offerings": "unknown",
       "rel:api.models": "unknown",
@@ -154808,6 +158505,7 @@
       "rel:api.review_queue": "unknown",
       "rel:api.software": "unknown",
       "rel:api.software_releases": "unknown",
+      "rel:api.symbol_docs": "unknown",
       "rel:api.talks": "unknown",
       "rel:api.works_authored": "unknown",
       "rel:authoring.asset_scope": "small",
@@ -154833,7 +158531,7 @@
       "rel:catalog.distribution_kind": "unknown",
       "rel:catalog.entity": "medium",
       "rel:catalog.entity_alias": "unknown",
-      "rel:catalog.entity_identifier": "unknown",
+      "rel:catalog.entity_identifier": "small",
       "rel:catalog.entity_merge": "unknown",
       "rel:catalog.license": "unknown",
       "rel:catalog.media_platform": "unknown",
@@ -154843,8 +158541,8 @@
       "rel:content.conversion_finding": "unknown",
       "rel:content.digest_item": "medium",
       "rel:content.document": "small",
-      "rel:content.document_about_entity": "unknown",
-      "rel:content.document_digest": "unknown",
+      "rel:content.document_about_entity": "small",
+      "rel:content.document_digest": "small",
       "rel:content.document_identifier": "unknown",
       "rel:content.document_kind_assignment": "small",
       "rel:content.document_node": "medium",
@@ -154868,7 +158566,7 @@
       "rel:content.unit_change": "small",
       "rel:content.unit_entity_role": "medium",
       "rel:content.unit_kind": "unknown",
-      "rel:content.unit_link": "small",
+      "rel:content.unit_link": "medium",
       "rel:conversation.context_item": "unknown",
       "rel:conversation.context_snapshot": "unknown",
       "rel:conversation.message": "unknown",
@@ -155083,9 +158781,9 @@
       "rel:taxonomy.term": "unknown",
       "rel:taxonomy.term_relation": "unknown",
       "rel:taxonomy.term_target_kind": "unknown",
-      "rel:temporal.event": "unknown",
+      "rel:temporal.event": "small",
       "rel:temporal.event_kind": "unknown",
-      "rel:temporal.event_occurrence": "unknown",
+      "rel:temporal.event_occurrence": "small",
       "rel:temporal.extent": "small",
       "rel:temporal.knowledge_batch": "unknown",
       "rel:temporal.knowledge_head": "small",
@@ -155095,5 +158793,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+  "workspace_fingerprint": "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 }

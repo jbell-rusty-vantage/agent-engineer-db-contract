@@ -13,7 +13,7 @@ raises: [summary representation lineage mismatch, summary requires faithful sour
 touches: { reads: [content.document_node, content.document_representation, content.document_summary, content.document_summary_source, content.transformation_run], writes: [] }
 tokens: [content, check_summary_lineage, content.check_summary_lineage]
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.check_summary_lineage
 

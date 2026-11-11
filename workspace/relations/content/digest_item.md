@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"digest_item\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part2_content.sql]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.digest_item
 
@@ -30,7 +30,7 @@ table in domain `content`, lens `corpus` — One digest item: a key point, an en
 | 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | — |
 | 3 | `digest_id` | `uuid` | no | — | unique (digest_id, ordinal); FK → [`content.document_digest`](document_digest.md).id |
 | 4 | `ordinal` | `integer` | no | — | unique (digest_id, ordinal) |
-| 5 | `item_kind` | `text` | no | — | key_point \| entity_role \| assertion_ref \| change \| open_question \| limitation \| research_direction \| problem \| method \| key_result \| artifact \| practitioner_change (the last five are the P1 structured paper digest of Build 08 §15.3).; _curated:_ key_point, entity_role, assertion, change, open_question, limitation, research_direction. |
+| 5 | `item_kind` | `text` | no | — | key_point \| entity_role \| assertion_ref \| change \| open_question \| limitation \| research_direction \| problem \| method \| key_result \| artifact \| practitioner_change \| recommendation (what a source recommends doing, kept apart from what it asserts; loop 3).; _curated:_ key_point, entity_role, assertion, change, open_question, limitation, research_direction. |
 | 6 | `text` | `text` | yes | — | — |
 | 7 | `payload` | `jsonb` | no | `'{}'::jsonb` | — |
 | 8 | `node_ids` | `uuid[]` | no | `'{}'::uuid[]` | _curated:_ content.document_node ids the item is anchored to; cite these, not the text. |
@@ -50,7 +50,8 @@ table in domain `content`, lens `corpus` — One digest item: a key point, an en
 ## Relationships
 
 Outbound: `claim_id` → [`evidence.claim`](../evidence/claim.md)`.id`; `digest_id` → [`content.document_digest`](document_digest.md)`.id` on delete restrict; `entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `unit_change_id` → [`content.unit_change`](unit_change.md)`.id`.
-Inbound: none.
+Inbound: [`retrieval.projection_target`](../retrieval/projection_target.md).digest_item_id.
+Polymorphic target of: [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_exactly_one).
 
 ## Indexes
 
@@ -72,6 +73,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:content.document_digest`.
+- Exposed through: [`api.digest_items`](../api/digest_items.md).
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

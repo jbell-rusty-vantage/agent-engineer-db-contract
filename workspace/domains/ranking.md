@@ -3,18 +3,18 @@ id: "dom:ranking"
 kind: domain
 lens: corpus
 schemas: [ranking]
-aliases: [leaderboard, ranking, editions, scores]
+aliases: [leaderboard, ranking, editions, scores, benchmark versions, benchmark edition, leaderboard diff, what changed on a leaderboard, leaderboard capture]
 relations: [ranking.leaderboard, ranking.leaderboard_edition, ranking.leaderboard_entry, temporal.segment]
-functions: [api.leaderboard]
+functions: [api.leaderboard, api.leaderboard_diff]
 tasks: [cheapest-qualified-model, compare-models]
-summary: A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head.
+summary: "A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head. Benchmark versions are in `api.benchmarks`; `api.leaderboard_diff(slug, edition_a, edition_b)` shows what entered, left or moved between two captures of a leaderboard."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # Leaderboards
 
-A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head.
+A leaderboard is a named ranked view over fact segments; editions freeze membership at a knowledge head. Benchmark versions are in `api.benchmarks`; `api.leaderboard_diff(slug, edition_a, edition_b)` shows what entered, left or moved between two captures of a leaderboard.
 
 > curated (model_assisted, unreviewed) — Build 08 reduced `ranking` to three tables. `ranking.leaderboard` names a ranked view:
 > the cohort filter, the metric (a `temporal.stream_kind`) and the policy are data in
@@ -40,7 +40,7 @@ A leaderboard is a named ranked view over fact segments; editions freeze members
 
 ## Functions
 
-[`api.leaderboard`](../functions/api/leaderboard.md)
+[`api.leaderboard`](../functions/api/leaderboard.md), [`api.leaderboard_diff`](../functions/api/leaderboard_diff.md)
 
 ## Named queries
 

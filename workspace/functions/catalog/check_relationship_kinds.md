@@ -13,7 +13,7 @@ raises: [invalid relationship endpoint kinds, invalid version pair]
 touches: { reads: [catalog.entity, taxonomy.relationship_kind], writes: [] }
 tokens: [catalog, check_relationship_kinds, catalog.check_relationship_kinds]
 defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql", "20261109130300_build08_loop2_fixups3.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # catalog.check_relationship_kinds
 

@@ -145,6 +145,12 @@
   "belief": [
     "term:belief"
   ],
+  "benchmark edition": [
+    "dom:ranking"
+  ],
+  "benchmark versions": [
+    "dom:ranking"
+  ],
   "benchmarks": [
     "q:catalog.benchmark_scores"
   ],
@@ -929,8 +935,14 @@
     "dom:ranking",
     "q:ranking.leaderboard"
   ],
+  "leaderboard capture": [
+    "dom:ranking"
+  ],
   "leaderboard definition": [
     "rel:ranking.leaderboard"
+  ],
+  "leaderboard diff": [
+    "dom:ranking"
   ],
   "leaderboard row": [
     "rel:ranking.leaderboard_entry"
@@ -2007,6 +2019,9 @@
   ],
   "what changed": [
     "q:facts.changes_since"
+  ],
+  "what changed on a leaderboard": [
+    "dom:ranking"
   ],
   "what do we teach about": [
     "task:modules-covering-concept"

@@ -6,7 +6,7 @@ lens: corpus
 domains: [identity, relationships]
 relations: 9
 functions: 6
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # catalog
 
@@ -17,7 +17,7 @@ Industry identities: one entity row per thing (kind + validated attributes), ali
 | [`distribution_kind`](../../relations/catalog/distribution_kind.md) | table | unknown | — | — |
 | [`entity`](../../relations/catalog/entity.md) | table | medium | One row per canonical identity; kind-specific attributes are a jsonb validated by taxonom… | → `orchestration.operation_receipt`, → `taxonomy.entity_kind` |
 | [`entity_alias`](../../relations/catalog/entity_alias.md) | table | unknown | Typed alternate name for one entity; unique per entity, not globally. | → `catalog.entity`, → `evidence.claim` |
-| [`entity_identifier`](../../relations/catalog/entity_identifier.md) | table | unknown | Schemed external identifier; unique per tenant on (scheme, value). | → `catalog.entity` |
+| [`entity_identifier`](../../relations/catalog/entity_identifier.md) | table | small | Schemed external identifier; unique per tenant on (scheme, value). | → `catalog.entity` |
 | [`entity_merge`](../../relations/catalog/entity_merge.md) | table | unknown | Durable merge of two entities; loser becomes lifecycle merged. | → `catalog.entity`, → `orchestration.operation_receipt` |
 | [`license`](../../relations/catalog/license.md) | table | unknown | — | — |
 | [`media_platform`](../../relations/catalog/media_platform.md) | table | unknown | — | → `catalog.entity` |

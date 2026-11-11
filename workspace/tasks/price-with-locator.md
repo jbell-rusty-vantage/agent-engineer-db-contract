@@ -7,7 +7,7 @@ queries: [entity.resolve, catalog.model_offerings, facts.price_history, facts.lo
 aliases: [price, pricing, cost per token, citation for price, where does the price come from]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # What does X cost per 1M tokens, and where exactly was that read?
 

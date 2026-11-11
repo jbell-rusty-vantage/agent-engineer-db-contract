@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role, verifier_agent]
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_artifact_metadata\"][\"Row\"]"
 defined_in: ["20260905012000_verification_artifact_metadata.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # orchestration.verification_artifact_metadata
 

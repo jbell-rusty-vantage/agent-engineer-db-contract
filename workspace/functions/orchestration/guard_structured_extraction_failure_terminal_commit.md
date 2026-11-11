@@ -13,7 +13,7 @@ raises: [structured extraction terminal transaction requires exact receipt and o
 touches: { reads: [knowledge_service.operation, knowledge_service.receipt, orchestration.verification_structured_extraction_failure], writes: [] }
 tokens: [orchestration, guard_structured_extraction_failure_terminal_commit, orchestration.guard_structured_extraction_failure_terminal_commit]
 defined_in: ["20260906032600_verification_structured_extraction_failure_terminal.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # orchestration.guard_structured_extraction_failure_terminal_commit
 

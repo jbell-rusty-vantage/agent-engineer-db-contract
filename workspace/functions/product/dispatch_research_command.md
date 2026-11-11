@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.asset_scope, authoring.event, authoring.file_set, authoring.work_revision, dataset.field, inquiry.assertion], writes: [authoring.work, dataset.cell, dataset.proposal, dataset.row, inquiry.acceptance, inquiry.delivery, inquiry.obligation, inquiry.support, inquiry.watch] }
 tokens: [product, dispatch_research_command, product.dispatch_research_command]
 defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # product.dispatch_research_command
 

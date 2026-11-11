@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_version\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.document_version
 
@@ -72,7 +72,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:content.document_digest`, `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`.
-- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.endpoints`](../api/endpoints.md).
+- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.digest_items`](../api/digest_items.md), [`api.endpoints`](../api/endpoints.md), [`api.hook_entries`](../api/hook_entries.md), [`api.mcp_prompts`](../api/mcp_prompts.md), [`api.mcp_resources`](../api/mcp_resources.md), [`api.mcp_tools`](../api/mcp_tools.md), [`api.symbol_docs`](../api/symbol_docs.md).
 - Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path

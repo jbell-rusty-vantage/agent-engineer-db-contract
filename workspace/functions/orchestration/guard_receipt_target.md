@@ -13,7 +13,7 @@ raises: [RECEIPT_TARGET_TENANT_MISMATCH]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt], writes: [] }
 tokens: [orchestration, guard_receipt_target, orchestration.guard_receipt_target]
 defined_in: ["20261031010000_operation_receipt_targets.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # orchestration.guard_receipt_target
 

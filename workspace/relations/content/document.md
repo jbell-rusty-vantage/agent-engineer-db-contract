@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # content.document
 
@@ -55,18 +55,15 @@ Inbound: [`content.document`](document.md).supersedes_id, [`content.document_abo
 
 ## Indexes
 
-`document_tenant_id_id_key` unique; `document_title_trgm_idx`
+2 indexes; see [details](document.details.md).
 
 ## Triggers
 
-- `document_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
-- `document_work_integrity` → [`content.check_document_work`](../../functions/content/check_document_work.md)
-- `predecessor_direction` → [`util.validate_predecessor`](../../functions/util/validate_predecessor.md)
+3 triggers; see [details](document.details.md).
 
 ## Row-level security
 
-Enabled.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](document.details.md).
 
 ## Grants
 
@@ -75,7 +72,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:catalog.papers`, `q:catalog.talks`, `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`.
-- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.endpoints`](../api/endpoints.md), [`api.papers`](../api/papers.md), [`api.talks`](../api/talks.md).
+- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.digest_items`](../api/digest_items.md), [`api.endpoints`](../api/endpoints.md), [`api.hook_entries`](../api/hook_entries.md), [`api.mcp_prompts`](../api/mcp_prompts.md), [`api.mcp_resources`](../api/mcp_resources.md), [`api.mcp_tools`](../api/mcp_tools.md), [`api.papers`](../api/papers.md), [`api.symbol_docs`](../api/symbol_docs.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path

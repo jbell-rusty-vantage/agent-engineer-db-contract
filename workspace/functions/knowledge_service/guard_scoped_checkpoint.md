@@ -13,7 +13,7 @@ raises: [checkpoint parent must match current scope head]
 touches: { reads: [knowledge_service.checkpoint_scope], writes: [] }
 tokens: [knowledge_service, guard_scoped_checkpoint, knowledge_service.guard_scoped_checkpoint]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # knowledge_service.guard_scoped_checkpoint
 

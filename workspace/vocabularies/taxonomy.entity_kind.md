@@ -3,18 +3,19 @@ id: "voc:taxonomy.entity_kind"
 kind: vocabulary
 schema: taxonomy
 name: entity_kind
-rows: 37
-rows_sha256: "sha256:78939236e3e12060d61eaed0b8778d5e34c0a5df69c74199cd5e3d7a52fe8ac8"
-codes: [agent_skill, ai_model, ai_model_version, ai_protocol, ai_protocol_feature, ai_protocol_version, benchmark, benchmark_run, benchmark_version, case_study, compute_device, compute_offering, concept, corporate_transaction, dataset, event_series, funding_round, industry_event, library, library_release, mcp_server, media_channel, media_series, media_work, model_offering, organization, paper, person, product, product_feature, product_version, registry, repository, security_advisory, story, talk, technique]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+rows: 38
+rows_sha256: "sha256:de674e177f9c6641e132347359c3753ca6d2eda35f83b2fcda04b941f17840f6"
+codes: [agent_plugin, agent_skill, ai_model, ai_model_version, ai_protocol, ai_protocol_feature, ai_protocol_version, benchmark, benchmark_run, benchmark_version, case_study, compute_device, compute_offering, concept, corporate_transaction, dataset, event_series, funding_round, industry_event, library, library_release, mcp_server, media_channel, media_series, media_work, model_offering, organization, paper, person, product, product_feature, product_version, registry, repository, security_advisory, story, talk, technique]
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # taxonomy.entity_kind
 
-Reference data snapshot (37 rows, digest `sha256:78939236e3e12060d61eaed0b8778d5e34c0a5df69c74199cd5e3d7a52fe8ac8`). Codes are enforced wherever a column has a foreign key to [`taxonomy.entity_kind`](../relations/taxonomy/entity_kind.md).
+Reference data snapshot (38 rows, digest `sha256:de674e177f9c6641e132347359c3753ca6d2eda35f83b2fcda04b941f17840f6`). Codes are enforced wherever a column has a foreign key to [`taxonomy.entity_kind`](../relations/taxonomy/entity_kind.md).
 
 | code | attributes_schema | canonical_schema | canonical_table | description | is_work | label | lens | parent_kind |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `agent_skill` | `{"type":"object"}` | catalog | entity | agent_skill | no | Agent Skill | corpus | — |
+| `agent_plugin` | `{"additionalProperties":true,"properties":{"author":{"type":"string"},"componen…` | catalog | entity | A harness plugin: a named bundle of skills, MCP servers, hooks, commands and prompts installed as one unit (CAP-D6). Ho… | no | Agent Plugin | corpus | — |
+| `agent_skill` | `{"additionalProperties":true,"properties":{"declared_clis":{"items":{"type":"st…` | catalog | entity | agent_skill | no | Agent Skill | corpus | — |
 | `ai_model` | `{"additionalProperties":true,"properties":{"description":{"type":"string"},"mod…` | catalog | entity | ai_model | no | Ai Model | corpus | — |
 | `ai_model_version` | `{"additionalProperties":true,"properties":{"modalities":{"items":{"type":"strin…` | catalog | entity | Model version (the thing that is released, priced and evaluated); version_of -> ai_model | no | Ai Model Version | corpus | ai_model |
 | `ai_protocol` | `{"type":"object"}` | catalog | entity | ai_protocol | no | Ai Protocol | corpus | — |

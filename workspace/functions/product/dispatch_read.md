@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.asset_scope, authoring.distribution, authoring.distribution_offer, authoring.release_item, authoring.revision_binding, authoring.revision_block, authoring.work, authoring.work_revision, authoring.workspace, authoring.workspace_member, conversation.message, conversation.thread, curriculum.requirement, learning.assessment_result, learning.credit, learning.criterion_result, learning.enrollment, learning.evidence_grant, learning.grading_run, learning.release_adoption, learning.submission, library.passage, library.resource_control], writes: [] }
 tokens: [product, dispatch_read, product.dispatch_read]
 defined_in: ["20261105010300_product_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part3b_product.sql]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # product.dispatch_read
 

@@ -5,12 +5,12 @@ lens: corpus
 schemas: [content]
 aliases: [documents, units, nodes, grammar, census, digests, summaries, transcripts, refresh]
 relations: [content.document, content.document_version, content.document_representation, content.document_node, content.unit_kind, content.document_type, content.document_kind_assignment, content.format, content.source_role, content.structure_census, content.unit_entity_role, content.unit_assertion_mapping, content.unit_change, content.refresh_check, content.document_digest, content.digest_item, content.document_summary, content.document_summary_source, content.document_about_entity, content.transformation_run]
-functions: [api.document_digest, api.document_units, api.summary_evidence, api.talk_segments, content.current_kind, content.validate_unit_attributes, content.validate_unit_entity_role]
+functions: [api.digest_item_passages, api.document_digest, api.document_units, api.release_digest, api.summary_evidence, api.symbol_history, api.talk_segments, api.talks_about, api.unit_entities, content.current_kind, content.validate_unit_attributes, content.validate_unit_entity_role]
 tasks: [build-evidence-packet, find-stale-facts, price-with-locator, talk-passage-at-timecode, talks-on-topic, what-changed-since]
 summary: "Faithful documents decomposed into typed units with stable logical keys; census before kind, digests anchored to units, refresh as data."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # Documents, typed units, census and digests
 
@@ -77,7 +77,7 @@ Faithful documents decomposed into typed units with stable logical keys; census 
 
 ## Functions
 
-[`api.document_digest`](../functions/api/document_digest.md), [`api.document_units`](../functions/api/document_units.md), [`api.summary_evidence`](../functions/api/summary_evidence.md), [`api.talk_segments`](../functions/api/talk_segments.md), [`content.current_kind`](../functions/content/current_kind.md), [`content.validate_unit_attributes`](../functions/content/validate_unit_attributes.md), [`content.validate_unit_entity_role`](../functions/content/validate_unit_entity_role.md)
+[`api.digest_item_passages`](../functions/api/digest_item_passages.md), [`api.document_digest`](../functions/api/document_digest.md), [`api.document_units`](../functions/api/document_units.md), [`api.release_digest`](../functions/api/release_digest.md), [`api.summary_evidence`](../functions/api/summary_evidence.md), [`api.symbol_history`](../functions/api/symbol_history.md), [`api.talk_segments`](../functions/api/talk_segments.md), [`api.talks_about`](../functions/api/talks_about.md), [`api.unit_entities`](../functions/api/unit_entities.md), [`content.current_kind`](../functions/content/current_kind.md), [`content.validate_unit_attributes`](../functions/content/validate_unit_attributes.md), [`content.validate_unit_entity_role`](../functions/content/validate_unit_entity_role.md)
 
 ## Named queries
 

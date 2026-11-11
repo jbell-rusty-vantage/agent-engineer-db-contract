@@ -8,7 +8,7 @@ call: api.product_command
 lens: ours
 relations: [authoring.asset_scope, authoring.file_set, authoring.file_set_entry, orchestration.artifact]
 tokens: [register_file_set, command, api.product_command]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # register_file_set
 

@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # evidence.source
 
@@ -76,7 +76,7 @@ Inbound: [`content.document`](../content/document.md).canonical_source_id, [`evi
 
 ## Triggers
 
-- `source_set_updated_at` → [`util.set_updated_at`](../../functions/util/set_updated_at.md)
+1 triggers; see [details](source.details.md).
 
 ## Row-level security
 
@@ -89,6 +89,7 @@ Enabled; 1 policies in [details](source.details.md).
 ## Read paths
 
 - Named queries: `q:entity.card`, `q:evidence.sources_by_domain`, `q:facts.locators`.
+- Exposed through: [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.symbol_docs`](../api/symbol_docs.md).
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

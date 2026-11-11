@@ -3,7 +3,7 @@ id: "fn:api.leaderboard_diff(text,int4,int4)"
 kind: function
 schema: api
 name: leaderboard_diff
-domain: api-surface
+domain: ranking
 lens: corpus
 overloads: ["fn:api.leaderboard_diff(text,int4,int4)"]
 security: definer
@@ -13,11 +13,11 @@ raises: []
 touches: { reads: [ranking.leaderboard, ranking.leaderboard_edition, ranking.leaderboard_entry], writes: [] }
 tokens: [api, leaderboard_diff, api.leaderboard_diff]
 defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql"]
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # api.leaderboard_diff
 
-Domain `api-surface`, lens `corpus`.
+Domain `ranking`, lens `corpus`.
 
 ## leaderboard_diff(text, integer, integer) → TABLE(change text, subject_label text, entity_id uuid, rank_a integer, rank_b integer, score_a numeric, score_b numeric, conditions jsonb, edition_a integer, edition_b integer, observed_a timestamp with time zone, observed_b timestamp with time zone, board_date_a date, board_date_b date)
 

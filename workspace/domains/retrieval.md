@@ -10,7 +10,7 @@ tasks: [build-evidence-packet, modules-covering-concept, run-hybrid-search, sear
 summary: "One retrieval stack: every searchable text is a vector item with lens, source tier and facets; api.search_unified scopes then fuses."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:027ab2b6133d5d59318c478f06d832d89f937e563c387539f37fb3d7668818a8"
+workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
 ---
 # Retrieval (one stack, lens and tier)
 
@@ -50,7 +50,7 @@ One retrieval stack: every searchable text is a vector item with lens, source ti
 | Relation | Summary | Enforced | Direct writers |
 | --- | --- | --- | --- |
 | [`retrieval.vector_item`](../relations/retrieval/vector_item.md) | One searchable item in one space version with lens, source tier and facets; the one thing api.search_unified … | PK (id); unique (tenant_id, id); RLS | `executor_service` |
-| [`retrieval.projection_target`](../relations/retrieval/projection_target.md) | What a search projection is about — exactly one of entity, guidance item, chunk, claim, summary, typed unit, … | PK (id); unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id), (tenant_id, id); RLS | `executor_service`, `pipeline_agent` |
+| [`retrieval.projection_target`](../relations/retrieval/projection_target.md) | What a search projection is about — exactly one of entity, guidance item, chunk, claim, summary, typed unit, … | PK (id); unique (tenant_id, target_kind, entity_id, record_id, chunk_id, claim_id, summary_id, document_node_id, digest_id, authored_revision_id, passage_id, digest_item_id), (tenant_id, id); RLS | `executor_service`, `pipeline_agent` |
 | [`retrieval.search_projection`](../relations/retrieval/search_projection.md) | Derived text projection that a vector item points at. | PK (id); unique (tenant_id, id), (tenant_id, projection_target_id, projection_procedure_id, purpose, embedding_text_sha256); RLS | helpers only |
 | [`retrieval.vector_space`](../relations/retrieval/vector_space.md) | Named embedding space (units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, … | PK (id); unique (tenant_id, slug), (tenant_id, id); RLS | `executor_service` |
 | [`retrieval.vector_space_version`](../relations/retrieval/vector_space_version.md) | Immutable version of a vector space, including dims and publication lifecycle. | PK (id); unique (tenant_id, id), (vector_space_id, version); RLS | `executor_service` |
