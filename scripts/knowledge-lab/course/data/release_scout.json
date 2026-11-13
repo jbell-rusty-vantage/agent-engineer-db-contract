@@ -1,0 +1,367 @@
+{
+ "schema": "aieng.course.release-scout.v1",
+ "exported_at": "2026-11-13T16:05:19Z",
+ "provenance": "AI Engineer knowledge base (lab disposable-aieng-build04): PyPI JSON captured 2026-11-13; claims verified through a Knowledge Services admission 2026-11-13",
+ "libraries": {
+  "langchain": {
+   "first": [
+    "2022-10-25",
+    "0.0.1"
+   ],
+   "count": 528,
+   "latest": [
+    "2026-11-11",
+    "1.5.0"
+   ],
+   "minor_lines": {
+    "0.0": [
+     "2022-10-25",
+     "0.0.1"
+    ],
+    "0.1": [
+     "2024-01-06",
+     "0.1.0"
+    ],
+    "0.2": [
+     "2024-05-17",
+     "0.2.0"
+    ],
+    "0.3": [
+     "2024-09-13",
+     "0.3.0"
+    ],
+    "1.0": [
+     "2025-10-17",
+     "1.0.0"
+    ],
+    "1.1": [
+     "2025-11-24",
+     "1.1.0"
+    ],
+    "1.2": [
+     "2025-12-15",
+     "1.2.0"
+    ],
+    "1.3": [
+     "2026-05-12",
+     "1.3.0"
+    ],
+    "1.4": [
+     "2026-09-03",
+     "1.4.0"
+    ],
+    "1.5": [
+     "2026-11-11",
+     "1.5.0"
+    ]
+   },
+   "capture": "pypi-langchain-l5-89aba899319f.json"
+  },
+  "langchain-core": {
+   "first": [
+    "2023-11-20",
+    "0.0.1"
+   ],
+   "count": 323,
+   "latest": [
+    "2026-11-11",
+    "1.8.0"
+   ],
+   "minor_lines": {
+    "0.0": [
+     "2023-11-20",
+     "0.0.1"
+    ],
+    "0.1": [
+     "2023-12-12",
+     "0.1.0"
+    ],
+    "0.2": [
+     "2024-05-17",
+     "0.2.0"
+    ],
+    "0.3": [
+     "2024-09-13",
+     "0.3.0"
+    ],
+    "1.0": [
+     "2025-10-17",
+     "1.0.0"
+    ],
+    "1.1": [
+     "2025-11-21",
+     "1.1.0"
+    ],
+    "1.2": [
+     "2025-12-12",
+     "1.2.0"
+    ],
+    "1.3": [
+     "2026-04-17",
+     "1.3.0"
+    ],
+    "1.4": [
+     "2026-05-11",
+     "1.4.0"
+    ],
+    "1.5": [
+     "2026-07-21",
+     "1.5.0"
+    ],
+    "1.6": [
+     "2026-08-19",
+     "1.6.0"
+    ],
+    "1.7": [
+     "2026-10-22",
+     "1.7.0"
+    ],
+    "1.8": [
+     "2026-11-11",
+     "1.8.0"
+    ]
+   },
+   "capture": "pypi-langchain-core-l5-282d75cfd9c1.json"
+  },
+  "langgraph": {
+   "first": [
+    "2024-01-08",
+    "0.0.8"
+   ],
+   "count": 286,
+   "latest": [
+    "2026-11-12",
+    "1.2.21"
+   ],
+   "minor_lines": {
+    "0.0": [
+     "2024-01-08",
+     "0.0.8"
+    ],
+    "0.1": [
+     "2024-06-22",
+     "0.1.1"
+    ],
+    "0.2": [
+     "2024-08-07",
+     "0.2.0"
+    ],
+    "0.3": [
+     "2025-02-26",
+     "0.3.0"
+    ],
+    "0.4": [
+     "2025-04-29",
+     "0.4.0"
+    ],
+    "0.5": [
+     "2025-06-26",
+     "0.5.0"
+    ],
+    "0.6": [
+     "2025-07-28",
+     "0.6.0"
+    ],
+    "1.0": [
+     "2025-10-17",
+     "1.0.0"
+    ],
+    "1.1": [
+     "2026-03-10",
+     "1.1.0"
+    ],
+    "1.2": [
+     "2026-05-12",
+     "1.2.0"
+    ]
+   },
+   "capture": "pypi-langgraph-l5-295069040b26.json"
+  },
+  "deepagents": {
+   "first": [
+    "2025-07-29",
+    "0.0.1"
+   ],
+   "count": 150,
+   "latest": [
+    "2026-11-13",
+    "0.7.38"
+   ],
+   "minor_lines": {
+    "0.0": [
+     "2025-07-29",
+     "0.0.1"
+    ],
+    "0.1": [
+     "2025-10-17",
+     "0.1.0"
+    ],
+    "0.2": [
+     "2025-10-28",
+     "0.2.0"
+    ],
+    "0.3": [
+     "2025-12-08",
+     "0.3.0"
+    ],
+    "0.4": [
+     "2026-02-10",
+     "0.4.0"
+    ],
+    "0.5": [
+     "2026-04-07",
+     "0.5.0"
+    ],
+    "0.6": [
+     "2026-05-12",
+     "0.6.0"
+    ],
+    "0.7": [
+     "2026-07-29",
+     "0.7.0"
+    ]
+   },
+   "capture": "pypi-deepagents-l5-3b3fff41a392.json"
+  },
+  "langgraph-sdk": {
+   "first": [
+    "2024-05-02",
+    "0.1.0"
+   ],
+   "count": 112,
+   "latest": [
+    "2026-11-06",
+    "0.4.14"
+   ],
+   "minor_lines": {
+    "0.1": [
+     "2024-05-02",
+     "0.1.0"
+    ],
+    "0.2": [
+     "2025-07-22",
+     "0.2.0"
+    ],
+    "0.3": [
+     "2025-12-12",
+     "0.3.0"
+    ],
+    "0.4": [
+     "2026-05-28",
+     "0.4.0"
+    ]
+   },
+   "capture": "pypi-langgraph-sdk-l5-0386a8525e7c.json"
+  },
+  "langgraph-cli": {
+   "first": [
+    "2024-05-02",
+    "0.1.0"
+   ],
+   "count": 153,
+   "latest": [
+    "2026-11-12",
+    "0.4.43"
+   ],
+   "minor_lines": {
+    "0.1": [
+     "2024-05-02",
+     "0.1.0"
+    ],
+    "0.2": [
+     "2025-04-10",
+     "0.2.1"
+    ],
+    "0.3": [
+     "2025-06-09",
+     "0.3.1"
+    ],
+    "0.4": [
+     "2025-08-26",
+     "0.4.0"
+    ]
+   },
+   "capture": "pypi-langgraph-cli-l5-c9057abe3779.json"
+  }
+ },
+ "verified_claims": [
+  {
+   "probe": "P0b-deepagents-prerelease-pull",
+   "statement": "On 2025-10-16, installing deepagents with langchain and langgraph pulled the 1.0 release candidates (langchain 1.0.0rc1, langgraph 1.0.0a4) into the environment",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-46af95ae2cb34b47"
+  },
+  {
+   "probe": "P1-crea-deprecation",
+   "statement": "LangGraph v1 deprecates the create_react_agent prebuilt in favour of LangChain's create_agent",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-bd834390bf5fabd2"
+  },
+  {
+   "probe": "P1-crea-deprecation",
+   "statement": "langgraph.prebuilt.create_react_agent now emits a deprecation warning that points to create_agent",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-7dc9c9af66fad13b"
+  },
+  {
+   "probe": "P10-compiled-subagent",
+   "statement": "A CompiledSubAgent's final AIMessage reaches the parent Deep Agent wrapped in a ToolMessage",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-afad1316fb408a20"
+  },
+  {
+   "probe": "P11-swarm-v1-resolution",
+   "statement": "langgraph-swarm>=0.0.14 cannot be installed together with langchain>=1.0.2 and langgraph>=1.0.1",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-cbd12e72e12fba87"
+  },
+  {
+   "probe": "P11-swarm-v1-resolution",
+   "statement": "Without a version pin, installing langgraph>=1.0 with langgraph-swarm on 2025-10-28 resolves to langgraph 1.0.1 with langchain-core 0.3.79 (a mixed 0.x/1.x environment) by backtracking to langgraph-swarm 0.0.13",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-0465c047d9157246"
+  },
+  {
+   "probe": "P13-release-facts",
+   "statement": "LangGraph went 1.0 in October 2025 and was at 1.2.x in early July 2026",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-f81069edd269a970"
+  },
+  {
+   "probe": "P2-create-agent-prompt-kwarg",
+   "statement": "In create_agent the prompt parameter is renamed to system_prompt; dynamic prompts use middleware",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-0c021eab6756b6c4"
+  },
+  {
+   "probe": "P3-stream-node-name",
+   "statement": "The model node in streaming output is named model, not agent, in create_agent",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-45ab058ec69ddc0a"
+  },
+  {
+   "probe": "P4-crea-new-kwargs",
+   "statement": "create_react_agent has neither middleware nor system_prompt parameters",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-85e4ed85de5b3e1b"
+  },
+  {
+   "probe": "P5-pydantic-state",
+   "statement": "create_agent accepts a Pydantic state_schema without error but no longer validates it: an invalid field value passes, where the deprecated prebuilt raised a ValidationError",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-a6d9eeb0e26f6ae0"
+  },
+  {
+   "probe": "P6-legacy-imports",
+   "statement": "Legacy LangChain functionality (chains, hub, AgentExecutor) moved to the langchain-classic package in v1",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-bea8924d6bf52871"
+  },
+  {
+   "probe": "P7-docs-link-target",
+   "statement": "The create_react_agent links on the LangGraph v1 migration and release pages point to the langchain-classic reference, which documents a different function (a text-ReAct agent taking prompt: BasePromptTemplate), not the deprecated LangGraph prebuilt",
+   "verified_on": "2026-11-13",
+   "use_decision_id": "ud-c26a6db9-cd54-4312-9ec2-8613e6c0ab70-cac70a7650d70346"
+  }
+ ]
+}

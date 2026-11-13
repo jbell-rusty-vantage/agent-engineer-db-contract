@@ -1,0 +1,474 @@
+<title>Agents That Act</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a course module. Sticky lesson rail on wide screens, chips on phones; each lesson = idea, diagram, code that ran, its real output, evidence, gotchas, check, tutor. */
+:root {
+  --bg: #f5f6f4; --paper: #ffffff; --ink: #141a1f; --muted: #5d6870; --line: #dde2e0; --soft: #eef1ef;
+  --accent: #0d7a73; --accent-ink: #ffffff; --violet: #5a45c9; --amber: #a86a00; --amber-bg: #fdf3dd;
+  --ok: #1d7a45; --ok-bg: #e2f3e8; --bad: #b4372f; --bad-bg: #fbe5e2; --gk: #7a5b00; --gk-bg: #fbf0c9; --kb: #0d5f8a; --kb-bg: #e0eff8;
+  --code-bg: #10161b; --code-ink: #e4e9ec; --code-muted: #8b98a1; --out-bg: #f0f4f1;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1316; --paper: #151c21; --ink: #e4eaed; --muted: #9aa8b0; --line: #26313a; --soft: #1b242b;
+  --accent: #35c2b6; --accent-ink: #062b28; --violet: #a596ff; --amber: #e7b04a; --amber-bg: #3a2c10;
+  --ok: #6dd59c; --ok-bg: #163427; --bad: #f08b82; --bad-bg: #3c1c1a; --gk: #ecc65f; --gk-bg: #3a3010; --kb: #7cc4ef; --kb-bg: #123247;
+  --code-bg: #0a0f12; --code-ink: #e4e9ec; --code-muted: #8b98a1; --out-bg: #121a1f; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0e1316; --paper: #151c21; --ink: #e4eaed; --muted: #9aa8b0; --line: #26313a; --soft: #1b242b;
+  --accent: #35c2b6; --accent-ink: #062b28; --violet: #a596ff; --amber: #e7b04a; --amber-bg: #3a2c10;
+  --ok: #6dd59c; --ok-bg: #163427; --bad: #f08b82; --bad-bg: #3c1c1a; --gk: #ecc65f; --gk-bg: #3a3010; --kb: #7cc4ef; --kb-bg: #123247;
+  --code-bg: #0a0f12; --code-ink: #e4e9ec; --code-muted: #8b98a1; --out-bg: #121a1f; color-scheme: dark }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 15.5px/1.65 var(--body); }
+.page { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 80px;
+        display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 40px; }
+@media (max-width: 960px) { .page { grid-template-columns: 1fr; gap: 20px; } }
+h1, h2, h3, h4 { font-family: var(--display); margin: 0; line-height: 1.12; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.3rem, 6vw, 4rem); font-weight: 750; }
+h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); font-weight: 650; }
+h3 { font-size: 1.12rem; font-weight: 650; }
+p { margin: 0; max-width: 70ch; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: 0.87em; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+.eyebrow { font: 600 0.72rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+main { display: grid; gap: 64px; min-width: 0; }
+
+/* rail */
+nav.rail { position: sticky; top: calc(16px + env(safe-area-inset-top, 0px)); align-self: start; display: grid; gap: 4px; font-size: 0.86rem; max-height: calc(100vh - 32px); overflow: auto; }
+nav.rail a { color: var(--muted); text-decoration: none; padding: 5px 10px; border-radius: 6px; display: grid; grid-template-columns: 26px 1fr; gap: 4px; }
+nav.rail a span:first-child { font: 600 0.74rem/1.6 var(--mono); color: var(--muted); }
+nav.rail a:hover, nav.rail a.on { background: var(--paper); color: var(--ink); }
+nav.rail .grp { font: 600 0.66rem/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 14px 10px 4px; }
+@media (max-width: 960px) { nav.rail { position: static; display: flex; overflow-x: auto; gap: 6px; max-height: none; padding-bottom: 4px; } nav.rail .grp { display: none; }
+  nav.rail a { display: inline-flex; white-space: nowrap; background: var(--paper); border: 1px solid var(--line); } }
+
+/* hero */
+.hero { display: grid; gap: 18px; }
+.hero .lede { font-size: 1.15rem; color: var(--muted); max-width: 64ch; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { font: 500 0.78rem/1 var(--mono); padding: 6px 9px; border-radius: 999px; background: var(--paper); border: 1px solid var(--line); color: var(--ink); }
+.pill.proto { background: var(--amber-bg); color: var(--amber); border-color: transparent; }
+.contrast { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 760px) { .contrast { grid-template-columns: 1fr; } }
+.era { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+.era h3 small { display: block; font: 500 0.75rem/1.4 var(--mono); color: var(--muted); margin-top: 4px; }
+
+/* badges for provenance */
+.src { display: inline-flex; gap: 6px; align-items: center; font: 600 0.68rem/1 var(--mono); padding: 4px 7px; border-radius: 4px; white-space: nowrap; vertical-align: 1px; }
+.src.kb { color: var(--kb); background: var(--kb-bg); }
+.src.reg { color: var(--violet); background: color-mix(in srgb, var(--violet) 14%, transparent); }
+.src.gk { color: var(--gk); background: var(--gk-bg); }
+.src.ver { color: var(--amber); background: var(--amber-bg); }
+.src.ran { color: var(--ok); background: var(--ok-bg); }
+.src.probe { color: var(--bad); background: var(--bad-bg); }
+
+/* sections */
+section.block { display: grid; gap: 22px; scroll-margin-top: 20px; }
+.lesson-head { display: grid; gap: 8px; border-top: 2px solid var(--ink); padding-top: 18px; }
+.lesson-head .num { font: 600 0.8rem/1 var(--mono); color: var(--accent); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 900px) { .two { grid-template-columns: 1fr; } }
+.prose { display: grid; gap: 12px; }
+.prose ul, .prose ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+
+/* diagrams */
+figure { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 10px; min-width: 0; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-size: 0.82rem; color: var(--muted); }
+.diagram-scroll { overflow-x: auto; }
+svg text { font-family: var(--body); fill: var(--ink); }
+svg .mono { font-family: var(--mono); }
+svg .mut { fill: var(--muted); }
+pre.mermaid { margin: 0; background: transparent; text-align: center; }
+
+/* code + output */
+.run { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--code-bg); min-width: 0; }
+.run .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding: 8px 10px 8px 14px; background: color-mix(in srgb, var(--code-bg) 85%, #ffffff 15%); }
+.run .file { font: 500 0.8rem/1 var(--mono); color: var(--code-ink); }
+.run .tabs { display: flex; gap: 4px; }
+.run .tabs button, .copy { font: 600 0.75rem/1 var(--mono); color: var(--code-ink); background: transparent; border: 1px solid #3b4851; border-radius: 6px; padding: 6px 9px; cursor: pointer; }
+.run .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.run pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 400 0.82rem/1.55 var(--mono); color: var(--code-ink); tab-size: 4; max-height: 560px; }
+.run pre.out { background: var(--out-bg); color: var(--ink); border-top: 1px solid var(--line); }
+.run .meta { font: 500 0.72rem/1.4 var(--mono); color: var(--code-muted); padding: 8px 14px; border-top: 1px solid #26323a; display: flex; flex-wrap: wrap; gap: 14px; }
+.tok-k { color: #ff9e7a; } .tok-s { color: #a6e3a1; } .tok-c { color: #7f8c95; font-style: italic; } .tok-f { color: #89c2ff; } .tok-n { color: #f9d27c; }
+button:focus-visible, a:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* callouts */
+.callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.callout { border-radius: 10px; padding: 14px 16px; display: grid; gap: 6px; font-size: 0.9rem; border: 1px solid var(--line); background: var(--paper); min-width: 0; }
+.callout .k { font: 600 0.7rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.callout.evidence { border-left: 4px solid var(--amber); } .callout.evidence .k { color: var(--amber); }
+.callout.watch { border-left: 4px solid var(--bad); } .callout.watch .k { color: var(--bad); }
+.callout.design { border-left: 4px solid var(--violet); } .callout.design .k { color: var(--violet); }
+.callout.real { border-left: 4px solid var(--ok); } .callout.real .k { color: var(--ok); }
+
+/* check + tutor */
+.check { display: grid; gap: 8px; }
+.check details { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.check summary { cursor: pointer; font-weight: 600; }
+.check details p { margin-top: 8px; color: var(--muted); }
+.tutor { background: var(--paper); border: 1px dashed var(--accent); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; }
+.tutor[hidden] { display: none !important; }
+.tutor .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.tutor textarea { flex: 1 1 280px; min-height: 64px; resize: vertical; font: 400 0.92rem/1.5 var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+.tutor button { font: 600 0.86rem/1 var(--body); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer; align-self: flex-start; }
+.tutor button:disabled { opacity: 0.6; cursor: progress; }
+.tutor .answer { white-space: pre-wrap; font-size: 0.92rem; }
+.tutor .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.tutor .chips button { background: var(--soft); color: var(--ink); font-weight: 500; font-size: 0.8rem; padding: 6px 9px; }
+
+/* tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 0.7rem/1.3 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); background: var(--soft); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* history timeline */
+.hist { display: grid; gap: 10px; }
+.hrow { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.hrow .d { font: 600 0.86rem/1.4 var(--mono); }
+.hrow .b { display: grid; gap: 6px; min-width: 0; }
+.hrow .b p { font-size: 0.93rem; }
+.hrow.disc .d { color: var(--bad); }
+.people { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.person { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 6px; font-size: 0.9rem; }
+.person b { font-family: var(--display); font-size: 1.05rem; }
+footer { font-size: 0.8rem; color: var(--muted); display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 18px; }
+@media (prefers-reduced-motion: no-preference) { nav.rail a { transition: background .15s; } }
+</style>
+
+<div class="page">
+<nav class="rail" aria-label="Lessons">
+  <span class="grp">Start</span>
+  <a href="#intro"><span>·</span><span>The module</span></a>
+  <a href="#history"><span>0</span><span>Agents that act: a history</span></a>
+  <a href="#time"><span>·</span><span>The libraries through time</span></a>
+  <a href="#arch"><span>·</span><span>How the stack fits</span></a>
+  <span class="grp">Beginner</span>
+  <a href="#l1"><span>1</span><span>Tool calling by hand</span></a>
+  <a href="#l2"><span>2</span><span>create_agent</span></a>
+  <a href="#l3"><span>3</span><span>Streaming events</span></a>
+  <a href="#l4"><span>4</span><span>Structured output</span></a>
+  <span class="grp">Intermediate</span>
+  <a href="#l5"><span>5</span><span>Middleware and approval</span></a>
+  <a href="#l6"><span>6</span><span>The Graph API</span></a>
+  <a href="#l7"><span>7</span><span>Persistence, time travel</span></a>
+  <a href="#l8"><span>8</span><span>Durable execution</span></a>
+  <span class="grp">Advanced intermediate</span>
+  <a href="#l9"><span>9</span><span>Parallel fan-out with Send</span></a>
+  <a href="#l10"><span>10</span><span>Multi-agent systems</span></a>
+  <a href="#l11"><span>11</span><span>Deep Agents</span></a>
+  <a href="#l12"><span>12</span><span>Deploying an Agent Server</span></a>
+  <a href="#l13"><span>13</span><span>Evaluate, then improve</span></a>
+  <span class="grp">Finish</span>
+  <a href="#capstone"><span>·</span><span>Capstone and staying current</span></a>
+</nav>
+
+<main>
+<header class="hero" id="intro">
+  <span class="eyebrow">AI Engineer course module · prototype · not released</span>
+  <h1>Agents That Act</h1>
+  <p class="lede">LangChain, LangGraph and Deep Agents, from the first time a language model chose a function and its arguments, to a durable, observable agent behind an HTTP server. Every example in this module ran on {{run_date}} against pinned releases, and the output you see beside the code is what it printed.</p>
+  <div class="pills">
+    <span class="pill proto">prototype for review</span>
+    <span class="pill">langchain 1.5.0</span><span class="pill">langgraph 1.2.21</span><span class="pill">deepagents 0.7.38</span><span class="pill">langchain-anthropic 1.7.10</span>
+    <span class="pill">model claude-haiku-4-5</span><span class="pill">13 lessons, all run</span><span class="pill">total model cost ${{total_usd}}</span>
+  </div>
+  <div class="prose">
+    <p><b>Who it is for.</b> You can write Python and call an API. By the end you can explain the agent loop from first principles, build it three ways (by hand, with <code>create_agent</code>, and as a LangGraph graph), add memory, human approval, durable resumption, parallel workers and subagents, deploy it, and measure whether a change made it better.</p>
+    <p><b>The running example: Release Scout.</b> An agent that answers questions about these very libraries: when versions shipped, what changed, and which migration facts are verified. Its tools read data exported from our knowledge base: the PyPI release histories we captured and the 13 claims that passed an experiment and a verification gate. You learn the libraries by building an agent about them.</p>
+    <p class="muted">Provenance badges tell you where each fact comes from: <span class="src kb">KB · docs</span> a first-party docs page we captured, <span class="src reg">KB · registry</span> captured PyPI data, <span class="src ver">verified</span> a claim admitted through our verification gate, <span class="src probe">probe</span> one of our experiments awaiting review, <span class="src ran">ran</span> output of the code in this module, <span class="src gk">general knowledge</span> not yet ingested or checked.</p>
+  </div>
+</header>
+
+<!-- ================================================================ HISTORY -->
+<section class="block" id="history">
+  <div class="lesson-head"><span class="num">LESSON 0</span><h2>From text that describes an action to a model that takes one</h2></div>
+  <div class="prose">
+    <p>In 2022 a language model could only write text. To make it <i>do</i> something, you asked it to write the action down in a format your program could parse, then you ran the action and pasted the result back. The ReAct paper (Yao et al., October 2022) named the pattern: interleave <b>Re</b>asoning and <b>Act</b>ing. LangChain shipped a month before ChatGPT and made that loop a library, and that is the door this module walks through: an agent is a loop in which a model chooses a function and its arguments, your code executes it, and the result goes back to the model.</p>
+  </div>
+  <div class="contrast">
+    <div class="era">
+      <h3>2022: parse what the model wrote<small>ReAct-style text, parsed by an output parser (illustration of the pattern)</small></h3>
+      <div class="run"><pre>Question: What is the newest LangGraph release?
+Thought: I should look up the latest release.
+Action: latest_release
+Action Input: langgraph
+Observation: langgraph 1.2.21 (published 2026-11-12)
+Thought: I now know the final answer.
+Final Answer: LangGraph 1.2.21, published 2026-11-12.</pre></div>
+      <p class="muted">Your code split on <code>Action:</code> and <code>Action Input:</code>, ran the tool, and appended an <code>Observation:</code>. A missing newline broke the agent.</p>
+    </div>
+    <div class="era">
+      <h3>2026: the model emits a typed tool call<small>the real output of lesson 1 <span class="src ran">ran</span></small></h3>
+      <div class="run"><pre>{{tool_call_excerpt}}</pre></div>
+      <p class="muted">Native tool calling returns structured arguments that match the tool's JSON schema. The loop is the same; the parsing problem is gone.</p>
+    </div>
+  </div>
+
+  <h3>The company and the library, in its own words and in the registry</h3>
+  <div class="hist" id="histlist"></div>
+
+  <h3>People in this story</h3>
+  <div class="people">
+    <div class="person"><b>Harrison Chase</b><span>Created LangChain and released it in October 2022; co-founder and CEO of LangChain Inc.</span><span class="src gk">general knowledge</span></div>
+    <div class="person"><b>Ankush Gola</b><span>Co-founded LangChain Inc. with Harrison Chase in early 2023.</span><span class="src gk">general knowledge</span></div>
+    <div class="person"><b>Vivek Trivedy</b><span>LangChain. Spoke at the 2026 AI Engineer World's Fair: "Improving Agents is a Data Mining Problem" (lesson 13 uses it).</span><span class="src kb">KB · talk</span></div>
+    <div class="person"><b>Jake Broekhuizen</b><span>LangChain. Spoke at the 2026 World's Fair on agent memory that learns: "The Next Run Should Be Better".</span><span class="src kb">KB · talk</span></div>
+  </div>
+  <div class="callouts">
+    <div class="callout design"><span class="k">Why it matters for you</span><span>Every abstraction in this module exists because an earlier one hurt in production. Chains could not loop, so LangGraph added cycles. Agents lost their place when a process died, so LangGraph added checkpoints. Agents needed oversight, so the runtime added interrupts. When you meet a feature, ask which failure it was built to prevent.</span></div>
+    <div class="callout evidence"><span class="k">Reading sources critically</span><span>The first-party history and the PyPI registry disagree in places. Dates in red above are discrepancies our knowledge base found, not errors we fixed. A release date in a narrative is not a registry timestamp, and a "release" can mean a first upload or a general-availability announcement.</span></div>
+  </div>
+</section>
+
+<!-- ================================================================ TIMELINE -->
+<section class="block" id="time">
+  <div class="lesson-head"><span class="num">THE LIBRARIES THROUGH TIME</span><h2>Four years of releases, from captured PyPI data</h2></div>
+  <p>Each band is a package; bar height is the number of releases published that quarter; the labels mark the first release of each minor line. <span class="src reg">KB · registry</span> PyPI JSON captured 2026-11-13.</p>
+  <figure><div class="diagram-scroll"><svg id="timeline" viewBox="0 0 1000 470" role="img" aria-label="Releases per quarter for six packages, 2022 to 2026"></svg></div>
+    <figcaption>langchain: {{lc_count}} releases since 0.0.1 on {{lc_first}} · langgraph: {{lg_count}} since 0.0.8 on {{lg_first}} · deepagents: {{da_count}} since 0.0.1 on {{da_first}} · langchain-core split out in November 2023, the Agent Server SDK and CLI in May 2024.</figcaption></figure>
+  <div class="callouts">
+    <div class="callout design"><span class="k">What the shape says</span><span>LangChain's 0.0.x era was one release every few days (the library was the field's sketchbook). The 0.1 cut in January 2024 is the turn toward stability; langchain-core had been split out two months earlier so integrations could depend on a small, stable kernel. LangGraph arrives in January 2024 and its 1.0 lands the same day as LangChain's (2025-10-17 on PyPI). Deep Agents ships fastest of all: 150 releases in fifteen months.</span></div>
+    <div class="callout watch"><span class="k">For your projects</span><span>A tutorial is pinned to a date. Lesson 2 shows what changed between a 2025 tutorial and today's packages; our probes re-run those checks whenever a subject library ships (deepagents 0.7.38 shipped while this module was being built and two probes were re-run).</span></div>
+  </div>
+</section>
+
+<!-- ================================================================ ARCHITECTURE -->
+<section class="block" id="arch">
+  <div class="lesson-head"><span class="num">HOW THE STACK FITS</span><h2>Framework, runtime, harness, server</h2></div>
+  <div class="two">
+    <figure>
+      <svg viewBox="0 0 520 470" role="img" aria-label="Layered architecture of the LangChain ecosystem">
+        <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill: var(--muted)"></path></marker></defs>
+        <g>
+          <rect x="10" y="10" width="500" height="70" rx="10" style="fill: color-mix(in srgb, var(--amber) 16%, var(--paper)); stroke: var(--amber)"></rect>
+          <text x="26" y="36" font-weight="650" font-size="15">Agent Server · LangSmith</text>
+          <text x="26" y="58" font-size="12" class="mut">assistants, threads, runs, cron, streaming over HTTP · tracing, evals, deployment</text>
+          <rect x="10" y="96" width="500" height="70" rx="10" style="fill: color-mix(in srgb, var(--violet) 14%, var(--paper)); stroke: var(--violet)"></rect>
+          <text x="26" y="122" font-weight="650" font-size="15">Deep Agents (harness)</text>
+          <text x="26" y="144" font-size="12" class="mut">create_deep_agent · write_todos · virtual filesystem · task subagents · summarization</text>
+          <rect x="10" y="182" width="500" height="70" rx="10" style="fill: color-mix(in srgb, var(--accent) 14%, var(--paper)); stroke: var(--accent)"></rect>
+          <text x="26" y="208" font-weight="650" font-size="15">LangChain (framework)</text>
+          <text x="26" y="230" font-size="12" class="mut">create_agent · middleware · structured output · init_chat_model · MCP adapters</text>
+          <rect x="10" y="268" width="500" height="96" rx="10" style="fill: color-mix(in srgb, var(--kb) 14%, var(--paper)); stroke: var(--kb)"></rect>
+          <text x="26" y="294" font-weight="650" font-size="15">LangGraph (runtime)</text>
+          <text x="26" y="316" font-size="12" class="mut">StateGraph · Pregel super-steps · channels and reducers · Send · Command</text>
+          <text x="26" y="336" font-size="12" class="mut">checkpointers · stores · interrupt() · durability modes · stream modes</text>
+          <rect x="10" y="380" width="500" height="80" rx="10" style="fill: var(--soft); stroke: var(--line)"></rect>
+          <text x="26" y="406" font-weight="650" font-size="15">langchain-core (kernel)</text>
+          <text x="26" y="428" font-size="12" class="mut">Runnable protocol · messages and content blocks · BaseChatModel · tools</text>
+          <text x="26" y="448" font-size="12" class="mut">provider packages: langchain-anthropic, langchain-openai, langchain-google-genai …</text>
+        </g>
+      </svg>
+      <figcaption>Each layer runs on the one below it: create_agent compiles to a LangGraph graph; create_deep_agent is create_agent plus a set of middleware and tools; the Agent Server hosts any compiled graph.</figcaption>
+    </figure>
+    <div class="prose">
+      <p>LangChain's own docs separate three kinds of software <span class="src kb">KB · docs</span>:</p>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>Runtime</th><th>Framework</th><th>Harness</th></tr></thead>
+        <tbody>
+          <tr><td>Adds</td><td>durable execution, streaming, human-in-the-loop, persistence</td><td>abstractions, integrations</td><td>predefined tools, prompts, subagents</td></tr>
+          <tr><td>Use for</td><td>low-level control; long-running, stateful work</td><td>getting started; one way for a team to build</td><td>autonomous agents on complex, open-ended tasks</td></tr>
+          <tr><td>Examples</td><td>LangGraph, Temporal, Inngest</td><td>LangChain, Vercel AI SDK, CrewAI, OpenAI Agents SDK, Google ADK, LlamaIndex</td><td>Deep Agents SDK, Claude Agent SDK, Manus</td></tr>
+        </tbody></table></div>
+      <p>The docs' philosophy page states two focuses: let developers build with the best models without lock-in (one message format across providers), and let models <i>orchestrate</i> flows that touch data and computation, not only generate text.</p>
+      <p>Below everything is one idea from langchain-core: a <b>Runnable</b> has <code>invoke</code>, <code>stream</code>, <code>batch</code> and async twins. Chat models, tools, compiled graphs and the Agent Server's <code>RemoteGraph</code> all speak it, which is why a deployed agent can be dropped into another graph as if it were local (lesson 12).</p>
+    </div>
+  </div>
+  <figure>
+    <div class="diagram-scroll"><svg viewBox="0 0 980 300" role="img" aria-label="Pregel super-step execution with checkpoints">
+      <text x="10" y="22" font-weight="650" font-size="14">How LangGraph runs a graph: Pregel super-steps</text>
+      <g font-size="12">
+        <rect x="10" y="44" width="200" height="200" rx="10" style="fill: var(--soft); stroke: var(--line)"></rect>
+        <text x="24" y="68" font-weight="600">State = channels</text>
+        <text x="24" y="92" class="mono mut">messages  ← add_messages</text>
+        <text x="24" y="112" class="mono mut">model_calls ← operator.add</text>
+        <text x="24" y="132" class="mono mut">library   ← last write wins</text>
+        <text x="24" y="166" class="mut">a reducer decides how a</text><text x="24" y="182" class="mut">node's partial update merges</text><text x="24" y="198" class="mut">into the channel</text>
+        <g>
+          <rect x="250" y="44" width="200" height="200" rx="10" style="fill: var(--paper); stroke: var(--accent)"></rect>
+          <text x="264" y="68" font-weight="600">Super-step N</text>
+          <text x="264" y="94" class="mut">1. plan: which nodes are</text><text x="264" y="110" class="mut">   triggered by updated channels</text>
+          <text x="264" y="136" class="mut">2. execute them in parallel;</text><text x="264" y="152" class="mut">   writes are buffered</text>
+          <text x="264" y="178" class="mut">3. barrier: apply all writes</text><text x="264" y="194" class="mut">   through the reducers</text>
+          <text x="264" y="220" class="mut">4. checkpoint the new state</text>
+        </g>
+        <line x1="450" y1="144" x2="490" y2="144" style="stroke: var(--muted)" marker-end="url(#ar2)"></line>
+        <rect x="490" y="44" width="200" height="200" rx="10" style="fill: var(--paper); stroke: var(--accent)"></rect>
+        <text x="504" y="68" font-weight="600">Super-step N+1</text>
+        <text x="504" y="94" class="mut">nodes see only state that</text><text x="504" y="110" class="mut">was committed at the barrier</text>
+        <text x="504" y="146" class="mut">Send(...) schedules several</text><text x="504" y="162" class="mut">copies of a node here (lesson 9)</text>
+        <text x="504" y="198" class="mut">interrupt() stops before the</text><text x="504" y="214" class="mut">barrier; resume replays (lesson 8)</text>
+        <g>
+          <rect x="730" y="44" width="240" height="200" rx="10" style="fill: color-mix(in srgb, var(--amber) 12%, var(--paper)); stroke: var(--amber)"></rect>
+          <text x="744" y="68" font-weight="600">Checkpointer</text>
+          <text x="744" y="94" class="mut">one checkpoint per super-step</text>
+          <text x="744" y="114" class="mut">keyed by thread_id</text>
+          <text x="744" y="146" class="mut">memory (lesson 7)</text>
+          <text x="744" y="166" class="mut">time travel and forks (lesson 7)</text>
+          <text x="744" y="186" class="mut">resume after a crash (lesson 8)</text>
+          <text x="744" y="206" class="mut">human-in-the-loop (lesson 5)</text>
+        </g>
+        <line x1="690" y1="144" x2="730" y2="144" style="stroke: var(--muted)" marker-end="url(#ar2)"></line>
+        <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" style="fill: var(--muted)"></path></marker></defs>
+        <text x="10" y="276" class="mut">This is the bulk-synchronous-parallel model of Google's Pregel paper: compute, exchange messages, synchronize, repeat. It is why parallel branches never see each other's half-finished writes.</text>
+      </g>
+    </svg></div>
+  </figure>
+</section>
+
+{{lessons}}
+
+<!-- ================================================================ CAPSTONE -->
+<section class="block" id="capstone">
+  <div class="lesson-head"><span class="num">CAPSTONE</span><h2>Release Scout in production, and how this module stays true</h2></div>
+  <div class="two">
+    <div class="prose">
+      <p><b>Capstone brief (mock; the student project space is not built yet).</b> Take Release Scout from lesson 2 to a deployed service:</p>
+      <ol>
+        <li>Rewrite the tool descriptions until your eval set (lesson 13) passes; add five questions of your own with answers you can check against PyPI.</li>
+        <li>Put a human approval gate on any tool that writes or publishes (lesson 5), and prove the run survives a restart (lesson 8) with a Postgres checkpointer.</li>
+        <li>Add a fact-checker subagent that answers only from verified facts and says "not verified" otherwise (lesson 10).</li>
+        <li>Serve it with <code>langgraph dev</code>, call it from the SDK, then from another graph through <code>RemoteGraph</code> (lesson 12).</li>
+        <li>Write one probe: a claim from an issue thread, the script that tests it, the dated environments it runs in, and your expected result written before you run it.</li>
+      </ol>
+    </div>
+    <div class="prose">
+      <p><b>How this module stays current.</b> The libraries ship every few days. Facts marked <span class="src ver">verified</span> passed one of our probes and our verification gate; when a subject library releases, the knowledge base lists which probes are due, reruns them in a rebuilt environment, and flags any released lesson whose facts changed. During the build of this module deepagents 0.7.38 shipped, two probes became due, were rerun, and held.</p>
+      <p><b>What is not here yet.</b> The LangGraph concept pages (graph API, persistence, durable execution) and the history sources marked <span class="src gk">general knowledge</span> are not yet ingested into the knowledge base; their facts in this module come from the code that ran and from the instructor, and are labelled as such.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Prototype module for review, built {{run_date}} from the AI Engineer knowledge base (lab disposable-aieng-build04) and code run in a pinned environment; not a released course.</span>
+  <span>Sources: LangChain docs pages captured 2026-11-10 (philosophy, products, middleware, human-in-the-loop, streaming, multi-agent, deploy, Deep Agents); PyPI JSON captured 2026-11-13; 13 claims verified 2026-11-13; 2026 World's Fair talk digests marked faithful by the reviewer.</span>
+</footer>
+</main>
+</div>
+
+<script type="application/json" id="course-data">{{course_data}}</script>
+<script>
+const DATA = JSON.parse(document.getElementById("course-data").textContent);
+
+/* ---------- code tabs, copy, highlighting ---------- */
+function highlight(src) {
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const kw = /\b(from|import|def|class|return|for|in|if|else|elif|with|as|async|await|not|and|or|None|True|False|try|except|finally|lambda|yield|while|print)\b/g;
+  return src.split("\n").map(line => {
+    const hash = line.search(/(^|\s)#/);
+    let code = line, comment = "";
+    if (hash >= 0 && !/["'][^"']*#/.test(line.slice(0, hash + 1))) { code = line.slice(0, hash); comment = line.slice(hash); }
+    let out = esc(code).replace(/("""[^]*?"""|"[^"\n]*"|'[^'\n]*')/g, m => `\u0000s${m}\u0001`)
+      .replace(kw, m => `\u0000k${m}\u0001`).replace(/\b(\d+(\.\d+)?)\b/g, m => `\u0000n${m}\u0001`)
+      .replace(/\b([a-z_][a-zA-Z0-9_]*)(?=\()/g, m => `\u0000f${m}\u0001`);
+    out = out.replace(/\u0000([skfn])/g, (_, t) => `<span class="tok-${t}">`).replace(/\u0001/g, "</span>");
+    return out + (comment ? `<span class="tok-c">${esc(comment)}</span>` : "");
+  }).join("\n");
+}
+document.querySelectorAll(".run[data-snippet]").forEach(box => {
+  const s = DATA.snippets[box.dataset.snippet];
+  const codePre = box.querySelector("pre.code"), outPre = box.querySelector("pre.out");
+  if (s) { codePre.innerHTML = highlight(s.code); outPre.textContent = s.output; }
+  const tabs = box.querySelectorAll(".tabs button");
+  tabs.forEach(t => t.addEventListener("click", () => {
+    tabs.forEach(x => x.setAttribute("aria-selected", String(x === t)));
+    const which = t.dataset.view;
+    codePre.hidden = which === "out"; outPre.hidden = which === "code";
+  }));
+  const copy = box.querySelector(".copy");
+  copy.addEventListener("click", () => {
+    const text = s ? s.code : codePre.textContent;
+    const done = () => { copy.textContent = "Copied"; setTimeout(() => copy.textContent = "Copy", 1400); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(() => {});
+  });
+});
+
+/* ---------- history rows ---------- */
+const BADGE = { kb: ["kb", "KB · docs"], reg: ["reg", "KB · registry"], gk: ["gk", "general knowledge"], ver: ["ver", "verified"] };
+document.getElementById("histlist").innerHTML = DATA.history.map(h =>
+  `<div class="hrow${h.disc ? " disc" : ""}"><div class="d">${h.date}</div><div class="b"><p>${h.text}</p><div>${h.src.map(s => `<span class="src ${BADGE[s][0]}">${BADGE[s][1]}</span>`).join(" ")}</div></div></div>`).join("");
+
+/* ---------- release timeline (quarters from captured PyPI) ---------- */
+(function () {
+  const svg = document.getElementById("timeline"), NS = "http://www.w3.org/2000/svg";
+  const pkgs = ["langchain", "langchain-core", "langgraph", "langgraph-sdk", "langgraph-cli", "deepagents"];
+  const color = { "langchain": "var(--accent)", "langchain-core": "var(--muted)", "langgraph": "var(--kb)", "langgraph-sdk": "var(--violet)", "langgraph-cli": "var(--violet)", "deepagents": "var(--amber)" };
+  const q0 = 2022 * 4 + 3, q1 = 2026 * 4 + 3, x0 = 120, x1 = 985, band = 66, top = 26;
+  const qx = q => x0 + (q - q0) * (x1 - x0) / (q1 - q0 + 1);
+  const qw = (x1 - x0) / (q1 - q0 + 1) - 2;
+  const add = (tag, attrs, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; };
+  for (let y = 2023; y <= 2026; y++) { const x = qx(y * 4); add("line", { x1: x, x2: x, y1: 14, y2: top + pkgs.length * band, style: "stroke: var(--line)" }); add("text", { x: x + 4, y: 12, "font-size": 11, class: "mono mut" }, String(y)); }
+  add("text", { x: qx(q0) + 4, y: 12, "font-size": 11, class: "mono mut" }, "Q4 2022");
+  const max = Math.max(...pkgs.flatMap(p => Object.values(DATA.history_data[p].quarters)));
+  pkgs.forEach((p, i) => {
+    const d = DATA.history_data[p], y = top + i * band, base = y + band - 16;
+    add("text", { x: 0, y: y + 26, "font-size": 12.5, "font-weight": 600 }, p);
+    add("text", { x: 0, y: y + 42, "font-size": 11, class: "mono mut" }, `${d.count} releases`);
+    add("line", { x1: x0, x2: x1, y1: base, y2: base, style: "stroke: var(--line)" });
+    Object.entries(d.quarters).forEach(([k, n]) => {
+      const [yy, qq] = k.split("-Q").map(Number); const q = yy * 4 + (qq - 1); if (q < q0) return;
+      const h = Math.max(2, (n / max) * (band - 24));
+      const r = add("rect", { x: qx(q) + 1, y: base - h, width: qw, height: h, rx: 1.5, style: `fill: ${color[p]}; fill-opacity: 0.75` });
+      const t = document.createElementNS(NS, "title"); t.textContent = `${p} ${k}: ${n} releases`; r.appendChild(t);
+    });
+    let lastX = -99;
+    Object.entries(d.minors).forEach(([line, [day]]) => {
+      const yy = +day.slice(0, 4), mm = +day.slice(5, 7), q = yy * 4 + Math.floor((mm - 1) / 3);
+      const x = qx(q) + qw / 2 + (mm - 1) % 3 * (qw / 3) - qw / 3;
+      if (x - lastX < 18) return; lastX = x;
+      add("circle", { cx: x, cy: base + 6, r: 3, style: `fill: ${color[p]}` });
+      add("text", { x: x, y: base + 16, "font-size": 9.5, "text-anchor": "middle", class: "mono mut" }, line);
+    });
+  });
+  [["2023-11", "core split"], ["2024-01", "0.1 · LangGraph"], ["2025-10", "1.0"], ["2025-07", "Deep Agents 0.0.1"]].forEach(([m, label], i) => {
+    const yy = +m.slice(0, 4), mm = +m.slice(5, 7), x = qx(yy * 4 + Math.floor((mm - 1) / 3)) + qw / 2;
+    add("line", { x1: x, x2: x, y1: top + pkgs.length * band - 6, y2: top + pkgs.length * band + 8 + i * 0, style: "stroke: var(--bad)" });
+    add("text", { x: x, y: top + pkgs.length * band + 22 + (i % 2) * 14, "font-size": 11, "text-anchor": "middle", style: "fill: var(--bad)" }, label);
+  });
+})();
+
+/* ---------- rail highlight ---------- */
+const links = [...document.querySelectorAll("nav.rail a")];
+const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), { rootMargin: "-20% 0px -70% 0px" });
+document.querySelectorAll("main > section[id], main > header[id]").forEach(s => obs.observe(s));
+
+/* ---------- tutor (asks Claude through the page's sample capability) ---------- */
+(async function () {
+  let sample = null;
+  try { sample = await window.claude?.use?.("sample"); } catch (e) { sample = null; }
+  const boxes = document.querySelectorAll(".tutor");
+  if (!sample) { boxes.forEach(b => { b.querySelector(".answer").textContent = "The tutor is not available in this view. Open the module on claude.ai to ask it questions."; b.querySelector(".row").hidden = true; b.querySelector(".chips").hidden = true; }); return; }
+  boxes.forEach(box => {
+    const section = box.closest("section"), ta = box.querySelector("textarea"), btn = box.querySelector(".ask"), ans = box.querySelector(".answer");
+    const snippetIds = [...section.querySelectorAll(".run[data-snippet]")].map(r => r.dataset.snippet);
+    const ask = async (question) => {
+      if (!question.trim()) return;
+      btn.disabled = true; ans.textContent = "Thinking…";
+      const lessonText = section.querySelector(".prose")?.innerText.slice(0, 3500) || "";
+      const code = snippetIds.map(id => `# ${id}.py\n${DATA.snippets[id].code}\n# its real output\n${DATA.snippets[id].output.slice(0, 1800)}`).join("\n\n");
+      const prompt = `You are the tutor inside a course module on LangChain 1.5, LangGraph 1.2 and Deep Agents 0.7 (Python). ` +
+        `The student is on this lesson. Answer their question in plain language, at most 180 words, with a short code fragment only if it helps. ` +
+        `Use the current APIs shown in the lesson code (create_agent from langchain.agents, system_prompt, middleware, StateGraph, Send, Command, interrupt). ` +
+        `If the answer depends on something not in the lesson, say so.\n\nLESSON TEXT:\n${lessonText}\n\nLESSON CODE AND OUTPUT:\n${code}\n\nSTUDENT QUESTION: ${question}`;
+      try {
+        const r = await sample(prompt, { cache: false, onText: ({ text }) => { ans.textContent = text; } });
+        ans.textContent = r.text;
+      } catch (e) {
+        ans.textContent = e && e.code === "not_granted" ? "The tutor needs your permission to ask Claude. Allow it in the artifact's permissions to use it." : "The tutor could not answer just now. Try again in a moment.";
+      } finally { btn.disabled = false; }
+    };
+    btn.addEventListener("click", () => ask(ta.value));
+    box.querySelectorAll(".chips button").forEach(c => c.addEventListener("click", () => { ta.value = c.textContent; ask(c.textContent); }));
+  });
+})();
+</script>
