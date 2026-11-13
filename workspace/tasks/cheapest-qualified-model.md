@@ -7,7 +7,7 @@ queries: [catalog.models, catalog.model_offerings, catalog.benchmark_scores, ran
 aliases: [cheapest, cost effective, budget model, cheapest with tool use]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # Cheapest model that satisfies a capability or benchmark floor
 

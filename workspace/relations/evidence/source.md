@@ -6,7 +6,7 @@ name: source
 domain: evidence
 lens: evidence
 aliases: [source, URL]
-tokens: [evidence, source, evidence.source, id, tenant_id, source_class, canonical_url, url_pattern, publisher, sensitivity, license_spdx, license_notes, terms_url, robots_policy, created_at, updated_at, verification_contract_version, logical_identity, host, registrable_domain, publisher_entity_id, source_kind, first_seen_at, last_seen_at, last_encounter_kind, last_capture_id, capture_count, failure_streak, next_revisit_after, blocked_reason, state_knowledge_seq]
+tokens: [evidence, source, evidence.source, id, tenant_id, source_class, canonical_url, url_pattern, publisher, sensitivity, license_spdx, license_notes, terms_url, robots_policy, created_at, updated_at, verification_contract_version, logical_identity, host, registrable_domain, publisher_entity_id, source_kind, first_seen_at, last_seen_at, last_encounter_kind, last_capture_id, capture_count, failure_streak, next_revisit_after, blocked_reason, state_knowledge_seq, channel_entity_id]
 summary: Canonical source (URL/domain) with revisit and publisher pointers.
 summary_basis: curated
 rls: enabled
@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # evidence.source
 
@@ -54,6 +54,7 @@ table in domain `evidence`, lens `evidence`.
 | 26 | `next_revisit_after` | `timestamp with time zone` | yes | — | _curated:_ When the refresh may fetch again. |
 | 27 | `blocked_reason` | `text` | yes | — | — |
 | 28 | `state_knowledge_seq` | `bigint` | yes | — | — |
+| 29 | `channel_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id; Loop 4: the source_channel this URL belongs to (issue tracker, forum, aggregator, blog, docs site). |
 
 ## Constraints
 
@@ -67,12 +68,11 @@ table in domain `evidence`, lens `evidence`.
 
 ## Relationships
 
-Outbound: `last_capture_id` → [`evidence.source_capture`](source_capture.md)`.id`; `publisher_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
-Inbound: [`content.document`](../content/document.md).canonical_source_id, [`evidence.attribution`](attribution.md).source_id, [`evidence.degraded_assurance`](degraded_assurance.md).source_id, [`evidence.provider_result`](provider_result.md).source_id, [`evidence.source_capture`](source_capture.md).source_id, [`evidence.source_encounter`](source_encounter.md).source_id, [`staging.candidate`](../staging/candidate.md).source_id.
+3 outbound and 12 inbound foreign keys; full list in [details](source.details.md).
 
 ## Indexes
 
-3 indexes; see [details](source.details.md).
+4 indexes; see [details](source.details.md).
 
 ## Triggers
 
@@ -89,7 +89,7 @@ Enabled; 1 policies in [details](source.details.md).
 ## Read paths
 
 - Named queries: `q:entity.card`, `q:evidence.sources_by_domain`, `q:facts.locators`.
-- Exposed through: [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.symbol_docs`](../api/symbol_docs.md).
+- Exposed through: [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.community_claims`](../api/community_claims.md), [`api.source_registry`](../api/source_registry.md), [`api.symbol_docs`](../api/symbol_docs.md).
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.revision_binding, authoring.work_revision, dataset.cell, evidence.claim, inquiry.assertion, orchestration.artifact], writes: [] }
 tokens: [product, support_detail, product.support_detail]
 defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # product.support_detail
 

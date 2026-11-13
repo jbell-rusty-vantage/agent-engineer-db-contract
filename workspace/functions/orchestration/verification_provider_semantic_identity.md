@@ -13,7 +13,7 @@ raises: [nonsemantic provider cannot choose semantic identity, semantic provider
 touches: { reads: [knowledge_service.operation], writes: [] }
 tokens: [orchestration, verification_provider_semantic_identity, orchestration.verification_provider_semantic_identity]
 defined_in: ["20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # orchestration.verification_provider_semantic_identity
 

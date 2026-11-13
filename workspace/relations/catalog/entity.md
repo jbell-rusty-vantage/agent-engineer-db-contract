@@ -14,24 +14,16 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"catalog\"][\"Tables\"][\"entity\"][\"Row\"]"
 defined_in: []
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # catalog.entity
 
 table in domain `identity`, lens `corpus` — One canonical row per industry identity. kind -> taxonomy.entity_kind; attributes validated per kind; display_name/slug are projections (entity_name stream is authoritative)..
 
-> curated (model_assisted, unreviewed) — Build 08 dropped the thirty-six thin typed tables (corpus.organization, corpus.person,
-> corpus.ai_model, corpus.ai_model_version, corpus.model_offering, …). What they carried now
-> lives in `attributes`, validated per kind by `catalog.validate_entity_attributes`:
-> organization → legal_name, org_kind (enum in the kind's schema), website_url,
-> country_code, founded_on; person → given_name, family_name, title,
-> affiliation_text, orcid, profile_url (also store scheme orcid on entity_identifier);
-> ai_model → model_family, modalities, description; ai_model_version (parent ai_model) →
-> version_label (required), provider_model_id, modalities, open_weights, model_page_url;
-> model_offering (parent ai_model_version) → offering_key (required; the provider-side SKU
-> or API model id), region, tier, pricing_url, provider_model_id; library → ecosystem,
-> package_name, repository_url, docs_url, category; paper → arxiv_id, doi, published_on,
-> venue; talk → talk_kind, track, level, session_id, video_url, slides_url, edition.
+> curated (model_assisted, unreviewed) — Build 08 replaced the thin typed tables (corpus.organization, corpus.person, …) with
+> `attributes`, validated per kind by `catalog.validate_entity_attributes`; read the kind's
+> `taxonomy.entity_kind.attributes_schema` for its keys (e.g. ai_model_version needs
+> version_label; model_offering needs offering_key; community_actor is platform + handle only).
 > Anything that changes over time (price, context window, stars)
 > is a fact stream, never an attribute. Work kinds also have a `catalog.work` row.
 
@@ -51,7 +43,7 @@ Full column table: [details](entity.details.md).
 
 ## Relationships
 
-4 outbound and 63 inbound foreign keys; full list in [details](entity.details.md).
+4 outbound and 66 inbound foreign keys; full list in [details](entity.details.md).
 
 ## Indexes
 
@@ -72,7 +64,7 @@ Enabled; 1 policies in [details](entity.details.md).
 ## Read paths
 
 - Named queries: `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.software_releases`, `q:catalog.talks`, `q:content.document_digest`, `q:entity.at`, `q:entity.attributes`, `q:entity.by_identifier`, `q:entity.card`, `q:entity.resolve`, `q:facts.changes_since`, `q:ours.works_authored`, `q:ranking.leaderboard`.
-- Exposed through: [`api.advisories`](../api/advisories.md), [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.benchmarks`](../api/benchmarks.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.compute_devices`](../api/compute_devices.md), [`api.compute_offerings`](../api/compute_offerings.md), [`api.concepts`](../api/concepts.md), [`api.digest_items`](../api/digest_items.md), [`api.entities`](../api/entities.md), [`api.events`](../api/events.md), [`api.hook_entries`](../api/hook_entries.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.protocol_versions`](../api/protocol_versions.md), [`api.registry_listings`](../api/registry_listings.md), [`api.software`](../api/software.md), [`api.software_releases`](../api/software_releases.md), [`api.talks`](../api/talks.md), [`api.works_authored`](../api/works_authored.md).
+- Exposed through: [`api.advisories`](../api/advisories.md), [`api.attention_policies`](../api/attention_policies.md), [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.benchmarks`](../api/benchmarks.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.community_claims`](../api/community_claims.md), [`api.compute_devices`](../api/compute_devices.md), [`api.compute_offerings`](../api/compute_offerings.md), [`api.concepts`](../api/concepts.md), [`api.digest_items`](../api/digest_items.md), [`api.entities`](../api/entities.md), [`api.events`](../api/events.md), [`api.hook_entries`](../api/hook_entries.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.probes`](../api/probes.md), [`api.protocol_versions`](../api/protocol_versions.md), [`api.registry_listings`](../api/registry_listings.md), [`api.software`](../api/software.md), [`api.software_releases`](../api/software_releases.md), [`api.source_registry`](../api/source_registry.md), [`api.source_track_record`](../api/source_track_record.md), [`api.talks`](../api/talks.md), [`api.works_authored`](../api/works_authored.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

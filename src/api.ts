@@ -58,3 +58,15 @@ export type ApiDigestItemPassage = ApiFunctionRows<"digest_item_passages">[numbe
 export type ApiTalkAbout = ApiFunctionRows<"talks_about">[number];
 export type ApiReleaseDigestItem = ApiFunctionRows<"release_digest">[number];
 export type ApiUnitEntity = ApiFunctionRows<"unit_entities">[number];
+// Build 08 loop 4 (2026-11-13): source intelligence (registry with per-topic assessments and track records, community claims),
+// attention allocation (policies with their last sweep, the due-list a Mission Control watch mission calls), experiments (probes,
+// per-cell matrix, claim verdicts), design interview outputs and the library dossier (jsonb).
+export type ApiSourceRegistryRow = ApiView<"source_registry">;
+export type ApiSourceTrackRecord = ApiView<"source_track_record">;
+export type ApiCommunityClaim = ApiView<"community_claims">;
+export type ApiClaimVerdict = ApiView<"claim_verdicts">;
+export type ApiProbe = ApiView<"probes">;
+export type ApiAttentionPolicy = ApiView<"attention_policies">;
+export type ApiProbeMatrixRow = ApiFunctionRows<"probe_matrix">[number];
+export type ApiAttentionDueRow = ApiFunctionRows<"attention_due">[number];
+export type ApiInterviewOutput = ApiFunctionRows<"interview_outputs">[number];

@@ -13,7 +13,7 @@ raises: [terminal transformation runs are immutable, transformation runs cannot 
 touches: { reads: [], writes: [] }
 tokens: [content, guard_terminal_transformation, content.guard_terminal_transformation]
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # content.guard_terminal_transformation
 

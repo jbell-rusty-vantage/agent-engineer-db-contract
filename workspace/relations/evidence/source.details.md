@@ -4,7 +4,7 @@ kind: details
 schema: evidence
 name: source
 of: "rel:evidence.source"
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # evidence.source — details
 
@@ -12,13 +12,14 @@ Spill-over from [the main page](source.md).
 
 ## Relationships
 
-Outbound: `last_capture_id` → [`evidence.source_capture`](source_capture.md)`.id`; `publisher_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
+Outbound: `channel_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `last_capture_id` → [`evidence.source_capture`](source_capture.md)`.id`; `publisher_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
 Inbound: [`content.document`](../content/document.md).canonical_source_id, [`evidence.attribution`](attribution.md).source_id, [`evidence.degraded_assurance`](degraded_assurance.md).source_id, [`evidence.provider_result`](provider_result.md).source_id, [`evidence.source_capture`](source_capture.md).source_id, [`evidence.source_encounter`](source_encounter.md).source_id, [`staging.candidate`](../staging/candidate.md).source_id.
 
 ## Indexes
 
 | Index | Definition |
 | --- | --- |
+| `source_channel_ix` | `CREATE INDEX source_channel_ix ON evidence.source USING btree (channel_entity_id) WHERE (channel_entity_id IS NOT NULL)` |
 | `source_tenant_canonical_url_uq` | `CREATE UNIQUE INDEX source_tenant_canonical_url_uq ON evidence.source USING btree (tenant_id, canonical_url) WHERE (canonical_url IS NOT NULL)` |
 | `source_tenant_id_uq` | `CREATE UNIQUE INDEX source_tenant_id_uq ON evidence.source USING btree (tenant_id, id)` |
 | `source_tenant_logical_identity_uq` | `CREATE UNIQUE INDEX source_tenant_logical_identity_uq ON evidence.source USING btree (tenant_id, source_class, logical_identity)` |

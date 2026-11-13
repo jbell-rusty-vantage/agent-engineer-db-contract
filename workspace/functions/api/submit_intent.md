@@ -13,7 +13,7 @@ raises: [IDEMPOTENCY_KEY_FOREIGN_TENANT, TENANT_CONTEXT_REQUIRED, idempotency_ke
 touches: { reads: [orchestration.intent_type], writes: [orchestration.operation_intent] }
 tokens: [api, submit_intent, api.submit_intent]
 defined_in: ["20260826001500_api_and_grants.sql", "20261024010000_knowledge_component_binding.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # api.submit_intent
 

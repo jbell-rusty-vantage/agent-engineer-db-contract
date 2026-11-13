@@ -4,7 +4,7 @@ kind: details
 schema: evidence
 name: locator
 of: "rel:evidence.locator"
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # evidence.locator — details
 
@@ -29,7 +29,7 @@ Spill-over from [the main page](locator.md).
 ## Relationships
 
 Outbound: `capture_id` → [`evidence.source_capture`](source_capture.md)`.id` (+tenant); `tenant_id,representation_artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict.
-Inbound: [`authoring.release_item`](../authoring/release_item.md).locator_id, [`authoring.revision_binding`](../authoring/revision_binding.md).locator_id, [`content.conversion_finding`](../content/conversion_finding.md).locator_id, [`evidence.attribution`](attribution.md).locator_id, [`evidence.claim_evidence_link`](claim_evidence_link.md).locator_id, [`evidence.extraction_record`](extraction_record.md).locator_id, [`evidence.extraction_signature`](extraction_signature.md).locator_id, [`evidence.segment_support`](segment_support.md).locator_id, [`inquiry.support`](../inquiry/support.md).locator_id, [`retrieval.chunk_span`](../retrieval/chunk_span.md).locator_id, [`retrieval.search_projection_chunk_support`](../retrieval/search_projection_chunk_support.md).locator_id, [`temporal.extent`](../temporal/extent.md).locator_id.
+Inbound: [`authoring.release_item`](../authoring/release_item.md).locator_id, [`authoring.revision_binding`](../authoring/revision_binding.md).locator_id, [`content.conversion_finding`](../content/conversion_finding.md).locator_id, [`evidence.attribution`](attribution.md).locator_id, [`evidence.claim_evidence_link`](claim_evidence_link.md).locator_id, [`evidence.extraction_record`](extraction_record.md).locator_id, [`evidence.extraction_signature`](extraction_signature.md).locator_id, [`evidence.segment_support`](segment_support.md).locator_id, [`inquiry.support`](../inquiry/support.md).locator_id, [`retrieval.chunk_span`](../retrieval/chunk_span.md).locator_id, [`retrieval.search_projection_chunk_support`](../retrieval/search_projection_chunk_support.md).locator_id, [`temporal.extent`](../temporal/extent.md).locator_id, [`verification.probe_run`](../verification/probe_run.md).output_locator_id.
 
 ## Indexes
 

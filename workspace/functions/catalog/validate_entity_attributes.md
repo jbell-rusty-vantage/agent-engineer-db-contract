@@ -13,7 +13,7 @@ raises: ["entity attributes do not match the %s schema"]
 touches: { reads: [taxonomy.entity_kind], writes: [] }
 tokens: [catalog, validate_entity_attributes, catalog.validate_entity_attributes]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # catalog.validate_entity_attributes
 

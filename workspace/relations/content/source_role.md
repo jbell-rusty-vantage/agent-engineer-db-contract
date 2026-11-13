@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: []
 typescript: "Database[\"content\"][\"Tables\"][\"source_role\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part2_content.sql]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # content.source_role
 
@@ -39,7 +39,7 @@ table in domain `content`, lens `corpus` — Who speaks: first party about itsel
 ## Relationships
 
 Outbound: none.
-Inbound: [`content.document`](document.md).source_role_code, [`content.unit_assertion_mapping`](unit_assertion_mapping.md).source_role_code, [`retrieval.vector_item`](../retrieval/vector_item.md).source_role_code.
+Inbound: [`content.document`](document.md).source_role_code, [`content.unit_assertion_mapping`](unit_assertion_mapping.md).source_role_code, [`evidence.source_assessment`](../evidence/source_assessment.md).source_role_code, [`retrieval.vector_item`](../retrieval/vector_item.md).source_role_code.
 
 ## Indexes
 

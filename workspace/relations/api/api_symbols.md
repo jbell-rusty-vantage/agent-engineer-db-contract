@@ -14,7 +14,7 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"api_symbols\"][\"Row\"]"
 defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261110140100_build08_loop3_fixups.sql", "20261110140200_build08_loop3_fixups2.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # api.api_symbols
 

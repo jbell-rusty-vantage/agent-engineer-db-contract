@@ -10,7 +10,7 @@ tasks: [build-evidence-packet, modules-covering-concept, run-hybrid-search, sear
 summary: "One retrieval stack: every searchable text is a vector item with lens, source tier and facets; api.search_unified scopes then fuses."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # Retrieval (one stack, lens and tier)
 

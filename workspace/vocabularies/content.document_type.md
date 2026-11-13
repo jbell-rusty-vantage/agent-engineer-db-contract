@@ -3,14 +3,14 @@ id: "voc:content.document_type"
 kind: vocabulary
 schema: content
 name: document_type
-rows: 64
-rows_sha256: "sha256:d6bd77e3116a21321de34706b3be32a3d04bd826b7383296bede8e177bbaea4c"
-codes: [agent_plugin_manifest, agent_skill_manifest, aie_talk, analysis_post, api_reference, api_surface, arxiv_paper, changelog, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, job_posting, journal_article, leaderboard_page, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, openapi_spec, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+rows: 67
+rows_sha256: "sha256:873d3ab241fa299ed96810049c8a83d85494bfcfc980d24599a93aebc9025e8d"
+codes: [agent_plugin_manifest, agent_skill_manifest, aie_talk, analysis_post, api_reference, api_surface, arxiv_paper, changelog, comparison_article, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, issue_thread, job_posting, journal_article, leaderboard_page, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, openapi_spec, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, probe_report, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # content.document_type
 
-Reference data snapshot (64 rows, digest `sha256:d6bd77e3116a21321de34706b3be32a3d04bd826b7383296bede8e177bbaea4c`). Codes are enforced wherever a column has a foreign key to [`content.document_type`](../relations/content/document_type.md).
+Reference data snapshot (67 rows, digest `sha256:873d3ab241fa299ed96810049c8a83d85494bfcfc980d24599a93aebc9025e8d`). Codes are enforced wherever a column has a foreign key to [`content.document_type`](../relations/content/document_type.md).
 
 | code | axis_note | default_chunking_slug | default_extraction_kinds | default_spaces | default_summary_kinds | description | family | is_primary_source | promoted_from_census | published_at_is_world_time | status | work_entity_kind |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -22,6 +22,7 @@ Reference data snapshot (64 rows, digest `sha256:d6bd77e3116a21321de34706b3be32a
 | `api_surface` | derived from a first-party tarball; attributes record repository, release_tag, tag_filter, parser and scope | structural_heading | entity | tool_capabilities | technical | Derived document: the public API surface of one repository release (symbols parsed from the tag tarball); the tree itse… | code | yes | no | yes | active | — |
 | `arxiv_paper` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | arxiv paper | research | yes | no | yes | active | paper |
 | `changelog` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | changelog | vendor | yes | no | yes | active | — |
+| `comparison_article` | method disclosure and conflict of interest are assessed on its channel | section | claim, entity | units | key_claims | A third-party article that compares or evaluates products, ideally with a disclosed method (tests, dates, models) | editorial | no | no | yes | active | — |
 | `conference_paper` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | conference paper | research | yes | no | yes | active | paper |
 | `course_module` | — | section | entity | own_content | abstract | Our own course module/lesson/guide revision (authoring.work_revision) projected as tier-1 content | own | yes | no | no | active | — |
 | `dataset_card` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | dataset card | research | yes | no | yes | active | — |
@@ -29,13 +30,14 @@ Reference data snapshot (64 rows, digest `sha256:d6bd77e3116a21321de34706b3be32a
 | `earnings_call_transcript` | — | transcript_window | claim, entity, relationship | source_native_sections, engineering_claims | abstract, timeline, entity_centric | earnings call transcript | media_transcript | yes | no | yes | active | media_work |
 | `earnings_release` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | earnings release | market | yes | no | yes | active | — |
 | `entity_profile` | — | structural_heading | claim, entity, relationship | source_native_sections, entity_profiles | abstract, technical | entity profile | system_generated | no | no | yes | active | — |
-| `forum_thread` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | forum thread | editorial | no | no | yes | active | story |
+| `forum_thread` | community statements: claim candidates only (loop 4 moved it from editorial) | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | forum thread | community | no | no | yes | active | story |
 | `framework_docs_page` | — | section | claim, entity | units | technical | A framework/library documentation page (concepts, API usage, examples, version notes) | vendor | yes | no | no | active | — |
 | `funding_announcement` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | funding announcement | market | yes | no | yes | active | — |
 | `github_release` | — | section | claim, entity, relationship | units | key_claims | A GitHub release entry (tag, date, notes, breaking changes) | code | yes | no | yes | active | — |
 | `guide` | — | section | entity | own_content | abstract | Our own setup/development guide | own | yes | no | no | active | — |
 | `interview` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | interview | editorial | no | no | yes | active | story |
 | `investor_letter` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | investor letter | market | yes | no | yes | active | — |
+| `issue_thread` | community statements: claim candidates only; the channel is the repository issue tracker | section | claim, entity | units | key_claims | A repository issue or pull request with its comments, captured from the platform API; one thread_post unit per post | community | no | no | yes | active | — |
 | `job_posting` | — | structural_heading | claim, entity, relationship | source_native_sections, market_intelligence | executive, investor_brief, timeline | job posting | market | yes | no | yes | active | — |
 | `journal_article` | — | semantic_boundary | claim, entity, relationship | source_native_sections, paper_case_study_knowledge | abstract, key_claims | journal article | research | yes | no | yes | active | paper |
 | `leaderboard_page` | primary when organizer-run; aggregator boards are T3 with per-row source labels | structural_heading | measurement, entity | benchmark_intelligence | abstract, technical | A published leaderboard or benchmark results table (HTML, JSON, CSV) from an organizer or an aggregator | research | yes | no | yes | active | — |
@@ -56,6 +58,7 @@ Reference data snapshot (64 rows, digest `sha256:d6bd77e3116a21321de34706b3be32a
 | `podcast_transcript` | — | transcript_window | claim, entity, relationship | source_native_sections, engineering_claims | abstract, timeline, entity_centric | podcast transcript | media_transcript | yes | no | yes | active | media_work |
 | `press_release` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | press release | vendor | yes | no | yes | active | — |
 | `pricing_page` | — | table_row | claim, entity, relationship | source_native_sections, market_intelligence | abstract, technical | Vendor pricing page: plan sections and price rows per offering/meter/tier/region; first-party about itself | vendor | yes | no | yes | active | — |
+| `probe_report` | our own experiment (source role own_experiment) | section | claim | units | key_claims | The outputs of one probe across its matrix: one probe_observation unit per cell and run | own | yes | no | yes | active | — |
 | `product_page` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | product page | vendor | yes | no | yes | active | — |
 | `registry_listing_page` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | registry listing page | registry | yes | no | yes | active | — |
 | `release_notes` | — | structural_heading | claim, entity, relationship | source_native_sections, engineering_claims | abstract, technical | release notes | vendor | yes | no | yes | active | — |

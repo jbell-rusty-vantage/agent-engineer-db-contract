@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"conversation\"][\"Tables\"][\"thread\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # conversation.thread
 
@@ -32,7 +32,7 @@ table in domain `library`, lens `private`.
 | 4 | `owner_id` | `uuid` | no | — | FK → `auth.users`.id |
 | 5 | `visibility` | `text` | no | `'private'::text` | _curated:_ owner-only or workspace; the product search honours it. |
 | 6 | `title` | `text` | no | — | — |
-| 7 | `purpose` | `text` | no | — | — |
+| 7 | `purpose` | `text` | no | — | tutor \| build \| research \| authoring \| project \| general \| defense \| interview (loop 4: a design interview between a person and an agent that produces probes, attention policies and claims, with knowledge-base retrieval snapshots on the agent turns). |
 | 8 | `mode` | `text` | no | `'coach'::text` | _curated:_ How the thread runs (chat, tutor, review). |
 | 9 | `origin` | `text` | no | `'native'::text` | — |
 | 10 | `imported_from` | `jsonb` | yes | — | — |
@@ -44,16 +44,16 @@ table in domain `library`, lens `private`.
 - PK (id)
 - unique (tenant_id, workspace_id, id)
 - check `thread_check`: `((origin = 'import'::text) = (imported_from IS NOT NULL))`
-- check `thread_mode_check`: `(mode = ANY (ARRAY['coach'::text, 'build_with_me'::text]))`
+- check `thread_mode_check`: `(mode = ANY (ARRAY['coach'::text, 'build_with_me'::text, 'elicit'::text]))`
 - check `thread_origin_check`: `(origin = ANY (ARRAY['native'::text, 'import'::text]))`
-- check `thread_purpose_check`: `(purpose = ANY (ARRAY['tutor'::text, 'build'::text, 'research'::text, 'authoring'::text, 'project'::text, 'general'::text, 'defense'::text]…`
+- check `thread_purpose_check`: `(purpose = ANY (ARRAY['tutor'::text, 'build'::text, 'research'::text, 'authoring'::text, 'project'::text, 'general'::text, 'defense'::text,…`
 - check `thread_title_check`: `product.nonblank(title)`
 - check `thread_visibility_check`: `(visibility = ANY (ARRAY['private'::text, 'workspace'::text]))`
 
 ## Relationships
 
 Outbound: `owner_id` → `auth.users``.id` on delete restrict; `tenant_id,workspace_id` → [`authoring.workspace`](../authoring/workspace.md)`.tenant_id,id` on delete restrict.
-Inbound: [`conversation.message`](message.md).workspace_id,thread_id.
+Inbound: [`acquisition.attention_policy`](../acquisition/attention_policy.md).designed_in_thread_id, [`conversation.message`](message.md).workspace_id,thread_id, [`verification.probe`](../verification/probe.md).designed_in_thread_id.
 
 ## Indexes
 

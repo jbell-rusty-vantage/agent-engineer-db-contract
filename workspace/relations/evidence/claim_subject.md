@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim_subject\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # evidence.claim_subject
 
@@ -61,7 +61,7 @@ Enabled.
 ## Read paths
 
 - Named queries: `q:evidence.claims_for_entity`.
-- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md).
+- Exposed through: [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.community_claims`](../api/community_claims.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

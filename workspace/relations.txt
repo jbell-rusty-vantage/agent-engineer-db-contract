@@ -7,11 +7,14 @@ access.processing_authorization
 access.provided_credential
 access.source_restriction
 # acquisition  lens=corpus
+acquisition.attention_policy
+acquisition.attention_sweep
 acquisition.fetch
 # api (views)  lens=corpus
 api.advisories  # view
 api.agent_skills  # view
 api.api_symbols  # view
+api.attention_policies  # view
 api.benchmark_scores  # view
 api.benchmarks  # view
 api.bundle_files  # view
@@ -19,6 +22,8 @@ api.capabilities  # view
 api.claim_candidates  # view
 api.claim_conflicts  # view
 api.claim_surfaces  # view
+api.claim_verdicts  # view
+api.community_claims  # view
 api.compute_devices  # view
 api.compute_offerings  # view
 api.concepts  # view
@@ -42,12 +47,15 @@ api.models  # view
 api.organizations  # view
 api.papers  # view
 api.people  # view
+api.probes  # view
 api.protocol_versions  # view
 api.registry_listings  # view
 api.repositories  # view
 api.review_queue  # view
 api.software  # view
 api.software_releases  # view
+api.source_registry  # view
+api.source_track_record  # view
 api.symbol_docs  # view
 api.talks  # view
 api.works_authored  # view
@@ -184,6 +192,7 @@ evidence.revalidation_policy
 evidence.search_provider
 evidence.segment_support
 evidence.source
+evidence.source_assessment
 evidence.source_capture
 evidence.source_encounter
 evidence.source_provider_attempt
@@ -354,4 +363,8 @@ temporal.segment
 temporal.stream
 temporal.stream_kind
 # verification  lens=evidence
+verification.probe
+verification.probe_claim
+verification.probe_run
+verification.probe_verdict
 verification.use_admission

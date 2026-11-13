@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"mission\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # orchestration.mission
 
@@ -54,7 +54,7 @@ table in domain `orchestration-ledger`, lens `machinery`.
 ## Relationships
 
 Outbound: `capability_profile_id` → [`orchestration.capability_profile`](capability_profile.md)`.id`.
-Inbound: [`evaluation.eval_run`](../evaluation/eval_run.md).mission_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).mission_id, [`observability.trace`](../observability/trace.md).mission_id, [`observability.usage_rollup`](../observability/usage_rollup.md).mission_id, [`orchestration.agent_session`](agent_session.md).mission_id, [`orchestration.artifact`](artifact.md).mission_id, [`orchestration.artifact_manifest`](artifact_manifest.md).mission_id, [`orchestration.continuation_checkpoint`](continuation_checkpoint.md).mission_id, [`orchestration.mission_event`](mission_event.md).mission_id, [`orchestration.operation_intent`](operation_intent.md).mission_id, [`orchestration.outbox_event`](outbox_event.md).mission_id, [`orchestration.work_item`](work_item.md).mission_id.
+Inbound: [`acquisition.attention_policy`](../acquisition/attention_policy.md).mission_id, [`acquisition.attention_sweep`](../acquisition/attention_sweep.md).mission_id, [`evaluation.eval_run`](../evaluation/eval_run.md).mission_id, [`knowledge_service.eve_operation_binding`](../knowledge_service/eve_operation_binding.md).mission_id, [`observability.trace`](../observability/trace.md).mission_id, [`observability.usage_rollup`](../observability/usage_rollup.md).mission_id, [`orchestration.agent_session`](agent_session.md).mission_id, [`orchestration.artifact`](artifact.md).mission_id, [`orchestration.artifact_manifest`](artifact_manifest.md).mission_id, [`orchestration.continuation_checkpoint`](continuation_checkpoint.md).mission_id, [`orchestration.mission_event`](mission_event.md).mission_id, [`orchestration.operation_intent`](operation_intent.md).mission_id … 3 more in [details](mission.details.md).
 
 ## Indexes
 
@@ -75,7 +75,7 @@ Enabled.
 
 ## Read paths
 
-- Exposed through: [`api.mission_progress`](../api/mission_progress.md).
+- Exposed through: [`api.attention_policies`](../api/attention_policies.md), [`api.mission_progress`](../api/mission_progress.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`.
 
 ## Write path

@@ -330,6 +330,172 @@ export type Database = {
   }
   acquisition: {
     Tables: {
+      attention_policy: {
+        Row: {
+          budget_credits_per_run: number
+          budget_total_usd: number | null
+          budget_usd_per_run: number
+          cadence: string | null
+          channel_entity_ids: string[]
+          created_at: string
+          decided_by: string
+          depth: Json
+          designed_in_thread_id: string | null
+          id: string
+          inquiry_watch_id: string | null
+          mission_id: string | null
+          rationale: string
+          scope_kind: string
+          selection: Json
+          slug: string
+          state: string
+          stop_condition: Json
+          subject_entity_ids: string[]
+          supersedes_id: string | null
+          tenant_id: string
+          title: string
+          triggers: Json
+          watch_level: string
+        }
+        Insert: {
+          budget_credits_per_run?: number
+          budget_total_usd?: number | null
+          budget_usd_per_run?: number
+          cadence?: string | null
+          channel_entity_ids?: string[]
+          created_at?: string
+          decided_by: string
+          depth?: Json
+          designed_in_thread_id?: string | null
+          id?: string
+          inquiry_watch_id?: string | null
+          mission_id?: string | null
+          rationale: string
+          scope_kind: string
+          selection?: Json
+          slug: string
+          state?: string
+          stop_condition?: Json
+          subject_entity_ids?: string[]
+          supersedes_id?: string | null
+          tenant_id?: string
+          title: string
+          triggers?: Json
+          watch_level: string
+        }
+        Update: {
+          budget_credits_per_run?: number
+          budget_total_usd?: number | null
+          budget_usd_per_run?: number
+          cadence?: string | null
+          channel_entity_ids?: string[]
+          created_at?: string
+          decided_by?: string
+          depth?: Json
+          designed_in_thread_id?: string | null
+          id?: string
+          inquiry_watch_id?: string | null
+          mission_id?: string | null
+          rationale?: string
+          scope_kind?: string
+          selection?: Json
+          slug?: string
+          state?: string
+          stop_condition?: Json
+          subject_entity_ids?: string[]
+          supersedes_id?: string | null
+          tenant_id?: string
+          title?: string
+          triggers?: Json
+          watch_level?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attention_policy_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "attention_policy"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attention_sweep: {
+        Row: {
+          credits: number
+          ended_at: string | null
+          id: string
+          items_captured: number
+          items_seen: number
+          items_selected: number
+          mission_id: string | null
+          note: string | null
+          origin_kind: string
+          outcome: string | null
+          policy_id: string
+          receipt_id: string | null
+          rejected: Json
+          spend_usd: number
+          started_at: string
+          tenant_id: string
+          trigger_kind: string
+          trigger_ref: Json
+          window_from: string | null
+          window_to: string | null
+        }
+        Insert: {
+          credits?: number
+          ended_at?: string | null
+          id?: string
+          items_captured?: number
+          items_seen?: number
+          items_selected?: number
+          mission_id?: string | null
+          note?: string | null
+          origin_kind: string
+          outcome?: string | null
+          policy_id: string
+          receipt_id?: string | null
+          rejected?: Json
+          spend_usd?: number
+          started_at?: string
+          tenant_id?: string
+          trigger_kind: string
+          trigger_ref?: Json
+          window_from?: string | null
+          window_to?: string | null
+        }
+        Update: {
+          credits?: number
+          ended_at?: string | null
+          id?: string
+          items_captured?: number
+          items_seen?: number
+          items_selected?: number
+          mission_id?: string | null
+          note?: string | null
+          origin_kind?: string
+          outcome?: string | null
+          policy_id?: string
+          receipt_id?: string | null
+          rejected?: Json
+          spend_usd?: number
+          started_at?: string
+          tenant_id?: string
+          trigger_kind?: string
+          trigger_ref?: Json
+          window_from?: string | null
+          window_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attention_sweep_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "attention_policy"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       fetch: {
         Row: {
           actor_principal_id: string | null
@@ -352,6 +518,7 @@ export type Database = {
           request_url: string
           requested_at: string
           size_bytes: number | null
+          sweep_id: string | null
           tenant_id: string
           tool: string
           tool_version: string | null
@@ -377,6 +544,7 @@ export type Database = {
           request_url: string
           requested_at?: string
           size_bytes?: number | null
+          sweep_id?: string | null
           tenant_id?: string
           tool: string
           tool_version?: string | null
@@ -402,11 +570,20 @@ export type Database = {
           request_url?: string
           requested_at?: string
           size_bytes?: number | null
+          sweep_id?: string | null
           tenant_id?: string
           tool?: string
           tool_version?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fetch_sweep_id_fkey"
+            columns: ["sweep_id"]
+            isOneToOne: false
+            referencedRelation: "attention_sweep"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -576,6 +753,20 @@ export type Database = {
             foreignKeyName: "relationship_from_entity_id_fkey"
             columns: ["software_id"]
             isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "relationship_from_entity_id_fkey"
+            columns: ["software_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
+          },
+          {
+            foreignKeyName: "relationship_from_entity_id_fkey"
+            columns: ["software_id"]
+            isOneToOne: false
             referencedRelation: "talks"
             referencedColumns: ["event_id"]
           },
@@ -605,6 +796,27 @@ export type Database = {
             columns: ["claim_id"]
             isOneToOne: false
             referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
             referencedColumns: ["claim_id"]
           },
         ]
@@ -658,6 +870,35 @@ export type Database = {
           signature: string | null
           symbol_kind: string | null
           uses_external: Json | null
+        }
+        Relationships: []
+      }
+      attention_policies: {
+        Row: {
+          budget_credits_per_run: number | null
+          budget_usd_per_run: number | null
+          cadence: string | null
+          channels: string[] | null
+          decided_by: string | null
+          depth: Json | null
+          designed_in_thread_id: string | null
+          last_outcome: string | null
+          last_seen: number | null
+          last_selected: number | null
+          last_sweep_at: string | null
+          mission: string | null
+          policy_id: string | null
+          rationale: string | null
+          scope_kind: string | null
+          selection: Json | null
+          slug: string | null
+          spend_usd: number | null
+          state: string | null
+          subjects: string[] | null
+          sweeps: number | null
+          title: string | null
+          triggers: Json | null
+          watch_level: string | null
         }
         Relationships: []
       }
@@ -719,6 +960,27 @@ export type Database = {
             referencedColumns: ["claim_id"]
           },
           {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
             foreignKeyName: "segment_ref_entity_id_fkey"
             columns: ["benchmark_version_id"]
             isOneToOne: false
@@ -843,6 +1105,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "software_releases"
             referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "segment_ref_entity_id_fkey"
+            columns: ["benchmark_version_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "segment_ref_entity_id_fkey"
+            columns: ["benchmark_version_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
           },
           {
             foreignKeyName: "segment_ref_entity_id_fkey"
@@ -976,6 +1252,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "software_releases"
             referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "stream_subject_entity_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "stream_subject_entity_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
           },
           {
             foreignKeyName: "stream_subject_entity_id_fkey"
@@ -1209,6 +1499,47 @@ export type Database = {
         }
         Relationships: []
       }
+      claim_verdicts: {
+        Row: {
+          cells: Json | null
+          channel: string | null
+          claim_id: string | null
+          claim_type: string | null
+          decided_at: string | null
+          decided_by: string | null
+          probe: string | null
+          quote: string | null
+          rationale: string | null
+          review_state: string | null
+          stated_at: string | null
+          stated_by: string | null
+          statement: string | null
+          status: string | null
+          verdict: string | null
+        }
+        Relationships: []
+      }
+      community_claims: {
+        Row: {
+          channel: string | null
+          channel_slug: string | null
+          claim_id: string | null
+          claim_type: string | null
+          extracted_by: string | null
+          quote: string | null
+          stated_at: string | null
+          stated_by: string | null
+          stated_by_kind: string | null
+          statement: string | null
+          status: string | null
+          subjects: string[] | null
+          thread: string | null
+          thread_state: string | null
+          thread_url: string | null
+          verdict: string | null
+        }
+        Relationships: []
+      }
       compute_devices: {
         Row: {
           bf16_tflops: number | null
@@ -1324,6 +1655,27 @@ export type Database = {
             columns: ["claim_id"]
             isOneToOne: false
             referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
             referencedColumns: ["claim_id"]
           },
         ]
@@ -1479,6 +1831,27 @@ export type Database = {
             referencedColumns: ["claim_id"]
           },
           {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
             foreignKeyName: "digest_item_entity_id_fkey"
             columns: ["entity_id"]
             isOneToOne: false
@@ -1603,6 +1976,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "software_releases"
             referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "digest_item_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
           },
           {
             foreignKeyName: "digest_item_entity_id_fkey"
@@ -1780,6 +2167,27 @@ export type Database = {
             columns: ["provenance_claim_id"]
             isOneToOne: false
             referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
             referencedColumns: ["claim_id"]
           },
         ]
@@ -2170,6 +2578,20 @@ export type Database = {
             foreignKeyName: "work_id_fkey"
             columns: ["paper_id"]
             isOneToOne: true
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "work_id_fkey"
+            columns: ["paper_id"]
+            isOneToOne: true
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
+          },
+          {
+            foreignKeyName: "work_id_fkey"
+            columns: ["paper_id"]
+            isOneToOne: true
             referencedRelation: "talks"
             referencedColumns: ["event_id"]
           },
@@ -2205,6 +2627,60 @@ export type Database = {
           talk_count?: never
           title?: never
           work_count?: never
+        }
+        Relationships: []
+      }
+      probes: {
+        Row: {
+          claims: number | null
+          designed_by: string | null
+          designed_in_thread_id: string | null
+          hypothesis: string | null
+          kind: string | null
+          last_run_at: string | null
+          matrix: Json | null
+          model_policy: string | null
+          probe_id: string | null
+          runs: number | null
+          script_path: string | null
+          slug: string | null
+          subjects: string[] | null
+          title: string | null
+          verdicts: Json | null
+        }
+        Insert: {
+          claims?: never
+          designed_by?: string | null
+          designed_in_thread_id?: string | null
+          hypothesis?: string | null
+          kind?: string | null
+          last_run_at?: never
+          matrix?: Json | null
+          model_policy?: string | null
+          probe_id?: string | null
+          runs?: never
+          script_path?: string | null
+          slug?: string | null
+          subjects?: never
+          title?: string | null
+          verdicts?: never
+        }
+        Update: {
+          claims?: never
+          designed_by?: string | null
+          designed_in_thread_id?: string | null
+          hypothesis?: string | null
+          kind?: string | null
+          last_run_at?: never
+          matrix?: Json | null
+          model_policy?: string | null
+          probe_id?: string | null
+          runs?: never
+          script_path?: string | null
+          slug?: string | null
+          subjects?: never
+          title?: string | null
+          verdicts?: never
         }
         Relationships: []
       }
@@ -2369,6 +2845,27 @@ export type Database = {
             referencedRelation: "claim_surfaces"
             referencedColumns: ["claim_id"]
           },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       software: {
@@ -2414,6 +2911,199 @@ export type Database = {
           version_label: string | null
         }
         Relationships: []
+      }
+      source_registry: {
+        Row: {
+          as_of: string | null
+          assessment_id: string | null
+          authority_score: number | null
+          claims_checked: number | null
+          claims_observed: number | null
+          confirmed: number | null
+          conflict_of_interest: string | null
+          current_watch_level: string | null
+          median_lead_days: number | null
+          method: string | null
+          method_disclosure: string | null
+          noise_ratio: number | null
+          platform: string | null
+          qualified: number | null
+          rationale: string | null
+          recommended_watch_level: string | null
+          refuted: number | null
+          source: string | null
+          source_entity_id: string | null
+          source_kind: string | null
+          source_role_code: string | null
+          topic: string | null
+          topic_entity_id: string | null
+          url: string | null
+          urls: number | null
+        }
+        Relationships: []
+      }
+      source_track_record: {
+        Row: {
+          claim_id: string | null
+          first_party_at: string | null
+          probe: string | null
+          source: string | null
+          source_entity_id: string | null
+          source_kind: string | null
+          stated_at: string | null
+          statement: string | null
+          status: string | null
+          verdict: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "advisories"
+            referencedColumns: ["advisory_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "agent_skills"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "benchmarks"
+            referencedColumns: ["benchmark_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["capability_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "compute_devices"
+            referencedColumns: ["device_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "compute_offerings"
+            referencedColumns: ["offering_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "concepts"
+            referencedColumns: ["concept_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["event_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "libraries"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "mcp_servers"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "people"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "protocol_versions"
+            referencedColumns: ["version_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "registry_listings"
+            referencedColumns: ["server_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "software"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "software_releases"
+            referencedColumns: ["release_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "software_releases"
+            referencedColumns: ["software_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
+          },
+          {
+            foreignKeyName: "attribution_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "talks"
+            referencedColumns: ["event_id"]
+          },
+        ]
       }
       symbol_docs: {
         Row: {
@@ -2595,6 +3285,20 @@ export type Database = {
             foreignKeyName: "work_id_fkey"
             columns: ["talk_id"]
             isOneToOne: true
+            referencedRelation: "source_registry"
+            referencedColumns: ["source_entity_id"]
+          },
+          {
+            foreignKeyName: "work_id_fkey"
+            columns: ["talk_id"]
+            isOneToOne: true
+            referencedRelation: "source_registry"
+            referencedColumns: ["topic_entity_id"]
+          },
+          {
+            foreignKeyName: "work_id_fkey"
+            columns: ["talk_id"]
+            isOneToOne: true
             referencedRelation: "talks"
             referencedColumns: ["event_id"]
           },
@@ -2635,6 +3339,19 @@ export type Database = {
           severity: string
           summary: string
           url: string
+        }[]
+      }
+      attention_due: {
+        Args: { p_as_of?: string }
+        Returns: {
+          budget_usd_per_run: number
+          last_sweep_at: string
+          mission: string
+          policy_id: string
+          reason: string
+          slug: string
+          trigger_ref: Json
+          watch_level: string
         }[]
       }
       changes_since: {
@@ -2926,6 +3643,18 @@ export type Database = {
           vector_item_id: string
         }[]
       }
+      interview_outputs: {
+        Args: { p_thread: string }
+        Returns: {
+          last_run_at: string
+          output_id: string
+          output_kind: string
+          runs: number
+          slug: string
+          state: string
+          title: string
+        }[]
+      }
       knowledge_head: {
         Args: never
         Returns: {
@@ -2965,6 +3694,7 @@ export type Database = {
           subject_label: string
         }[]
       }
+      library_dossier: { Args: { p_library: string }; Returns: Json }
       model_offerings_at: {
         Args: { p_at?: string }
         Returns: {
@@ -3080,6 +3810,19 @@ export type Database = {
       price_per_1m: {
         Args: { p_at?: string; p_meter: string; p_offering: string }
         Returns: number
+      }
+      probe_matrix: {
+        Args: { p_probe: string }
+        Returns: {
+          cell: Json
+          cell_label: string
+          locator_id: string
+          observations: Json
+          outcome: string
+          resolved: Json
+          run_id: string
+          started_at: string
+        }[]
       }
       product_command: {
         Args: {
@@ -10150,6 +10893,7 @@ export type Database = {
           blocked_reason: string | null
           canonical_url: string | null
           capture_count: number
+          channel_entity_id: string | null
           created_at: string
           failure_streak: number
           first_seen_at: string | null
@@ -10180,6 +10924,7 @@ export type Database = {
           blocked_reason?: string | null
           canonical_url?: string | null
           capture_count?: number
+          channel_entity_id?: string | null
           created_at?: string
           failure_streak?: number
           first_seen_at?: string | null
@@ -10210,6 +10955,7 @@ export type Database = {
           blocked_reason?: string | null
           canonical_url?: string | null
           capture_count?: number
+          channel_entity_id?: string | null
           created_at?: string
           failure_streak?: number
           first_seen_at?: string | null
@@ -10242,6 +10988,95 @@ export type Database = {
             columns: ["last_capture_id"]
             isOneToOne: false
             referencedRelation: "source_capture"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      source_assessment: {
+        Row: {
+          as_of: string
+          assessed_by: string
+          authority_score: number | null
+          claims_checked: number
+          claims_observed: number
+          confirmed: number
+          conflict_of_interest: string
+          created_at: string
+          id: string
+          inputs: Json
+          median_lead_days: number | null
+          method: string
+          method_disclosure: string
+          noise_ratio: number | null
+          qualified: number
+          rationale: string
+          receipt_id: string | null
+          recommended_watch_level: string | null
+          refuted: number
+          source_role_code: string | null
+          subject_entity_id: string
+          supersedes_id: string | null
+          tenant_id: string
+          topic_entity_id: string | null
+        }
+        Insert: {
+          as_of?: string
+          assessed_by: string
+          authority_score?: number | null
+          claims_checked?: number
+          claims_observed?: number
+          confirmed?: number
+          conflict_of_interest?: string
+          created_at?: string
+          id?: string
+          inputs?: Json
+          median_lead_days?: number | null
+          method: string
+          method_disclosure?: string
+          noise_ratio?: number | null
+          qualified?: number
+          rationale: string
+          receipt_id?: string | null
+          recommended_watch_level?: string | null
+          refuted?: number
+          source_role_code?: string | null
+          subject_entity_id: string
+          supersedes_id?: string | null
+          tenant_id?: string
+          topic_entity_id?: string | null
+        }
+        Update: {
+          as_of?: string
+          assessed_by?: string
+          authority_score?: number | null
+          claims_checked?: number
+          claims_observed?: number
+          confirmed?: number
+          conflict_of_interest?: string
+          created_at?: string
+          id?: string
+          inputs?: Json
+          median_lead_days?: number | null
+          method?: string
+          method_disclosure?: string
+          noise_ratio?: number | null
+          qualified?: number
+          rationale?: string
+          receipt_id?: string | null
+          recommended_watch_level?: string | null
+          refuted?: number
+          source_role_code?: string | null
+          subject_entity_id?: string
+          supersedes_id?: string | null
+          tenant_id?: string
+          topic_entity_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "source_assessment_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "source_assessment"
             referencedColumns: ["id"]
           },
         ]
@@ -10725,6 +11560,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      derive_source_assessment: {
+        Args: {
+          p_assessed_by?: string
+          p_note?: string
+          p_subject: string
+          p_topic?: string
+        }
+        Returns: string
+      }
       rebuild_source_state: { Args: never; Returns: number }
       verification_locator_artifacts_are_admitted: {
         Args: {
@@ -20472,6 +21316,7 @@ export type Database = {
         }
         Returns: string
       }
+      retire_deterministic_digest_items: { Args: never; Returns: number }
       retire_items_for_passages: {
         Args: { p_passage_ids: string[] }
         Returns: number
@@ -21678,6 +22523,244 @@ export type Database = {
   }
   verification: {
     Tables: {
+      probe: {
+        Row: {
+          budget_usd: number
+          created_at: string
+          designed_by: string
+          designed_in_thread_id: string | null
+          environment: Json
+          hypothesis: string
+          id: string
+          kind: string
+          matrix: Json
+          model_policy: string
+          script_path: string | null
+          script_sha256: string | null
+          slug: string
+          state: string
+          subject_entity_ids: string[]
+          tenant_id: string
+          title: string
+        }
+        Insert: {
+          budget_usd?: number
+          created_at?: string
+          designed_by: string
+          designed_in_thread_id?: string | null
+          environment?: Json
+          hypothesis: string
+          id?: string
+          kind: string
+          matrix?: Json
+          model_policy?: string
+          script_path?: string | null
+          script_sha256?: string | null
+          slug: string
+          state?: string
+          subject_entity_ids?: string[]
+          tenant_id?: string
+          title: string
+        }
+        Update: {
+          budget_usd?: number
+          created_at?: string
+          designed_by?: string
+          designed_in_thread_id?: string | null
+          environment?: Json
+          hypothesis?: string
+          id?: string
+          kind?: string
+          matrix?: Json
+          model_policy?: string
+          script_path?: string | null
+          script_sha256?: string | null
+          slug?: string
+          state?: string
+          subject_entity_ids?: string[]
+          tenant_id?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      probe_claim: {
+        Row: {
+          claim_id: string
+          expectation: Json
+          probe_id: string
+          tenant_id: string
+        }
+        Insert: {
+          claim_id: string
+          expectation?: Json
+          probe_id: string
+          tenant_id?: string
+        }
+        Update: {
+          claim_id?: string
+          expectation?: Json
+          probe_id?: string
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "probe_claim_probe_id_fkey"
+            columns: ["probe_id"]
+            isOneToOne: false
+            referencedRelation: "probe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      probe_run: {
+        Row: {
+          cell: Json
+          cell_label: string
+          cost_usd: number | null
+          created_at: string
+          ended_at: string | null
+          exit_code: number | null
+          id: string
+          latency_ms: number | null
+          lock_sha256: string | null
+          mission_id: string | null
+          observations: Json
+          origin_kind: string
+          outcome: string
+          output_capture_id: string | null
+          output_locator_id: string | null
+          platform: string | null
+          probe_id: string
+          python_version: string | null
+          receipt_id: string | null
+          resolved: Json
+          started_at: string
+          sweep_id: string | null
+          tenant_id: string
+          tokens_in: number | null
+          tokens_out: number | null
+        }
+        Insert: {
+          cell?: Json
+          cell_label: string
+          cost_usd?: number | null
+          created_at?: string
+          ended_at?: string | null
+          exit_code?: number | null
+          id?: string
+          latency_ms?: number | null
+          lock_sha256?: string | null
+          mission_id?: string | null
+          observations?: Json
+          origin_kind?: string
+          outcome: string
+          output_capture_id?: string | null
+          output_locator_id?: string | null
+          platform?: string | null
+          probe_id: string
+          python_version?: string | null
+          receipt_id?: string | null
+          resolved?: Json
+          started_at: string
+          sweep_id?: string | null
+          tenant_id?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+        }
+        Update: {
+          cell?: Json
+          cell_label?: string
+          cost_usd?: number | null
+          created_at?: string
+          ended_at?: string | null
+          exit_code?: number | null
+          id?: string
+          latency_ms?: number | null
+          lock_sha256?: string | null
+          mission_id?: string | null
+          observations?: Json
+          origin_kind?: string
+          outcome?: string
+          output_capture_id?: string | null
+          output_locator_id?: string | null
+          platform?: string | null
+          probe_id?: string
+          python_version?: string | null
+          receipt_id?: string | null
+          resolved?: Json
+          started_at?: string
+          sweep_id?: string | null
+          tenant_id?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "probe_run_probe_id_fkey"
+            columns: ["probe_id"]
+            isOneToOne: false
+            referencedRelation: "probe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      probe_verdict: {
+        Row: {
+          cells: Json
+          claim_id: string
+          decided_at: string
+          decided_by: string
+          id: string
+          probe_id: string
+          rationale: string
+          review_state: string
+          supersedes_id: string | null
+          tenant_id: string
+          verdict: Database["evidence"]["Enums"]["support_verdict"]
+        }
+        Insert: {
+          cells?: Json
+          claim_id: string
+          decided_at?: string
+          decided_by: string
+          id?: string
+          probe_id: string
+          rationale: string
+          review_state?: string
+          supersedes_id?: string | null
+          tenant_id?: string
+          verdict: Database["evidence"]["Enums"]["support_verdict"]
+        }
+        Update: {
+          cells?: Json
+          claim_id?: string
+          decided_at?: string
+          decided_by?: string
+          id?: string
+          probe_id?: string
+          rationale?: string
+          review_state?: string
+          supersedes_id?: string | null
+          tenant_id?: string
+          verdict?: Database["evidence"]["Enums"]["support_verdict"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "probe_verdict_probe_id_fkey"
+            columns: ["probe_id"]
+            isOneToOne: false
+            referencedRelation: "probe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "probe_verdict_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "probe_verdict"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       use_admission: {
         Row: {
           admitted_at: string

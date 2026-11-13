@@ -13,7 +13,7 @@ raises: ["publication gate failed (dims %, precision %, decision %, gate %, embe
 touches: { reads: [evaluation.promotion_gate_result, retrieval.content_promotion_decision, retrieval.vector_item_embedding_1536, retrieval.vector_space_version], writes: [] }
 tokens: [retrieval, guard_space_publication, retrieval.guard_space_publication]
 defined_in: ["20260903010200_knowledge_runtime_security.sql", "20260903010400_atomic_publication_and_hybrid_retrieval.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # retrieval.guard_space_publication
 

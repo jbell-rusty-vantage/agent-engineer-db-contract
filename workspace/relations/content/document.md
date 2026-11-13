@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # content.document
 
@@ -50,8 +50,7 @@ table in domain `content`, lens `corpus`.
 
 ## Relationships
 
-Outbound: `document_type_code` → [`content.document_type`](document_type.md)`.code`; `source_role_code` → [`content.source_role`](source_role.md)`.code`; `tenant_id,canonical_source_id` → [`evidence.source`](../evidence/source.md)`.tenant_id,id` on delete restrict; `tenant_id,created_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document`](document.md)`.tenant_id,id` on delete restrict; `work_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
-Inbound: [`content.document`](document.md).supersedes_id, [`content.document_about_entity`](document_about_entity.md).document_id, [`content.document_identifier`](document_identifier.md).document_id, [`content.document_kind_assignment`](document_kind_assignment.md).document_id, [`content.document_version`](document_version.md).document_id, [`content.refresh_check`](refresh_check.md).document_id, [`content.unit_change`](unit_change.md).document_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).document_id.
+6 outbound and 9 inbound foreign keys; full list in [details](document.details.md).
 
 ## Indexes
 
@@ -72,7 +71,7 @@ Enabled; 1 policies in [details](document.details.md).
 ## Read paths
 
 - Named queries: `q:catalog.papers`, `q:catalog.talks`, `q:content.document_units`, `q:content.talk_segments`, `q:facts.changes_since`.
-- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.digest_items`](../api/digest_items.md), [`api.endpoints`](../api/endpoints.md), [`api.hook_entries`](../api/hook_entries.md), [`api.mcp_prompts`](../api/mcp_prompts.md), [`api.mcp_resources`](../api/mcp_resources.md), [`api.mcp_tools`](../api/mcp_tools.md), [`api.papers`](../api/papers.md), [`api.symbol_docs`](../api/symbol_docs.md), [`api.talks`](../api/talks.md).
+- Exposed through: [`api.api_symbols`](../api/api_symbols.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.community_claims`](../api/community_claims.md), [`api.digest_items`](../api/digest_items.md), [`api.endpoints`](../api/endpoints.md), [`api.hook_entries`](../api/hook_entries.md), [`api.mcp_prompts`](../api/mcp_prompts.md), [`api.mcp_resources`](../api/mcp_resources.md), [`api.mcp_tools`](../api/mcp_tools.md), [`api.papers`](../api/papers.md), [`api.symbol_docs`](../api/symbol_docs.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `app_reader`, `executor_service`.
 
 ## Write path

@@ -13,7 +13,7 @@ raises: [structured extraction publication accounting drift, structured extracti
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt, orchestration.verification_structured_extraction, orchestration.verification_structured_extraction_execution], writes: [] }
 tokens: [orchestration, guard_verification_structured_extraction_publication, orchestration.guard_verification_structured_extraction_publication]
 defined_in: ["20260906031900_verification_structured_extraction_publication.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # orchestration.guard_verification_structured_extraction_publication
 

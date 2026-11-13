@@ -6,7 +6,7 @@ lens: corpus
 domains: [temporal-facts]
 relations: 9
 functions: 17
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # temporal
 
@@ -18,7 +18,7 @@ Lens `corpus`. Domains: [`temporal-facts`](../../domains/temporal-facts.md).
 | [`event_kind`](../../relations/temporal/event_kind.md) | table | unknown | Event vocabulary with subject and object kinds and optional start/end stream kinds. | → `temporal.stream_kind` |
 | [`event_occurrence`](../../relations/temporal/event_occurrence.md) | table | small | K-stamped occurrence of an event (actual, scheduled, or cancelled). | → `temporal.event`, → `temporal.extent`, → `evidence.claim` |
 | [`extent`](../../relations/temporal/extent.md) | table | small | Source text for a date with precision and optional earliest/latest bounds. | → `evidence.locator` |
-| [`knowledge_batch`](../../relations/temporal/knowledge_batch.md) | table | unknown | One sealed admission transaction with receipt, idempotency key, and input digest. | → `knowledge_service.operation`, → `orchestration.operation_receipt` |
+| [`knowledge_batch`](../../relations/temporal/knowledge_batch.md) | table | small | One sealed admission transaction with receipt, idempotency key, and input digest. | → `knowledge_service.operation`, → `orchestration.operation_receipt` |
 | [`knowledge_head`](../../relations/temporal/knowledge_head.md) | table | small | One row per tenant; knowledge_seq is the sealed-batch clock and open_xid/open_k mark an o… | — |
 | [`segment`](../../relations/temporal/segment.md) | table | medium | A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to). One ho… | → `temporal.event`, → `temporal.extent`, → `evidence.claim`, → `catalog.entity` |
 | [`stream`](../../relations/temporal/stream.md) | table | medium | Identity of a fact series, unique on kind, subject, and scope_key. | → `temporal.stream_kind`, → `catalog.entity`, → `catalog.relationship` |

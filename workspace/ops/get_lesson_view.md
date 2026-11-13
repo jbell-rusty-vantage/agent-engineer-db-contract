@@ -8,7 +8,7 @@ call: api.product_read
 lens: ours
 relations: [authoring.release_item, authoring.revision_binding, authoring.revision_block, authoring.work, authoring.work_revision, authoring.workspace]
 tokens: [get_lesson_view, read, api.product_read]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # get_lesson_view
 

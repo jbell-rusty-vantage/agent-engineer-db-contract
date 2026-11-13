@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, pipeline_agent, service_role, verifier_a
 writers: [executor_service, service_role]
 typescript: "Database[\"taxonomy\"][\"Tables\"][\"entity_kind\"][\"Row\"]"
 defined_in: ["20260829192855_optimize_ai_entity_taxonomy_and_relationships.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # taxonomy.entity_kind
 
@@ -45,7 +45,7 @@ table in domain `identity`, lens `corpus` — Primary canonical AI knowledge ent
 
 Outbound: `parent_kind` → [`taxonomy.entity_kind`](entity_kind.md)`.code`.
 Inbound: [`catalog.entity`](../catalog/entity.md).kind, [`content.document_type`](../content/document_type.md).work_entity_kind, [`orchestration.operation_receipt_target`](../orchestration/operation_receipt_target.md).entity_kind, [`staging.candidate`](../staging/candidate.md).proposed_kind, [`taxonomy.entity_kind`](entity_kind.md).parent_kind, [`taxonomy.term_target_kind`](term_target_kind.md).entity_kind_code.
-Polymorphic: `parent_kind` selects one of 38 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK entity_kind_parent_kind_fkey.
+Polymorphic: `parent_kind` selects one of 39 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK entity_kind_parent_kind_fkey.
 
 ## Indexes
 

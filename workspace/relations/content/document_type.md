@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_type\"][\"Row\"]"
 defined_in: ["20260912010100_km_01_vocabularies.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # content.document_type
 
@@ -48,7 +48,7 @@ table in domain `content`, lens `corpus`.
 
 Outbound: `work_entity_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`.
 Inbound: [`content.document`](document.md).document_type_code, [`content.document_kind_assignment`](document_kind_assignment.md).document_type_code, [`content.unit_assertion_mapping`](unit_assertion_mapping.md).document_type_code, [`retrieval.vector_item`](../retrieval/vector_item.md).document_type_code.
-Polymorphic: `work_entity_kind` selects one of 38 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK document_type_work_entity_kind_fkey.
+Polymorphic: `work_entity_kind` selects one of 39 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK document_type_work_entity_kind_fkey.
 
 ## Indexes
 

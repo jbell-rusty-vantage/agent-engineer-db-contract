@@ -13,7 +13,7 @@ raises: [semantic dispatch context cannot be supplied at reservation, semantic d
 touches: { reads: [], writes: [] }
 tokens: [orchestration, verification_semantic_dispatch_context, orchestration.verification_semantic_dispatch_context]
 defined_in: ["20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # orchestration.verification_semantic_dispatch_context
 

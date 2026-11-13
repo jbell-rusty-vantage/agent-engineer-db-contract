@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_item\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # retrieval.vector_item
 
@@ -63,7 +63,7 @@ Enabled; 2 policies in [details](vector_item.details.md).
 ## Write path
 
 - Direct DML: `executor_service`.
-- Via functions (best effort): [`retrieval.index_text_item`](../../functions/retrieval/index_text_item.md), [`retrieval.retire_items_for_passages`](../../functions/retrieval/retire_items_for_passages.md), [`retrieval.supersede_duplicate_items`](../../functions/retrieval/supersede_duplicate_items.md).
+- Via functions (best effort): [`retrieval.index_text_item`](../../functions/retrieval/index_text_item.md), [`retrieval.retire_deterministic_digest_items`](../../functions/retrieval/retire_deterministic_digest_items.md), [`retrieval.retire_items_for_passages`](../../functions/retrieval/retire_items_for_passages.md), [`retrieval.supersede_duplicate_items`](../../functions/retrieval/supersede_duplicate_items.md).
 
 ## TypeScript
 

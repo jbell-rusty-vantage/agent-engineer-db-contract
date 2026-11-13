@@ -4,7 +4,7 @@ kind: details
 schema: evidence
 name: source_capture
 of: "rel:evidence.source_capture"
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # evidence.source_capture — details
 
@@ -13,7 +13,7 @@ Spill-over from [the main page](source_capture.md).
 ## Relationships
 
 Outbound: `acquisition_fetch_id` → [`acquisition.fetch`](../acquisition/fetch.md)`.id`; `artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.id` (+tenant); `capture_method` → [`evidence.capture_method`](capture_method.md)`.code`; `tenant_id,knowledge_operation_id` → [`knowledge_service.operation`](../knowledge_service/operation.md)`.tenant_id,id` on delete restrict; `produced_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.id` (+tenant); `source_id` → [`evidence.source`](source.md)`.id` (+tenant).
-Inbound: [`access.source_restriction`](../access/source_restriction.md).capture_id, [`acquisition.fetch`](../acquisition/fetch.md).prior_capture_id, [`authoring.release_item`](../authoring/release_item.md).capture_id, [`authoring.revision_binding`](../authoring/revision_binding.md).capture_id, [`content.document_version_source_capture`](../content/document_version_source_capture.md).source_capture_id, [`content.transformation_input`](../content/transformation_input.md).source_capture_id, [`evaluation.eval_case_provenance`](../evaluation/eval_case_provenance.md).source_capture_id, [`evidence.locator`](locator.md).capture_id, [`evidence.source`](source.md).last_capture_id, [`evidence.source_encounter`](source_encounter.md).capture_id, [`inquiry.support`](../inquiry/support.md).capture_id, [`orchestration.verification_structured_extraction`](../orchestration/verification_structured_extraction.md).capture_id, [`ranking.leaderboard_edition`](../ranking/leaderboard_edition.md).capture_id.
+Inbound: [`access.source_restriction`](../access/source_restriction.md).capture_id, [`acquisition.fetch`](../acquisition/fetch.md).prior_capture_id, [`authoring.release_item`](../authoring/release_item.md).capture_id, [`authoring.revision_binding`](../authoring/revision_binding.md).capture_id, [`content.document_version_source_capture`](../content/document_version_source_capture.md).source_capture_id, [`content.transformation_input`](../content/transformation_input.md).source_capture_id, [`evaluation.eval_case_provenance`](../evaluation/eval_case_provenance.md).source_capture_id, [`evidence.locator`](locator.md).capture_id, [`evidence.source`](source.md).last_capture_id, [`evidence.source_encounter`](source_encounter.md).capture_id, [`inquiry.support`](../inquiry/support.md).capture_id, [`orchestration.verification_structured_extraction`](../orchestration/verification_structured_extraction.md).capture_id, [`ranking.leaderboard_edition`](../ranking/leaderboard_edition.md).capture_id, [`verification.probe_run`](../verification/probe_run.md).output_capture_id.
 Polymorphic: exactly one of `produced_by_attempt_id`, `knowledge_operation_id`, `acquisition_fetch_id` → [`acquisition.fetch`](../acquisition/fetch.md) | [`orchestration.attempt`](../orchestration/attempt.md) — basis: check constraint source_capture_exactly_one_producer_ck.
 
 ## Indexes

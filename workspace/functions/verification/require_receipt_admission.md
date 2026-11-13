@@ -13,7 +13,7 @@ raises: [ADMISSION_REQUIRED]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt, verification.use_admission], writes: [] }
 tokens: [verification, require_receipt_admission, verification.require_receipt_admission]
 defined_in: []
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # verification.require_receipt_admission
 

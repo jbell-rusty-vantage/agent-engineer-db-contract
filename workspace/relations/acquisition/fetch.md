@@ -6,7 +6,7 @@ name: fetch
 domain: acquisition
 lens: corpus
 aliases: [fetch, fetch ledger, spend]
-tokens: [acquisition, fetch, acquisition.fetch, id, tenant_id, origin_kind, origin_label, actor_principal_id, mc_mission_id, mc_run_id, tool, tool_version, request_url, final_url, requested_at, completed_at, http_status, outcome, content_sha256, media_type, size_bytes, credits_used, cost_usd, failure_class, prior_capture_id, notes]
+tokens: [acquisition, fetch, acquisition.fetch, id, tenant_id, origin_kind, origin_label, actor_principal_id, mc_mission_id, mc_run_id, tool, tool_version, request_url, final_url, requested_at, completed_at, http_status, outcome, content_sha256, media_type, size_bytes, credits_used, cost_usd, failure_class, prior_capture_id, notes, sweep_id]
 summary: "One attempt to obtain bytes from a URL — who, with what tool, outcome, hash, spend — recorded before any capture exists."
 summary_basis: curated
 rls: enabled
@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [executor_service, service_role]
 typescript: "Database[\"acquisition\"][\"Tables\"][\"fetch\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part2_content.sql]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # acquisition.fetch
 
@@ -49,6 +49,7 @@ table in domain `acquisition`, lens `corpus` — One attempt to obtain bytes fro
 | 21 | `failure_class` | `text` | yes | — | — |
 | 22 | `prior_capture_id` | `uuid` | yes | — | FK → [`evidence.source_capture`](../evidence/source_capture.md).id; _curated:_ Capture whose bytes an unchanged outcome matched; no new document version is created. |
 | 23 | `notes` | `jsonb` | no | `'{}'::jsonb` | — |
+| 24 | `sweep_id` | `uuid` | yes | — | FK → [`acquisition.attention_sweep`](attention_sweep.md).id |
 
 ## Constraints
 
@@ -61,7 +62,7 @@ table in domain `acquisition`, lens `corpus` — One attempt to obtain bytes fro
 
 ## Relationships
 
-Outbound: `prior_capture_id` → [`evidence.source_capture`](../evidence/source_capture.md)`.id`.
+Outbound: `prior_capture_id` → [`evidence.source_capture`](../evidence/source_capture.md)`.id`; `sweep_id` → [`acquisition.attention_sweep`](attention_sweep.md)`.id`.
 Inbound: [`content.refresh_check`](../content/refresh_check.md).fetch_id, [`evidence.source_capture`](../evidence/source_capture.md).acquisition_fetch_id.
 Polymorphic target of: [`evidence.source_capture`](../evidence/source_capture.md) (check constraint source_capture_exactly_one_producer_ck).
 

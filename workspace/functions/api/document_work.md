@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.work, content.document, content.document_about_entity], writes: [] }
 tokens: [api, document_work, api.document_work]
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # api.document_work
 

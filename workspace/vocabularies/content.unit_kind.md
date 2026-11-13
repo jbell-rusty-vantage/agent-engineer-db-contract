@@ -3,14 +3,14 @@ id: "voc:content.unit_kind"
 kind: vocabulary
 schema: content
 name: unit_kind
-rows: 45
-rows_sha256: "sha256:d6d5586f23831cbc2386093703f835046d3ec61e77b53c36edea146a59997d3d"
-codes: [advisory, api_symbol, bundle_file, change_item, code_block, code_example, docs_section, document_root, endpoint, eval_row, figure, hook_entry, leaderboard_row, link, list, list_item, mcp_prompt, mcp_resource, mcp_tool, media_segment, metadata_field, metric_definition, model_card_section, module_block, paper_section, paragraph, parameter, plan_section, post_paragraph, price_row, quote, readme_section, reference, registry_listing, release_entry, schema_component, section, slide, spec_field, table, table_row, talk_header, talk_resource, talk_writeup, transcript_segment]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+rows: 47
+rows_sha256: "sha256:57e528f50a00dbbd83f61aa80d0a27d095daed7ae188aad354c103bde2196fc8"
+codes: [advisory, api_symbol, bundle_file, change_item, code_block, code_example, docs_section, document_root, endpoint, eval_row, figure, hook_entry, leaderboard_row, link, list, list_item, mcp_prompt, mcp_resource, mcp_tool, media_segment, metadata_field, metric_definition, model_card_section, module_block, paper_section, paragraph, parameter, plan_section, post_paragraph, price_row, probe_observation, quote, readme_section, reference, registry_listing, release_entry, schema_component, section, slide, spec_field, table, table_row, talk_header, talk_resource, talk_writeup, thread_post, transcript_segment]
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # content.unit_kind
 
-Reference data snapshot (45 rows, digest `sha256:d6d5586f23831cbc2386093703f835046d3ec61e77b53c36edea146a59997d3d`). Codes are enforced wherever a column has a foreign key to [`content.unit_kind`](../relations/content/unit_kind.md).
+Reference data snapshot (47 rows, digest `sha256:57e528f50a00dbbd83f61aa80d0a27d095daed7ae188aad354c103bde2196fc8`). Codes are enforced wherever a column has a foreign key to [`content.unit_kind`](../relations/content/unit_kind.md).
 
 | code | applicable_document_types | attributes_schema | description | entity_roles | is_universal | logical_key_attributes | parent_kinds | retrieval_role | selector_kind | status | version |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -44,6 +44,7 @@ Reference data snapshot (45 rows, digest `sha256:d6d5586f23831cbc2386093703f8350
 | `plan_section` | pricing_page | `{"properties":{"plan":{"type":"string"},"tier":{"type":"string"}},"required":["…` | A pricing plan/model family section | offering | no | plan | document_root, section | embed | text_quote | active | 1 |
 | `post_paragraph` | news_article, social_post, thirdparty_blog_post, official_blog_post, analysis_post, newsletter_issue | `{"properties":{"byline":{"type":"string"},"ordinal":{"type":"integer"},"publish…` | A paragraph of a post/article that may carry claims | mentions, quotes | no | ordinal | document_root, section | embed | text_quote | active | 1 |
 | `price_row` | pricing_page | `{"additionalProperties":true,"properties":{"amount":{"type":"number"},"commitme…` | One priced meter for an offering (model tokens, GPU-hours, sandbox vCPU-seconds); the section label is read before slot… | offering, provider, device | no | offering, meter, tier, region, commitment | plan_section, table | embed | table | active | 1 |
+| `probe_observation` | probe_report | `{"additionalProperties":true,"properties":{"cell":{"type":"string"},"observatio…` | What one probe run observed in one cell (versions, warnings, exceptions, keys, counts) rendered as text plus the struct… | subject | no | probe, cell, run_id | document_root, section | embed | json_pointer | active | 1 |
 | `quote` | news_article, social_post, thirdparty_blog_post, official_blog_post, analysis_post, newsletter_issue, aie_talk | `{"properties":{"ordinal":{"type":"integer"},"speaker":{"type":"string"}},"type"…` | A quotation attributed to a speaker | speaker | no | ordinal | post_paragraph, paragraph, transcript_segment | embed | text_quote | active | 1 |
 | `readme_section` | repository_readme | `{"properties":{"heading":{"type":"string"},"path":{"type":"string"}},"type":"ob…` | README section | software, concept | no | path | document_root, section | embed | text_quote | active | 1 |
 | `reference` | arxiv_paper, tech_report, conference_paper, journal_article, official_blog_post, aie_talk | `{"additionalProperties":true,"properties":{"arxiv_id":{"type":"string"},"doi":{…` | One bibliographic reference of a paper or post (becomes a cites relationship when the target resolves) | paper, cited | no | ref_key | document_root, section, list | filter | text_quote | active | 1 |
@@ -58,4 +59,5 @@ Reference data snapshot (45 rows, digest `sha256:d6d5586f23831cbc2386093703f8350
 | `talk_header` | aie_talk | `{"properties":{"event":{"type":"string"},"session_id":{"type":"string"},"speake…` | Talk title, speakers, track and event fields from the page/sessions record | speaker, event | no | session_id | document_root | filter | json_pointer | active | 1 |
 | `talk_resource` | aie_talk | `{"properties":{"href":{"type":"string"},"resource_kind":{"enum":["repository","…` | A resource link listed on a talk page or inside a slide (repository, paper, docs); slide links are cites candidates | references | no | href | section, document_root, slide, list | filter | text_quote | active | 1 |
 | `talk_writeup` | aie_talk | `{"properties":{"heading":{"type":"string"},"path":{"type":"string"}},"type":"ob…` | Organizer/AI write-up section of a talk page: claim candidates, never facts | mentions | no | path | document_root, section | embed | text_quote | active | 1 |
+| `thread_post` | issue_thread, forum_thread | `{"additionalProperties":true,"properties":{"accepted":{"type":"boolean"},"autho…` | One post of an issue, forum or aggregator thread: author handle as published, platform role, time, reactions; the openi… | author | no | post_id | document_root, section | embed | text_quote | active | 1 |
 | `transcript_segment` | aie_talk, video_transcript, podcast_transcript | `{"properties":{"slide_n":{"type":"integer"},"speaker":{"type":"string"},"t0_ms"…` | Timestamped transcript window (no speaker labels on ai.engineer pages) | speaker, mentions | no | t0_ms | document_root, section | embed | media_timecode | active | 1 |

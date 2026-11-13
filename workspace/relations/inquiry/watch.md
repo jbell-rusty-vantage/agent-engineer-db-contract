@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"inquiry\"][\"Tables\"][\"watch\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # inquiry.watch
 
@@ -56,7 +56,7 @@ table in domain `inquiry`, lens `ours`.
 ## Relationships
 
 Outbound: `created_by` → `auth.users``.id` on delete restrict; `tenant_id,workspace_id,brief_work_id` → [`authoring.work`](../authoring/work.md)`.tenant_id,workspace_id,id` on delete restrict.
-Inbound: none.
+Inbound: [`acquisition.attention_policy`](../acquisition/attention_policy.md).inquiry_watch_id.
 
 ## Indexes
 

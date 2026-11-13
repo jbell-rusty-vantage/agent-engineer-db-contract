@@ -3,14 +3,14 @@ id: "voc:taxonomy.entity_kind"
 kind: vocabulary
 schema: taxonomy
 name: entity_kind
-rows: 38
-rows_sha256: "sha256:de674e177f9c6641e132347359c3753ca6d2eda35f83b2fcda04b941f17840f6"
-codes: [agent_plugin, agent_skill, ai_model, ai_model_version, ai_protocol, ai_protocol_feature, ai_protocol_version, benchmark, benchmark_run, benchmark_version, case_study, compute_device, compute_offering, concept, corporate_transaction, dataset, event_series, funding_round, industry_event, library, library_release, mcp_server, media_channel, media_series, media_work, model_offering, organization, paper, person, product, product_feature, product_version, registry, repository, security_advisory, story, talk, technique]
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+rows: 39
+rows_sha256: "sha256:ee57f07b282646556557a324da36333474eb55d23437a1ec7786a9928c094e8e"
+codes: [agent_plugin, agent_skill, ai_model, ai_model_version, ai_protocol, ai_protocol_feature, ai_protocol_version, benchmark, benchmark_version, case_study, community_actor, compute_device, compute_offering, concept, corporate_transaction, dataset, event_series, funding_round, industry_event, library, library_release, mcp_server, media_channel, media_series, media_work, model_offering, organization, paper, person, product, product_feature, product_version, registry, repository, security_advisory, source_channel, story, talk, technique]
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # taxonomy.entity_kind
 
-Reference data snapshot (38 rows, digest `sha256:de674e177f9c6641e132347359c3753ca6d2eda35f83b2fcda04b941f17840f6`). Codes are enforced wherever a column has a foreign key to [`taxonomy.entity_kind`](../relations/taxonomy/entity_kind.md).
+Reference data snapshot (39 rows, digest `sha256:ee57f07b282646556557a324da36333474eb55d23437a1ec7786a9928c094e8e`). Codes are enforced wherever a column has a foreign key to [`taxonomy.entity_kind`](../relations/taxonomy/entity_kind.md).
 
 | code | attributes_schema | canonical_schema | canonical_table | description | is_work | label | lens | parent_kind |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -22,9 +22,9 @@ Reference data snapshot (38 rows, digest `sha256:de674e177f9c6641e132347359c3753
 | `ai_protocol_feature` | `{"type":"object"}` | catalog | entity | ai_protocol_feature | no | Ai Protocol Feature | corpus | ai_protocol |
 | `ai_protocol_version` | `{"additionalProperties":true,"properties":{"changelog_url":{"type":"string"},"d…` | catalog | entity | One revision of a protocol (MCP 2026-07-28); status current/final/draft from the versioning page | no | Ai Protocol Version | corpus | ai_protocol |
 | `benchmark` | `{"additionalProperties":true,"properties":{"agentic":{"type":"boolean"},"canoni…` | catalog | entity | A benchmark (task set + metric) that scores models, agents or systems; versions/editions are benchmark_version children | no | Benchmark | corpus | — |
-| `benchmark_run` | `{"type":"object"}` | catalog | entity | benchmark_run | no | Benchmark Run | corpus | benchmark |
 | `benchmark_version` | `{"additionalProperties":true,"properties":{"canonical_url":{"type":"string"},"c…` | catalog | entity | One edition/cohort of a benchmark (SWE-bench Verified, Terminal-Bench 4.1, ARC-AGI-2, OSWorld v2.1); scores reference t… | no | Benchmark Version | corpus | benchmark |
 | `case_study` | `{"type":"object"}` | catalog | work | case_study | yes | Case Study | corpus | — |
+| `community_actor` | `{"additionalProperties":false,"properties":{"first_seen_at":{"type":"string"},"…` | catalog | entity | A handle that published statements on a channel, kept as published (platform + handle) with the platform's own role lab… | no | Community actor | corpus | — |
 | `compute_device` | `{"additionalProperties":true,"properties":{"announced_on":{"type":"string"},"av…` | catalog | entity | An accelerator or system (GPU, TPU, NPU, CPU or a multi-GPU system such as GB200 NVL72); specs are attributes with clai… | no | Compute Device | corpus | — |
 | `compute_offering` | `{"additionalProperties":true,"properties":{"billing_granularity":{"type":"strin…` | catalog | entity | A sellable compute offering: an instance type, a serverless GPU, a sandbox product, a managed cluster or an inference e… | no | Compute Offering | corpus | — |
 | `concept` | `{"additionalProperties":true,"properties":{"component":{"enum":["rag","context"…` | catalog | entity | concept | no | Concept | corpus | — |
@@ -49,6 +49,7 @@ Reference data snapshot (38 rows, digest `sha256:de674e177f9c6641e132347359c3753
 | `registry` | `{"additionalProperties":true,"properties":{"api_url":{"type":"string"},"descrip…` | catalog | entity | registry | no | Registry | corpus | — |
 | `repository` | `{"additionalProperties":true,"properties":{"default_branch":{"type":"string"},"…` | catalog | entity | repository | no | Repository | corpus | — |
 | `security_advisory` | `{"additionalProperties":true,"properties":{"affected_range":{"type":"string"},"…` | catalog | entity | A published security advisory (GHSA/CVE) affecting software; the record itself, not the vulnerability concept | no | Security Advisory | corpus | — |
+| `source_channel` | `{"additionalProperties":true,"properties":{"access":{"type":"object"},"channel_…` | catalog | entity | A place statements are published: an issue tracker of one repository, a forum, a Q&A tag, an aggregator, a blog or news… | no | Source channel | corpus | — |
 | `story` | `{"type":"object"}` | catalog | work | story | yes | Story | corpus | — |
 | `talk` | `{"additionalProperties":true,"properties":{"edition":{"type":"string"},"level":…` | catalog | work | A conference talk/session (ai.engineer World's Fair, Code Summit ...): presented_by -> person, presented_at -> industry… | yes | Talk | corpus | — |
 | `technique` | `{"additionalProperties":true,"properties":{"description":{"type":"string"},"tec…` | catalog | entity | technique | no | Technique | corpus | — |

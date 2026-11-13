@@ -4,9 +4,9 @@ kind: schema
 name: evidence
 lens: evidence
 domains: [evidence]
-relations: 26
-functions: 9
-workspace_fingerprint: "sha256:fbf5703bf7a6f6131c452444ee949f1feec1bbe813c78d772fb3886b510815b9"
+relations: 27
+functions: 10
+workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
 ---
 # evidence
 
@@ -14,7 +14,7 @@ Sources, captures, locators, signatures, claims, support, verification. PROVISIO
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
-| [`attribution`](../../relations/evidence/attribution.md) | table | unknown | — | → `evidence.claim`, → `catalog.entity`, → `evidence.extraction_record`, → `evidence.locator` |
+| [`attribution`](../../relations/evidence/attribution.md) | table | small | — | → `evidence.claim`, → `catalog.entity`, → `evidence.extraction_record`, → `evidence.locator` |
 | [`capture_method`](../../relations/evidence/capture_method.md) | table | unknown | Vocabulary of how a source_capture was taken. | — |
 | [`claim`](../../relations/evidence/claim.md) | table | medium | Atomic statement with type, status, and creating receipt. | → `evidence.claim_type`, → `orchestration.operation_receipt`, → `orchestration.attempt`, → `catalog.relationship` |
 | [`claim_conflict`](../../relations/evidence/claim_conflict.md) | table | unknown | — | → `evidence.claim` |
@@ -33,7 +33,8 @@ Sources, captures, locators, signatures, claims, support, verification. PROVISIO
 | [`revalidation_policy`](../../relations/evidence/revalidation_policy.md) | table | unknown | — | — |
 | [`search_provider`](../../relations/evidence/search_provider.md) | table | unknown | — | — |
 | [`segment_support`](../../relations/evidence/segment_support.md) | table | medium | K-stamped link from a claim and locator to a segment or occurrence. | → `evidence.claim`, → `temporal.event_occurrence`, → `evidence.locator`, → `temporal.segment` |
-| [`source`](../../relations/evidence/source.md) | table | small | Canonical source (URL/domain) with revisit and publisher pointers. | → `evidence.source_capture`, → `catalog.entity` |
+| [`source`](../../relations/evidence/source.md) | table | small | Canonical source (URL/domain) with revisit and publisher pointers. | → `catalog.entity`, → `evidence.source_capture` |
+| [`source_assessment`](../../relations/evidence/source_assessment.md) | table | small | Loop 4: what we know about a source (channel, actor, organization, person) on a topic at … | → `content.source_role`, → `catalog.entity` |
 | [`source_capture`](../../relations/evidence/source_capture.md) | table | small | One immutable capture of a source, hashed and stored as an artifact; points at the acquis… | → `acquisition.fetch`, → `orchestration.artifact`, → `evidence.capture_method`, → `knowledge_service.operation` |
 | [`source_encounter`](../../relations/evidence/source_encounter.md) | table | unknown | — | → `evidence.source_capture`, → `evidence.provider_result`, → `orchestration.operation_receipt`, → `evidence.source` |
 | [`source_provider_attempt`](../../relations/evidence/source_provider_attempt.md) | table | unknown | — | → `orchestration.artifact`, → `evidence.search_provider`, → `evidence.source_query` |
@@ -41,7 +42,7 @@ Sources, captures, locators, signatures, claims, support, verification. PROVISIO
 | [`source_result_selection`](../../relations/evidence/source_result_selection.md) | table | unknown | Append-only research inclusion revisions per provider result; reads choose the latest rec… | → `evidence.source_provider_attempt`, → `evidence.source_selection_revision`, → `orchestration.artifact` |
 | [`source_selection_revision`](../../relations/evidence/source_selection_revision.md) | table | unknown | — | → `evidence.source_provider_attempt`, → `orchestration.artifact` |
 
-Functions: [`enforce_claim_association_proposed`](../../functions/evidence/enforce_claim_association_proposed.md), [`enforce_verified_claim_gate`](../../functions/evidence/enforce_verified_claim_gate.md), [`guard_source_provider_attempt`](../../functions/evidence/guard_source_provider_attempt.md), [`guard_source_result_selection`](../../functions/evidence/guard_source_result_selection.md), [`rebuild_source_state`](../../functions/evidence/rebuild_source_state.md), [`require_source_selection_decisions`](../../functions/evidence/require_source_selection_decisions.md), [`validate_capture_artifact`](../../functions/evidence/validate_capture_artifact.md), [`validate_locator_capture_lineage`](../../functions/evidence/validate_locator_capture_lineage.md), [`verification_locator_artifacts_are_admitted`](../../functions/evidence/verification_locator_artifacts_are_admitted.md).
+Functions: [`derive_source_assessment`](../../functions/evidence/derive_source_assessment.md), [`enforce_claim_association_proposed`](../../functions/evidence/enforce_claim_association_proposed.md), [`enforce_verified_claim_gate`](../../functions/evidence/enforce_verified_claim_gate.md), [`guard_source_provider_attempt`](../../functions/evidence/guard_source_provider_attempt.md), [`guard_source_result_selection`](../../functions/evidence/guard_source_result_selection.md), [`rebuild_source_state`](../../functions/evidence/rebuild_source_state.md), [`require_source_selection_decisions`](../../functions/evidence/require_source_selection_decisions.md), [`validate_capture_artifact`](../../functions/evidence/validate_capture_artifact.md), [`validate_locator_capture_lineage`](../../functions/evidence/validate_locator_capture_lineage.md), [`verification_locator_artifacts_are_admitted`](../../functions/evidence/verification_locator_artifacts_are_admitted.md).
 
 Types: [`types/evidence.md`](../../types/evidence.md).
 
