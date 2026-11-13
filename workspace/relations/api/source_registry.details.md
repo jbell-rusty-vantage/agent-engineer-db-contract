@@ -4,7 +4,7 @@ kind: details
 schema: api
 name: source_registry
 of: "rel:api.source_registry"
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # api.source_registry — details
 
@@ -60,33 +60,35 @@ SELECT e.id AS source_entity_id,
            FROM evidence.source s
           WHERE s.channel_entity_id = e.id) AS urls,
     a.rationale,
-    a.id AS assessment_id
-   FROM ( SELECT DISTINCT ON (source_assessment.subject_entity_id, source_assessment.topic_entity_id) source_assessment.id,
-            source_assessment.tenant_id,
-            source_assessment.subject_entity_id,
-            source_assessment.topic_entity_id,
-            source_assessment.as_of,
-            source_assessment.method,
-            source_assessment.source_role_code,
-            source_assessment.conflict_of_interest,
-            source_assessment.method_disclosure,
-            source_assessment.claims_observed,
-            source_assessment.claims_checked,
-            source_assessment.confirmed,
-            source_assessment.qualified,
-            source_assessment.refuted,
-            source_assessment.median_lead_days,
-            source_assessment.noise_ratio,
-            source_assessment.authority_score,
-            source_assessment.recommended_watch_level,
-            source_assessment.rationale,
-            source_assessment.inputs,
-            source_assessment.assessed_by,
-            source_assessment.receipt_id,
-            source_assessment.supersedes_id,
-            source_assessment.created_at
-           FROM evidence.source_assessment
-          ORDER BY source_assessment.subject_entity_id, source_assessment.topic_entity_id, source_assessment.as_of DESC, source_assessment.created_at DESC) a
+    a.id AS assessment_id,
+    a.self_checked
+   FROM ( SELECT DISTINCT ON (sa.subject_entity_id, sa.topic_entity_id) sa.id,
+            sa.tenant_id,
+            sa.subject_entity_id,
+            sa.topic_entity_id,
+            sa.as_of,
+            sa.method,
+            sa.source_role_code,
+            sa.conflict_of_interest,
+            sa.method_disclosure,
+            sa.claims_observed,
+            sa.claims_checked,
+            sa.confirmed,
+            sa.qualified,
+            sa.refuted,
+            sa.median_lead_days,
+            sa.noise_ratio,
+            sa.authority_score,
+            sa.recommended_watch_level,
+            sa.rationale,
+            sa.inputs,
+            sa.assessed_by,
+            sa.receipt_id,
+            sa.supersedes_id,
+            sa.created_at,
+            sa.self_checked
+           FROM evidence.source_assessment sa
+          ORDER BY sa.subject_entity_id, sa.topic_entity_id, sa.as_of DESC, sa.created_at DESC) a
      JOIN catalog.entity e ON e.id = a.subject_entity_id
      LEFT JOIN catalog.entity t ON t.id = a.topic_entity_id;
 ```

@@ -13,7 +13,7 @@ raises: [benchmark checkpoint is outside its immutable running plan, benchmark c
 touches: { reads: [evaluation.verification_benchmark_run], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_checkpoint, evaluation.validate_verification_benchmark_checkpoint]
 defined_in: ["20260906029000_verification_benchmark_durable_run.sql", "20260906029100_verification_benchmark_checkpoint_running_only.sql", "20260906029400_verification_benchmark_checkpoint_result_binding.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # evaluation.validate_verification_benchmark_checkpoint
 

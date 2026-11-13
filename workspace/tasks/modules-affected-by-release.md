@@ -7,7 +7,7 @@ queries: [catalog.software_releases, ours.modules_affected_by_release, ours.work
 aliases: [flywheel, release impact, stale modules, needs review after release]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # Which of our modules does a new software release affect?
 

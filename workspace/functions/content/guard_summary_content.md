@@ -13,7 +13,7 @@ raises: [summary history cannot be deleted]
 touches: { reads: [], writes: [] }
 tokens: [content, guard_summary_content, content.guard_summary_content]
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # content.guard_summary_content
 

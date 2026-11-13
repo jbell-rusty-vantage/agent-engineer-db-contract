@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"eval_case_provenance\"][\"Row\"]"
 defined_in: ["20260903010300_knowledge_retrieval_completeness.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # evaluation.eval_case_provenance
 

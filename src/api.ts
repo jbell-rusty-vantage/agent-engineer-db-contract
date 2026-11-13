@@ -70,3 +70,10 @@ export type ApiAttentionPolicy = ApiView<"attention_policies">;
 export type ApiProbeMatrixRow = ApiFunctionRows<"probe_matrix">[number];
 export type ApiAttentionDueRow = ApiFunctionRows<"attention_due">[number];
 export type ApiInterviewOutput = ApiFunctionRows<"interview_outputs">[number];
+// Build 08 loop 6 (2026-11-13): claims verified through a Knowledge Services admission (decision, admission-bound receipt, payload, verdicts).
+export type ApiVerifiedClaim = ApiView<"verified_claims">;
+// Build 08 loop 5 (2026-11-13): claim triage, probe revalidation on release, releases whose bound claims' verdicts changed.
+// api.search_unified gains p_evidence_weight (default 0.15) and reports channel_scores.evidence; api.source_registry gains self_checked.
+export type ApiClaimTriage = ApiView<"claim_triage">;
+export type ApiProbeRevalidationDueRow = ApiFunctionRows<"probe_revalidation_due">[number];
+export type ApiReleaseNeedingReview = ApiFunctionRows<"releases_needing_review">[number];

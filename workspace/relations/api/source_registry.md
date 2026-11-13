@@ -6,19 +6,19 @@ name: source_registry
 domain: api-surface
 lens: corpus
 aliases: []
-tokens: [api, source_registry, api.source_registry, source_entity_id, source_kind, source, platform, url, topic_entity_id, topic, as_of, method, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, median_lead_days, noise_ratio, authority_score, recommended_watch_level, current_watch_level, urls, rationale, assessment_id]
-summary: "The current (latest) assessment of each registered source (channel, actor, organization) per topic, with its components and the watch level its policies give it. Order by authority_score for a ranking; never read authority_score without claims_checked."
+tokens: [api, source_registry, api.source_registry, source_entity_id, source_kind, source, platform, url, topic_entity_id, topic, as_of, method, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, median_lead_days, noise_ratio, authority_score, recommended_watch_level, current_watch_level, urls, rationale, assessment_id, self_checked]
+summary: "Latest assessment per source and topic: role prior, conflict of interest, method disclosure, track record from independently checked claims, self_checked (shown, not scored, D-61), lead days, noise, derived score and a watch suggestion only from 5 checked claims (D-69)."
 summary_basis: comment
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"source_registry\"][\"Row\"]"
-defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120300_build08_loop4_fixup_registry_view.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120300_build08_loop4_fixup_registry_view.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # api.source_registry
 
-view in domain `api-surface`, lens `corpus` — The current (latest) assessment of each registered source (channel, actor, organization) per topic, with its components and the watch level its policies give it. Order by authority_score for a ranking; never read authority_score without claims_checked..
+view in domain `api-surface`, lens `corpus` — Latest assessment per source and topic: role prior, conflict of interest, method disclosure, track record from independently checked claims, self_checked (shown, not scored, D-61), lead days, noise, derived score and a watch suggestion only from 5 checked claims (D-69)..
 
 ## Columns
 
@@ -49,6 +49,7 @@ view in domain `api-surface`, lens `corpus` — The current (latest) assessment 
 | 23 | `urls` | `bigint` | yes | — | — |
 | 24 | `rationale` | `text` | yes | — | — |
 | 25 | `assessment_id` | `uuid` | yes | — | — |
+| 26 | `self_checked` | `integer` | yes | — | — |
 
 ## Constraints
 
@@ -91,4 +92,4 @@ See [details](source_registry.details.md).
 
 row: `Database["api"]["Views"]["source_registry"]["Row"]`
 
-Defined in: `20261113120000_build08_loop4_source_intelligence_experiments.sql`, `20261113120300_build08_loop4_fixup_registry_view.sql`.
+Defined in: `20261113120000_build08_loop4_source_intelligence_experiments.sql`, `20261113120300_build08_loop4_fixup_registry_view.sql`, `20261113160000_build08_loop5_followups.sql`, `20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql`.

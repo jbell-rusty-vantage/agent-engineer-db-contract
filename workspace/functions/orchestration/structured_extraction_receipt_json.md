@@ -13,7 +13,7 @@ raises: [structured extraction receipt requires safe integers]
 touches: { reads: [], writes: [] }
 tokens: [orchestration, structured_extraction_receipt_json, orchestration.structured_extraction_receipt_json]
 defined_in: ["20260906032100_verification_structured_extraction_terminal.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # orchestration.structured_extraction_receipt_json
 

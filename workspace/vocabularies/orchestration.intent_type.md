@@ -3,18 +3,19 @@ id: "voc:orchestration.intent_type"
 kind: vocabulary
 schema: orchestration
 name: intent_type
-rows: 14
-rows_sha256: "sha256:a5eed23f657fe227731cbd11ea12730fbf2a28d226e8f90acef59f1c9a1750ab"
-codes: [assign_taxonomy_term, content_link, ingest_research_bundle, knowledge_ingestion, link_entities, merge_entities, promote_candidate, publish_report, record_claim, record_metric_observations, retract_record, upsert_entity, upsert_knowledge, verify_claim]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+rows: 15
+rows_sha256: "sha256:afa462af44ac0c65a020e94fc08a843a309a4758344d053b2e25bb1b13461b31"
+codes: [assign_taxonomy_term, claim_verification, content_link, ingest_research_bundle, knowledge_ingestion, link_entities, merge_entities, promote_candidate, publish_report, record_claim, record_metric_observations, retract_record, upsert_entity, upsert_knowledge, verify_claim]
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # orchestration.intent_type
 
-Reference data snapshot (14 rows, digest `sha256:a5eed23f657fe227731cbd11ea12730fbf2a28d226e8f90acef59f1c9a1750ab`). Codes are enforced wherever a column has a foreign key to [`orchestration.intent_type`](../relations/orchestration/intent_type.md).
+Reference data snapshot (15 rows, digest `sha256:afa462af44ac0c65a020e94fc08a843a309a4758344d053b2e25bb1b13461b31`). Codes are enforced wherever a column has a foreign key to [`orchestration.intent_type`](../relations/orchestration/intent_type.md).
 
 | code | description | schema_version |
 | --- | --- | --- |
 | `assign_taxonomy_term` | Assign a taxonomy term to a target | 1 |
+| `claim_verification` | Verify an existing claim under a Knowledge Services admitted exact-use decision (verification.record_admitted_claim_ver… | 1 |
 | `content_link` | content-link-intent.v1: evidence-backed canonical document, chunk, summary and projection links | 1 |
 | `ingest_research_bundle` | Register a verified source bundle, claims, candidates, and report | 1 |
 | `knowledge_ingestion` | knowledge-ingestion-intent.v1: evidence-backed proposals applied by the knowledge executor as executor_service | 1 |

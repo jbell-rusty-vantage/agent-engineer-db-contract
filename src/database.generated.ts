@@ -819,6 +819,13 @@ export type Database = {
             referencedRelation: "source_track_record"
             referencedColumns: ["claim_id"]
           },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       agent_skills: {
@@ -978,6 +985,13 @@ export type Database = {
             columns: ["claim_id"]
             isOneToOne: false
             referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
             referencedColumns: ["claim_id"]
           },
           {
@@ -1499,6 +1513,139 @@ export type Database = {
         }
         Relationships: []
       }
+      claim_triage: {
+        Row: {
+          checkability: string | null
+          claim_id: string | null
+          claim_type: string | null
+          components: Json | null
+          decided_at: string | null
+          decided_by: string | null
+          disposition: string | null
+          duplicate_of_claim_id: string | null
+          priority: number | null
+          probe: string | null
+          rationale: string | null
+          review_state: string | null
+          statement: string | null
+          status: string | null
+          verdict: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_candidates"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_conflicts"
+            referencedColumns: ["first_party_claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_conflicts"
+            referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_candidates"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_conflicts"
+            referencedColumns: ["first_party_claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_conflicts"
+            referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_surfaces"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_verdicts"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "community_claims"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
+            referencedColumns: ["claim_id"]
+          },
+        ]
+      }
       claim_verdicts: {
         Row: {
           cells: Json | null
@@ -1678,6 +1825,13 @@ export type Database = {
             referencedRelation: "source_track_record"
             referencedColumns: ["claim_id"]
           },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       concepts: {
@@ -1849,6 +2003,13 @@ export type Database = {
             columns: ["claim_id"]
             isOneToOne: false
             referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
             referencedColumns: ["claim_id"]
           },
           {
@@ -2188,6 +2349,13 @@ export type Database = {
             columns: ["provenance_claim_id"]
             isOneToOne: false
             referencedRelation: "source_track_record"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
             referencedColumns: ["claim_id"]
           },
         ]
@@ -2866,6 +3034,13 @@ export type Database = {
             referencedRelation: "source_track_record"
             referencedColumns: ["claim_id"]
           },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "verified_claims"
+            referencedColumns: ["claim_id"]
+          },
         ]
       }
       software: {
@@ -2931,6 +3106,7 @@ export type Database = {
           rationale: string | null
           recommended_watch_level: string | null
           refuted: number | null
+          self_checked: number | null
           source: string | null
           source_entity_id: string | null
           source_kind: string | null
@@ -3303,6 +3479,21 @@ export type Database = {
             referencedColumns: ["event_id"]
           },
         ]
+      }
+      verified_claims: {
+        Row: {
+          bound_effect_digest: string | null
+          claim_id: string | null
+          claim_type: string | null
+          effect: Json | null
+          executor_version: string | null
+          receipt_id: string | null
+          statement: string | null
+          use_decision_id: string | null
+          verdicts: Json | null
+          verified_at: string | null
+        }
+        Relationships: []
       }
       works_authored: {
         Row: {
@@ -3824,6 +4015,20 @@ export type Database = {
           started_at: string
         }[]
       }
+      probe_revalidation_due: {
+        Args: { p_as_of?: string }
+        Returns: {
+          cell_label: string
+          last_run_at: string
+          library: string
+          newest_released_at: string
+          newest_version: string
+          probe: string
+          probe_id: string
+          reason: string
+          resolved_version: string
+        }[]
+      }
       product_command: {
         Args: {
           p_expected_head: string
@@ -3880,6 +4085,21 @@ export type Database = {
         }[]
       }
       release_order: { Args: { p_tag: string }; Returns: number[] }
+      releases_needing_review: {
+        Args: never
+        Returns: {
+          claim_id: string
+          decided_at: string
+          release_id: string
+          release_no: number
+          released_at: string
+          root_work_id: string
+          statement: string
+          status_now: string
+          verdict_at_release: string
+          verdict_now: string
+        }[]
+      }
       resolve_entity: {
         Args: { p_text: string }
         Returns: {
@@ -3909,6 +4129,7 @@ export type Database = {
           p_content_kinds?: string[]
           p_document_types?: string[]
           p_entity_ids?: string[]
+          p_evidence_weight?: number
           p_lenses?: string[]
           p_limit?: number
           p_query: string
@@ -11013,6 +11234,7 @@ export type Database = {
           receipt_id: string | null
           recommended_watch_level: string | null
           refuted: number
+          self_checked: number
           source_role_code: string | null
           subject_entity_id: string
           supersedes_id: string | null
@@ -11039,6 +11261,7 @@ export type Database = {
           receipt_id?: string | null
           recommended_watch_level?: string | null
           refuted?: number
+          self_checked?: number
           source_role_code?: string | null
           subject_entity_id: string
           supersedes_id?: string | null
@@ -11065,6 +11288,7 @@ export type Database = {
           receipt_id?: string | null
           recommended_watch_level?: string | null
           refuted?: number
+          self_checked?: number
           source_role_code?: string | null
           subject_entity_id?: string
           supersedes_id?: string | null
@@ -11560,6 +11784,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_is_self_stated: { Args: { p_claim: string }; Returns: boolean }
       derive_source_assessment: {
         Args: {
           p_assessed_by?: string
@@ -21247,6 +21472,10 @@ export type Database = {
           world_interval: unknown
         }[]
       }
+      evidence_signal: {
+        Args: { p_claim: string; p_document: string; p_unit_kind: string }
+        Returns: Json
+      }
       history_claim_authorized: { Args: { p_claim: string }; Returns: boolean }
       history_projection_matches: {
         Args: {
@@ -21306,6 +21535,11 @@ export type Database = {
         Returns: string
       }
       project_entity_timeline: { Args: { p_k?: number }; Returns: number }
+      promote_release_passages: { Args: { p_release: string }; Returns: number }
+      promote_revision_passages: {
+        Args: { p_revision: string }
+        Returns: number
+      }
       publish_vector_space: {
         Args: {
           p_actor_identity: string
@@ -22523,6 +22757,72 @@ export type Database = {
   }
   verification: {
     Tables: {
+      claim_triage: {
+        Row: {
+          checkability: string
+          claim_id: string
+          components: Json
+          decided_at: string
+          decided_by: string
+          disposition: string
+          duplicate_of_claim_id: string | null
+          id: string
+          priority: number | null
+          probe_id: string | null
+          rationale: string
+          review_state: string
+          supersedes_id: string | null
+          tenant_id: string
+        }
+        Insert: {
+          checkability: string
+          claim_id: string
+          components?: Json
+          decided_at?: string
+          decided_by: string
+          disposition: string
+          duplicate_of_claim_id?: string | null
+          id?: string
+          priority?: number | null
+          probe_id?: string | null
+          rationale: string
+          review_state?: string
+          supersedes_id?: string | null
+          tenant_id?: string
+        }
+        Update: {
+          checkability?: string
+          claim_id?: string
+          components?: Json
+          decided_at?: string
+          decided_by?: string
+          disposition?: string
+          duplicate_of_claim_id?: string | null
+          id?: string
+          priority?: number | null
+          probe_id?: string | null
+          rationale?: string
+          review_state?: string
+          supersedes_id?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claim_triage_probe_id_fkey"
+            columns: ["probe_id"]
+            isOneToOne: false
+            referencedRelation: "probe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claim_triage_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "claim_triage"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       probe: {
         Row: {
           budget_usd: number
@@ -22827,6 +23127,32 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      record_admitted_claim_verification: {
+        Args: {
+          p_bound_effect_digest: string
+          p_claim: string
+          p_effect_text: string
+          p_executor: string
+          p_normalized_values_digest: string
+          p_origin_digest: string
+          p_processed_epoch: number
+          p_use_decision_id: string
+        }
+        Returns: string
+      }
+      require_admitted_use: {
+        Args: {
+          p_bound_effect_digest: string
+          p_normalized_values_digest?: string
+          p_processed_epoch: number
+          p_tenant: string
+          p_use_decision_id: string
+        }
+        Returns: {
+          authoritative_epoch: number
+          effect_key: string
+        }[]
       }
     }
     Enums: {

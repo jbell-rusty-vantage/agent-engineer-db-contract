@@ -22,6 +22,7 @@ api.capabilities  # view
 api.claim_candidates  # view
 api.claim_conflicts  # view
 api.claim_surfaces  # view
+api.claim_triage  # view
 api.claim_verdicts  # view
 api.community_claims  # view
 api.compute_devices  # view
@@ -58,6 +59,7 @@ api.source_registry  # view
 api.source_track_record  # view
 api.symbol_docs  # view
 api.talks  # view
+api.verified_claims  # view
 api.works_authored  # view
 # authoring  lens=ours
 authoring.asset_scope
@@ -363,6 +365,7 @@ temporal.segment
 temporal.stream
 temporal.stream_kind
 # verification  lens=evidence
+verification.claim_triage
 verification.probe
 verification.probe_claim
 verification.probe_run

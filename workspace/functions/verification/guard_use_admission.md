@@ -12,8 +12,8 @@ executors: []
 raises: [TENANT_MISMATCH]
 touches: { reads: [], writes: [] }
 tokens: [verification, guard_use_admission, verification.guard_use_admission]
-defined_in: []
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+defined_in: ["20261113150000_build08_ks_admission_verified_claims.sql", "20261113150100_build08_loop6_fixup_require_admitted_use.sql"]
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # verification.guard_use_admission
 
@@ -29,6 +29,6 @@ Execute: no configured role.
 
 Raises (mechanically extracted): `TENANT_MISMATCH`.
 
-Touches (best effort): reads —; writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
+Touches (best effort): reads —; writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md), [`verification.require_admitted_use`](require_admitted_use.md).
 
-Defined in: unknown.
+Defined in: `20261113150000_build08_ks_admission_verified_claims.sql`, `20261113150100_build08_loop6_fixup_require_admitted_use.sql`.

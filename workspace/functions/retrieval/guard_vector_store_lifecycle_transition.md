@@ -13,7 +13,7 @@ raises: ["illegal vector store lifecycle transition % -> %", vector store lifecy
 touches: { reads: [], writes: [] }
 tokens: [retrieval, guard_vector_store_lifecycle_transition, retrieval.guard_vector_store_lifecycle_transition]
 defined_in: ["20260904015000_vector_store_lifecycle_control_plane.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # retrieval.guard_vector_store_lifecycle_transition
 

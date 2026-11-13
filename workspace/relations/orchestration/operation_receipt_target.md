@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_receipt_target\"][\"Row\"]"
 defined_in: ["20261031010000_operation_receipt_targets.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # orchestration.operation_receipt_target
 
@@ -33,7 +33,7 @@ table in domain `orchestration-ledger`, lens `machinery` — Normalized targets 
 | 7 | `entity_id` | `uuid` | yes | — | — |
 | 8 | `entity_kind` | `text` | yes | — | FK → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md).code |
 | 9 | `role` | `text` | no | — | unique (tenant_id, receipt_id, target_schema, target_table, target_id, role) |
-| 10 | `action` | `text` | no | — | — |
+| 10 | `action` | `text` | no | — | created, reused, superseded, staged; verified (loop 6): the receipt, bound to an admitted knowledge_verification use decision, moved the target claim to status verified. |
 | 11 | `proposal_id` | `text` | yes | — | — |
 | 12 | `claim_id` | `uuid` | yes | — | — |
 
@@ -41,7 +41,7 @@ table in domain `orchestration-ledger`, lens `machinery` — Normalized targets 
 
 - PK (tenant_id, receipt_id, ordinal)
 - unique (tenant_id, receipt_id, target_schema, target_table, target_id, role)
-- check `operation_receipt_target_action_check`: `(action = ANY (ARRAY['created'::text, 'reused'::text, 'superseded'::text, 'staged'::text]))`
+- check `operation_receipt_target_action_check`: `(action = ANY (ARRAY['created'::text, 'reused'::text, 'superseded'::text, 'staged'::text, 'verified'::text]))`
 - check `operation_receipt_target_check`: `((entity_id IS NULL) = (entity_kind IS NULL))`
 - check `operation_receipt_target_ordinal_check`: `(ordinal >= 0)`
 - check `operation_receipt_target_role_check`: `(role = ANY (ARRAY['subject'::text, 'canonical'::text, 'supporting'::text, 'provenance'::text, 'staging'::text, 'projection'::text]))`
@@ -57,17 +57,15 @@ Polymorphic: `entity_kind` selects one of 39 typed tables listed in [`taxonomy.e
 
 ## Indexes
 
-`operation_receipt_target_entity` where `(entity_id IS NOT NULL)`; `operation_receipt_target_lookup`; `operation_receipt_target_tenant_id_receipt_id_target_schema_key` unique
+3 indexes; see [details](operation_receipt_target.details.md).
 
 ## Triggers
 
-- `receipt_target_guard` → [`orchestration.guard_receipt_target`](../../functions/orchestration/guard_receipt_target.md)
-- `receipt_target_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+2 triggers; see [details](operation_receipt_target.details.md).
 
 ## Row-level security
 
-Enabled and forced.
-- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](operation_receipt_target.details.md).
 
 ## Grants
 
@@ -75,12 +73,13 @@ Enabled and forced.
 
 ## Read paths
 
-- Exposed through: [`orchestration.mission_run_effects`](mission_run_effects.md).
+- Exposed through: [`api.verified_claims`](../api/verified_claims.md), [`orchestration.mission_run_effects`](mission_run_effects.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`.
 
 ## Write path
 
 - Direct DML: `executor_service`.
+- Via functions (best effort): [`verification.record_admitted_claim_verification`](../../functions/verification/record_admitted_claim_verification.md).
 
 ## TypeScript
 

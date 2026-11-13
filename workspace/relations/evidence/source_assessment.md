@@ -6,7 +6,7 @@ name: source_assessment
 domain: evidence
 lens: evidence
 aliases: []
-tokens: [evidence, source_assessment, evidence.source_assessment, id, tenant_id, subject_entity_id, topic_entity_id, as_of, method, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, median_lead_days, noise_ratio, authority_score, recommended_watch_level, rationale, inputs, assessed_by, receipt_id, supersedes_id, created_at]
+tokens: [evidence, source_assessment, evidence.source_assessment, id, tenant_id, subject_entity_id, topic_entity_id, as_of, method, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, median_lead_days, noise_ratio, authority_score, recommended_watch_level, rationale, inputs, assessed_by, receipt_id, supersedes_id, created_at, self_checked]
 summary: "Loop 4: what we know about a source (channel, actor, organization, person) on a topic at a time. Components, never a bare score: role prior, conflict of interest, method disclosure, track record from verdicts, lead time against first-party docs, sweep noise. Append-only; a new row supersedes. authority_score is derived: (4·prior + 100·(confirmed + 0.5·qualified)) / (4 + checked)."
 summary_basis: comment
 rls: enabled
@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_assessment\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # evidence.source_assessment
 
@@ -48,6 +48,7 @@ table in domain `evidence`, lens `evidence` — Loop 4: what we know about a sou
 | 22 | `receipt_id` | `uuid` | yes | — | — |
 | 23 | `supersedes_id` | `uuid` | yes | — | FK → [`evidence.source_assessment`](source_assessment.md).id |
 | 24 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 25 | `self_checked` | `integer` | no | `0` | Loop 5 (D-61): checked claims that the subject stated and our own probes checked. Shown, never counted in confirmed / qualified / refuted or in authority_score: a check by the party that made the claim is not independent evidence of that party's reliability. |
 
 ## Constraints
 
@@ -59,24 +60,23 @@ table in domain `evidence`, lens `evidence` — Loop 4: what we know about a sou
 - check `source_assessment_method_check`: `(method = ANY (ARRAY['prior'::text, 'derived'::text, 'reviewed'::text]))`
 - check `source_assessment_method_disclosure_check`: `(method_disclosure = ANY (ARRAY['none'::text, 'partial'::text, 'full'::text, 'not_applicable'::text]))`
 - check `source_assessment_recommended_watch_level_check`: `(recommended_watch_level = ANY (ARRAY['W0'::text, 'W1'::text, 'W2'::text, 'W3'::text]))`
+- check `source_assessment_self_checked_check`: `(self_checked >= 0)`
 
 ## Relationships
 
-Outbound: `source_role_code` → [`content.source_role`](../content/source_role.md)`.code`; `subject_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `supersedes_id` → [`evidence.source_assessment`](source_assessment.md)`.id`; `topic_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
-Inbound: [`evidence.source_assessment`](source_assessment.md).supersedes_id.
+4 outbound and 1 inbound foreign keys; full list in [details](source_assessment.details.md).
 
 ## Indexes
 
-`source_assessment_subject_ix`
+1 indexes; see [details](source_assessment.details.md).
 
 ## Triggers
 
-_None._
+0 triggers; see [details](source_assessment.details.md).
 
 ## Row-level security
 
-Enabled.
-- `source_assessment_tenant` (ALL) for `public`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](source_assessment.details.md).
 
 ## Grants
 

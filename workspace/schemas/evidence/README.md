@@ -5,8 +5,8 @@ name: evidence
 lens: evidence
 domains: [evidence]
 relations: 27
-functions: 10
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+functions: 11
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # evidence
 
@@ -42,7 +42,7 @@ Sources, captures, locators, signatures, claims, support, verification. PROVISIO
 | [`source_result_selection`](../../relations/evidence/source_result_selection.md) | table | unknown | Append-only research inclusion revisions per provider result; reads choose the latest rec… | → `evidence.source_provider_attempt`, → `evidence.source_selection_revision`, → `orchestration.artifact` |
 | [`source_selection_revision`](../../relations/evidence/source_selection_revision.md) | table | unknown | — | → `evidence.source_provider_attempt`, → `orchestration.artifact` |
 
-Functions: [`derive_source_assessment`](../../functions/evidence/derive_source_assessment.md), [`enforce_claim_association_proposed`](../../functions/evidence/enforce_claim_association_proposed.md), [`enforce_verified_claim_gate`](../../functions/evidence/enforce_verified_claim_gate.md), [`guard_source_provider_attempt`](../../functions/evidence/guard_source_provider_attempt.md), [`guard_source_result_selection`](../../functions/evidence/guard_source_result_selection.md), [`rebuild_source_state`](../../functions/evidence/rebuild_source_state.md), [`require_source_selection_decisions`](../../functions/evidence/require_source_selection_decisions.md), [`validate_capture_artifact`](../../functions/evidence/validate_capture_artifact.md), [`validate_locator_capture_lineage`](../../functions/evidence/validate_locator_capture_lineage.md), [`verification_locator_artifacts_are_admitted`](../../functions/evidence/verification_locator_artifacts_are_admitted.md).
+Functions: [`claim_is_self_stated`](../../functions/evidence/claim_is_self_stated.md), [`derive_source_assessment`](../../functions/evidence/derive_source_assessment.md), [`enforce_claim_association_proposed`](../../functions/evidence/enforce_claim_association_proposed.md), [`enforce_verified_claim_gate`](../../functions/evidence/enforce_verified_claim_gate.md), [`guard_source_provider_attempt`](../../functions/evidence/guard_source_provider_attempt.md), [`guard_source_result_selection`](../../functions/evidence/guard_source_result_selection.md), [`rebuild_source_state`](../../functions/evidence/rebuild_source_state.md), [`require_source_selection_decisions`](../../functions/evidence/require_source_selection_decisions.md), [`validate_capture_artifact`](../../functions/evidence/validate_capture_artifact.md), [`validate_locator_capture_lineage`](../../functions/evidence/validate_locator_capture_lineage.md), [`verification_locator_artifacts_are_admitted`](../../functions/evidence/verification_locator_artifacts_are_admitted.md).
 
 Types: [`types/evidence.md`](../../types/evidence.md).
 

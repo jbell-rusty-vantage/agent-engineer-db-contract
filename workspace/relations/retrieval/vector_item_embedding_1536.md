@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"vector_item_embedding_1536\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # retrieval.vector_item_embedding_1536
 
@@ -69,7 +69,7 @@ Enabled.
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`retrieval.store_embedding`](../../functions/retrieval/store_embedding.md).
+- Via functions (best effort): [`retrieval.promote_revision_passages`](../../functions/retrieval/promote_revision_passages.md), [`retrieval.store_embedding`](../../functions/retrieval/store_embedding.md).
 
 ## Partitions
 

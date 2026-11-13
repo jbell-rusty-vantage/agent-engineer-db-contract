@@ -8,7 +8,7 @@ call: api.product_command
 lens: ours
 relations: [authoring.distribution_offer, authoring.release_item, authoring.revision_binding, authoring.work, authoring.work_revision, conversation.context_item, learning.evidence_item, library.passage, library.removal]
 tokens: [preview_removal, command, api.product_command]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # preview_removal
 

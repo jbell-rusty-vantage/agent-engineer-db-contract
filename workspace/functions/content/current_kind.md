@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document, content.document_kind_assignment], writes: [] }
 tokens: [content, current_kind, content.current_kind]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part2_content.sql]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # content.current_kind
 

@@ -10,7 +10,7 @@ tasks: [search-my-notes]
 summary: "What learners do (lens ours): enroll in an offer, adopt a release, attempt activities, submit evidence, get graded, appeal, earn credit."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # Learning (enrollment, attempts, assessment)
 

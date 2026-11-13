@@ -13,7 +13,7 @@ raises: [active vector_store_ingestion operation with matching actor is required
 touches: { reads: [knowledge_service.operation], writes: [] }
 tokens: [retrieval, validate_vector_store_ingestion_operation, retrieval.validate_vector_store_ingestion_operation]
 defined_in: ["20260904014000_vector_store_ingestion_evidence.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # retrieval.validate_vector_store_ingestion_operation
 

@@ -16,18 +16,18 @@
     "catalog_version": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
     "contract_version": "0.6.0",
     "enrichment_sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
-    "fingerprint": "sha256:7d28df8f3928d3ff1ef4c5ca9b3f8f350f8a37b88319cddb9524b4fde2d0505a",
-    "generated_types_sha256": "sha256:3a8c58f4ee07bc4aeb6141283f74818c619cf189d6794f3a111779ef57e4fcd5",
-    "migration_head": "20261113120400",
+    "fingerprint": "sha256:78bfcf79e22bc1585c72a8451eadc16408d74daaa93ede627d9d18997440b96b",
+    "generated_types_sha256": "sha256:66d5983d414593e8c52bead2aa6eee53e0abfa429388627791a4b40f7c051e6d",
+    "migration_head": "20261113160300",
     "renderer_version": "4.0.0",
     "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-13T06:16:25.089Z",
+      "introspected_at": "2026-11-13T15:01:51.441Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+    "workspace_fingerprint": "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
   },
   "entry_points": [
     "START_HERE.md",
@@ -40,12 +40,12 @@
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
     "domains": 23,
-    "functions": 265,
+    "functions": 274,
     "operations": 81,
     "queries": 55,
-    "relation_details": 80,
+    "relation_details": 84,
     "relation_stubs": 0,
-    "relations": 346,
+    "relations": 349,
     "schemas": 27,
     "tasks": 27,
     "types": 10,
@@ -53,11 +53,11 @@
   },
   "scope": null,
   "sizes": {
-    "files": 884,
+    "files": 900,
     "largest": {
-      "bytes": 5048974,
+      "bytes": 5100652,
       "path": "schema-ir.json"
     },
-    "total_bytes": 8525475
+    "total_bytes": 8627672
   }
 }

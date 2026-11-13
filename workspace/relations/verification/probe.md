@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # verification.probe
 
@@ -55,7 +55,7 @@ table in domain `evidence`, lens `evidence` — Loop 4: an experiment that tests
 ## Relationships
 
 Outbound: `designed_in_thread_id` → [`conversation.thread`](../conversation/thread.md)`.id`.
-Inbound: [`verification.probe_claim`](probe_claim.md).probe_id, [`verification.probe_run`](probe_run.md).probe_id, [`verification.probe_verdict`](probe_verdict.md).probe_id.
+Inbound: [`verification.claim_triage`](claim_triage.md).probe_id, [`verification.probe_claim`](probe_claim.md).probe_id, [`verification.probe_run`](probe_run.md).probe_id, [`verification.probe_verdict`](probe_verdict.md).probe_id.
 
 ## Indexes
 
@@ -76,7 +76,7 @@ Enabled.
 
 ## Read paths
 
-- Exposed through: [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.probes`](../api/probes.md), [`api.source_track_record`](../api/source_track_record.md).
+- Exposed through: [`api.claim_triage`](../api/claim_triage.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.probes`](../api/probes.md), [`api.source_track_record`](../api/source_track_record.md), [`api.verified_claims`](../api/verified_claims.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

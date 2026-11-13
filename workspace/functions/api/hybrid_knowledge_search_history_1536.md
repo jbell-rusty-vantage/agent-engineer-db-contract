@@ -13,7 +13,7 @@ raises: [currently authorized publication required, invalid bounded history quer
 touches: { reads: [retrieval.search_projection, retrieval.vector_item, retrieval.vector_item_embedding_1536, temporal.knowledge_head], writes: [] }
 tokens: [api, hybrid_knowledge_search_history_1536, api.hybrid_knowledge_search_history_1536]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # api.hybrid_knowledge_search_history_1536
 

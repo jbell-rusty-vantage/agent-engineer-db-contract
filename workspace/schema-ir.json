@@ -2,8 +2,8 @@
   "build": {
     "contract_version": "0.6.0",
     "enrichment_sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
-    "generated_types_sha256": "sha256:3a8c58f4ee07bc4aeb6141283f74818c619cf189d6794f3a111779ef57e4fcd5",
-    "migration_head": "20261113120400",
+    "generated_types_sha256": "sha256:66d5983d414593e8c52bead2aa6eee53e0abfa429388627791a4b40f7c051e6d",
+    "migration_head": "20261113160300",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -119,6 +119,9 @@
       "api.probe_matrix": [
         "fn:api.probe_matrix(text)"
       ],
+      "api.probe_revalidation_due": [
+        "fn:api.probe_revalidation_due(timestamptz)"
+      ],
       "api.product_command": [
         "fn:api.product_command(uuid,text,text,uuid,jsonb)"
       ],
@@ -140,6 +143,9 @@
       "api.release_order": [
         "fn:api.release_order(text)"
       ],
+      "api.releases_needing_review": [
+        "fn:api.releases_needing_review()"
+      ],
       "api.resolve_entity": [
         "fn:api.resolve_entity(text)"
       ],
@@ -147,7 +153,7 @@
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)"
       ],
       "api.search_unified": [
-        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)"
+        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
       ],
       "api.submit_intent": [
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)"
@@ -277,6 +283,9 @@
       ],
       "evaluation.verify_sealed_benchmark_arm_publications": [
         "fn:evaluation.verify_sealed_benchmark_arm_publications()"
+      ],
+      "evidence.claim_is_self_stated": [
+        "fn:evidence.claim_is_self_stated(uuid)"
       ],
       "evidence.derive_source_assessment": [
         "fn:evidence.derive_source_assessment(uuid,uuid,text,text)"
@@ -635,6 +644,9 @@
       "retrieval.enforce_evidence_gate": [
         "fn:retrieval.enforce_evidence_gate()"
       ],
+      "retrieval.evidence_signal": [
+        "fn:retrieval.evidence_signal(uuid,uuid,text)"
+      ],
       "retrieval.guard_space_publication": [
         "fn:retrieval.guard_space_publication()"
       ],
@@ -668,8 +680,17 @@
       "retrieval.index_text_item": [
         "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)"
       ],
+      "retrieval.on_release_item_promote": [
+        "fn:retrieval.on_release_item_promote()"
+      ],
       "retrieval.project_entity_timeline": [
         "fn:retrieval.project_entity_timeline(int8)"
+      ],
+      "retrieval.promote_release_passages": [
+        "fn:retrieval.promote_release_passages(uuid)"
+      ],
+      "retrieval.promote_revision_passages": [
+        "fn:retrieval.promote_revision_passages(uuid)"
       ],
       "retrieval.publish_vector_space": [
         "fn:retrieval.publish_vector_space(uuid,text,text,text,text)"
@@ -802,6 +823,12 @@
       ],
       "verification.guard_use_admission": [
         "fn:verification.guard_use_admission()"
+      ],
+      "verification.record_admitted_claim_verification": [
+        "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
+      ],
+      "verification.require_admitted_use": [
+        "fn:verification.require_admitted_use(uuid,text,text,int8,text)"
       ],
       "verification.require_receipt_admission": [
         "fn:verification.require_receipt_admission()"
@@ -2952,7 +2979,8 @@
         "fn:product.guard_immutable()"
       ],
       "rel:authoring.release_item": [
-        "fn:product.guard_immutable()"
+        "fn:product.guard_immutable()",
+        "fn:retrieval.on_release_item_promote()"
       ],
       "rel:authoring.revision_binding": [
         "fn:product.guard_immutable()",
@@ -3761,6 +3789,13 @@
         "rel:evidence.locator",
         "rel:evidence.source"
       ],
+      "rel:api.claim_triage": [
+        "fn:util.current_tenant_id()",
+        "rel:evidence.claim",
+        "rel:verification.claim_triage",
+        "rel:verification.probe",
+        "rel:verification.probe_verdict"
+      ],
       "rel:api.claim_verdicts": [
         "rel:catalog.entity",
         "rel:evidence.attribution",
@@ -3994,6 +4029,15 @@
         "rel:content.document",
         "rel:content.document_about_entity"
       ],
+      "rel:api.verified_claims": [
+        "fn:util.current_tenant_id()",
+        "rel:evidence.claim",
+        "rel:orchestration.operation_intent",
+        "rel:orchestration.operation_receipt",
+        "rel:orchestration.operation_receipt_target",
+        "rel:verification.probe",
+        "rel:verification.probe_verdict"
+      ],
       "rel:api.works_authored": [
         "fn:api.names(uuid[])",
         "fn:util.default_tenant_id()",
@@ -4138,6 +4182,11 @@
         "via_functions": []
       },
       "rel:api.claim_surfaces": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.claim_triage": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -4318,6 +4367,11 @@
         "via_functions": []
       },
       "rel:api.talks": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.verified_claims": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -5140,7 +5194,9 @@
           "pipeline_agent",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
+        ]
       },
       "rel:evidence.claim_conflict": {
         "basis": "grants + best_effort body scan",
@@ -5932,7 +5988,8 @@
           "service_role"
         ],
         "via_functions": [
-          "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)"
+          "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
+          "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
         ]
       },
       "rel:orchestration.operation_receipt": {
@@ -5942,7 +5999,9 @@
           "executor_service",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
+        ]
       },
       "rel:orchestration.operation_receipt_target": {
         "basis": "grants + best_effort body scan",
@@ -5950,7 +6009,9 @@
           "executor_service",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
+        ]
       },
       "rel:orchestration.outbox_event": {
         "basis": "grants + best_effort body scan",
@@ -6340,6 +6401,7 @@
         ],
         "via_functions": [
           "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)",
+          "fn:retrieval.promote_revision_passages(uuid)",
           "fn:retrieval.retire_deterministic_digest_items()",
           "fn:retrieval.retire_items_for_passages(uuid[])",
           "fn:retrieval.supersede_duplicate_items()"
@@ -6349,6 +6411,7 @@
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": [
+          "fn:retrieval.promote_revision_passages(uuid)",
           "fn:retrieval.store_embedding(uuid,halfvec,text)"
         ]
       },
@@ -6586,6 +6649,16 @@
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:verification.claim_triage": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [
+          "control_plane",
+          "pipeline_agent",
+          "service_role",
+          "verifier_agent"
+        ],
+        "via_functions": []
+      },
       "rel:verification.probe": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [
@@ -6742,7 +6815,7 @@
           "fn:api.models_at(timestamptz)",
           "fn:api.model_offerings_at(timestamptz)",
           "fn:api.modules_affected_by_release(uuid)",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
           "fn:api.talk_segments(uuid,int4,int4,text)",
           "fn:api.document_units(uuid,text[])",
           "fn:api.document_digest(uuid)",
@@ -7607,7 +7680,7 @@
         ],
         "body": "Build 08 collapsed retrieval into one stack. `retrieval.vector_item` is the searchable\nitem: `search_text`, `lens` (corpus | ours | private | evidence), `source_tier` (T0 verified\nassertions, T1 our content, T2 primary corpus, T3 third-party, T4 live web — a filter and a\nmild boost, never a truth claim), and facets `document_type_code`, `unit_kind`,\n`entity_id`, `document_id`, `source_role_code`, `valid_during`, `knowledge_seq`,\n`assurance_rank`, `start_ms`/`end_ms`, `workspace_id` for private items. Embeddings live in\n`retrieval.vector_item_embedding_1536` partitions.\n\n`retrieval.projection_target` says what an item is about — exactly one of entity card,\nguidance item (`record_id`), chunk, claim, summary, typed unit (`document_node_id`), digest,\none of our authored revisions, or a private passage. `retrieval.index_text_item` is the one\nway a text becomes searchable (idempotent on identical text). Spaces (`retrieval.vector_space`\nslugs units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, …)\nare facets, not separate engines; publication (`retrieval.space_publication`) still gates\nwhat `app_reader` may read.\n\n`q:retrieval.search_unified` (`api.search_unified`) is L3: resolve the scope first (lenses,\ntiers, space slugs, document types, unit kinds, entity ids, as-of, workspace ids for\nprivate), then fuse english full-text, trigram and ANN (when the executor supplies an\nembedding) with RRF. Private items are returned only for the workspaces passed in; the\nproduct `search` operation passes the caller's workspaces. `q:retrieval.hybrid_search` is\nthe older per-space-version entry (needs an embedding, `execute: false`).\n\nPackets (`retrieval.evidence_packet`, `retrieval.packet_member`) assemble verified claims,\nguidance items and source-faithful representations with scores and locators for one\nquestion; `q:retrieval.evidence_packet` returns one with node timecodes. Agents never write\nembeddings; projection rebuilds are governed runtime operations. Trap: expecting\n`search_unified` to embed the query in-database — without an embedding it is lexical only.\n",
         "functions": [
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
           "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)",
           "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
           "fn:api.evidence_packet(uuid)",
@@ -15435,7 +15508,7 @@
         "id": "term:hybrid-search",
         "provenance": "model_assisted",
         "refs": [
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
           "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
           "q:retrieval.search_unified"
         ],
@@ -15522,7 +15595,7 @@
         "refs": [
           "rel:api.models",
           "fn:api.changes_since(timestamptz,text[],text[],text[])",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
           "task:compare-models"
         ],
         "reviewed": null,
@@ -15577,7 +15650,7 @@
         "provenance": "model_assisted",
         "refs": [
           "rel:retrieval.vector_item",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)"
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
         ],
         "reviewed": null,
         "slug": "lens",
@@ -15865,7 +15938,7 @@
         "refs": [
           "rel:retrieval.vector_item",
           "rel:content.source_role",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)"
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
         ],
         "reviewed": null,
         "slug": "source-tier",
@@ -16118,7 +16191,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:7d28df8f3928d3ff1ef4c5ca9b3f8f350f8a37b88319cddb9524b4fde2d0505a",
+  "fingerprint": "sha256:78bfcf79e22bc1585c72a8451eadc16408d74daaa93ede627d9d18997440b96b",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -19232,6 +19305,86 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"probe_matrix\"]",
       "volatility": "stable"
     },
+    "fn:api.probe_revalidation_due(timestamptz)": {
+      "arguments": [
+        {
+          "default": "now()",
+          "mode": "in",
+          "name": "p_as_of",
+          "type": "timestamp with time zone"
+        }
+      ],
+      "body_sha256": "sha256:f8cfc56028d59d1bc9bccbe5d0de6e28a62602df38a0c02590dfd5d53e89a142",
+      "comment": "Loop 5 (D-76): probes whose latest (unpinned) cell resolved a different, older version of a subject library than its newest catalogued release: the probe-revalidation policy rebuilds the latest cell and reruns them.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql",
+        "20261113160200_build08_loop5_fixup_revalidation_due.sql",
+        "20261113160300_build08_loop5_fixup_latest_cell.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.probe_revalidation_due(timestamptz)",
+      "identity_arguments": "p_as_of timestamp with time zone",
+      "kind": "function",
+      "language": "sql",
+      "name": "probe_revalidation_due",
+      "raises": [],
+      "returns": "TABLE(probe_id uuid, probe text, cell_label text, last_run_at timestamp with time zone, library text, resolved_version text, newest_version text, newest_released_at timestamp with time zone, reason text)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "api.software_releases",
+          "catalog.entity",
+          "verification.probe",
+          "verification.probe_run"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"probe_revalidation_due\"]",
+      "volatility": "stable"
+    },
     "fn:api.product_command(uuid,text,text,uuid,jsonb)": {
       "arguments": [
         {
@@ -19777,6 +19930,80 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"release_order\"]",
       "volatility": "immutable"
     },
+    "fn:api.releases_needing_review()": {
+      "arguments": [],
+      "body_sha256": "sha256:332004cc1560ecfe72f7fc18483646ed2e73f1c07aac61525fe2d3e2bb353717",
+      "comment": "Loop 5: releases whose bound claims have a current probe verdict, decided after the release, that differs from the verdict current when the release was frozen; a human confirmation of the same verdict does not trigger.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.releases_needing_review()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "sql",
+      "name": "releases_needing_review",
+      "raises": [],
+      "returns": "TABLE(release_id uuid, release_no integer, root_work_id uuid, released_at timestamp with time zone, claim_id uuid, statement text, verdict_at_release text, verdict_now text, status_now text, decided_at timestamp with time zone)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "authoring.release",
+          "authoring.release_item",
+          "authoring.revision_binding",
+          "evidence.claim",
+          "verification.probe_verdict"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"releases_needing_review\"]",
+      "volatility": "stable"
+    },
     "fn:api.resolve_entity(text)": {
       "arguments": [
         {
@@ -19925,7 +20152,7 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"search_knowledge_1536\"]",
       "volatility": "stable"
     },
-    "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)": {
+    "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)": {
       "arguments": [
         {
           "default": null,
@@ -20016,10 +20243,16 @@
           "mode": "in",
           "name": "p_rrf_k",
           "type": "integer"
+        },
+        {
+          "default": "0.15",
+          "mode": "in",
+          "name": "p_evidence_weight",
+          "type": "double precision"
         }
       ],
-      "body_sha256": "sha256:440a31f91bd9cebf49015f267745fbeb39a074eefbf916917e94fdf3a60e741f",
-      "comment": "L3 scoped semantic search over the one stack: resolve the scope first (lens, tier, space, document kind, unit kind, entity, as-of, workspace for private), then fuse english full-text, trigram and ANN (if an embedding is given) with RRF; tier is a mild boost. Private items are returned only for the workspaces passed in.",
+      "body_sha256": "sha256:9d4ac0981b75616188062c1e7f2e4f6af0ed22117cd3d91863b8c152cfc5169a",
+      "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, and (loop 5, D-62) an evidence factor 1 + weight x signal from retrieval.evidence_signal, reported as channel_scores.evidence (signal, verdict, status, weight, factor). Weight 0 reproduces the loop-4 order. Rank, authority and verdict stay separate fields.",
       "config": [
         "search_path=\"\""
       ],
@@ -20027,6 +20260,8 @@
         "20261108120000_build08_r2_knowledge_continuum.sql",
         "20261108120100_build08_r2_fixups.sql",
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql",
         "part3_retrieval.sql"
       ],
       "executors": [
@@ -20065,12 +20300,13 @@
           "EXECUTE"
         ]
       },
-      "id": "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
-      "identity_arguments": "p_query text, p_query_embedding halfvec, p_lenses text[], p_tiers smallint[], p_space_slugs text[], p_document_types text[], p_unit_kinds text[], p_entity_ids uuid[], p_as_of timestamp with time zone, p_workspace_ids uuid[], p_source_roles text[], p_content_kinds text[], p_limit integer, p_candidate_limit integer, p_rrf_k integer",
+      "id": "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+      "identity_arguments": "p_query text, p_query_embedding halfvec, p_lenses text[], p_tiers smallint[], p_space_slugs text[], p_document_types text[], p_unit_kinds text[], p_entity_ids uuid[], p_as_of timestamp with time zone, p_workspace_ids uuid[], p_source_roles text[], p_content_kinds text[], p_limit integer, p_candidate_limit integer, p_rrf_k integer, p_evidence_weight double precision",
       "kind": "function",
       "language": "plpgsql",
       "name": "search_unified",
       "raises": [
+        "evidence weight must be between 0 and 1",
         "query text length must be between 1 and 4096",
         "result/candidate bounds are invalid"
       ],
@@ -20081,6 +20317,7 @@
       "touches": {
         "basis": "best_effort",
         "calls": [
+          "retrieval.evidence_signal",
           "util.default_tenant_id"
         ],
         "reads": [
@@ -23082,6 +23319,83 @@
       "typescript": null,
       "volatility": "volatile"
     },
+    "fn:evidence.claim_is_self_stated(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claim",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:23de0032ea6b0e4364cada424a73e01366624b56594891b2a2ce7b6f80d9a848",
+      "comment": "Loop 5: a claim stated by this system (structured.source_role own_experiment, or attributed to an entity whose prior role is own_experiment). Our probes checking it is self-verification (D-61).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:evidence.claim_is_self_stated(uuid)",
+      "identity_arguments": "p_claim uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "claim_is_self_stated",
+      "raises": [],
+      "returns": "boolean",
+      "returns_set": false,
+      "schema": "evidence",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "evidence.attribution",
+          "evidence.claim",
+          "evidence.source_assessment"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"evidence\"][\"Functions\"][\"claim_is_self_stated\"]",
+      "volatility": "stable"
+    },
     "fn:evidence.derive_source_assessment(uuid,uuid,text,text)": {
       "arguments": [
         {
@@ -23109,14 +23423,16 @@
           "type": "text"
         }
       ],
-      "body_sha256": "sha256:670116aff3860725f2f1abcb296adaf601135b0e4831b18eb09beacbbc65cc39",
-      "comment": "Loop 4: appends a derived assessment of a source on a topic from the latest probe verdicts on the claims it stated (evidence.attribution by actor, channel or publisher). The base (role, conflict of interest, method disclosure) is the latest prior or reviewed row on the topic, else on all topics. Supported and contradicted verdicts are checked; not reproduced, unverifiable and insufficient evidence are observed only (D-59).",
+      "body_sha256": "sha256:1dd1f13c8badb7fb10231b26e25829d9ff1d105bed696af0731aafc221701871",
+      "comment": "Append a derived assessment for a source (subject) on a topic: the role prior moved by independently checked claims (self-checked ones counted in self_checked, not scored, D-61); a watch level is suggested only from 5 checked claims (D-69).",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261113120000_build08_loop4_source_intelligence_experiments.sql",
-        "20261113120200_build08_loop4_fixup_assessment.sql"
+        "20261113120200_build08_loop4_fixup_assessment.sql",
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
       ],
       "executors": [
         "anon",
@@ -23166,7 +23482,9 @@
       "security": "definer",
       "touches": {
         "basis": "best_effort",
-        "calls": [],
+        "calls": [
+          "evidence.claim_is_self_stated"
+        ],
         "reads": [
           "acquisition.attention_policy",
           "acquisition.attention_sweep",
@@ -23256,8 +23574,8 @@
     },
     "fn:evidence.enforce_verified_claim_gate()": {
       "arguments": [],
-      "body_sha256": "sha256:9cae055d16dd7c5b34219f4f51e2ca0d63db3c9df2bf892c7a89067f32f4f138",
-      "comment": "Status verified requires the creating receipt to be bound to an admitted exact-use decision of the knowledge_verification component (requires_admission, use_decision_id, bound_effect_digest); the receipt's deferred guard requires the same-transaction research.use_admission. The legacy AIDB verification-run path was withdrawn in 20261025010000.",
+      "body_sha256": "sha256:a16af1bd85a287ac79877e17412632c129eafb36493786e810471af61768f788",
+      "comment": "Status verified requires a receipt bound to an admitted exact-use decision of the knowledge_verification component: the creating receipt (requires_admission, use_decision_id, bound_effect_digest), or (loop 6, D-72) a receipt that targets the claim with action verified and whose use was admitted in the same transaction. The decision itself is issued only by the component from a sealed verification run.",
       "config": [
         "search_path=\"\""
       ],
@@ -23266,7 +23584,9 @@
         "20260829194915_require_direct_same_run_claim_verification.sql",
         "20260829194954_normalize_append_only_claim_evidence_assessments.sql",
         "20260915010000_official_claim_verification.sql",
-        "20261025010000_withdraw_legacy_verification_truth.sql"
+        "20261025010000_withdraw_legacy_verification_truth.sql",
+        "20261113150000_build08_ks_admission_verified_claims.sql",
+        "20261113150000_build08_loop6_ks_admission.sql"
       ],
       "executors": [],
       "grants": {},
@@ -23286,7 +23606,9 @@
         "basis": "best_effort",
         "calls": [],
         "reads": [
-          "orchestration.operation_receipt"
+          "orchestration.operation_receipt",
+          "orchestration.operation_receipt_target",
+          "verification.use_admission"
         ],
         "writes": []
       },
@@ -30798,6 +31120,64 @@
       "typescript": null,
       "volatility": "volatile"
     },
+    "fn:retrieval.evidence_signal(uuid,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claim",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_document",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_unit_kind",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:226d56be65ec8aea9691429d2542eca8fb1b89e4ae63cf2a1f98ff07c56efd2a",
+      "comment": "Loop 5 (D-62): the evidence behind a search candidate: its claim's current probe verdict and status, or for a probe observation the verdicts of the claims its probe judged. +1 supported or verified, +0.5 qualified, -1 contradicted or disputed, 0 otherwise (averaged). Not a relevance score; search reports it as its own channel.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:retrieval.evidence_signal(uuid,uuid,text)",
+      "identity_arguments": "p_claim uuid, p_document uuid, p_unit_kind text",
+      "kind": "function",
+      "language": "sql",
+      "name": "evidence_signal",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "retrieval",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "content.document_version",
+          "content.document_version_source_capture",
+          "evidence.claim",
+          "verification.probe_claim",
+          "verification.probe_run",
+          "verification.probe_verdict"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"retrieval\"][\"Functions\"][\"evidence_signal\"]",
+      "volatility": "stable"
+    },
     "fn:retrieval.guard_space_publication()": {
       "arguments": [],
       "body_sha256": "sha256:a03ea1bf164df8f7743fe4d5c8f201fc012e714d5d57b0656212cf38b61e4864",
@@ -31087,14 +31467,16 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:8d688c93bbe10e52c2712b0e538ec32cbafde01f73f5509ed84814799de3d613",
-      "comment": "A historical claim is authorized for retrieval when it is verified (or superseded after verification) and was created under a receipt bound to a knowledge_verification use decision with a recorded research.use_admission. Admission is separate from belief.",
+      "body_sha256": "sha256:dbfd32d30851ce007e7c3d321c1c0c465dcba191f2f4e379328c890d40d3a048",
+      "comment": "A historical claim is authorized for retrieval when it is verified (or superseded after verification) under a receipt bound to a knowledge_verification use decision with a recorded verification.use_admission: the creating receipt, or a receipt that verified it (loop 6). Admission is separate from belief.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20260914011100_retrieval_history.sql",
-        "20261025010000_withdraw_legacy_verification_truth.sql"
+        "20261025010000_withdraw_legacy_verification_truth.sql",
+        "20261113150000_build08_ks_admission_verified_claims.sql",
+        "20261113150000_build08_loop6_ks_admission.sql"
       ],
       "executors": [],
       "grants": {},
@@ -31116,6 +31498,7 @@
         "reads": [
           "evidence.claim",
           "orchestration.operation_receipt",
+          "orchestration.operation_receipt_target",
           "verification.use_admission"
         ],
         "writes": []
@@ -31654,6 +32037,74 @@
       "typescript": "Database[\"retrieval\"][\"Functions\"][\"index_text_item\"]",
       "volatility": "volatile"
     },
+    "fn:retrieval.on_release_item_promote()": {
+      "arguments": [],
+      "body_sha256": "sha256:ab9c92e09ae78d05277c5f7519de8ad3c4592d39bd31488bbf4fdd34d842e4c6",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:retrieval.on_release_item_promote()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "on_release_item_promote",
+      "raises": [],
+      "returns": "trigger",
+      "returns_set": false,
+      "schema": "retrieval",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "retrieval.promote_revision_passages"
+        ],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": null,
+      "volatility": "volatile"
+    },
     "fn:retrieval.project_entity_timeline(int8)": {
       "arguments": [
         {
@@ -31710,6 +32161,162 @@
         ]
       },
       "typescript": "Database[\"retrieval\"][\"Functions\"][\"project_entity_timeline\"]",
+      "volatility": "volatile"
+    },
+    "fn:retrieval.promote_release_passages(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_release",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:4c1f2b7e59f73f097f116ca098aa3cc825f5f58e18e2e5b75bb9c275d296b37b",
+      "comment": "Loop 5: promote the passages of every revision a release includes to T1.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:retrieval.promote_release_passages(uuid)",
+      "identity_arguments": "p_release uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "promote_release_passages",
+      "raises": [],
+      "returns": "integer",
+      "returns_set": false,
+      "schema": "retrieval",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "retrieval.promote_revision_passages"
+        ],
+        "reads": [
+          "authoring.release_item"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"retrieval\"][\"Functions\"][\"promote_release_passages\"]",
+      "volatility": "volatile"
+    },
+    "fn:retrieval.promote_revision_passages(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_revision",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:b12ddcb0f0e42f6ea7101921f42f8a04120e22be3ce207d0a616e159edf3eeba",
+      "comment": "Loop 5: the active search items of a released revision's passages get a successor at tier T1 (our content), same text, projection and embedding; the draft item is superseded. A workspace draft has no tier.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:retrieval.promote_revision_passages(uuid)",
+      "identity_arguments": "p_revision uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "promote_revision_passages",
+      "raises": [],
+      "returns": "integer",
+      "returns_set": false,
+      "schema": "retrieval",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "library.passage",
+          "retrieval.projection_target"
+        ],
+        "writes": [
+          "retrieval.vector_item",
+          "retrieval.vector_item_embedding_1536"
+        ]
+      },
+      "typescript": "Database[\"retrieval\"][\"Functions\"][\"promote_revision_passages\"]",
       "volatility": "volatile"
     },
     "fn:retrieval.publish_vector_space(uuid,text,text,text,text)": {
@@ -34791,12 +35398,15 @@
     },
     "fn:verification.guard_use_admission()": {
       "arguments": [],
-      "body_sha256": "sha256:ce7ee9ab50ff99b92c8dfaa411b823b74157e750ab6f410162ecd89c3628156c",
+      "body_sha256": "sha256:2b6be1892167858a1464b25aae6d72acafbc794d7e0fbd98bfbff85d78cad79f",
       "comment": null,
       "config": [
         "search_path=\"\""
       ],
-      "defined_in": [],
+      "defined_in": [
+        "20261113150000_build08_ks_admission_verified_claims.sql",
+        "20261113150100_build08_loop6_fixup_require_admitted_use.sql"
+      ],
       "executors": [],
       "grants": {},
       "id": "fn:verification.guard_use_admission()",
@@ -34814,12 +35424,205 @@
       "touches": {
         "basis": "best_effort",
         "calls": [
-          "util.current_tenant_id"
+          "util.current_tenant_id",
+          "verification.require_admitted_use"
         ],
         "reads": [],
         "writes": []
       },
       "typescript": null,
+      "volatility": "volatile"
+    },
+    "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claim",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_use_decision_id",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_bound_effect_digest",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_processed_epoch",
+          "type": "bigint"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_normalized_values_digest",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_origin_digest",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_effect_text",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_executor",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:02627751825cfcca5fc3da624d059b82c8904056492966108224c9bb9ee85c3f",
+      "comment": "Loop 6: the AI Engineer native write of a Knowledge Services claim-verification admission, inside the caller's transaction. The payload text must hash to the semantic payload digest of the decision's bound effect (D-74) and name this claim and the sha256 of its statement; then: assert the admitted exact use (component rule + AIDB guard), write the intent and the admission-bound receipt, target the claim with action verified, set status verified. Re-presenting the same decision for an already verified claim returns its receipt; another decision is refused.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113150000_build08_ks_admission_verified_claims.sql",
+        "20261113150000_build08_loop6_ks_admission.sql",
+        "20261113160100_build08_loop6_fixup_bind_payload.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "executor_service",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)",
+      "identity_arguments": "p_claim uuid, p_use_decision_id text, p_bound_effect_digest text, p_processed_epoch bigint, p_normalized_values_digest text, p_origin_digest text, p_effect_text text, p_executor text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "record_admitted_claim_verification",
+      "raises": [
+        "CLAIM_ALREADY_VERIFIED",
+        "CLAIM_NOT_FOUND",
+        "CLAIM_NOT_VERIFIABLE",
+        "EFFECT_DOES_NOT_MATCH_CLAIM",
+        "EFFECT_PAYLOAD_NOT_BOUND"
+      ],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id",
+          "verification.assert_admitted_use"
+        ],
+        "reads": [],
+        "writes": [
+          "evidence.claim",
+          "orchestration.operation_intent",
+          "orchestration.operation_receipt",
+          "orchestration.operation_receipt_target"
+        ]
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"record_admitted_claim_verification\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.require_admitted_use(uuid,text,text,int8,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_tenant",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_use_decision_id",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_bound_effect_digest",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_processed_epoch",
+          "type": "bigint"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_normalized_values_digest",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:278c272883fc8f3d0db5ddc2f2199b7be819585352634c84357db062bc88b4e3",
+      "comment": "Internal checker shared by assert_admitted_use and the use_admission insert trigger: knowledge_verification.admit_exact_use (normalized values digest forwarded) outcome -> typed errors KSA01..KSA04.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261113150000_build08_ks_admission_verified_claims.sql",
+        "20261113150100_build08_loop6_fixup_require_admitted_use.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:verification.require_admitted_use(uuid,text,text,int8,text)",
+      "identity_arguments": "p_tenant uuid, p_use_decision_id text, p_bound_effect_digest text, p_processed_epoch bigint, p_normalized_values_digest text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "require_admitted_use",
+      "raises": [
+        "EFFECT_CONFLICT",
+        "REVIEW_REQUIRED",
+        "STALE_DECISION",
+        "UNRESOLVED_EFFECT"
+      ],
+      "returns": "TABLE(authoritative_epoch bigint, effect_key text)",
+      "returns_set": true,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"require_admitted_use\"]",
       "volatility": "volatile"
     },
     "fn:verification.require_receipt_admission()": {
@@ -41386,6 +42189,248 @@
       },
       "unique": [],
       "view_definition": " SELECT id AS claim_id,\n    claim_type,\n    statement,\n    status::text AS status,\n    structured ->> 'path'::text AS path,\n    structured ->> 'assertion_mode'::text AS assertion_mode,\n    structured -> 'speakers'::text AS speakers,\n    structured ->> 'quote'::text AS quote,\n    (structured ->> 't0_ms'::text)::integer AS start_ms,\n    structured ->> 'deep_link'::text AS deep_link,\n    (structured ->> 'talk_id'::text)::uuid AS talk_id,\n    ( SELECT w.title\n           FROM catalog.work w\n          WHERE w.id = ((c.structured ->> 'talk_id'::text)::uuid)) AS talk,\n    structured ->> 'consistency'::text AS consistency,\n    structured ->> 'consistency_note'::text AS consistency_note,\n    structured ->> 'compared_by'::text AS compared_by,\n    api.names(( SELECT array_agg(s.entity_id) AS array_agg\n           FROM evidence.claim_subject s\n          WHERE s.claim_id = c.id)) AS subjects,\n    ( SELECT jsonb_agg(jsonb_build_object('node_id', n.id, 'unit_kind', n.unit_kind, 'label', COALESCE(n.attributes ->> 'qualified_name'::text, n.attributes ->> 'heading'::text, \"left\"(n.inline_text, 80)), 'document', d.canonical_title, 'url', src.canonical_url, 'role', l.role) ORDER BY d.canonical_title) AS jsonb_agg\n           FROM evidence.claim_evidence_link l\n             JOIN evidence.locator lo ON lo.id = l.locator_id\n             JOIN content.document_node n ON n.id = ((lo.selector ->> 'node_id'::text)::uuid)\n             JOIN content.document_representation r ON r.id = n.representation_id\n             JOIN content.document_version v ON v.id = r.document_version_id\n             JOIN content.document d ON d.id = v.document_id\n             LEFT JOIN evidence.source src ON src.id = d.canonical_source_id\n          WHERE l.claim_id = c.id AND l.role = 'context'::text) AS surfaces,\n    ( SELECT count(*) AS count\n           FROM evidence.claim_conflict x\n          WHERE x.claim_a_id = c.id OR x.claim_b_id = c.id) AS conflicts\n   FROM evidence.claim c\n  WHERE tenant_id = util.current_tenant_id() AND (structured ->> 'path'::text) = 'L1_candidate'::text AND structured ? 'quote'::text;",
+      "writers": []
+    },
+    "rel:api.claim_triage": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.statement",
+          "identity": null,
+          "name": "statement",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.claim_type",
+          "identity": null,
+          "name": "claim_type",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.status",
+          "identity": null,
+          "name": "status",
+          "nullable": true,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.disposition",
+          "identity": null,
+          "name": "disposition",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.checkability",
+          "identity": null,
+          "name": "checkability",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.priority",
+          "identity": null,
+          "name": "priority",
+          "nullable": true,
+          "position": 7,
+          "type": "numeric(6,2)"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.components",
+          "identity": null,
+          "name": "components",
+          "nullable": true,
+          "position": 8,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.rationale",
+          "identity": null,
+          "name": "rationale",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.probe",
+          "identity": null,
+          "name": "probe",
+          "nullable": true,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.duplicate_of_claim_id",
+          "identity": null,
+          "name": "duplicate_of_claim_id",
+          "nullable": true,
+          "position": 11,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.decided_by",
+          "identity": null,
+          "name": "decided_by",
+          "nullable": true,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.review_state",
+          "identity": null,
+          "name": "review_state",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.decided_at",
+          "identity": null,
+          "name": "decided_at",
+          "nullable": true,
+          "position": 14,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_triage.verdict",
+          "identity": null,
+          "name": "verdict",
+          "nullable": true,
+          "position": 15,
+          "type": "text"
+        }
+      ],
+      "comment": "Loop 5: the current triage of each claim candidate, with the probe it became and its verdict if probed.",
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.claim_triage",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "claim_triage",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"claim_triage\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT t.claim_id,\n    c.statement,\n    c.claim_type,\n    c.status::text AS status,\n    t.disposition,\n    t.checkability,\n    t.priority,\n    t.components,\n    t.rationale,\n    p.slug AS probe,\n    t.duplicate_of_claim_id,\n    t.decided_by,\n    t.review_state,\n    t.decided_at,\n    ( SELECT v.verdict::text AS verdict\n           FROM verification.probe_verdict v\n          WHERE v.claim_id = t.claim_id\n          ORDER BY v.decided_at DESC\n         LIMIT 1) AS verdict\n   FROM verification.claim_triage t\n     JOIN evidence.claim c ON c.id = t.claim_id\n     LEFT JOIN verification.probe p ON p.id = t.probe_id\n  WHERE t.tenant_id = util.current_tenant_id() AND NOT (EXISTS ( SELECT 1\n           FROM verification.claim_triage w\n          WHERE w.supersedes_id = t.id));",
       "writers": []
     },
     "rel:api.claim_verdicts": {
@@ -49784,12 +50829,26 @@
           "nullable": true,
           "position": 25,
           "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.source_registry.self_checked",
+          "identity": null,
+          "name": "self_checked",
+          "nullable": true,
+          "position": 26,
+          "type": "integer"
         }
       ],
-      "comment": "The current (latest) assessment of each registered source (channel, actor, organization) per topic, with its components and the watch level its policies give it. Order by authority_score for a ranking; never read authority_score without claims_checked.",
+      "comment": "Latest assessment per source and topic: role prior, conflict of interest, method disclosure, track record from independently checked claims, self_checked (shown, not scored, D-61), lead days, noise, derived score and a watch suggestion only from 5 checked claims (D-69).",
       "defined_in": [
         "20261113120000_build08_loop4_source_intelligence_experiments.sql",
-        "20261113120300_build08_loop4_fixup_registry_view.sql"
+        "20261113120300_build08_loop4_fixup_registry_view.sql",
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
       ],
       "exclusions": [],
       "foreign_keys": [],
@@ -49844,7 +50903,7 @@
         "row": "Database[\"api\"][\"Views\"][\"source_registry\"][\"Row\"]"
       },
       "unique": [],
-      "view_definition": " SELECT e.id AS source_entity_id,\n    e.kind AS source_kind,\n    e.display_name AS source,\n    e.attributes ->> 'platform'::text AS platform,\n    COALESCE(e.attributes ->> 'url'::text, e.attributes ->> 'profile_url'::text) AS url,\n    t.id AS topic_entity_id,\n    t.display_name AS topic,\n    a.as_of,\n    a.method,\n    a.source_role_code,\n    a.conflict_of_interest,\n    a.method_disclosure,\n    a.claims_observed,\n    a.claims_checked,\n    a.confirmed,\n    a.qualified,\n    a.refuted,\n    a.median_lead_days,\n    a.noise_ratio,\n    a.authority_score,\n    a.recommended_watch_level,\n    ( SELECT p.watch_level\n           FROM acquisition.attention_policy p\n          WHERE (e.id = ANY (p.channel_entity_ids)) AND p.state <> 'retired'::text\n          ORDER BY p.watch_level DESC\n         LIMIT 1) AS current_watch_level,\n    ( SELECT count(*) AS count\n           FROM evidence.source s\n          WHERE s.channel_entity_id = e.id) AS urls,\n    a.rationale,\n    a.id AS assessment_id\n   FROM ( SELECT DISTINCT ON (source_assessment.subject_entity_id, source_assessment.topic_entity_id) source_assessment.id,\n            source_assessment.tenant_id,\n            source_assessment.subject_entity_id,\n            source_assessment.topic_entity_id,\n            source_assessment.as_of,\n            source_assessment.method,\n            source_assessment.source_role_code,\n            source_assessment.conflict_of_interest,\n            source_assessment.method_disclosure,\n            source_assessment.claims_observed,\n            source_assessment.claims_checked,\n            source_assessment.confirmed,\n            source_assessment.qualified,\n            source_assessment.refuted,\n            source_assessment.median_lead_days,\n            source_assessment.noise_ratio,\n            source_assessment.authority_score,\n            source_assessment.recommended_watch_level,\n            source_assessment.rationale,\n            source_assessment.inputs,\n            source_assessment.assessed_by,\n            source_assessment.receipt_id,\n            source_assessment.supersedes_id,\n            source_assessment.created_at\n           FROM evidence.source_assessment\n          ORDER BY source_assessment.subject_entity_id, source_assessment.topic_entity_id, source_assessment.as_of DESC, source_assessment.created_at DESC) a\n     JOIN catalog.entity e ON e.id = a.subject_entity_id\n     LEFT JOIN catalog.entity t ON t.id = a.topic_entity_id;",
+      "view_definition": " SELECT e.id AS source_entity_id,\n    e.kind AS source_kind,\n    e.display_name AS source,\n    e.attributes ->> 'platform'::text AS platform,\n    COALESCE(e.attributes ->> 'url'::text, e.attributes ->> 'profile_url'::text) AS url,\n    t.id AS topic_entity_id,\n    t.display_name AS topic,\n    a.as_of,\n    a.method,\n    a.source_role_code,\n    a.conflict_of_interest,\n    a.method_disclosure,\n    a.claims_observed,\n    a.claims_checked,\n    a.confirmed,\n    a.qualified,\n    a.refuted,\n    a.median_lead_days,\n    a.noise_ratio,\n    a.authority_score,\n    a.recommended_watch_level,\n    ( SELECT p.watch_level\n           FROM acquisition.attention_policy p\n          WHERE (e.id = ANY (p.channel_entity_ids)) AND p.state <> 'retired'::text\n          ORDER BY p.watch_level DESC\n         LIMIT 1) AS current_watch_level,\n    ( SELECT count(*) AS count\n           FROM evidence.source s\n          WHERE s.channel_entity_id = e.id) AS urls,\n    a.rationale,\n    a.id AS assessment_id,\n    a.self_checked\n   FROM ( SELECT DISTINCT ON (sa.subject_entity_id, sa.topic_entity_id) sa.id,\n            sa.tenant_id,\n            sa.subject_entity_id,\n            sa.topic_entity_id,\n            sa.as_of,\n            sa.method,\n            sa.source_role_code,\n            sa.conflict_of_interest,\n            sa.method_disclosure,\n            sa.claims_observed,\n            sa.claims_checked,\n            sa.confirmed,\n            sa.qualified,\n            sa.refuted,\n            sa.median_lead_days,\n            sa.noise_ratio,\n            sa.authority_score,\n            sa.recommended_watch_level,\n            sa.rationale,\n            sa.inputs,\n            sa.assessed_by,\n            sa.receipt_id,\n            sa.supersedes_id,\n            sa.created_at,\n            sa.self_checked\n           FROM evidence.source_assessment sa\n          ORDER BY sa.subject_entity_id, sa.topic_entity_id, sa.as_of DESC, sa.created_at DESC) a\n     JOIN catalog.entity e ON e.id = a.subject_entity_id\n     LEFT JOIN catalog.entity t ON t.id = a.topic_entity_id;",
       "writers": []
     },
     "rel:api.source_track_record": {
@@ -50651,6 +51710,188 @@
       },
       "unique": [],
       "view_definition": " SELECT w.id AS talk_id,\n    w.title,\n    e.slug,\n    w.attributes ->> 'talk_kind'::text AS talk_kind,\n    w.attributes ->> 'track'::text AS track,\n    w.attributes ->> 'level'::text AS level,\n    ev.display_name AS event,\n    ev.id AS event_id,\n    ev.attributes ->> 'starts_on'::text AS event_starts_on,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'presented_by'::text, 'outgoing'::text) x(x))) AS speakers,\n    ( SELECT array_agg(DISTINCT org.display_name) AS array_agg\n           FROM api.related(w.id, 'presented_by'::text, 'outgoing'::text) sp(sp)\n             JOIN catalog.relationship r ON r.from_entity_id = sp.sp AND r.kind = 'employed_by'::text AND r.k_to IS NULL\n             JOIN catalog.entity org ON org.id = r.to_entity_id) AS speaker_affiliations,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'about'::text, 'outgoing'::text) x(x))) AS topics,\n    api.names(( SELECT array_agg(x.x) AS array_agg\n           FROM api.related(w.id, 'has_code'::text, 'outgoing'::text) x(x))) AS repositories,\n    w.published_at AS recorded_at,\n    w.duration_ms,\n    w.canonical_url,\n    w.attributes ->> 'video_url'::text AS video_url,\n    w.attributes ->> 'slides_url'::text AS slides_url,\n    w.attributes ->> 'session_id'::text AS session_id,\n    ( SELECT count(*) AS count\n           FROM content.document d\n          WHERE d.work_entity_id = w.id OR (EXISTS ( SELECT 1\n                   FROM content.document_about_entity a\n                  WHERE a.document_id = d.id AND a.entity_id = w.id AND a.role = 'primary'::text))) AS document_count,\n    e.summary\n   FROM catalog.work w\n     JOIN catalog.entity e ON e.id = w.id\n     LEFT JOIN LATERAL ( SELECT x.id,\n            x.tenant_id,\n            x.kind,\n            x.display_name,\n            x.slug,\n            x.summary,\n            x.lifecycle,\n            x.merged_into_id,\n            x.projection_knowledge_seq,\n            x.created_by_receipt_id,\n            x.created_at,\n            x.updated_at,\n            x.attributes\n           FROM catalog.entity x\n          WHERE (x.id IN ( SELECT api.related(w.id, 'presented_at'::text, 'outgoing'::text) AS related))\n         LIMIT 1) ev ON true\n  WHERE w.tenant_id = util.current_tenant_id() AND w.kind = 'talk'::text AND e.lifecycle = 'active'::text;",
+      "writers": []
+    },
+    "rel:api.verified_claims": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.statement",
+          "identity": null,
+          "name": "statement",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.claim_type",
+          "identity": null,
+          "name": "claim_type",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.receipt_id",
+          "identity": null,
+          "name": "receipt_id",
+          "nullable": true,
+          "position": 4,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.use_decision_id",
+          "identity": null,
+          "name": "use_decision_id",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.bound_effect_digest",
+          "identity": null,
+          "name": "bound_effect_digest",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.verified_at",
+          "identity": null,
+          "name": "verified_at",
+          "nullable": true,
+          "position": 7,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.executor_version",
+          "identity": null,
+          "name": "executor_version",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.effect",
+          "identity": null,
+          "name": "effect",
+          "nullable": true,
+          "position": 9,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.verified_claims.verdicts",
+          "identity": null,
+          "name": "verdicts",
+          "nullable": true,
+          "position": 10,
+          "type": "jsonb"
+        }
+      ],
+      "comment": "Loop 6: claims that reached verified through a Knowledge Services admission, with the use decision, the admission-bound receipt, the bound native payload and the current probe verdicts.",
+      "defined_in": [
+        "20261113150000_build08_ks_admission_verified_claims.sql",
+        "20261113150000_build08_loop6_ks_admission.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.verified_claims",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "verified_claims",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"verified_claims\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT c.id AS claim_id,\n    c.statement,\n    c.claim_type,\n    r.id AS receipt_id,\n    r.use_decision_id,\n    r.bound_effect_digest,\n    r.applied_at AS verified_at,\n    r.executor_version,\n    i.payload AS effect,\n    ( SELECT jsonb_agg(jsonb_build_object('probe', p.slug, 'verdict', v.verdict, 'review_state', v.review_state) ORDER BY p.slug) AS jsonb_agg\n           FROM verification.probe_verdict v\n             JOIN verification.probe p ON p.id = v.probe_id\n          WHERE v.claim_id = c.id AND NOT (EXISTS ( SELECT 1\n                   FROM verification.probe_verdict w\n                  WHERE w.supersedes_id = v.id))) AS verdicts\n   FROM evidence.claim c\n     JOIN orchestration.operation_receipt_target t ON t.claim_id = c.id AND t.action = 'verified'::text\n     JOIN orchestration.operation_receipt r ON r.id = t.receipt_id\n     JOIN orchestration.operation_intent i ON i.id = r.intent_id\n  WHERE c.tenant_id = util.current_tenant_id() AND c.status::text = 'verified'::text;",
       "writers": []
     },
     "rel:api.works_authored": {
@@ -55641,6 +56882,14 @@
           "id": "trg:authoring.release_item.immutable_guard",
           "initially_deferred": false,
           "name": "immutable_guard"
+        },
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER release_item_promote_passages AFTER INSERT ON authoring.release_item FOR EACH ROW EXECUTE FUNCTION retrieval.on_release_item_promote()",
+          "function": "retrieval.on_release_item_promote",
+          "id": "trg:authoring.release_item.release_item_promote_passages",
+          "initially_deferred": false,
+          "name": "release_item_promote_passages"
         }
       ],
       "typescript": {
@@ -88687,6 +89936,26 @@
           "columns": [
             "claim_id"
           ],
+          "constraint": "claim_triage_claim_id_fkey",
+          "from": "rel:verification.claim_triage",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "duplicate_of_claim_id"
+          ],
+          "constraint": "claim_triage_duplicate_of_claim_id_fkey",
+          "from": "rel:verification.claim_triage",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "claim_id"
+          ],
           "constraint": "probe_claim_claim_id_fkey",
           "from": "rel:verification.probe_claim",
           "to_columns": [
@@ -94223,6 +95492,10 @@
         {
           "expression": "(recommended_watch_level = ANY (ARRAY['W0'::text, 'W1'::text, 'W2'::text, 'W3'::text]))",
           "name": "source_assessment_recommended_watch_level_check"
+        },
+        {
+          "expression": "(self_checked >= 0)",
+          "name": "source_assessment_self_checked_check"
         }
       ],
       "columns": [
@@ -94537,6 +95810,18 @@
           "nullable": false,
           "position": 24,
           "type": "timestamp with time zone"
+        },
+        {
+          "comment": "Loop 5 (D-61): checked claims that the subject stated and our own probes checked. Shown, never counted in confirmed / qualified / refuted or in authority_score: a check by the party that made the claim is not independent evidence of that party's reliability.",
+          "default": "0",
+          "fk": null,
+          "generated": null,
+          "id": "col:evidence.source_assessment.self_checked",
+          "identity": null,
+          "name": "self_checked",
+          "nullable": false,
+          "position": 25,
+          "type": "integer"
         }
       ],
       "comment": "Loop 4: what we know about a source (channel, actor, organization, person) on a topic at a time. Components, never a bare score: role prior, conflict of interest, method disclosure, track record from verdicts, lead time against first-party docs, sweep noise. Append-only; a new row supersedes. authority_score is derived: (4·prior + 100·(confirmed + 0.5·qualified)) / (4 + checked).",
@@ -123577,7 +124862,7 @@
     "rel:orchestration.operation_receipt_target": {
       "checks": [
         {
-          "expression": "(action = ANY (ARRAY['created'::text, 'reused'::text, 'superseded'::text, 'staged'::text]))",
+          "expression": "(action = ANY (ARRAY['created'::text, 'reused'::text, 'superseded'::text, 'staged'::text, 'verified'::text]))",
           "name": "operation_receipt_target_action_check"
         },
         {
@@ -123727,7 +125012,7 @@
           "type": "text"
         },
         {
-          "comment": null,
+          "comment": "created, reused, superseded, staged; verified (loop 6): the receipt, bound to an admitted knowledge_verification use decision, moved the target claim to status verified.",
           "default": null,
           "fk": null,
           "generated": null,
@@ -150425,6 +151710,368 @@
       "view_definition": null,
       "writers": []
     },
+    "rel:verification.claim_triage": {
+      "checks": [
+        {
+          "expression": "(checkability = ANY (ARRAY['deterministic_local'::text, 'needs_live_model'::text, 'needs_external_service'::text, 'historical_only'::text, 'not_applicable'::text]))",
+          "name": "claim_triage_checkability_check"
+        },
+        {
+          "expression": "(disposition = ANY (ARRAY['probe'::text, 'docs_check'::text, 'registry_check'::text, 'not_checkable'::text, 'duplicate'::text, 'out_of_scope'::text]))",
+          "name": "claim_triage_disposition_check"
+        },
+        {
+          "expression": "(review_state = ANY (ARRAY['agent_proposed'::text, 'human_confirmed'::text, 'human_rejected'::text]))",
+          "name": "claim_triage_review_state_check"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.uuidv7()",
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.id",
+          "identity": null,
+          "name": "id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": "util.default_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "claim_triage_claim_id_fkey",
+            "to": "rel:evidence.claim"
+          },
+          "generated": null,
+          "id": "col:verification.claim_triage.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": false,
+          "position": 3,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.disposition",
+          "identity": null,
+          "name": "disposition",
+          "nullable": false,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.checkability",
+          "identity": null,
+          "name": "checkability",
+          "nullable": false,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.priority",
+          "identity": null,
+          "name": "priority",
+          "nullable": true,
+          "position": 6,
+          "type": "numeric(6,2)"
+        },
+        {
+          "comment": null,
+          "default": "'{}'::jsonb",
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.components",
+          "identity": null,
+          "name": "components",
+          "nullable": false,
+          "position": 7,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "claim_triage_duplicate_of_claim_id_fkey",
+            "to": "rel:evidence.claim"
+          },
+          "generated": null,
+          "id": "col:verification.claim_triage.duplicate_of_claim_id",
+          "identity": null,
+          "name": "duplicate_of_claim_id",
+          "nullable": true,
+          "position": 8,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "claim_triage_probe_id_fkey",
+            "to": "rel:verification.probe"
+          },
+          "generated": null,
+          "id": "col:verification.claim_triage.probe_id",
+          "identity": null,
+          "name": "probe_id",
+          "nullable": true,
+          "position": 9,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.rationale",
+          "identity": null,
+          "name": "rationale",
+          "nullable": false,
+          "position": 10,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.decided_by",
+          "identity": null,
+          "name": "decided_by",
+          "nullable": false,
+          "position": 11,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": "'agent_proposed'::text",
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.review_state",
+          "identity": null,
+          "name": "review_state",
+          "nullable": false,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:verification.claim_triage.decided_at",
+          "identity": null,
+          "name": "decided_at",
+          "nullable": false,
+          "position": 13,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "claim_triage_supersedes_id_fkey",
+            "to": "rel:verification.claim_triage"
+          },
+          "generated": null,
+          "id": "col:verification.claim_triage.supersedes_id",
+          "identity": null,
+          "name": "supersedes_id",
+          "nullable": true,
+          "position": 14,
+          "type": "uuid"
+        }
+      ],
+      "comment": "Loop 5: what to do with a claim candidate before anyone checks it: probe it, check the docs or the registry, or not checkable (advice, experience, opinion), duplicate, out of scope; with checkability, priority components, rationale and the probe it became. Append-only; a later row supersedes.",
+      "defined_in": [
+        "20261113160000_build08_loop5_followups.sql",
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "claim_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "claim_triage_claim_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:evidence.claim",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "duplicate_of_claim_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "claim_triage_duplicate_of_claim_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:evidence.claim",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "probe_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "claim_triage_probe_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:verification.probe",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "supersedes_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "claim_triage_supersedes_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:verification.claim_triage",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [],
+        "control_plane": [
+          "INSERT",
+          "SELECT"
+        ],
+        "executor_service": [],
+        "pipeline_agent": [
+          "INSERT",
+          "SELECT"
+        ],
+        "service_role": [
+          "INSERT",
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "INSERT",
+          "SELECT"
+        ]
+      },
+      "id": "rel:verification.claim_triage",
+      "inbound_foreign_keys": [
+        {
+          "columns": [
+            "supersedes_id"
+          ],
+          "constraint": "claim_triage_supersedes_id_fkey",
+          "from": "rel:verification.claim_triage",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": [
+        {
+          "definition": "CREATE INDEX claim_triage_claim_ix ON verification.claim_triage USING btree (claim_id, decided_at DESC)",
+          "id": "idx:verification.claim_triage_claim_ix",
+          "method": "btree",
+          "name": "claim_triage_claim_ix",
+          "predicate": null,
+          "unique": false
+        }
+      ],
+      "kind": "table",
+      "name": "claim_triage",
+      "partitions": null,
+      "primary_key": [
+        "id"
+      ],
+      "readers": [
+        "app_reader",
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:verification.claim_triage.claim_triage_tenant",
+            "name": "claim_triage_tenant",
+            "permissive": true,
+            "roles": [
+              "public"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": null
+          }
+        ]
+      },
+      "schema": "verification",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Insert\"]",
+        "row": "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Row\"]",
+        "update": "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ]
+    },
     "rel:verification.probe": {
       "checks": [
         {
@@ -150710,6 +152357,16 @@
       },
       "id": "rel:verification.probe",
       "inbound_foreign_keys": [
+        {
+          "columns": [
+            "probe_id"
+          ],
+          "constraint": "claim_triage_probe_id_fkey",
+          "from": "rel:verification.claim_triage",
+          "to_columns": [
+            "id"
+          ]
+        },
         {
           "columns": [
             "probe_id"
@@ -152195,6 +153852,7 @@
         "fn:api.price_history(uuid,text)",
         "fn:api.price_per_1m(uuid,text,timestamptz)",
         "fn:api.probe_matrix(text)",
+        "fn:api.probe_revalidation_due(timestamptz)",
         "fn:api.product_command(uuid,text,text,uuid,jsonb)",
         "fn:api.product_read(uuid,text,jsonb)",
         "fn:api.product_worker(text,jsonb)",
@@ -152202,9 +153860,10 @@
         "fn:api.relationships(uuid,text,timestamptz,int8,text)",
         "fn:api.release_digest(uuid)",
         "fn:api.release_order(text)",
+        "fn:api.releases_needing_review()",
         "fn:api.resolve_entity(text)",
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)",
-        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4)",
+        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
         "fn:api.summary_evidence(uuid)",
         "fn:api.symbol_changes(text,text,text)",
@@ -152229,6 +153888,7 @@
         "rel:api.claim_candidates",
         "rel:api.claim_conflicts",
         "rel:api.claim_surfaces",
+        "rel:api.claim_triage",
         "rel:api.claim_verdicts",
         "rel:api.community_claims",
         "rel:api.compute_devices",
@@ -152265,6 +153925,7 @@
         "rel:api.source_track_record",
         "rel:api.symbol_docs",
         "rel:api.talks",
+        "rel:api.verified_claims",
         "rel:api.works_authored"
       ],
       "type_ids": []
@@ -152491,6 +154152,7 @@
       "comment": "Sources, captures, locators, signatures, claims, support, verification. PROVISIONAL until the attribution lab stabilizes it.",
       "domain_ids": [],
       "function_ids": [
+        "fn:evidence.claim_is_self_stated(uuid)",
         "fn:evidence.derive_source_assessment(uuid,uuid,text,text)",
         "fn:evidence.enforce_claim_association_proposed()",
         "fn:evidence.enforce_verified_claim_gate()",
@@ -152873,6 +154535,7 @@
         "fn:retrieval.claim_history_witnesses(uuid,int8)",
         "fn:retrieval.enforce_canonical_source()",
         "fn:retrieval.enforce_evidence_gate()",
+        "fn:retrieval.evidence_signal(uuid,uuid,text)",
         "fn:retrieval.guard_space_publication()",
         "fn:retrieval.guard_terminal_status()",
         "fn:retrieval.guard_vector_store_lifecycle_transition()",
@@ -152884,7 +154547,10 @@
         "fn:retrieval.history_representation_authorized(uuid)",
         "fn:retrieval.history_world_matches(tstzrange,timestamptz,timestamptz,timestamptz)",
         "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)",
+        "fn:retrieval.on_release_item_promote()",
         "fn:retrieval.project_entity_timeline(int8)",
+        "fn:retrieval.promote_release_passages(uuid)",
+        "fn:retrieval.promote_revision_passages(uuid)",
         "fn:retrieval.publish_vector_space(uuid,text,text,text,text)",
         "fn:retrieval.reject_new_legacy_governance_provenance()",
         "fn:retrieval.reject_vector_store_document_identity_mutation()",
@@ -153050,11 +154716,14 @@
       "function_ids": [
         "fn:verification.assert_admitted_use(uuid,text,text,int8,text)",
         "fn:verification.guard_use_admission()",
+        "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)",
+        "fn:verification.require_admitted_use(uuid,text,text,int8,text)",
         "fn:verification.require_receipt_admission()"
       ],
       "id": "sch:verification",
       "name": "verification",
       "relation_ids": [
+        "rel:verification.claim_triage",
         "rel:verification.probe",
         "rel:verification.probe_claim",
         "rel:verification.probe_run",
@@ -158585,6 +160254,11 @@
           "schema_version": 1
         },
         {
+          "code": "claim_verification",
+          "description": "Verify an existing claim under a Knowledge Services admitted exact-use decision (verification.record_admitted_claim_verification)",
+          "schema_version": 1
+        },
+        {
           "code": "content_link",
           "description": "content-link-intent.v1: evidence-backed canonical document, chunk, summary and projection links",
           "schema_version": 1
@@ -158650,7 +160324,7 @@
           "schema_version": 1
         }
       ],
-      "rows_sha256": "sha256:a5eed23f657fe227731cbd11ea12730fbf2a28d226e8f90acef59f1c9a1750ab",
+      "rows_sha256": "sha256:afa462af44ac0c65a020e94fc08a843a309a4758344d053b2e25bb1b13461b31",
       "schema": "orchestration",
       "table": "intent_type"
     },
@@ -164079,6 +165753,7 @@
       "rel:api.claim_candidates": "unknown",
       "rel:api.claim_conflicts": "unknown",
       "rel:api.claim_surfaces": "unknown",
+      "rel:api.claim_triage": "unknown",
       "rel:api.claim_verdicts": "unknown",
       "rel:api.community_claims": "unknown",
       "rel:api.compute_devices": "unknown",
@@ -164115,6 +165790,7 @@
       "rel:api.source_track_record": "unknown",
       "rel:api.symbol_docs": "unknown",
       "rel:api.talks": "unknown",
+      "rel:api.verified_claims": "unknown",
       "rel:api.works_authored": "unknown",
       "rel:authoring.asset_scope": "small",
       "rel:authoring.block_type": "unknown",
@@ -164399,6 +166075,7 @@
       "rel:temporal.segment": "medium",
       "rel:temporal.stream": "medium",
       "rel:temporal.stream_kind": "small",
+      "rel:verification.claim_triage": "small",
       "rel:verification.probe": "unknown",
       "rel:verification.probe_claim": "unknown",
       "rel:verification.probe_run": "unknown",
@@ -164406,5 +166083,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+  "workspace_fingerprint": "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 }

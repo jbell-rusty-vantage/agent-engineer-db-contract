@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt, temporal.knowledge_batch], writes: [] }
 tokens: [retrieval, history_receipt_k, retrieval.history_receipt_k]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:78aebf069f0925cf906c3997f4050a5a9e69eae7bcc29ce2060a813d8a02d4a9"
+workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
 ---
 # retrieval.history_receipt_k
 
