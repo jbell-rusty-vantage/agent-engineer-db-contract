@@ -1,27 +1,27 @@
 ---
-id: "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
+id: "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
 kind: function
 schema: api
 name: search_unified
 domain: api-surface
 lens: corpus
-overloads: ["fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"]
+overloads: ["fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"]
 security: definer
 volatility: stable
 executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: [evidence weight must be between 0 and 1, query text length must be between 1 and 4096, result/candidate bounds are invalid]
 touches: { reads: [retrieval.projection_target, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space, retrieval.vector_space_version], writes: [] }
 tokens: [api, search_unified, api.search_unified]
-defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120100_build08_r2_fixups.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120100_build08_r2_fixups.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", "20261115120000_build08_loop7_search_collapse_restatements.sql", "20261115120100_build08_loop7_fixup_collapse_window.sql", part3_retrieval.sql]
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api.search_unified
 
 Domain `api-surface`, lens `corpus`.
 
-## search_unified(text, halfvec, text[], smallint[], text[], text[], text[], uuid[], timestamp with time zone, uuid[], text[], text[], integer, integer, integer, double precision) → TABLE(vector_item_id uuid, lens text, source_tier smallint, content_kind text, document_type_code text, unit_kind text, entity_id uuid, document_id uuid, document_version_id uuid, target_kind text, target_id uuid, workspace_id uuid, snippet text, start_ms integer, end_ms integer, observed_at timestamp with time zone, valid_during tstzrange, space_slug text, fused_score double precision, channel_scores jsonb)
+## search_unified(text, halfvec, text[], smallint[], text[], text[], text[], uuid[], timestamp with time zone, uuid[], text[], text[], integer, integer, integer, double precision, boolean) → TABLE(vector_item_id uuid, lens text, source_tier smallint, content_kind text, document_type_code text, unit_kind text, entity_id uuid, document_id uuid, document_version_id uuid, target_kind text, target_id uuid, workspace_id uuid, snippet text, start_ms integer, end_ms integer, observed_at timestamp with time zone, valid_during tstzrange, space_slug text, fused_score double precision, channel_scores jsonb)
 
-function, stable, security definer, language plpgsql, config `search_path=""`. One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, and (loop 5, D-62) an evidence factor 1 + weight x signal from retrieval.evidence_signal, reported as channel_scores.evidence (signal, verdict, status, weight, factor). Weight 0 reproduces the loop-4 order. Rank, authority and verdict stay separate fields.
+function, stable, security definer, language plpgsql, config `search_path=""`. One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, an evidence factor 1 + weight x signal (loop 5, D-62, reported as channel_scores.evidence) and (loop 7, D-77) one hit per target: items of one claim, passage or unit in several spaces collapse to the best-ranked one, the others listed in channel_scores.collapsed (best first, the returned item at index 0 removed). p_collapse = false and p_evidence_weight = 0 reproduce the loop-4 order.
 
 | Argument | Type | Default | Mode |
 | --- | --- | --- | --- |
@@ -41,6 +41,7 @@ function, stable, security definer, language plpgsql, config `search_path=""`. O
 | `p_candidate_limit` | `integer` | `100` | — |
 | `p_rrf_k` | `integer` | `60` | — |
 | `p_evidence_weight` | `double precision` | `0.15` | — |
+| `p_collapse` | `boolean` | `true` | — |
 
 Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
@@ -52,4 +53,4 @@ Named queries: `q:retrieval.search_unified`.
 
 TypeScript: `Database["api"]["Functions"]["search_unified"]`.
 
-Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `20261108120100_build08_r2_fixups.sql`, `20261110140000_build08_loop3_libraries_talks_capabilities.sql`, `20261113160000_build08_loop5_followups.sql`, `20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql`, `part3_retrieval.sql`.
+Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `20261108120100_build08_r2_fixups.sql`, `20261110140000_build08_loop3_libraries_talks_capabilities.sql`, `20261113160000_build08_loop5_followups.sql`, `20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql`, `20261115120000_build08_loop7_search_collapse_restatements.sql`, `20261115120100_build08_loop7_fixup_collapse_window.sql`, `part3_retrieval.sql`.

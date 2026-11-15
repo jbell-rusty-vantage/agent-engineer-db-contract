@@ -13,7 +13,7 @@ raises: [provider reconciliation settlement transition mismatch, verification pr
 touches: { reads: [orchestration.verification_provider_reconciliation], writes: [] }
 tokens: [orchestration, verification_provider_attempt_guard, orchestration.verification_provider_attempt_guard]
 defined_in: ["20260906010000_verification_provider_budget_accounting.sql", "20260906012000_harden_verification_provider_accounting.sql", "20260906013000_verification_provider_dispatch_fence.sql", "20260906014000_provider_accounting_identity_overrun_rls.sql", "20260906032900_verification_provider_reconciliation_missing_response.sql", "20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # orchestration.verification_provider_attempt_guard
 

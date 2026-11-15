@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [api.software_releases, catalog.entity, verification.probe, verification.probe_run], writes: [] }
 tokens: [api, probe_revalidation_due, api.probe_revalidation_due]
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", "20261113160200_build08_loop5_fixup_revalidation_due.sql", "20261113160300_build08_loop5_fixup_latest_cell.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api.probe_revalidation_due
 

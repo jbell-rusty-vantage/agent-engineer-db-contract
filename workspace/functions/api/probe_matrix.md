@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [verification.probe, verification.probe_run], writes: [] }
 tokens: [api, probe_matrix, api.probe_matrix]
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api.probe_matrix
 

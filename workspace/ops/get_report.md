@@ -8,7 +8,7 @@ call: api.product_read
 lens: ours
 relations: [authoring.revision_binding, authoring.revision_block, authoring.work, authoring.work_revision, inquiry.assertion]
 tokens: [get_report, research, api.product_read]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # get_report
 

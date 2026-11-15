@@ -13,7 +13,7 @@ raises: [CLAIM_ALREADY_VERIFIED, CLAIM_NOT_FOUND, CLAIM_NOT_VERIFIABLE, EFFECT_D
 touches: { reads: [], writes: [evidence.claim, orchestration.operation_intent, orchestration.operation_receipt, orchestration.operation_receipt_target] }
 tokens: [verification, record_admitted_claim_verification, verification.record_admitted_claim_verification]
 defined_in: ["20261113150000_build08_ks_admission_verified_claims.sql", "20261113150000_build08_loop6_ks_admission.sql", "20261113160100_build08_loop6_fixup_bind_payload.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # verification.record_admitted_claim_verification
 

@@ -72,6 +72,8 @@ export type ApiAttentionDueRow = ApiFunctionRows<"attention_due">[number];
 export type ApiInterviewOutput = ApiFunctionRows<"interview_outputs">[number];
 // Build 08 loop 6 (2026-11-13): claims verified through a Knowledge Services admission (decision, admission-bound receipt, payload, verdicts).
 export type ApiVerifiedClaim = ApiView<"verified_claims">;
+// Build 08 loop 7 (2026-11-15, D-80): restated claims and the attribution-framed originals they were atomized from; search_unified gains p_collapse (D-77).
+export type ApiClaimRestatement = ApiView<"claim_restatements">;
 // Build 08 loop 5 (2026-11-13): claim triage, probe revalidation on release, releases whose bound claims' verdicts changed.
 // api.search_unified gains p_evidence_weight (default 0.15) and reports channel_scores.evidence; api.source_registry gains self_checked.
 export type ApiClaimTriage = ApiView<"claim_triage">;

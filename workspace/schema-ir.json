@@ -2,8 +2,8 @@
   "build": {
     "contract_version": "0.6.0",
     "enrichment_sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
-    "generated_types_sha256": "sha256:66d5983d414593e8c52bead2aa6eee53e0abfa429388627791a4b40f7c051e6d",
-    "migration_head": "20261113160300",
+    "generated_types_sha256": "sha256:b241f627071ec6d82613c9fd08b6c590a17ab75253a9b9ee816fbc35dee8a0c8",
+    "migration_head": "20261115120100",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -153,7 +153,7 @@
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)"
       ],
       "api.search_unified": [
-        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
+        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
       ],
       "api.submit_intent": [
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)"
@@ -3774,6 +3774,9 @@
         "rel:evidence.claim_conflict",
         "rel:evidence.conflict_reconciliation"
       ],
+      "rel:api.claim_restatements": [
+        "rel:evidence.claim"
+      ],
       "rel:api.claim_surfaces": [
         "fn:api.names(uuid[])",
         "fn:util.current_tenant_id()",
@@ -4177,6 +4180,11 @@
         "via_functions": []
       },
       "rel:api.claim_conflicts": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
+      "rel:api.claim_restatements": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": []
@@ -6815,7 +6823,7 @@
           "fn:api.models_at(timestamptz)",
           "fn:api.model_offerings_at(timestamptz)",
           "fn:api.modules_affected_by_release(uuid)",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
           "fn:api.talk_segments(uuid,int4,int4,text)",
           "fn:api.document_units(uuid,text[])",
           "fn:api.document_digest(uuid)",
@@ -7680,7 +7688,7 @@
         ],
         "body": "Build 08 collapsed retrieval into one stack. `retrieval.vector_item` is the searchable\nitem: `search_text`, `lens` (corpus | ours | private | evidence), `source_tier` (T0 verified\nassertions, T1 our content, T2 primary corpus, T3 third-party, T4 live web — a filter and a\nmild boost, never a truth claim), and facets `document_type_code`, `unit_kind`,\n`entity_id`, `document_id`, `source_role_code`, `valid_during`, `knowledge_seq`,\n`assurance_rank`, `start_ms`/`end_ms`, `workspace_id` for private items. Embeddings live in\n`retrieval.vector_item_embedding_1536` partitions.\n\n`retrieval.projection_target` says what an item is about — exactly one of entity card,\nguidance item (`record_id`), chunk, claim, summary, typed unit (`document_node_id`), digest,\none of our authored revisions, or a private passage. `retrieval.index_text_item` is the one\nway a text becomes searchable (idempotent on identical text). Spaces (`retrieval.vector_space`\nslugs units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, …)\nare facets, not separate engines; publication (`retrieval.space_publication`) still gates\nwhat `app_reader` may read.\n\n`q:retrieval.search_unified` (`api.search_unified`) is L3: resolve the scope first (lenses,\ntiers, space slugs, document types, unit kinds, entity ids, as-of, workspace ids for\nprivate), then fuse english full-text, trigram and ANN (when the executor supplies an\nembedding) with RRF. Private items are returned only for the workspaces passed in; the\nproduct `search` operation passes the caller's workspaces. `q:retrieval.hybrid_search` is\nthe older per-space-version entry (needs an embedding, `execute: false`).\n\nPackets (`retrieval.evidence_packet`, `retrieval.packet_member`) assemble verified claims,\nguidance items and source-faithful representations with scores and locators for one\nquestion; `q:retrieval.evidence_packet` returns one with node timecodes. Agents never write\nembeddings; projection rebuilds are governed runtime operations. Trap: expecting\n`search_unified` to embed the query in-database — without an embedding it is lexical only.\n",
         "functions": [
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
           "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)",
           "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
           "fn:api.evidence_packet(uuid)",
@@ -15508,7 +15516,7 @@
         "id": "term:hybrid-search",
         "provenance": "model_assisted",
         "refs": [
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
           "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
           "q:retrieval.search_unified"
         ],
@@ -15595,7 +15603,7 @@
         "refs": [
           "rel:api.models",
           "fn:api.changes_since(timestamptz,text[],text[],text[])",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
           "task:compare-models"
         ],
         "reviewed": null,
@@ -15650,7 +15658,7 @@
         "provenance": "model_assisted",
         "refs": [
           "rel:retrieval.vector_item",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
         ],
         "reviewed": null,
         "slug": "lens",
@@ -15938,7 +15946,7 @@
         "refs": [
           "rel:retrieval.vector_item",
           "rel:content.source_role",
-          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
+          "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
         ],
         "reviewed": null,
         "slug": "source-tier",
@@ -16191,7 +16199,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:78bfcf79e22bc1585c72a8451eadc16408d74daaa93ede627d9d18997440b96b",
+  "fingerprint": "sha256:d133fc74f972525ea3085654444e259dc2a4db39061dcd56b016f6ae2c3b4765",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -20152,7 +20160,7 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"search_knowledge_1536\"]",
       "volatility": "stable"
     },
-    "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)": {
+    "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)": {
       "arguments": [
         {
           "default": null,
@@ -20249,10 +20257,16 @@
           "mode": "in",
           "name": "p_evidence_weight",
           "type": "double precision"
+        },
+        {
+          "default": "true",
+          "mode": "in",
+          "name": "p_collapse",
+          "type": "boolean"
         }
       ],
-      "body_sha256": "sha256:9d4ac0981b75616188062c1e7f2e4f6af0ed22117cd3d91863b8c152cfc5169a",
-      "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, and (loop 5, D-62) an evidence factor 1 + weight x signal from retrieval.evidence_signal, reported as channel_scores.evidence (signal, verdict, status, weight, factor). Weight 0 reproduces the loop-4 order. Rank, authority and verdict stay separate fields.",
+      "body_sha256": "sha256:3654f4a3cd8647b5e19bd223ab96b23e0556ecc2e1c65f429823baa7cef163e0",
+      "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, an evidence factor 1 + weight x signal (loop 5, D-62, reported as channel_scores.evidence) and (loop 7, D-77) one hit per target: items of one claim, passage or unit in several spaces collapse to the best-ranked one, the others listed in channel_scores.collapsed (best first, the returned item at index 0 removed). p_collapse = false and p_evidence_weight = 0 reproduce the loop-4 order.",
       "config": [
         "search_path=\"\""
       ],
@@ -20262,6 +20276,8 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql",
         "20261113160000_build08_loop5_followups.sql",
         "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql",
+        "20261115120000_build08_loop7_search_collapse_restatements.sql",
+        "20261115120100_build08_loop7_fixup_collapse_window.sql",
         "part3_retrieval.sql"
       ],
       "executors": [
@@ -20300,8 +20316,8 @@
           "EXECUTE"
         ]
       },
-      "id": "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
-      "identity_arguments": "p_query text, p_query_embedding halfvec, p_lenses text[], p_tiers smallint[], p_space_slugs text[], p_document_types text[], p_unit_kinds text[], p_entity_ids uuid[], p_as_of timestamp with time zone, p_workspace_ids uuid[], p_source_roles text[], p_content_kinds text[], p_limit integer, p_candidate_limit integer, p_rrf_k integer, p_evidence_weight double precision",
+      "id": "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
+      "identity_arguments": "p_query text, p_query_embedding halfvec, p_lenses text[], p_tiers smallint[], p_space_slugs text[], p_document_types text[], p_unit_kinds text[], p_entity_ids uuid[], p_as_of timestamp with time zone, p_workspace_ids uuid[], p_source_roles text[], p_content_kinds text[], p_limit integer, p_candidate_limit integer, p_rrf_k integer, p_evidence_weight double precision, p_collapse boolean",
       "kind": "function",
       "language": "plpgsql",
       "name": "search_unified",
@@ -41909,6 +41925,190 @@
       },
       "unique": [],
       "view_definition": " SELECT x.id AS conflict_id,\n    x.conflict_kind,\n    x.detected_by,\n    x.detected_at,\n    a.id AS first_party_claim_id,\n    a.statement AS first_party_statement,\n    a.status::text AS first_party_status,\n    b.id AS other_claim_id,\n    b.statement AS other_statement,\n    b.status::text AS other_status,\n    b.structured ->> 'source_role'::text AS other_source_role,\n    b.structured ->> 'provenance'::text AS other_provenance,\n    ( SELECT r.outcome\n           FROM evidence.conflict_reconciliation r\n          WHERE r.conflict_id = x.id\n          ORDER BY r.decided_at DESC\n         LIMIT 1) AS reconciliation\n   FROM evidence.claim_conflict x\n     JOIN evidence.claim a ON a.id = x.claim_a_id\n     JOIN evidence.claim b ON b.id = x.claim_b_id\n  WHERE a.tenant_id = util.current_tenant_id();",
+      "writers": []
+    },
+    "rel:api.claim_restatements": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.statement",
+          "identity": null,
+          "name": "statement",
+          "nullable": true,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.status",
+          "identity": null,
+          "name": "status",
+          "nullable": true,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.qualified",
+          "identity": null,
+          "name": "qualified",
+          "nullable": true,
+          "position": 4,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.dropped",
+          "identity": null,
+          "name": "dropped",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.probe",
+          "identity": null,
+          "name": "probe",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.original_claim_id",
+          "identity": null,
+          "name": "original_claim_id",
+          "nullable": true,
+          "position": 7,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.original_statement",
+          "identity": null,
+          "name": "original_statement",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.original_status",
+          "identity": null,
+          "name": "original_status",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.claim_restatements.created_at",
+          "identity": null,
+          "name": "created_at",
+          "nullable": true,
+          "position": 10,
+          "type": "timestamp with time zone"
+        }
+      ],
+      "comment": "Loop 7 (D-80): restated claims and the attribution-framed originals they were atomized from (the original stays proposed as the record of what a source said).",
+      "defined_in": [
+        "20261115120000_build08_loop7_search_collapse_restatements.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [
+          "SELECT"
+        ],
+        "authenticated": [
+          "SELECT"
+        ],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:api.claim_restatements",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "view",
+      "name": "claim_restatements",
+      "partitions": null,
+      "primary_key": [],
+      "readers": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "api",
+      "triggers": [],
+      "typescript": {
+        "row": "Database[\"api\"][\"Views\"][\"claim_restatements\"][\"Row\"]"
+      },
+      "unique": [],
+      "view_definition": " SELECT r.id AS claim_id,\n    r.statement,\n    r.status::text AS status,\n    (r.structured ->> 'qualified'::text)::boolean AS qualified,\n    r.structured ->> 'dropped'::text AS dropped,\n    r.structured ->> 'probe'::text AS probe,\n    o.id AS original_claim_id,\n    o.statement AS original_statement,\n    o.status::text AS original_status,\n    r.created_at\n   FROM evidence.claim r\n     JOIN evidence.claim o ON o.id = r.atomized_from_id\n  WHERE (r.structured ->> 'path'::text) = 'restatement'::text;",
       "writers": []
     },
     "rel:api.claim_surfaces": {
@@ -153863,7 +154063,7 @@
         "fn:api.releases_needing_review()",
         "fn:api.resolve_entity(text)",
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)",
-        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+        "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
         "fn:api.summary_evidence(uuid)",
         "fn:api.symbol_changes(text,text,text)",
@@ -153887,6 +154087,7 @@
         "rel:api.capabilities",
         "rel:api.claim_candidates",
         "rel:api.claim_conflicts",
+        "rel:api.claim_restatements",
         "rel:api.claim_surfaces",
         "rel:api.claim_triage",
         "rel:api.claim_verdicts",
@@ -165752,6 +165953,7 @@
       "rel:api.capabilities": "unknown",
       "rel:api.claim_candidates": "unknown",
       "rel:api.claim_conflicts": "unknown",
+      "rel:api.claim_restatements": "unknown",
       "rel:api.claim_surfaces": "unknown",
       "rel:api.claim_triage": "unknown",
       "rel:api.claim_verdicts": "unknown",
@@ -166083,5 +166285,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+  "workspace_fingerprint": "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 }

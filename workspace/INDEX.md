@@ -1,8 +1,8 @@
 ---
 id: index
 kind: entry
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
-migration_head: "20261113160300"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+migration_head: "20261115120100"
 ---
 # Index
 
@@ -14,7 +14,7 @@ Lenses: `ours`, `private`, `corpus`, `evidence`, `machinery`, `legacy`. [MAP.md]
 | --- | --- | --- | ---: | ---: | --- |
 | [access](domains/access.md) | ours | access | 7 | 6 | [`domains/access.md`](domains/access.md), [`tasks/search-my-notes.md`](tasks/search-my-notes.md) |
 | [acquisition](domains/acquisition.md) | corpus | acquisition | 3 | 0 | [`domains/acquisition.md`](domains/acquisition.md), [`tasks/what-changed-since.md`](tasks/what-changed-since.md) |
-| [api-surface](domains/api-surface.md) | corpus | api | 48 | 55 | [`domains/api-surface.md`](domains/api-surface.md), [`tasks/cheapest-qualified-model.md`](tasks/cheapest-qualified-model.md), [`tasks/compare-models.md`](tasks/compare-models.md) |
+| [api-surface](domains/api-surface.md) | corpus | api | 49 | 55 | [`domains/api-surface.md`](domains/api-surface.md), [`tasks/cheapest-qualified-model.md`](tasks/cheapest-qualified-model.md), [`tasks/compare-models.md`](tasks/compare-models.md) |
 | [authoring](domains/authoring.md) | ours | api, authoring | 21 | 4 | [`domains/authoring.md`](domains/authoring.md), [`tasks/modules-affected-by-release.md`](tasks/modules-affected-by-release.md), [`tasks/modules-covering-concept.md`](tasks/modules-covering-concept.md) |
 | [content](domains/content.md) | corpus | content | 30 | 13 | [`domains/content.md`](domains/content.md), [`tasks/build-evidence-packet.md`](tasks/build-evidence-packet.md), [`tasks/find-stale-facts.md`](tasks/find-stale-facts.md) |
 | [curriculum](domains/curriculum.md) | machinery | curriculum | 8 | 0 | [`domains/curriculum.md`](domains/curriculum.md) |
@@ -42,7 +42,7 @@ Lenses: `ours`, `private`, `corpus`, `evidence`, `machinery`, `legacy`. [MAP.md]
 | --- | --- | ---: | ---: | --- |
 | [`access`](schemas/access/README.md) | ours | 7 | 0 | access |
 | [`acquisition`](schemas/acquisition/README.md) | corpus | 3 | 0 | acquisition |
-| [`api`](schemas/api/README.md) | corpus | 50 | 57 | api-surface |
+| [`api`](schemas/api/README.md) | corpus | 51 | 57 | api-surface |
 | [`authoring`](schemas/authoring/README.md) | ours | 20 | 0 | authoring |
 | [`catalog`](schemas/catalog/README.md) | corpus | 9 | 6 | identity |
 | [`content`](schemas/content/README.md) | corpus | 30 | 8 | content |
@@ -156,4 +156,4 @@ Product operations dispatched by `product.dispatch_*`; call them through `api.pr
 | [`trace_reverse`](ops/trace_reverse.md) | research | `api.product_read` | `authoring.revision_binding`, `authoring.work`, `authoring.work_revision`, `dataset.cell`, `dataset.row`, `inquiry.assertion`, `inquiry.delivery`, `inquiry.obligation`, `inquiry.support` |
 | [`withdraw_acceptance`](ops/withdraw_acceptance.md) | research | `api.product_command` | `inquiry.acceptance` |
 
-Counts at head `20261113160300`: 349 relations (child partitions folded into their parents), 274 function overloads, 81 operations, 27 tasks, 55 named queries. Vocabularies: [`content.document_type`](vocabularies/content.document_type.md), [`content.format`](vocabularies/content.format.md), [`content.source_role`](vocabularies/content.source_role.md), [`content.unit_kind`](vocabularies/content.unit_kind.md), [`evidence.capture_method`](vocabularies/evidence.capture_method.md), [`evidence.search_provider`](vocabularies/evidence.search_provider.md), [`guidance.item_kind`](vocabularies/guidance.item_kind.md), [`orchestration.artifact_type`](vocabularies/orchestration.artifact_type.md), [`orchestration.intent_type`](vocabularies/orchestration.intent_type.md), [`taxonomy.entity_kind`](vocabularies/taxonomy.entity_kind.md), [`taxonomy.relationship_kind`](vocabularies/taxonomy.relationship_kind.md), [`temporal.event_kind`](vocabularies/temporal.event_kind.md), [`temporal.stream_kind`](vocabularies/temporal.stream_kind.md).
+Counts at head `20261115120100`: 350 relations (child partitions folded into their parents), 274 function overloads, 81 operations, 27 tasks, 55 named queries. Vocabularies: [`content.document_type`](vocabularies/content.document_type.md), [`content.format`](vocabularies/content.format.md), [`content.source_role`](vocabularies/content.source_role.md), [`content.unit_kind`](vocabularies/content.unit_kind.md), [`evidence.capture_method`](vocabularies/evidence.capture_method.md), [`evidence.search_provider`](vocabularies/evidence.search_provider.md), [`guidance.item_kind`](vocabularies/guidance.item_kind.md), [`orchestration.artifact_type`](vocabularies/orchestration.artifact_type.md), [`orchestration.intent_type`](vocabularies/orchestration.intent_type.md), [`taxonomy.entity_kind`](vocabularies/taxonomy.entity_kind.md), [`taxonomy.relationship_kind`](vocabularies/taxonomy.relationship_kind.md), [`temporal.event_kind`](vocabularies/temporal.event_kind.md), [`temporal.stream_kind`](vocabularies/temporal.stream_kind.md).

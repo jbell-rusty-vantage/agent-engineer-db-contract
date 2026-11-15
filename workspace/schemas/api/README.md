@@ -4,9 +4,9 @@ kind: schema
 name: api
 lens: corpus
 domains: [api-surface, authoring, guidance]
-relations: 50
+relations: 51
 functions: 57
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api
 
@@ -24,6 +24,7 @@ Views and functions only. The sole surface exposed to apps and agents. Lens `cor
 | [`capabilities`](../../relations/api/capabilities.md) | view | unknown | L1: researched capabilities (skills, MCP servers, plugins) with shared upstream identifie… | — |
 | [`claim_candidates`](../../relations/api/claim_candidates.md) | view | unknown | L3/evidence: every claim with its path (deterministic_first_party = cheap path, L1_candid… | — |
 | [`claim_conflicts`](../../relations/api/claim_conflicts.md) | view | unknown | Kept disagreements between a first-party claim and another statement (value, scope or sub… | — |
+| [`claim_restatements`](../../relations/api/claim_restatements.md) | view | unknown | Loop 7 (D-80): restated claims and the attribution-framed originals they were atomized fr… | — |
 | [`claim_surfaces`](../../relations/api/claim_surfaces.md) | view | unknown | Claim candidates from talks (speaker, timecode, exact quote; always proposed, never adjud… | — |
 | [`claim_triage`](../../relations/api/claim_triage.md) | view | unknown | Loop 5: the current triage of each claim candidate, with the probe it became and its verd… | — |
 | [`claim_verdicts`](../../relations/api/claim_verdicts.md) | view | unknown | Claims that a probe has judged, with who stated them, on which channel, the latest verdic… | — |

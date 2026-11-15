@@ -13,7 +13,7 @@ raises: [retired artifact cannot regain custody]
 touches: { reads: [orchestration.artifact_tombstone], writes: [] }
 tokens: [orchestration, prevent_artifact_resurrection, orchestration.prevent_artifact_resurrection]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # orchestration.prevent_artifact_resurrection
 

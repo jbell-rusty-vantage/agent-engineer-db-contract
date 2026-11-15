@@ -1,12 +1,12 @@
 {
-  "fingerprint": "sha256:78bfcf79e22bc1585c72a8451eadc16408d74daaa93ede627d9d18997440b96b",
+  "fingerprint": "sha256:d133fc74f972525ea3085654444e259dc2a4db39061dcd56b016f6ae2c3b4765",
   "inputs": {
     "contract_version": "0.6.0",
     "enrichment_sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
-    "generated_types_sha256": "sha256:66d5983d414593e8c52bead2aa6eee53e0abfa429388627791a4b40f7c051e6d",
-    "migration_head": "20261113160300",
+    "generated_types_sha256": "sha256:b241f627071ec6d82613c9fd08b6c590a17ab75253a9b9ee816fbc35dee8a0c8",
+    "migration_head": "20261115120100",
     "renderer_version": "4.0.0"
   },
   "scope": null,
-  "workspace_fingerprint": "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+  "workspace_fingerprint": "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 }

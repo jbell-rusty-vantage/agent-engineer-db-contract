@@ -795,6 +795,20 @@ export type Database = {
             foreignKeyName: "relationship_primary_claim_id_fkey"
             columns: ["claim_id"]
             isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
+          },
+          {
+            foreignKeyName: "relationship_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
             referencedRelation: "claim_surfaces"
             referencedColumns: ["claim_id"]
           },
@@ -958,6 +972,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
           },
           {
             foreignKeyName: "segment_primary_claim_id_fkey"
@@ -1450,6 +1478,21 @@ export type Database = {
         }
         Relationships: []
       }
+      claim_restatements: {
+        Row: {
+          claim_id: string | null
+          created_at: string | null
+          dropped: string | null
+          original_claim_id: string | null
+          original_statement: string | null
+          original_status: string | null
+          probe: string | null
+          qualified: boolean | null
+          statement: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
       claim_surfaces: {
         Row: {
           assertion_mode: string | null
@@ -1557,6 +1600,20 @@ export type Database = {
             foreignKeyName: "claim_triage_claim_id_fkey"
             columns: ["claim_id"]
             isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
             referencedRelation: "claim_surfaces"
             referencedColumns: ["claim_id"]
           },
@@ -1608,6 +1665,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
+            columns: ["duplicate_of_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
           },
           {
             foreignKeyName: "claim_triage_duplicate_of_claim_id_fkey"
@@ -1801,6 +1872,20 @@ export type Database = {
             foreignKeyName: "segment_primary_claim_id_fkey"
             columns: ["claim_id"]
             isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
+          },
+          {
+            foreignKeyName: "segment_primary_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
             referencedRelation: "claim_surfaces"
             referencedColumns: ["claim_id"]
           },
@@ -1976,6 +2061,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "digest_item_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
           },
           {
             foreignKeyName: "digest_item_claim_id_fkey"
@@ -2322,6 +2421,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "record_provenance_claim_id_fkey"
+            columns: ["provenance_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
           },
           {
             foreignKeyName: "record_provenance_claim_id_fkey"
@@ -3005,6 +3118,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "claim_conflicts"
             referencedColumns: ["other_claim_id"]
+          },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["claim_id"]
+          },
+          {
+            foreignKeyName: "review_task_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "claim_restatements"
+            referencedColumns: ["original_claim_id"]
           },
           {
             foreignKeyName: "review_task_claim_id_fkey"
@@ -4126,6 +4253,7 @@ export type Database = {
         Args: {
           p_as_of?: string
           p_candidate_limit?: number
+          p_collapse?: boolean
           p_content_kinds?: string[]
           p_document_types?: string[]
           p_entity_ids?: string[]

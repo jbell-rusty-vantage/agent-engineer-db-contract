@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, catalog.entity_alias, catalog.entity_identifier], writes: [] }
 tokens: [api, resolve_entity, api.resolve_entity]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api.resolve_entity
 

@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_query\"][\"Row\"]"
 defined_in: ["20260829181815_cloud_agent_parallel_source_provenance.sql", "20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # evidence.source_query
 

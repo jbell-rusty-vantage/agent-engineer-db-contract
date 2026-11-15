@@ -13,7 +13,7 @@ raises: [original source dispatch is immutable, source provider attempt identity
 touches: { reads: [], writes: [] }
 tokens: [evidence, guard_source_provider_attempt, evidence.guard_source_provider_attempt]
 defined_in: ["20260914010200_source_attempt_accounting.sql", "20260914010400_source_attempt_recovery.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # evidence.guard_source_provider_attempt
 

@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"work_item_event\"][\"Row\"]"
 defined_in: ["20260829012402_cloud_agent_research_operations.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # orchestration.work_item_event
 

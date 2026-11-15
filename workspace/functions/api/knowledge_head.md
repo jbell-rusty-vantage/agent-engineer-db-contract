@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [temporal.knowledge_head], writes: [] }
 tokens: [api, knowledge_head, api.knowledge_head]
 defined_in: ["20260912020000_km_13_knowledge_intents.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api.knowledge_head
 

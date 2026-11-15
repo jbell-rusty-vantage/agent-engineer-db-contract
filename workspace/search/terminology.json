@@ -286,7 +286,7 @@
     "definition": "api.search_unified fuses english full-text, trigram and (when an embedding is given) ANN channels with reciprocal rank fusion over the one stack, filtered by lens, tier, space, document kind, unit kind, entity, as-of and workspace. api.hybrid_knowledge_search_1536 is the older per-space-version entry.",
     "provenance": "model_assisted",
     "refs": [
-      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
       "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
       "q:retrieval.search_unified"
     ],
@@ -363,7 +363,7 @@
     "refs": [
       "rel:api.models",
       "fn:api.changes_since(timestamptz,text[],text[],text[])",
-      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)",
+      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
       "task:compare-models"
     ],
     "reviewed": null,
@@ -412,7 +412,7 @@
     "provenance": "model_assisted",
     "refs": [
       "rel:retrieval.vector_item",
-      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
+      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
     ],
     "reviewed": null,
     "term": "lens"
@@ -666,7 +666,7 @@
     "refs": [
       "rel:retrieval.vector_item",
       "rel:content.source_role",
-      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8)"
+      "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
     ],
     "reviewed": null,
     "term": "source tier"

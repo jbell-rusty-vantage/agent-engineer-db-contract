@@ -21,6 +21,7 @@ api.bundle_files  # view
 api.capabilities  # view
 api.claim_candidates  # view
 api.claim_conflicts  # view
+api.claim_restatements  # view
 api.claim_surfaces  # view
 api.claim_triage  # view
 api.claim_verdicts  # view

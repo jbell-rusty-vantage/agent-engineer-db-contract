@@ -8,7 +8,7 @@ call: api.product_worker
 lens: ours
 relations: [authoring.work_revision, learning.assessment_result, learning.criterion_result, learning.grading_run, learning.submission, orchestration.artifact]
 tokens: [record_grading, worker, api.product_worker]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # record_grading
 

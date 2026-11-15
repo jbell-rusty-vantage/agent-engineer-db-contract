@@ -13,7 +13,7 @@ raises: [TENANT_MISMATCH]
 touches: { reads: [], writes: [] }
 tokens: [verification, guard_use_admission, verification.guard_use_admission]
 defined_in: ["20261113150000_build08_ks_admission_verified_claims.sql", "20261113150100_build08_loop6_fixup_require_admitted_use.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # verification.guard_use_admission
 

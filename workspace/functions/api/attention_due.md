@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [acquisition.attention_policy, acquisition.attention_sweep, catalog.entity, catalog.relationship, orchestration.mission, temporal.event, temporal.event_occurrence], writes: [] }
 tokens: [api, attention_due, api.attention_due]
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120100_build08_loop4_fixup_attention_due.sql"]
-workspace_fingerprint: "sha256:4ca964568389f6bca66099cb3a109cf6e895892ead47d26c6c89b292b0e91e75"
+workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
 ---
 # api.attention_due
 
