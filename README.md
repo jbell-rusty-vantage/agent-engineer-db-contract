@@ -11,11 +11,12 @@ Applications consume this repository as a pinned dependency. They do not maintai
 
 Repository: public [`jbell-rusty-vantage/agent-engineer-db-contract`](https://github.com/jbell-rusty-vantage/agent-engineer-db-contract), `main` only. History starts at the 2026-11-06 clean-slate baseline, so commit IDs cited below and in older documents do not resolve here ([repository history](docs/REPOSITORY-HISTORY.md)).
 
-## Versions and where they are installed (2026-11-01)
+## Versions and where they are installed (2026-11-01; `main` row added 2026-11-15)
 
 | Contract | Migration head | Committed | Installed |
 | --- | --- | --- | --- |
-| **0.6.0** (current) | `20261031010000_operation_receipt_targets` (187 migrations) | yes (`44c980c`; version bump OVE-206) | local disposable `supabase_db_disposable-overnight-20261029` (2026-10-31), and the owner-declared **disposable** remote `wkythqbofmckbuoothhn` on 2026-11-01 (`20261025010200` → `20261031010000`, contract installer `--remote-reinstall --skip-mission-control`; [receipt summary](docs/knowledge-model/SCHEMA-SUMMARY.md#native-ledger-provenance-migration-20261031010000)) |
+| `main`, unversioned (package.json still says 0.6.0) | `20261115120000_build08_loop7_search_collapse_restatements` (198 migrations: the 0.6.0 chain plus four product migrations `20261105010000`–`20261105010300` and seven Build 08 migrations `20261108120000`–`20261115120000`) | yes; the product migrations are on `origin/main` (CI passed on 9dd8439, 2026-11-08); the Build 08 commits 75362e6–37f594b are local only, not pushed, and CI has not run on them | disposable lab `disposable-aieng-build04` (head `20261115120100`, drafts included) and replay `disposable-aieng-b08replay` (head `20261115120000`, populated upgrade). No remote installation of this chain is recorded; read the target's `supabase_migrations.schema_migrations` before claiming one. No contract version has been cut for this chain |
+| **0.6.0** (last versioned) | `20261031010000_operation_receipt_targets` (187 migrations) | yes (`44c980c`; version bump OVE-206) | local disposable `supabase_db_disposable-overnight-20261029` (2026-10-31), and the owner-declared **disposable** remote `wkythqbofmckbuoothhn` on 2026-11-01 (`20261025010200` → `20261031010000`, contract installer `--remote-reinstall --skip-mission-control`; [receipt summary](docs/knowledge-model/SCHEMA-SUMMARY.md#native-ledger-provenance-migration-20261031010000)) |
 | 0.5.0 | `20261025010200` (186 migrations) | yes (`25f82ed`, `306efd7`) | Sprint OC W0 (2026-10-28) on the owner-declared **disposable** remote `wkythqbofmckbuoothhn` (`supabase-blue-ocean`), after the WI-24 wipe (Mission Control `docs/specs/provider-consolidation-2026-10/sprint-oc/release/RELEASE-BUNDLE.md`, sections 1 and 4) |
 | 0.4.0 / 0.3.0 | `20260913020000` / `20260912011200` | yes | historical: deployed to the same project `wkythqbofmckbuoothhn` in 2026-09; the W0 wipe dropped those schemas and their data |
 
