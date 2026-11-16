@@ -13,7 +13,7 @@ raises: [vector store space authority must match its parent store class]
 touches: { reads: [retrieval.vector_store], writes: [] }
 tokens: [retrieval, validate_vector_store_space_authority, retrieval.validate_vector_store_space_authority]
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # retrieval.validate_vector_store_space_authority
 

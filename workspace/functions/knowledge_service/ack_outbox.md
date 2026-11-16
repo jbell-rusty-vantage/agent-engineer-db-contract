@@ -13,7 +13,7 @@ raises: [stale or foreign outbox claim, valid app.tenant_id context is required]
 touches: { reads: [], writes: [knowledge_service.outbox] }
 tokens: [knowledge_service, ack_outbox, knowledge_service.ack_outbox]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # knowledge_service.ack_outbox
 

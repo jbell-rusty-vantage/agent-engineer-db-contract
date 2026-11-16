@@ -5,12 +5,12 @@ lens: evidence
 schemas: []
 aliases: [verified claims, claim candidates, verdicts, probes, probe runs, probe matrix, conflicts, restatements, claim triage, disputed claims, what is verified]
 relations: [api.verified_claims, api.claim_candidates, api.claim_verdicts, api.claim_conflicts, api.claim_restatements, api.claim_triage, api.claim_surfaces, api.community_claims, api.probes, verification.probe, verification.probe_claim, verification.probe_run, verification.probe_verdict, verification.claim_triage, evidence.claim_conflict]
-functions: [api.interview_outputs, api.library_dossier, api.probe_matrix, api.probe_revalidation_due, api.releases_needing_review]
-tasks: [read-claim-with-evidence, what-a-release-affects, what-is-due, what-is-verified-about-subject, why-claim-disputed-or-restated]
+functions: [api.interview_outputs, api.library_dossier, api.probe_matrix, api.probe_revalidation_due, api.propose_verdict, api.record_claim, api.record_probe_run, api.record_triage, api.register_probe, api.releases_needing_review, api.restate_claim]
+tasks: [propose-verdict-from-probe, read-claim-with-evidence, record-claim-with-evidence, triage-claims-and-assess-sources, what-a-release-affects, what-agents-may-not-write, what-is-due, what-is-verified-about-subject, why-claim-disputed-or-restated, write-verification-chain]
 summary: A claim is a candidate until a probe judges it and a Knowledge Services admission verifies it; conflicts and restatements are kept beside it.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # Verified knowledge (claims, probes, verdicts)
 
@@ -56,8 +56,15 @@ A claim is a candidate until a probe judges it and a Knowledge Services admissio
 > 
 > Start with `q:evidence.verified_claims`; one claim in depth is `q:evidence.claim`,
 > `q:evidence.claim_verdicts` and `q:evidence.probe_matrix`. Sources and watch policies are
-> the source-intelligence domain. Writing a verdict or an admission is the pipeline's work
-> (verifier_agent, executor_service), not a read role's.
+> the source-intelligence domain.
+> 
+> **Writing.** An agent role writes this chain through governed functions, never by
+> inserting rows: `api.record_claim`, `api.restate_claim`, `api.register_probe`,
+> `api.record_probe_run`, `api.propose_verdict` and `api.record_triage`
+> (`tasks/write-verification-chain.md`). Each is idempotent on a caller key and leaves a
+> receipt naming the role and the mission run. What they never do: verify a claim (only a
+> Knowledge Services admission does) or record a person's review
+> (`tasks/what-agents-may-not-write.md`). A read role writes nothing.
 
 ## Relations that matter
 
@@ -75,13 +82,13 @@ A claim is a candidate until a probe judges it and a Knowledge Services admissio
 | [`verification.probe`](../relations/verification/probe.md) | Loop 4: an experiment that tests stated claims against a matrix of environments. Cells are dates (uv --exclud… | PK (id); unique (tenant_id, slug); RLS | `control_plane`, `pipeline_agent`, `verifier_agent` |
 | [`verification.probe_claim`](../relations/verification/probe_claim.md) | table | PK (probe_id, claim_id); RLS | `control_plane`, `pipeline_agent`, `verifier_agent` |
 | [`verification.probe_run`](../relations/verification/probe_run.md) | Loop 4: one execution of a probe in one cell. outcome pass/fail is about the probe's own checks, not about th… | PK (id); RLS | `control_plane`, `pipeline_agent`, `verifier_agent` |
-| [`verification.probe_verdict`](../relations/verification/probe_verdict.md) | Loop 4: what a probe's runs say about one claim. agent_proposed by default; a human confirmation is a separat… | PK (id); RLS | `control_plane`, `pipeline_agent`, `verifier_agent` |
+| [`verification.probe_verdict`](../relations/verification/probe_verdict.md) | Loop 4: what a probe's runs say about one claim. Append-only: a changed verdict is a new row that supersedes.… | PK (id); RLS | `control_plane`, `pipeline_agent`, `verifier_agent` |
 | [`verification.claim_triage`](../relations/verification/claim_triage.md) | Loop 5: what to do with a claim candidate before anyone checks it: probe it, check the docs or the registry, … | PK (id); RLS | `control_plane`, `pipeline_agent`, `verifier_agent` |
 | [`evidence.claim_conflict`](../relations/evidence/claim_conflict.md) | table | PK (id); unique (claim_a_id, claim_b_id, conflict_kind); RLS | `executor_service`, `verifier_agent` |
 
 ## Functions
 
-[`api.interview_outputs`](../functions/api/interview_outputs.md), [`api.library_dossier`](../functions/api/library_dossier.md), [`api.probe_matrix`](../functions/api/probe_matrix.md), [`api.probe_revalidation_due`](../functions/api/probe_revalidation_due.md), [`api.releases_needing_review`](../functions/api/releases_needing_review.md)
+[`api.interview_outputs`](../functions/api/interview_outputs.md), [`api.library_dossier`](../functions/api/library_dossier.md), [`api.probe_matrix`](../functions/api/probe_matrix.md), [`api.probe_revalidation_due`](../functions/api/probe_revalidation_due.md), [`api.propose_verdict`](../functions/api/propose_verdict.md), [`api.record_claim`](../functions/api/record_claim.md), [`api.record_probe_run`](../functions/api/record_probe_run.md), [`api.record_triage`](../functions/api/record_triage.md), [`api.register_probe`](../functions/api/register_probe.md), [`api.releases_needing_review`](../functions/api/releases_needing_review.md), [`api.restate_claim`](../functions/api/restate_claim.md)
 
 ## Named queries
 
@@ -89,6 +96,6 @@ A claim is a candidate until a probe judges it and a Knowledge Services admissio
 
 ## Tasks
 
-[`read-claim-with-evidence`](../tasks/read-claim-with-evidence.md), [`what-a-release-affects`](../tasks/what-a-release-affects.md), [`what-is-due`](../tasks/what-is-due.md), [`what-is-verified-about-subject`](../tasks/what-is-verified-about-subject.md), [`why-claim-disputed-or-restated`](../tasks/why-claim-disputed-or-restated.md)
+[`propose-verdict-from-probe`](../tasks/propose-verdict-from-probe.md), [`read-claim-with-evidence`](../tasks/read-claim-with-evidence.md), [`record-claim-with-evidence`](../tasks/record-claim-with-evidence.md), [`triage-claims-and-assess-sources`](../tasks/triage-claims-and-assess-sources.md), [`what-a-release-affects`](../tasks/what-a-release-affects.md), [`what-agents-may-not-write`](../tasks/what-agents-may-not-write.md), [`what-is-due`](../tasks/what-is-due.md), [`what-is-verified-about-subject`](../tasks/what-is-verified-about-subject.md), [`why-claim-disputed-or-restated`](../tasks/why-claim-disputed-or-restated.md), [`write-verification-chain`](../tasks/write-verification-chain.md)
 
 Schemas: —.

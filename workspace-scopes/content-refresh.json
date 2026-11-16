@@ -26,7 +26,11 @@
       "api.fact_locators",
       "api.summary_evidence",
       "content.*",
-      "util.current_tenant_id"
+      "util.current_tenant_id",
+      "api.attention_due",
+      "api.raise_attention_sweep",
+      "api.settle_attention_sweep",
+      "api.record_probe_run"
     ]
   },
   "exclude": {
@@ -55,7 +59,10 @@
     "talk-passage-at-timecode",
     "price-with-locator",
     "what-is-due",
-    "how-trusted-is-source"
+    "how-trusted-is-source",
+    "write-verification-chain",
+    "run-attention-sweep",
+    "what-agents-may-not-write"
   ],
   "queries": [
     "content.*",
@@ -72,7 +79,8 @@
     "evidence.source_registry",
     "evidence.source_track_record",
     "evidence.probe_revalidation_due",
-    "ours.releases_needing_review"
+    "ours.releases_needing_review",
+    "chain.governed_writes"
   ],
   "operations": [
     "restrict_source",

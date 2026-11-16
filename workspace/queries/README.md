@@ -1,19 +1,20 @@
 ---
 id: queries
 kind: entry
-queries: 69
-catalog_version: "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace"
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+queries: 71
+catalog_version: "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # Named queries
 
-Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, digest `sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace`): the executor opens a read-only transaction, sets `app.tenant_id`, `SET LOCAL ROLE <role>`, applies the statement timeout of the cost class, binds `paramOrder` positionally, and caps rows at `limit` (default 200, max 2000). Run one with `knowledge db query <name> --param k=v`, or batch several in a `knowledge-read-intent.v1` (`knowledge db read-intent intent.json`). The snapshot records the knowledge head so your ingestion intent can cite it.
+Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, digest `sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1`): the executor opens a read-only transaction, sets `app.tenant_id`, `SET LOCAL ROLE <role>`, applies the statement timeout of the cost class, binds `paramOrder` positionally, and caps rows at `limit` (default 200, max 2000). Run one with `knowledge db query <name> --param k=v`, or batch several in a `knowledge-read-intent.v1` (`knowledge db read-intent intent.json`). The snapshot records the knowledge head so your ingestion intent can cite it.
 
 | Query | Role | Cost | Params | Shape | Domain | Summary |
 | --- | --- | --- | --- | --- | --- | --- |
 | <a id="acquisitionattentiondue"></a>`acquisition.attention_due` | app_reader | cheap | `as_of` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Attention policies due at a time, by trigger event or elapsed cadence (the due list a watch mission calls) |
 | <a id="acquisitionattentionpolicies"></a>`acquisition.attention_policies` | app_reader | cheap | `watch_level`, `state`, `limit` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Attention policies (what we watch, watch level, cadence, triggers, budget) with their sweep history |
 | <a id="acquisitionfetchesforurl"></a>`acquisition.fetches_for_url` | pipeline_agent | cheap | `url`, `limit` | rows | [`acquisition`](../domains/acquisition.md) | Fetch ledger rows for a URL (who fetched, with what tool, outcome, hash, spend) |
+| <a id="acquisitionopensweeps"></a>`acquisition.open_sweeps` | pipeline_agent | cheap | `mission_id`, `limit` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Attention sweeps that were opened and not settled yet, with their policy, trigger and mission |
 | <a id="artifactsbytype"></a>`artifacts.by_type` | pipeline_agent | cheap | `artifact_type`, `limit` | rows | [`orchestration-ledger`](../domains/orchestration-ledger.md) | Artifacts of one artifact_type for the current tenant |
 | <a id="catalogbenchmarkscores"></a>`catalog.benchmark_scores` | app_reader | medium | `subject_id`, `benchmark`, `limit` | rows | [`api-surface`](../domains/api-surface.md) | L1 benchmark results as facts (one home for numbers) by subject or benchmark |
 | <a id="catalogconcepts"></a>`catalog.concepts` | app_reader | medium | `text`, `limit` | rows | [`api-surface`](../domains/api-surface.md) | L1 concepts and techniques with how many works, software, guidance items and our modules cover them |
@@ -28,6 +29,7 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 | <a id="catalogsoftware"></a>`catalog.software` | app_reader | medium | `kind`, `text`, `limit` | rows | [`api-surface`](../domains/api-surface.md) | L1 software (libraries, repositories, MCP servers, agent skills, products, protocols) in one table |
 | <a id="catalogsoftwarereleases"></a>`catalog.software_releases` | app_reader | medium | `software_id`, `text`, `limit` | rows | [`api-surface`](../domains/api-surface.md) | Releases of a software thing, newest first, with breaking flag and the knowledge seq they were learned at |
 | <a id="catalogtalks"></a>`catalog.talks` | app_reader | medium | `text`, `event_id`, `limit` | rows | [`api-surface`](../domains/api-surface.md) | L1 talks with event, speakers, topics, linked repositories and recording links |
+| <a id="chaingovernedwrites"></a>`chain.governed_writes` | pipeline_agent | cheap | `function`, `mc_run_id`, `key`, `limit` | rows | [`orchestration-ledger`](../domains/orchestration-ledger.md) | Governed writes of the verification chain, by function, idempotency key or Mission Control run (who acted, for which mission) |
 | <a id="contentdocumentdigest"></a>`content.document_digest` | app_reader | cheap | `document_id` | rows | [`content`](../domains/content.md) | Structured digest of a document's newest version (key points, entity roles, assertions, changes, open questions) |
 | <a id="contentdocumentunits"></a>`content.document_units` | app_reader | cheap | `document_id`, `unit_kinds` | rows | [`content`](../domains/content.md) | Typed units of a document across its versions (newest first) |
 | <a id="contentrefreshchecks"></a>`content.refresh_checks` | pipeline_agent | cheap | `document_id`, `outcome`, `limit` | rows | [`content`](../domains/content.md) | Refresh outcomes for a document (unchanged, changed, failed) and the version each created |
@@ -90,6 +92,7 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 - `acquisition.attention_due`: `as_of` string|null? — example `{"as_of":null}`
 - `acquisition.attention_policies`: `limit` integer?, `state` string|null?, `watch_level` string|null? — example `{"limit":50,"state":null,"watch_level":null}`
 - `acquisition.fetches_for_url`: `limit` integer?, `url` string|null? — example `{"limit":50,"url":null}`
+- `acquisition.open_sweeps`: `limit` integer?, `mission_id` string|null? — example `{"limit":50,"mission_id":null}`
 - `artifacts.by_type`: `artifact_type` string|null?, `limit` integer? — example `{"artifact_type":"knowledge_ingestion_receipt","limit":50}`
 - `catalog.benchmark_scores`: `benchmark` string|null?, `limit` integer?, `subject_id` string|null? — example `{"benchmark":null,"limit":100,"subject_id":null}`
 - `catalog.concepts`: `limit` integer?, `text` string|null? — example `{"limit":50,"text":null}`
@@ -104,6 +107,7 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 - `catalog.software`: `kind` string|null?, `limit` integer?, `text` string|null? — example `{"kind":null,"limit":50,"text":null}`
 - `catalog.software_releases`: `limit` integer?, `software_id` string|null?, `text` string|null? — example `{"limit":50,"software_id":null,"text":null}`
 - `catalog.talks`: `event_id` string|null?, `limit` integer?, `text` string|null? — example `{"event_id":null,"limit":50,"text":null}`
+- `chain.governed_writes`: `function` string|null?, `key` string|null?, `limit` integer?, `mc_run_id` string|null? — example `{"function":"api.propose_verdict","key":null,"limit":20,"mc_run_id":null}`
 - `content.document_digest`: `document_id` string — example `{"document_id":"0192b000-0000-7000-8000-000000000001"}`
 - `content.document_units`: `document_id` string, `unit_kinds` array|null? — example `{"document_id":"0192b000-0000-7000-8000-000000000001","unit_kinds":null}`
 - `content.refresh_checks`: `document_id` string|null?, `limit` integer?, `outcome` string|null? — example `{"document_id":null,"limit":50,"outcome":null}`

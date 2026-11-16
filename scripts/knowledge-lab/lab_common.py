@@ -82,6 +82,23 @@ def one(statement):
     return rows[0][0] if rows and rows[0] else None
 
 
+GOVERNED_ROLES = ("pipeline_agent", "verifier_agent", "control_plane", "executor_service")
+
+
+def governed(function, args, role="pipeline_agent", actor=None, dry_run=False):
+    """One governed write of the verification chain (migration 20261116130000): api.<function> called as a bounded role, never
+    as postgres. The tenant is set for the transaction, the role is switched with `set local role`, `args` are the function's
+    named arguments (the idempotency key included) and `actor` its p_actor. Returns the function's JSON result; a refusal
+    raises with the function's error code in the message. dry_run rolls the transaction back and still returns the result."""
+    if role not in GOVERNED_ROLES or not re.fullmatch(r"[a-z_]+", function):
+        raise ValueError(f"not a governed call: {role} api.{function}")
+    named = dict(args, p_actor=actor) if actor is not None else dict(args)
+    call = ", ".join(f"{k} => {q(v)}" for k, v in named.items())
+    out, _ = sql(f"begin;\nset local app.tenant_id = '{TENANT}';\nset local role {role};\nselect api.{function}({call});\n{'rollback' if dry_run else 'commit'};",
+                 tenant=False)
+    return json.loads(out.splitlines()[-1])
+
+
 def load_secret(name):
     for line in open(SECRETS, encoding="utf-8"):
         line = line.strip()

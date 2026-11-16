@@ -13,7 +13,7 @@ raises: [frozen verification evaluation records are append-only, frozen verifica
 touches: { reads: [], writes: [] }
 tokens: [evaluation, guard_verification_freeze, evaluation.guard_verification_freeze]
 defined_in: ["20260905010000_verification_persistence_contract.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evaluation.guard_verification_freeze
 

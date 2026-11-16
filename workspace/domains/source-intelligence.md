@@ -5,12 +5,12 @@ lens: evidence
 schemas: []
 aliases: [source registry, source assessment, track record, source trust, authority score, attention policy, watch level, sweep, due list, what to watch]
 relations: [api.source_registry, api.source_track_record, api.attention_policies, evidence.source_assessment, acquisition.attention_policy, acquisition.attention_sweep]
-functions: [api.attention_due]
-tasks: [how-trusted-is-source, what-is-due]
+functions: [api.attention_due, api.raise_attention_sweep, api.record_source_assessment, api.settle_attention_sweep]
+tasks: [how-trusted-is-source, run-attention-sweep, triage-claims-and-assess-sources, what-agents-may-not-write, what-is-due, write-verification-chain]
 summary: "What we know about each source on each topic, from the claims it stated and how they checked out; and what we watch, how often, on what budget."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # Source intelligence and attention (registry, track record, watch policies)
 
@@ -44,8 +44,11 @@ What we know about each source on each topic, from the claims it stated and how 
 > domain; `tasks/what-is-due.md` reads all three.
 > 
 > Start with `q:evidence.source_registry` for trust and `q:acquisition.attention_due` for
-> work. Assessments and policies are written by the pipeline and by a design interview, not
-> by a read role.
+> work. An agent role records a prior or a derived assessment with
+> `api.record_source_assessment` and runs a sweep with `api.raise_attention_sweep` and
+> `api.settle_attention_sweep` (`tasks/run-attention-sweep.md`). Policies (what to watch,
+> on what budget) and reviewed assessments are a person's decisions: no agent function
+> writes them, and a read role writes nothing.
 
 ## Relations that matter
 
@@ -60,14 +63,14 @@ What we know about each source on each topic, from the claims it stated and how 
 
 ## Functions
 
-[`api.attention_due`](../functions/api/attention_due.md)
+[`api.attention_due`](../functions/api/attention_due.md), [`api.raise_attention_sweep`](../functions/api/raise_attention_sweep.md), [`api.record_source_assessment`](../functions/api/record_source_assessment.md), [`api.settle_attention_sweep`](../functions/api/settle_attention_sweep.md)
 
 ## Named queries
 
-[`q:acquisition.attention_due`](../queries/README.md), [`q:acquisition.attention_policies`](../queries/README.md), [`q:evidence.source_registry`](../queries/README.md), [`q:evidence.source_track_record`](../queries/README.md)
+[`q:acquisition.attention_due`](../queries/README.md), [`q:acquisition.attention_policies`](../queries/README.md), [`q:acquisition.open_sweeps`](../queries/README.md), [`q:evidence.source_registry`](../queries/README.md), [`q:evidence.source_track_record`](../queries/README.md)
 
 ## Tasks
 
-[`how-trusted-is-source`](../tasks/how-trusted-is-source.md), [`what-is-due`](../tasks/what-is-due.md)
+[`how-trusted-is-source`](../tasks/how-trusted-is-source.md), [`run-attention-sweep`](../tasks/run-attention-sweep.md), [`triage-claims-and-assess-sources`](../tasks/triage-claims-and-assess-sources.md), [`what-agents-may-not-write`](../tasks/what-agents-may-not-write.md), [`what-is-due`](../tasks/what-is-due.md), [`write-verification-chain`](../tasks/write-verification-chain.md)
 
 Schemas: —.

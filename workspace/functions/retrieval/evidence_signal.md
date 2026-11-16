@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document_version, content.document_version_source_capture, evidence.claim, verification.probe_claim, verification.probe_run, verification.probe_verdict], writes: [] }
 tokens: [retrieval, evidence_signal, retrieval.evidence_signal]
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # retrieval.evidence_signal
 

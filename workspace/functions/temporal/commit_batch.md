@@ -13,7 +13,7 @@ raises: [no open knowledge batch, receipt tenant mismatch, stream slot/payload r
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt, temporal.segment, temporal.stream, temporal.stream_kind], writes: [temporal.knowledge_batch, temporal.knowledge_head] }
 tokens: [temporal, commit_batch, temporal.commit_batch]
 defined_in: ["20260912010400_km_04_temporal.sql", "20260912011200_km_12_projection_workers.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # temporal.commit_batch
 

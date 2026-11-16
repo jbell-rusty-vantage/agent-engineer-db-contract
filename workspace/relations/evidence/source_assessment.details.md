@@ -4,7 +4,7 @@ kind: details
 schema: evidence
 name: source_assessment
 of: "rel:evidence.source_assessment"
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evidence.source_assessment — details
 
@@ -34,7 +34,8 @@ Inbound: [`evidence.source_assessment`](source_assessment.md).supersedes_id.
 
 ## Triggers
 
-_None._
+- `source_assessment_append_only` → [`util.reject_mutation`](../../functions/util/reject_mutation.md): `CREATE TRIGGER source_assessment_append_only BEFORE DELETE OR UPDATE ON evidence.source_assessment FOR EACH ROW EXECUTE FUNCTION util.reject_mutation()`
+- `source_assessment_human_judgment` → [`verification.guard_human_judgment`](../../functions/verification/guard_human_judgment.md): `CREATE TRIGGER source_assessment_human_judgment BEFORE INSERT ON evidence.source_assessment FOR EACH ROW EXECUTE FUNCTION verification.guard_human_judgment()`
 
 ## Row-level security
 

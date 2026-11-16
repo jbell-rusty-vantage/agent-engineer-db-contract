@@ -6,11 +6,11 @@ schemas: [orchestration]
 aliases: [intents, receipts, artifacts, missions]
 relations: [orchestration.mission, orchestration.attempt, orchestration.operation_intent, orchestration.operation_receipt, orchestration.artifact, orchestration.artifact_lineage, orchestration.artifact_type, orchestration.intent_type, orchestration.work_item, orchestration.capability]
 functions: [api.submit_intent]
-tasks: [check-knowledge-head, verify-ingestion-result]
+tasks: [check-knowledge-head, verify-ingestion-result, write-verification-chain]
 summary: "Missions, intents, immutable receipts, and content-addressed artifacts (machinery lens)."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # Orchestration ledger
 
@@ -56,10 +56,10 @@ Missions, intents, immutable receipts, and content-addressed artifacts (machiner
 
 ## Named queries
 
-[`q:artifacts.by_type`](../queries/README.md), [`q:receipts.for_intent`](../queries/README.md), [`q:receipts.recent_for_mission`](../queries/README.md)
+[`q:artifacts.by_type`](../queries/README.md), [`q:chain.governed_writes`](../queries/README.md), [`q:receipts.for_intent`](../queries/README.md), [`q:receipts.recent_for_mission`](../queries/README.md)
 
 ## Tasks
 
-[`check-knowledge-head`](../tasks/check-knowledge-head.md), [`verify-ingestion-result`](../tasks/verify-ingestion-result.md)
+[`check-knowledge-head`](../tasks/check-knowledge-head.md), [`verify-ingestion-result`](../tasks/verify-ingestion-result.md), [`write-verification-chain`](../tasks/write-verification-chain.md)
 
 Schemas: [`orchestration`](../schemas/orchestration/README.md).

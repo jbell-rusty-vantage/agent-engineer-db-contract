@@ -26,6 +26,7 @@
   ],
   "admission": [
     "dom:evidence",
+    "task:what-agents-may-not-write",
     "term:admission"
   ],
   "admission ledger": [
@@ -59,8 +60,27 @@
   "affected modules": [
     "q:ours.modules_affected_by_release"
   ],
+  "agent limits": [
+    "task:what-agents-may-not-write"
+  ],
+  "agent proposed": [
+    "task:propose-verdict-from-probe"
+  ],
   "agent skills": [
     "rel:api.software"
+  ],
+  "agent write": [
+    "task:write-verification-chain",
+    "term:governed-write"
+  ],
+  "agent writes": [
+    "q:chain.governed_writes"
+  ],
+  "agent-proposed": [
+    "term:agent-proposed"
+  ],
+  "agent_proposed": [
+    "term:agent-proposed"
   ],
   "alias": [
     "rel:catalog.entity_alias",
@@ -72,6 +92,9 @@
   "ambiguous identity": [
     "task:stage-uncertain-candidate"
   ],
+  "anchor": [
+    "term:evidence-anchor"
+  ],
   "app_reader": [
     "dom:api-surface"
   ],
@@ -80,6 +103,9 @@
   ],
   "append message": [
     "op:append_message"
+  ],
+  "append-only": [
+    "task:what-agents-may-not-write"
   ],
   "artifact": [
     "op:complete_asset",
@@ -129,6 +155,7 @@
   ],
   "atomized claim": [
     "q:evidence.claim_restatements",
+    "task:record-claim-with-evidence",
     "term:restatement"
   ],
   "attempts": [
@@ -145,6 +172,12 @@
     "dom:source-intelligence",
     "q:acquisition.attention_policies",
     "term:attention-policy"
+  ],
+  "attention sweep": [
+    "term:attention-sweep"
+  ],
+  "attention sweep write": [
+    "task:run-attention-sweep"
   ],
   "attributes": [
     "q:entity.attributes"
@@ -211,8 +244,18 @@
   "breaking changes": [
     "task:release-history"
   ],
+  "budget gate": [
+    "task:run-attention-sweep",
+    "term:attention-sweep"
+  ],
   "budget model": [
     "task:cheapest-qualified-model"
+  ],
+  "budget stopped": [
+    "task:run-attention-sweep"
+  ],
+  "budget_stopped": [
+    "term:attention-sweep"
   ],
   "cadence": [
     "term:attention-policy"
@@ -268,6 +311,13 @@
     "rel:content.structure_census",
     "term:census"
   ],
+  "chain write": [
+    "task:write-verification-chain",
+    "term:governed-write"
+  ],
+  "chain writes": [
+    "q:chain.governed_writes"
+  ],
   "changed units": [
     "q:content.unit_changes"
   ],
@@ -299,6 +349,7 @@
   ],
   "checkability": [
     "q:evidence.claim_triage",
+    "task:triage-claims-and-assess-sources",
     "term:claim-triage"
   ],
   "checked claims of a source": [
@@ -324,6 +375,9 @@
   "claim candidate": [
     "q:evidence.claim",
     "term:claim-candidate"
+  ],
+  "claim candidate write": [
+    "task:record-claim-with-evidence"
   ],
   "claim candidates": [
     "dom:verified-knowledge"
@@ -357,6 +411,9 @@
   ],
   "client grant": [
     "dom:access"
+  ],
+  "close sweep": [
+    "task:run-attention-sweep"
   ],
   "commands": [
     "dom:product-operations"
@@ -563,6 +620,9 @@
   "deprecated": [
     "task:record-availability-change"
   ],
+  "derived assessment": [
+    "task:triage-claims-and-assess-sources"
+  ],
   "diff": [
     "q:entity.what_changed",
     "task:what-changed-since-head"
@@ -642,6 +702,9 @@
     "task:what-is-due",
     "term:due-list"
   ],
+  "duplicate claim": [
+    "task:triage-claims-and-assess-sources"
+  ],
   "edge": [
     "rel:catalog.relationship"
   ],
@@ -716,6 +779,10 @@
     "dom:observability",
     "q:catalog.events",
     "q:events.current_for_entity"
+  ],
+  "evidence anchor": [
+    "task:record-claim-with-evidence",
+    "term:evidence-anchor"
   ],
   "evidence claim": [
     "term:claim"
@@ -797,6 +864,9 @@
     "task:modules-affected-by-release",
     "task:what-a-release-affects"
   ],
+  "forbidden write": [
+    "task:what-agents-may-not-write"
+  ],
   "format axis": [
     "rel:content.format"
   ],
@@ -853,6 +923,16 @@
   ],
   "get thread": [
     "op:get_thread"
+  ],
+  "governed chain write": [
+    "term:governed-write"
+  ],
+  "governed write": [
+    "task:write-verification-chain",
+    "term:governed-write"
+  ],
+  "governed writes": [
+    "q:chain.governed_writes"
   ],
   "graders": [
     "dom:evaluation"
@@ -926,15 +1006,31 @@
   "how-to": [
     "dom:guidance"
   ],
+  "human confirmed": [
+    "task:what-agents-may-not-write"
+  ],
+  "human review": [
+    "task:what-agents-may-not-write",
+    "term:agent-proposed"
+  ],
   "human_confirmed": [
+    "term:agent-proposed",
     "term:verdict"
+  ],
+  "human_rejected": [
+    "term:agent-proposed"
   ],
   "hybrid search": [
     "q:retrieval.hybrid_search",
     "term:hybrid-search"
   ],
   "idempotency key": [
+    "task:write-verification-chain",
+    "term:governed-write",
     "term:idempotency-key"
+  ],
+  "idempotency key lookup": [
+    "q:chain.governed_writes"
   ],
   "idempotencykey": [
     "term:idempotency-key"
@@ -955,6 +1051,9 @@
   "identity row": [
     "rel:catalog.entity",
     "term:canonical-entity"
+  ],
+  "immutable": [
+    "task:what-agents-may-not-write"
   ],
   "immutable revision": [
     "op:accept_research",
@@ -1006,6 +1105,9 @@
   ],
   "issue provided credential": [
     "op:issue_provided_credential"
+  ],
+  "json_pointer": [
+    "term:evidence-anchor"
   ],
   "judged claims": [
     "q:evidence.claim_verdicts"
@@ -1137,6 +1239,9 @@
   "lineage": [
     "rel:orchestration.artifact_lineage"
   ],
+  "lines agents do not cross": [
+    "task:what-agents-may-not-write"
+  ],
   "link": [
     "rel:catalog.relationship",
     "task:assert-relationship"
@@ -1155,6 +1260,8 @@
   ],
   "locator": [
     "q:facts.locators",
+    "task:record-claim-with-evidence",
+    "term:evidence-anchor",
     "term:locator"
   ],
   "locators": [
@@ -1205,6 +1312,9 @@
   ],
   "mission receipts": [
     "q:receipts.recent_for_mission"
+  ],
+  "mission write": [
+    "task:write-verification-chain"
   ],
   "missions": [
     "dom:orchestration-ledger"
@@ -1274,6 +1384,9 @@
   "needs review after release": [
     "task:modules-affected-by-release"
   ],
+  "new claim": [
+    "task:record-claim-with-evidence"
+  ],
   "new version": [
     "task:what-a-release-affects"
   ],
@@ -1284,8 +1397,12 @@
   "nodes": [
     "dom:content"
   ],
+  "not allowed": [
+    "task:what-agents-may-not-write"
+  ],
   "not checkable": [
     "q:evidence.claim_triage",
+    "task:triage-claims-and-assess-sources",
     "task:why-claim-disputed-or-restated",
     "term:claim-triage"
   ],
@@ -1337,6 +1454,12 @@
   "open distribution": [
     "op:open_distribution"
   ],
+  "open sweep": [
+    "task:run-attention-sweep"
+  ],
+  "open sweeps": [
+    "q:acquisition.open_sweeps"
+  ],
   "open-world kinds": [
     "rel:content.document_kind_assignment"
   ],
@@ -1386,6 +1509,10 @@
   "overview": [
     "q:entity.card"
   ],
+  "p_actor": [
+    "task:write-verification-chain",
+    "term:governed-write"
+  ],
   "packet": [
     "q:retrieval.evidence_packet",
     "rel:retrieval.evidence_packet",
@@ -1420,6 +1547,9 @@
   ],
   "people": [
     "q:catalog.people"
+  ],
+  "person's judgment": [
+    "term:agent-proposed"
   ],
   "pin": [
     "term:probe"
@@ -1470,6 +1600,9 @@
     "task:price-with-locator",
     "task:record-price-change"
   ],
+  "prior": [
+    "task:triage-claims-and-assess-sources"
+  ],
   "prior knowledge": [
     "task:what-do-we-know-about-entity"
   ],
@@ -1503,6 +1636,9 @@
   ],
   "probe verdicts": [
     "rel:api.probes"
+  ],
+  "probe write": [
+    "task:propose-verdict-from-probe"
   ],
   "probes": [
     "dom:verified-knowledge",
@@ -1542,6 +1678,9 @@
   "propose research": [
     "op:propose_research"
   ],
+  "propose verdict": [
+    "task:propose-verdict-from-probe"
+  ],
   "proposed claim": [
     "term:claim-candidate"
   ],
@@ -1566,10 +1705,17 @@
   "quote": [
     "rel:evidence.locator",
     "task:admit-support-for-claim",
+    "task:record-claim-with-evidence",
     "term:locator"
+  ],
+  "quote anchor": [
+    "term:evidence-anchor"
   ],
   "quote from talk": [
     "task:talk-passage-at-timecode"
+  ],
+  "raise sweep": [
+    "task:run-attention-sweep"
   ],
   "ranking": [
     "dom:ranking",
@@ -1601,6 +1747,9 @@
   "reconciliation": [
     "term:claim-conflict"
   ],
+  "record claim": [
+    "task:record-claim-with-evidence"
+  ],
   "record deployment": [
     "op:record_deployment"
   ],
@@ -1612,6 +1761,15 @@
   ],
   "record grading": [
     "op:record_grading"
+  ],
+  "record probe run": [
+    "task:propose-verdict-from-probe"
+  ],
+  "record source assessment": [
+    "task:triage-claims-and-assess-sources"
+  ],
+  "record triage": [
+    "task:triage-claims-and-assess-sources"
   ],
   "reference data": [
     "term:vocabulary"
@@ -1630,6 +1788,9 @@
   ],
   "register file set": [
     "op:register_file_set"
+  ],
+  "register probe": [
+    "task:propose-verdict-from-probe"
   ],
   "rel kind": [
     "term:relationship-kind"
@@ -1656,7 +1817,8 @@
     "task:what-a-release-affects"
   ],
   "release review": [
-    "q:ours.releases_needing_review"
+    "q:ours.releases_needing_review",
+    "task:what-agents-may-not-write"
   ],
   "release transitions": [
     "dom:curriculum"
@@ -1682,6 +1844,9 @@
   ],
   "replay": [
     "q:entity.at"
+  ],
+  "replayed": [
+    "term:governed-write"
   ],
   "repo for talk": [
     "task:talk-to-repo-to-paper"
@@ -1731,6 +1896,9 @@
   "resolve appeal": [
     "op:resolve_appeal"
   ],
+  "restate claim": [
+    "task:record-claim-with-evidence"
+  ],
   "restated": [
     "task:why-claim-disputed-or-restated"
   ],
@@ -1742,6 +1910,9 @@
     "q:evidence.claim_restatements",
     "task:why-claim-disputed-or-restated",
     "term:restatement"
+  ],
+  "restatement write": [
+    "task:record-claim-with-evidence"
   ],
   "restatements": [
     "dom:verified-knowledge"
@@ -1762,6 +1933,9 @@
     "q:evidence.probe_revalidation_due",
     "term:due-list"
   ],
+  "revalidation write": [
+    "task:propose-verdict-from-probe"
+  ],
   "review": [
     "dom:staging"
   ],
@@ -1772,10 +1946,14 @@
     "op:review_revision"
   ],
   "review state": [
+    "term:agent-proposed",
     "term:verdict"
   ],
   "review tasks": [
     "dom:evaluation"
+  ],
+  "reviewed assessment": [
+    "term:agent-proposed"
   ],
   "revise work": [
     "op:revise_work"
@@ -1831,6 +2009,9 @@
   "rrf": [
     "task:run-hybrid-search",
     "term:hybrid-search"
+  ],
+  "running sweeps": [
+    "q:acquisition.open_sweeps"
   ],
   "schema workspace": [
     "term:workspace"
@@ -1926,6 +2107,12 @@
   "set watch state": [
     "op:set_watch_state"
   ],
+  "settle a sweep": [
+    "term:attention-sweep"
+  ],
+  "settle sweep": [
+    "task:run-attention-sweep"
+  ],
   "sha256": [
     "term:fingerprint"
   ],
@@ -1976,6 +2163,9 @@
     "dom:source-intelligence",
     "task:how-trusted-is-source",
     "term:source-registry"
+  ],
+  "source write": [
+    "task:triage-claims-and-assess-sources"
   ],
   "sources": [
     "q:evidence.sources_by_domain"
@@ -2093,13 +2283,17 @@
   ],
   "sweep": [
     "dom:source-intelligence",
-    "term:attention-policy"
+    "term:attention-policy",
+    "term:attention-sweep"
   ],
   "sweep history": [
     "rel:api.attention_policies"
   ],
   "sweeps": [
     "q:acquisition.attention_policies"
+  ],
+  "sweeps to settle": [
+    "q:acquisition.open_sweeps"
   ],
   "synonym": [
     "rel:catalog.entity_alias",
@@ -2178,6 +2372,9 @@
   "tests of a claim": [
     "q:evidence.probes"
   ],
+  "text_quote": [
+    "term:evidence-anchor"
+  ],
   "thread": [
     "op:append_message",
     "op:create_thread",
@@ -2237,6 +2434,9 @@
     "q:evidence.claim_triage",
     "term:claim-triage"
   ],
+  "triage write": [
+    "task:triage-claims-and-assess-sources"
+  ],
   "trigger": [
     "term:attention-policy"
   ],
@@ -2295,6 +2495,9 @@
   "unresolved": [
     "q:staging.unresolved"
   ],
+  "unsettled sweeps": [
+    "q:acquisition.open_sweeps"
+  ],
   "upgrade impact": [
     "task:what-a-release-affects"
   ],
@@ -2326,6 +2529,9 @@
   "vector space": [
     "term:vector-space"
   ],
+  "verbatim quote": [
+    "term:evidence-anchor"
+  ],
   "verdict": [
     "q:evidence.claim_verdicts",
     "term:verdict"
@@ -2335,6 +2541,9 @@
   ],
   "verdict of a claim": [
     "task:read-claim-with-evidence"
+  ],
+  "verdict write": [
+    "task:propose-verdict-from-probe"
   ],
   "verdicts": [
     "dom:verified-knowledge"
@@ -2361,6 +2570,9 @@
   ],
   "verified knowledge": [
     "term:verified-claim"
+  ],
+  "verify claim": [
+    "task:what-agents-may-not-write"
   ],
   "verify write": [
     "task:verify-ingestion-result"
@@ -2404,12 +2616,19 @@
   "watch levels": [
     "rel:api.attention_policies"
   ],
+  "watch mission write": [
+    "task:run-attention-sweep"
+  ],
   "watch policies": [
     "rel:api.attention_policies"
   ],
   "watch policy": [
     "q:acquisition.attention_policies",
     "term:attention-policy"
+  ],
+  "watch tick": [
+    "task:run-attention-sweep",
+    "term:attention-sweep"
   ],
   "what breaks": [
     "task:what-a-release-affects"
@@ -2469,6 +2688,9 @@
   "who is reliable on a topic": [
     "q:evidence.source_registry"
   ],
+  "who may write": [
+    "task:write-verification-chain"
+  ],
   "who speaks": [
     "rel:content.source_role"
   ],
@@ -2477,6 +2699,9 @@
   ],
   "who to believe about": [
     "task:how-trusted-is-source"
+  ],
+  "who wrote": [
+    "q:chain.governed_writes"
   ],
   "whose knowledge": [
     "term:lens"
@@ -2532,5 +2757,23 @@
   ],
   "write": [
     "task:compose-ingestion-intent"
+  ],
+  "write a claim": [
+    "task:write-verification-chain"
+  ],
+  "write claim": [
+    "task:record-claim-with-evidence"
+  ],
+  "write function": [
+    "term:governed-write"
+  ],
+  "write functions": [
+    "task:write-verification-chain"
+  ],
+  "write verdict": [
+    "task:propose-verdict-from-probe"
+  ],
+  "writes of a run": [
+    "q:chain.governed_writes"
   ]
 }

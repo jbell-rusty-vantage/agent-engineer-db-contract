@@ -4175,6 +4175,108 @@ export type Database = {
         Args: { p_operation: string; p_payload: Json }
         Returns: Json
       }
+      propose_verdict: {
+        Args: {
+          p_actor?: Json
+          p_cells: Json
+          p_claim_id: string
+          p_idempotency_key: string
+          p_probe_id: string
+          p_rationale: string
+          p_verdict: string
+        }
+        Returns: Json
+      }
+      raise_attention_sweep: {
+        Args: {
+          p_actor?: Json
+          p_idempotency_key: string
+          p_note?: string
+          p_policy: string
+          p_trigger_kind: string
+          p_trigger_ref?: Json
+          p_window_from?: string
+          p_window_to?: string
+        }
+        Returns: Json
+      }
+      record_claim: {
+        Args: {
+          p_actor?: Json
+          p_attributions?: Json
+          p_claim_type: string
+          p_evidence: Json
+          p_idempotency_key: string
+          p_statement: string
+          p_structured?: Json
+          p_subjects?: Json
+        }
+        Returns: Json
+      }
+      record_probe_run: {
+        Args: {
+          p_actor?: Json
+          p_cell?: Json
+          p_cell_label: string
+          p_idempotency_key: string
+          p_observations?: Json
+          p_outcome: string
+          p_output?: Json
+          p_probe_id: string
+          p_resolved?: Json
+          p_run?: Json
+          p_started_at: string
+          p_sweep_id?: string
+        }
+        Returns: Json
+      }
+      record_source_assessment: {
+        Args: {
+          p_actor?: Json
+          p_conflict_of_interest?: string
+          p_idempotency_key: string
+          p_method: string
+          p_method_disclosure?: string
+          p_rationale?: string
+          p_source_role_code?: string
+          p_subject_entity_id: string
+          p_topic_entity_id?: string
+        }
+        Returns: Json
+      }
+      record_triage: {
+        Args: {
+          p_actor?: Json
+          p_checkability: string
+          p_claim_id: string
+          p_components?: Json
+          p_disposition: string
+          p_duplicate_of_claim_id?: string
+          p_idempotency_key: string
+          p_priority?: number
+          p_probe_id?: string
+          p_rationale: string
+        }
+        Returns: Json
+      }
+      register_probe: {
+        Args: {
+          p_actor?: Json
+          p_budget_usd?: number
+          p_claims: Json
+          p_environment?: Json
+          p_hypothesis: string
+          p_idempotency_key: string
+          p_kind: string
+          p_matrix?: Json
+          p_model_policy?: string
+          p_script?: Json
+          p_slug: string
+          p_subject_entity_ids?: string[]
+          p_title: string
+        }
+        Returns: Json
+      }
       related: {
         Args: {
           p_at?: string
@@ -4236,6 +4338,18 @@ export type Database = {
           kind: string
           score: number
         }[]
+      }
+      restate_claim: {
+        Args: {
+          p_actor?: Json
+          p_dropped?: string
+          p_idempotency_key: string
+          p_original_claim_id: string
+          p_polarity?: Json
+          p_qualified?: boolean
+          p_statement: string
+        }
+        Returns: Json
       }
       search_knowledge: {
         Args: {
@@ -4334,6 +4448,21 @@ export type Database = {
           vector_item_id: string
           workspace_id: string
         }[]
+      }
+      settle_attention_sweep: {
+        Args: {
+          p_actor?: Json
+          p_credits?: number
+          p_idempotency_key: string
+          p_items_captured: number
+          p_items_seen: number
+          p_items_selected: number
+          p_outcome: string
+          p_rejected?: Json
+          p_spend_usd?: number
+          p_sweep_id: string
+        }
+        Returns: Json
       }
       submit_intent: {
         Args: {
@@ -23302,6 +23431,49 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      chain_anchor: {
+        Args: { p_function: string; p_spec: Json; p_tenant: string }
+        Returns: Record<string, unknown>
+      }
+      chain_begin: {
+        Args: {
+          p_actor: Json
+          p_function: string
+          p_key: string
+          p_request: Json
+        }
+        Returns: Json
+      }
+      chain_fail: {
+        Args: { p_code: string; p_detail?: string; p_state: string }
+        Returns: undefined
+      }
+      chain_norm: { Args: { p_text: string }; Returns: string }
+      chain_record: {
+        Args: {
+          p_ctx: Json
+          p_function: string
+          p_refs: Json
+          p_request: Json
+          p_result: Json
+        }
+        Returns: Json
+      }
+      chain_sha: { Args: { p_text: string }; Returns: string }
+      chain_target: {
+        Args: {
+          p_action: string
+          p_claim?: string
+          p_ctx: Json
+          p_id: string
+          p_receipt: string
+          p_role: string
+          p_schema: string
+          p_table: string
+        }
+        Returns: undefined
+      }
+      chain_uuid: { Args: { p_code: string; p_text: string }; Returns: string }
       record_admitted_claim_verification: {
         Args: {
           p_bound_effect_digest: string

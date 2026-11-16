@@ -1,14 +1,14 @@
 ---
 id: start
 kind: entry
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
-migration_head: "20261116120000"
-contract_version: "0.7.0"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+migration_head: "20261116130000"
+contract_version: "0.8.0"
 scope: null
 ---
 # Start here
 
-AI Engineer database at head `20261116120000` (contract 0.7.0); generated from the catalog, `> curated` blocks are guidance.
+AI Engineer database at head `20261116130000` (contract 0.8.0); generated from the catalog, `> curated` blocks are guidance.
 
 ## Router: question shape → level → page
 
@@ -34,4 +34,4 @@ AI Engineer database at head `20261116120000` (contract 0.7.0); generated from t
 
 ## Writing
 
-Apps and agents write through product operations (`ops/`); canonical facts only via `executor_service` (`temporal.begin_batch` → `assert_*` → `commit_batch`, under a receipt). You author intents; the executor writes.
+Apps and agents write through product operations (`ops/`); canonical facts only via `executor_service` (`temporal.begin_batch` → `assert_*` → `commit_batch`, under a receipt). You author intents; the executor writes. Claims, probes, verdicts, triage and sweeps go through governed `api` writes: [tasks/write-verification-chain.md](tasks/write-verification-chain.md).

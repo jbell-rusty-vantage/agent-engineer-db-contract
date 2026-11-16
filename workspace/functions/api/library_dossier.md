@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [api.probes, api.source_registry, catalog.entity, catalog.relationship, evidence.claim, evidence.claim_subject], writes: [] }
 tokens: [api, library_dossier, api.library_dossier]
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # api.library_dossier
 

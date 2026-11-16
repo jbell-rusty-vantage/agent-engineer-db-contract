@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, pipeline_agent, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_intent\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # orchestration.operation_intent
 
@@ -83,14 +83,14 @@ Enabled; 1 policies in [details](operation_intent.details.md).
 
 ## Read paths
 
-- Named queries: `q:receipts.for_intent`, `q:receipts.recent_for_mission`.
+- Named queries: `q:chain.governed_writes`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`.
 - Exposed through: [`api.verified_claims`](../api/verified_claims.md), [`orchestration.mission_run_effects`](mission_run_effects.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`.
 
 ## Write path
 
 - Direct DML: `control_plane`, `executor_service`, `pipeline_agent`.
-- Via functions (best effort): [`api.submit_intent`](../../functions/api/submit_intent.md), [`verification.record_admitted_claim_verification`](../../functions/verification/record_admitted_claim_verification.md).
+- Via functions (best effort): [`api.submit_intent`](../../functions/api/submit_intent.md), [`verification.chain_record`](../../functions/verification/chain_record.md), [`verification.record_admitted_claim_verification`](../../functions/verification/record_admitted_claim_verification.md).
 
 ## TypeScript
 

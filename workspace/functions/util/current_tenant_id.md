@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, current_tenant_id, util.current_tenant_id]
 defined_in: ["20260826001550_rls_policies.sql", "20260903010200_knowledge_runtime_security.sql", "20261115130000_build08_d82_signed_in_knowledge_reads.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # util.current_tenant_id
 
@@ -29,7 +29,7 @@ Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_servi
 
 Touches (best effort): reads —; writes —; calls [`util.default_tenant_id`](default_tenant_id.md).
 
-Named queries: `q:acquisition.fetches_for_url`, `q:artifacts.by_type`, `q:content.refresh_checks`, `q:content.unit_changes`, `q:entity.attributes`, `q:entity.by_identifier`, `q:evidence.captures_for_source`, `q:evidence.claim_support`, `q:evidence.claims_for_entity`, `q:evidence.sources_by_domain`, `q:facts.history_for_stream`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`, `q:staging.candidates_for_kind`, `q:staging.unresolved`.
+Named queries: `q:acquisition.fetches_for_url`, `q:acquisition.open_sweeps`, `q:artifacts.by_type`, `q:chain.governed_writes`, `q:content.refresh_checks`, `q:content.unit_changes`, `q:entity.attributes`, `q:entity.by_identifier`, `q:evidence.captures_for_source`, `q:evidence.claim_support`, `q:evidence.claims_for_entity`, `q:evidence.sources_by_domain`, `q:facts.history_for_stream`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`, `q:staging.candidates_for_kind`, `q:staging.unresolved`.
 
 TypeScript: `Database["util"]["Functions"]["current_tenant_id"]`.
 

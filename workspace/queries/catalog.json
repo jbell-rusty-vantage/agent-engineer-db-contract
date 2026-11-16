@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace",
+  "catalogVersion": "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1",
   "defaults": {
     "limit": 200,
     "maxLimit": 2000,
@@ -207,6 +207,72 @@
         "world_time": "n/a"
       },
       "title": "Fetch ledger rows for a URL (who fetched, with what tool, outcome, hash, spend)",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "source-intelligence",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "mission_id": null
+      },
+      "id": "q:acquisition.open_sweeps",
+      "kind": "named_query",
+      "name": "acquisition.open_sweeps",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "mission_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "mission_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "sweep_id",
+          "policy",
+          "trigger_kind",
+          "origin_kind",
+          "mission_id",
+          "mc_run_id",
+          "started_at",
+          "note",
+          "budget_usd_per_run"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select s.id as sweep_id, p.slug as policy, s.trigger_kind, s.origin_kind, s.mission_id, s.trigger_ref ->> 'mc_run_id' as mc_run_id,\n       s.started_at, s.note, p.budget_usd_per_run\nfrom acquisition.attention_sweep s\njoin acquisition.attention_policy p on p.id = s.policy_id\nwhere s.tenant_id = util.current_tenant_id() and s.ended_at is null\n  and ($1::uuid is null or s.mission_id = $1)\norder by s.started_at desc, s.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "run-attention-sweep"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "now()"
+      },
+      "title": "Attention sweeps that were opened and not settled yet, with their policy, trigger and mission",
       "volatile": true
     },
     {
@@ -1199,6 +1265,91 @@
       },
       "title": "L1 talks with event, speakers, topics, linked repositories and recording links",
       "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "orchestration-ledger",
+      "embedding": null,
+      "example": {
+        "function": "api.propose_verdict",
+        "key": null,
+        "limit": 20,
+        "mc_run_id": null
+      },
+      "id": "q:chain.governed_writes",
+      "kind": "named_query",
+      "name": "chain.governed_writes",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "function",
+        "mc_run_id",
+        "key",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "function": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "key": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "mc_run_id": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "intent_id",
+          "function",
+          "idempotency_key",
+          "session_role",
+          "actor_label",
+          "origin_kind",
+          "mc_run_id",
+          "mc_operation_id",
+          "mc_operation_attempt",
+          "mission_id",
+          "created_at"
+        ],
+        "shape": "rows"
+      },
+      "role": "pipeline_agent",
+      "sql": "select i.id as intent_id, i.payload ->> 'function' as function, substr(i.idempotency_key, 7) as idempotency_key,\n       i.payload -> 'actor' ->> 'session_role' as session_role, i.payload -> 'actor' ->> 'label' as actor_label,\n       i.origin_kind, i.mc_run_id, i.mc_operation_id, i.mc_operation_attempt, i.mission_id, i.created_at\nfrom orchestration.operation_intent i\nwhere i.tenant_id = util.current_tenant_id() and i.intent_type = 'governed_chain_write'\n  and ($1::text is null or i.payload ->> 'function' = $1)\n  and ($2::text is null or i.mc_run_id = $2)\n  and ($3::text is null or i.idempotency_key = 'chain:' || $3)\norder by i.created_at desc, i.id\nlimit least(greatest(coalesce($4, 20), 1), 200)\n",
+      "tasks": [
+        "write-verification-chain",
+        "what-agents-may-not-write"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "n/a"
+      },
+      "title": "Governed writes of the verification chain, by function, idempotency key or Mission Control run (who acted, for which mission)",
+      "volatile": true
     },
     {
       "cost_class": "cheap",
@@ -4662,7 +4813,7 @@
       "volatile": false
     }
   ],
-  "migrationHead": "20261116120000",
+  "migrationHead": "20261116130000",
   "schemaVersion": "knowledge-query-catalog.v1",
-  "workspaceFingerprint": "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+  "workspaceFingerprint": "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 }

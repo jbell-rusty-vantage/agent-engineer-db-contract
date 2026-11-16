@@ -13,7 +13,7 @@ raises: [active vector store is required]
 touches: { reads: [retrieval.vector_store], writes: [] }
 tokens: [retrieval, require_active_vector_store_reference, retrieval.require_active_vector_store_reference]
 defined_in: ["20260904015000_vector_store_lifecycle_control_plane.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # retrieval.require_active_vector_store_reference
 

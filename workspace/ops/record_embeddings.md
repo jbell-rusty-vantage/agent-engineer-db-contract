@@ -8,7 +8,7 @@ call: api.product_worker
 lens: ours
 relations: [authoring.work_revision, library.passage, library.resource_control, retrieval.projection_target, retrieval.vector_item]
 tokens: [record_embeddings, worker, api.product_worker]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # record_embeddings
 

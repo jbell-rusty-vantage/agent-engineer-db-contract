@@ -74,7 +74,13 @@
     "why-claim-disputed-or-restated",
     "how-trusted-is-source",
     "what-is-due",
-    "what-a-release-affects"
+    "what-a-release-affects",
+    "write-verification-chain",
+    "record-claim-with-evidence",
+    "propose-verdict-from-probe",
+    "triage-claims-and-assess-sources",
+    "run-attention-sweep",
+    "what-agents-may-not-write"
   ],
   "queries": [
     "entity.*",
@@ -94,7 +100,8 @@
     "acquisition.attention_policies",
     "acquisition.attention_due",
     "ours.releases_needing_review",
-    "ours.modules_affected_by_release"
+    "ours.modules_affected_by_release",
+    "chain.*"
   ],
   "operations": []
 }

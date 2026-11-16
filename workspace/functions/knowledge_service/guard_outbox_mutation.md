@@ -13,7 +13,7 @@ raises: [outbox event linkage and payload are immutable, outbox messages cannot 
 touches: { reads: [], writes: [] }
 tokens: [knowledge_service, guard_outbox_mutation, knowledge_service.guard_outbox_mutation]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # knowledge_service.guard_outbox_mutation
 

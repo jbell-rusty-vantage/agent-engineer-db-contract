@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_assessment\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evidence.source_assessment
 
@@ -65,7 +65,7 @@ table in domain `source-intelligence`, lens `evidence` — Loop 4: what we know 
 
 ## Triggers
 
-0 triggers; see [details](source_assessment.details.md).
+2 triggers; see [details](source_assessment.details.md).
 
 ## Row-level security
 
@@ -84,7 +84,7 @@ Enabled; 1 policies in [details](source_assessment.details.md).
 ## Write path
 
 - Direct DML: `control_plane`, `pipeline_agent`, `verifier_agent`.
-- Via functions (best effort): [`evidence.derive_source_assessment`](../../functions/evidence/derive_source_assessment.md).
+- Via functions (best effort): [`api.record_source_assessment`](../../functions/api/record_source_assessment.md), [`evidence.derive_source_assessment`](../../functions/evidence/derive_source_assessment.md).
 
 ## TypeScript
 

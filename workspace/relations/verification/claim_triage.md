@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Row\"]"
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # verification.claim_triage
 
@@ -57,7 +57,8 @@ Inbound: [`verification.claim_triage`](claim_triage.md).supersedes_id.
 
 ## Triggers
 
-_None._
+- `claim_triage_append_only` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+- `claim_triage_human_judgment` → [`verification.guard_human_judgment`](../../functions/verification/guard_human_judgment.md)
 
 ## Row-level security
 
@@ -77,6 +78,7 @@ Enabled.
 ## Write path
 
 - Direct DML: `control_plane`, `pipeline_agent`, `verifier_agent`.
+- Via functions (best effort): [`api.record_triage`](../../functions/api/record_triage.md).
 
 ## TypeScript
 

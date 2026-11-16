@@ -26,7 +26,7 @@
   "sourceState": "Filesystem snapshot; may include uncommitted changes. No deployment or commit claim.",
   "inputs": {
     ".agent-docs/config.json": "a6a79525e9c3b0e56868b4e3f78def7e9ad69d3fab812a3faab997acc3e55c02",
-    "README.md": "a50dbbb28d1f0f620e3f90d917e6cd12ef776d38ad85bb9117d47db51f2d7b7e",
+    "README.md": "aa1dbc28827187061927c9ffbee2034a5b686c143b769f14d21bb49fc09c1e11",
     "docs/SCHEMA_WORKSPACE_MATERIALIZATION_SPEC.md": "ed3318757c33cfb557448f57135d358e595487b354c3d65569a23461d15ce5e5",
     "docs/knowledge-model/MIGRATION-RESULT.md": "b236fb2423c0faf887749b03835cde6ade5b152bf851eb8527a664d6246e12e6",
     "docs/knowledge-model/SCHEMA-SUMMARY.md": "e94b40020ff3d1d3acb50406b2b18df620cb5f564854aff35816433a0526a703",
@@ -34,7 +34,7 @@
     "docs/schema-workspace/INTENT_AND_EXECUTOR_CONTRACTS.md": "a30e2ef4b9550567d501df1216b603ae191563130f269db669f1991e7f65167d",
     "docs/schema-workspace/SKILLS.md": "c28c597d371f81b1c2743312d4d2cefb11a00c9b51525457e836e52a5a99f2d0",
     "docs/schema-workspace/WORKSPACE_LAYOUT_AND_SAMPLES.md": "b26b243a7925ff87a115190d2e7115199534b5bbc092136ec29d0dc8030c0359",
-    "package.json": "cf9ce21e69eb2ac046e92057b0db18a723a883bab6665553d6085189cbbae7c9",
+    "package.json": "60d695a369e338af3f8fcbc15ffa91a415c304fb04db1691a5b8cb1ba6172d09",
     "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
     "scripts/reset-disposable-local.mjs": "0b6e40c2557a39eeddef6909001a53eab39ead8592bc912afd39bf597bbeaa42",
     "scripts/schema-workspace/cli.mjs": "bdfc2e8b5dac50a2ae2763bb4f60b2062efb61147f7f749ac6951b5833e1e377",
@@ -43,7 +43,7 @@
   "semantic": {
     "inputs": {
       ".agent-docs/modules.json": "91a2439f1a9c1492c3ac24e1ef2fc8f62ef7360542668d9b9b9aae9c6ee427d0",
-      "package.json": "cf9ce21e69eb2ac046e92057b0db18a723a883bab6665553d6085189cbbae7c9",
+      "package.json": "60d695a369e338af3f8fcbc15ffa91a415c304fb04db1691a5b8cb1ba6172d09",
       "scripts/generate-types-native.mjs": "cacbe7b47a66cde35bbe2113a07368b8c31ece6c0cd1eab8848813d187b59fd4",
       "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
       "scripts/install-ai-engineer.mjs": "567fbca64f432b418685c60e51591c2bf0a0d156eb69d15716cad049d5bc59ad",
@@ -60,15 +60,15 @@
       "scripts/schema-workspace/lib/validate.mjs": "cdb457c4797b78b6feb173bb1e49ef1f9ba21d51c5b32fdeebb25ed6ff689312",
       "scripts/schema-workspace/README.md": "a55b40c783afa83ef79f2f64f2613cb7c33eba8aa0f4e9a32108334346ffb3de",
       "scripts/schema-workspace/test/helpers.test.mjs": "0551367c902bce871b9682b8e3a883ef4e839e71326244d35cb7574a680ba27d",
-      "src/api.ts": "f2b5d22c7b750020efc19ceeaaf8a31bee6409c1115d5643c5b3636991d5cb0b",
+      "src/api.ts": "6e6f6ac59910d1e4017220eeec37c5306455e84a878092cded98fe251b38de02",
       "src/index.ts": "d940fa0c5211020fae288e31b5108b4974609ddc9da29b98a926f1f41b9a1572",
       "supabase/config.toml": "d08bc818a526927d776192c96919ef37eb85352088a02ebfacbdcd87bb7fd509",
       "supabase/tests/legacy_verification_withdrawal.sql": "4590702a9bfadcd48fb3bad488044521f721f3407835e130fc06f9ee1b25324a",
       "supabase/tests/verification_evaluation_dataset_manifest.sql": "315728d1eb025e0ca42142d1a2f87b2b7ea9929cd28c4792a6cb2a5e9cc310bb",
-      "workspace-enrichment/domains.yaml": "fd0f3ee7d2c9536c7ed77474a1fd9354192f67e4196f1b5f7d250d1c45cf8892",
-      "workspace-enrichment/queries.yaml": "2eb9439cb5744ca2e93c3e972fa3177718e903bd9cfeb098f1b1f9df6cc1feec",
+      "workspace-enrichment/domains.yaml": "6365b6c25d5b6103df0faf3833137626f2663431f38cab17482eda319de79fc5",
+      "workspace-enrichment/queries.yaml": "e9f07a2b9dae006c70e6e7f1ce641b82af3ce83cccbd02033b568bb0764eae01",
       "workspace-enrichment/README.md": "aefc06053d815752effb08147104c98af9785e837c6339c0f803f2fa67c3cacb",
-      "workspace-scopes/db-aware-research.json": "dfa9eefac4466c6f43aac897713bb055f6a59386e292c31c6d3fd94dd577146d",
+      "workspace-scopes/db-aware-research.json": "74d59b8e38d9bba439a6c26a60b11b2ea27e3c447ed443c3a30e1ab4e9657840",
       "workspace.config.json": "4f75a5b3e163221da9ce34e5ab34af3307de14b192df12a7ce7fbbf9bff230c0"
     },
     "inventories": {}

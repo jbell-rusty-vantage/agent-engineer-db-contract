@@ -5,7 +5,7 @@
 -- role that opened the plan.
 begin;
 create extension if not exists pgtap with schema extensions;
-select extensions.plan(51);
+select extensions.plan(52);
 
 \set tenant '00000000-0000-7000-8000-000000000001'
 \set user_a 'adc00000-0000-4000-8000-00000000000a'
@@ -56,7 +56,17 @@ select extensions.is((select coalesce(string_agg(c.oid::regclass::text, ', ' ord
      and (has_table_privilege('anon', c.oid, 'select') or has_table_privilege('anon', c.oid, 'insert') or has_table_privilege('anon', c.oid, 'update') or has_table_privilege('anon', c.oid, 'delete')
           or exists (select 1 from aclexplode(coalesce(c.relacl, acldefault('r', c.relowner))) a where a.grantee = 0))),
   '', 'no api relation grants anything to PUBLIC or anon');
-select extensions.cmp_ok((select count(*) from pg_proc p where p.pronamespace = 'api'::regnamespace), '>=', 59::bigint, 'the api schema holds its routines (the checks above are not vacuous)');
+select extensions.cmp_ok((select count(*) from pg_proc p where p.pronamespace = 'api'::regnamespace), '>=', 68::bigint, 'the api schema holds its routines, the nine governed chain writes included (the checks above are not vacuous)');
+-- The governed chain writes (20261116130000) change shared knowledge: no API role holds one, directly or through PUBLIC, and
+-- each is held by name by at least one bounded service role (supabase/tests/governed_chain_writes.sql has the exact table).
+select extensions.is((select coalesce(string_agg(p.proname || case when not exists (select 1 from pg_roles r where r.rolname in ('pipeline_agent','verifier_agent','executor_service','control_plane') and has_function_privilege(r.oid, p.oid, 'execute')) then ' (no bounded role)' else '' end, ', ' order by p.proname)
+      filter (where has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('authenticated', p.oid, 'execute') or has_function_privilege('app_reader', p.oid, 'execute')
+                 or has_function_privilege('product_api_owner', p.oid, 'execute')
+                 or not exists (select 1 from pg_roles r where r.rolname in ('pipeline_agent','verifier_agent','executor_service','control_plane') and has_function_privilege(r.oid, p.oid, 'execute'))), '')
+      || ' / ' || count(*)
+   from pg_proc p where p.pronamespace = 'api'::regnamespace
+    and p.proname in ('record_claim','restate_claim','register_probe','record_probe_run','propose_verdict','record_triage','record_source_assessment','raise_attention_sweep','settle_attention_sweep')),
+  ' / 9', 'the nine governed chain writes are held by bounded service roles only: not by anon, a signed-in user, app_reader or the product owner');
 -- A view runs the functions it names as the role that reads it: no role may be left with a view it cannot evaluate.
 select extensions.is((select coalesce(string_agg(r.rolname || ' reads ' || x.v::regclass || ' without ' || x.f::regprocedure, '; ' order by r.rolname, x.v::regclass::text, x.f::regprocedure::text), '')
    from (select distinct rw.ev_class v, d.refobjid f from pg_depend d join pg_rewrite rw on rw.oid = d.objid join pg_class c on c.oid = rw.ev_class

@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, evidence.segment_support, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, model_offerings_at, api.model_offerings_at]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # api.model_offerings_at
 

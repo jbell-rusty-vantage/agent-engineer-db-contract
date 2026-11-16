@@ -13,21 +13,21 @@
     "task_bytes": 5120
   },
   "build": {
-    "catalog_version": "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace",
-    "contract_version": "0.7.0",
-    "enrichment_sha256": "sha256:cb6affa02c52946cbd0019cc2b63fb3fc3855fb33ee4338c0039fcc878421a33",
-    "fingerprint": "sha256:b72ff7130a3107d5c20f6e0f24497fa8df6f3c72bca885e3bdac5940eb611a49",
-    "generated_types_sha256": "sha256:5858ae58ef064e6d3686492b0d1fefed037431b5c7ccf6f9a7253f6fe7a1615a",
-    "migration_head": "20261116120000",
+    "catalog_version": "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1",
+    "contract_version": "0.8.0",
+    "enrichment_sha256": "sha256:3d2e100fd2971e9d9964aa426481202d3e7a89b33747566c2f2ea111e11826a2",
+    "fingerprint": "sha256:0c3261c3215ba1fd32f76583b07e4cd3b7dd222d63e49f387bfb0a3fd12ee53e",
+    "generated_types_sha256": "sha256:8031c7f4f795550e05dd2c745caf83ec39264187f57d7f2429391bf81ca67b5f",
+    "migration_head": "20261116130000",
     "renderer_version": "4.0.0",
     "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-16T16:00:46.943Z",
+      "introspected_at": "2026-11-16T21:44:28.954Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+    "workspace_fingerprint": "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
   },
   "entry_points": [
     "START_HERE.md",
@@ -40,24 +40,24 @@
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
     "domains": 25,
-    "functions": 279,
+    "functions": 297,
     "operations": 81,
-    "queries": 69,
+    "queries": 71,
     "relation_details": 85,
     "relation_stubs": 0,
     "relations": 350,
     "schemas": 27,
-    "tasks": 33,
+    "tasks": 39,
     "types": 10,
     "vocabularies": 13
   },
   "scope": null,
   "sizes": {
-    "files": 915,
+    "files": 939,
     "largest": {
-      "bytes": 5195691,
+      "bytes": 5292004,
       "path": "schema-ir.json"
     },
-    "total_bytes": 8856634
+    "total_bytes": 9065053
   }
 }

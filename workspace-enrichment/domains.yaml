@@ -815,8 +815,8 @@ domains:
     aliases: [verified claims, claim candidates, verdicts, probes, probe runs, probe matrix, conflicts, restatements, claim triage, disputed claims, what is verified]
     schemas: []
     relations: [api.verified_claims, api.claim_candidates, api.claim_verdicts, api.claim_conflicts, api.claim_restatements, api.claim_triage, api.claim_surfaces, api.community_claims, api.probes, verification.probe, verification.probe_claim, verification.probe_run, verification.probe_verdict, verification.claim_triage, evidence.claim_conflict]
-    functions: [api.probe_matrix, api.probe_revalidation_due, api.releases_needing_review, api.library_dossier, api.interview_outputs]
-    tasks: [what-is-verified-about-subject, read-claim-with-evidence, why-claim-disputed-or-restated, what-is-due, what-a-release-affects]
+    functions: [api.probe_matrix, api.probe_revalidation_due, api.releases_needing_review, api.library_dossier, api.interview_outputs, api.record_claim, api.restate_claim, api.register_probe, api.record_probe_run, api.propose_verdict, api.record_triage]
+    tasks: [what-is-verified-about-subject, read-claim-with-evidence, why-claim-disputed-or-restated, what-is-due, what-a-release-affects, write-verification-chain, record-claim-with-evidence, propose-verdict-from-probe, triage-claims-and-assess-sources, what-agents-may-not-write]
     queries: [evidence.verified_claims, evidence.claim, evidence.claim_verdicts, evidence.claim_conflicts, evidence.claim_restatements, evidence.claim_triage, evidence.probes, evidence.probe_matrix, evidence.probe_revalidation_due, ours.releases_needing_review]
     summary: A claim is a candidate until a probe judges it and a Knowledge Services admission verifies it; conflicts and restatements are kept beside it.
     body: |
@@ -860,8 +860,15 @@ domains:
 
       Start with `q:evidence.verified_claims`; one claim in depth is `q:evidence.claim`,
       `q:evidence.claim_verdicts` and `q:evidence.probe_matrix`. Sources and watch policies are
-      the source-intelligence domain. Writing a verdict or an admission is the pipeline's work
-      (verifier_agent, executor_service), not a read role's.
+      the source-intelligence domain.
+
+      **Writing.** An agent role writes this chain through governed functions, never by
+      inserting rows: `api.record_claim`, `api.restate_claim`, `api.register_probe`,
+      `api.record_probe_run`, `api.propose_verdict` and `api.record_triage`
+      (`tasks/write-verification-chain.md`). Each is idempotent on a caller key and leaves a
+      receipt naming the role and the mission run. What they never do: verify a claim (only a
+      Knowledge Services admission does) or record a person's review
+      (`tasks/what-agents-may-not-write.md`). A read role writes nothing.
 
   - slug: source-intelligence
     title: Source intelligence and attention (registry, track record, watch policies)
@@ -871,9 +878,9 @@ domains:
     aliases: [source registry, source assessment, track record, source trust, authority score, attention policy, watch level, sweep, due list, what to watch]
     schemas: []
     relations: [api.source_registry, api.source_track_record, api.attention_policies, evidence.source_assessment, acquisition.attention_policy, acquisition.attention_sweep]
-    functions: [api.attention_due]
-    tasks: [how-trusted-is-source, what-is-due]
-    queries: [evidence.source_registry, evidence.source_track_record, acquisition.attention_policies, acquisition.attention_due]
+    functions: [api.attention_due, api.record_source_assessment, api.raise_attention_sweep, api.settle_attention_sweep]
+    tasks: [how-trusted-is-source, what-is-due, run-attention-sweep, triage-claims-and-assess-sources, write-verification-chain]
+    queries: [evidence.source_registry, evidence.source_track_record, acquisition.attention_policies, acquisition.attention_due, acquisition.open_sweeps]
     summary: What we know about each source on each topic, from the claims it stated and how they checked out; and what we watch, how often, on what budget.
     body: |
       **Source registry.** `evidence.source_assessment` records what we know about a source (a
@@ -904,5 +911,8 @@ domains:
       domain; `tasks/what-is-due.md` reads all three.
 
       Start with `q:evidence.source_registry` for trust and `q:acquisition.attention_due` for
-      work. Assessments and policies are written by the pipeline and by a design interview, not
-      by a read role.
+      work. An agent role records a prior or a derived assessment with
+      `api.record_source_assessment` and runs a sweep with `api.raise_attention_sweep` and
+      `api.settle_attention_sweep` (`tasks/run-attention-sweep.md`). Policies (what to watch,
+      on what budget) and reviewed assessments are a person's decisions: no agent function
+      writes them, and a read role writes nothing.

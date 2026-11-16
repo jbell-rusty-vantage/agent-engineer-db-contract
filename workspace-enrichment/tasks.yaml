@@ -1012,3 +1012,215 @@ tasks:
       The order is causal and takes time: a release makes probes due, a rerun may change a verdict, and only then does a frozen release need review, so `frozen` is empty right after a release. `modules` lists head revisions authored before the release; `breaking` rows first. Verified claims about the software were verified on the versions in `q:evidence.probe_matrix`; until the due probes rerun, say which version a claim was checked on. A signed-in user sees the modules they may read and the releases of their workspaces; database roles see all. Authoring the fix is `tasks/modules-affected-by-release.md`.
     provenance: model_assisted
     reviewed: null
+
+  # ---------------------------------------------------------------- governed writes of the verification chain (contract 0.8.0)
+  - slug: write-verification-chain
+    title: How do I write the verification chain (claim, probe, verdict, triage, assessment, sweep)?
+    domains: [verified-knowledge, source-intelligence, orchestration-ledger]
+    queries: [chain.governed_writes, evidence.claim, evidence.claim_verdicts, acquisition.attention_due]
+    aliases: [governed write, write a claim, agent write, mission write, idempotency key, p_actor, chain write, who may write, write functions]
+    navigation: |
+      `START_HERE.md` (Writing) → this page → the task for the step → `functions/api/<name>.md`.
+    operation: |
+      Nine functions, one per write. Call them as a bounded role with the tenant set for the transaction; never insert the rows.
+
+      | Step | Function | Roles | Task |
+      |---|---|---|---|
+      | record a claim with evidence | `api.record_claim` | pipeline_agent, executor_service | `tasks/record-claim-with-evidence.md` |
+      | restate a claim | `api.restate_claim` | pipeline_agent, executor_service | same |
+      | register a probe | `api.register_probe` | pipeline_agent, verifier_agent, control_plane | `tasks/propose-verdict-from-probe.md` |
+      | record a probe run | `api.record_probe_run` | same three | same |
+      | propose a verdict | `api.propose_verdict` | same three | same |
+      | triage a candidate | `api.record_triage` | same three | `tasks/triage-claims-and-assess-sources.md` |
+      | assess a source | `api.record_source_assessment` | same three | same |
+      | open and settle a sweep | `api.raise_attention_sweep`, `api.settle_attention_sweep` | pipeline_agent, control_plane | `tasks/run-attention-sweep.md` |
+
+      ```sql
+      begin;
+      select set_config('app.tenant_id', '00000000-0000-7000-8000-000000000001', true);
+      set local role pipeline_agent;
+      select api.record_claim(
+        p_idempotency_key => 'run-2fa5:claim:7',
+        p_claim_type => 'assertion',
+        p_statement => 'create_agent ends the loop when tool_calls is empty.',
+        p_evidence => '[{"capture_id":"0192d000-0000-7000-8000-000000000001","node_id":"0192d000-0000-7000-8000-000000000002","quote":"the loop exits when tool_calls is empty"}]',
+        p_actor => '{"label":"ks:claim-extractor","mission_id":"0192a000-0000-7000-8000-000000000001","mc":{"mission_id":"m-1","run_id":"2fa5e2ab","operation_id":"op-3","operation_attempt":1,"execution_generation":0,"lane":"deep_agents"}}');
+      commit;
+      ```
+
+      Every function takes `p_idempotency_key` first and `p_actor` last. `p_actor` is optional: `label` (the agent or tool), `mission_id` (the `orchestration.mission` whose budget bounds the work), `mc` (the Mission Control invocation: all of `mission_id`, `run_id`, `operation_id`, `operation_attempt`, `execution_generation`, `lane`), `origin_digest`.
+    expected_shape: |
+      One JSON object: the ids written, plus `intent_id`, `receipt_id` and `replayed`. The same key with the same arguments returns the first result with `replayed` true and writes nothing (the actor is not compared, so a later attempt of the same operation replays). `q:chain.governed_writes` lists the writes of a function, a key or a Mission Control run.
+    pitfalls: |
+      The tenant is `app.tenant_id` of the transaction, never an argument: without it the call fails `TENANT_CONTEXT_REQUIRED`. A failure's message is a stable code; the SQLSTATE is its class (42501 not allowed, 22023 malformed argument, P0002 not found in the tenant, 23514 the row's state refuses, 23505 taken). The same key with other arguments is `IDEMPOTENCY_KEY_REUSED`: derive the key from the operation, not from the attempt. A `label` that starts with `human` is `ACTOR_INVALID`. Order matters: a verdict needs a registered probe with a recorded run in every cell it cites.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: record-claim-with-evidence
+    title: How do I record a claim with its evidence, or restate one?
+    domains: [verified-knowledge, evidence]
+    queries: [evidence.claim, evidence.claim_restatements, content.document_units, evidence.captures_for_source]
+    aliases: [record claim, write claim, new claim, claim candidate write, evidence anchor, locator, quote, restate claim, restatement write, atomized claim]
+    navigation: |
+      `tasks/write-verification-chain.md` → `functions/api/record_claim.md` or `functions/api/restate_claim.md` → `q:evidence.claim` to read it back.
+    operation: |
+      `api.record_claim` (pipeline_agent, executor_service) stores a statement as `proposed` with 1 to 50 evidence anchors. An anchor is an existing locator, or a quote that is verbatim in a content unit of a capture:
+
+      ```sql
+      select api.record_claim(
+        p_idempotency_key => 'thread-36957:claim:2',
+        p_claim_type => 'assertion',
+        p_statement => 'The post states that checkpoint_ns in the config is not stored.',
+        p_evidence => '[{"capture_id":"0192d000-0000-7000-8000-000000000001","node_id":"0192d000-0000-7000-8000-000000000002","quote":"checkpoint_ns is ignored","role":"context"},
+                        {"locator_id":"0192d000-0000-7000-8000-000000000003","role":"supports"}]',
+        p_subjects => '["0192b000-0000-7000-8000-000000000011"]',
+        p_attributions => '[{"entity_id":"0192b000-0000-7000-8000-000000000012","role":"stated_by"}]',
+        p_structured => '{"path":"community_thread","source_role":"community","stated_at":"2026-11-10"}');
+      ```
+
+      `api.restate_claim` turns an attribution-framed proposed claim ("the post states that X") into X, the statement a probe can test:
+
+      ```sql
+      select api.restate_claim(
+        p_idempotency_key => 'thread-36957:claim:2:restate',
+        p_original_claim_id => '0192b000-0000-7000-8000-000000000001',
+        p_statement => 'Passing checkpoint_ns in the config does not change where a root invoke stores checkpoints.',
+        p_qualified => false, p_dropped => 'attribution', p_polarity => '{"negative":true}');
+      ```
+
+      Find `node_id` and the text to quote with `q:content.document_units`.
+    expected_shape: |
+      `record_claim`: `claim_id`, `created`, `reused`, `status`, `locator_ids`, `subjects`, `attributions`. `restate_claim`: `claim_id`, `original_claim_id`, `created`, `reused`, `status`, `probe` (the probe of the original's current verdict, if any), `copied` (subjects, attributions, evidence links taken from the original).
+    pitfalls: |
+      A new anchor is stored only when the quote is in the unit's text (whitespace and typographic quotes aside): `QUOTE_NOT_IN_UNIT`; the unit must belong to a document version read from that capture: `EVIDENCE_UNIT_NOT_IN_CAPTURE`. New anchors are `text_quote`, or `json_pointer` with `pointer`; any other kind is passed as `locator_id`. The same statement again returns the existing claim with `reused` true and adds no evidence to it. `path` `restatement` is reserved for `api.restate_claim`. One restatement per original; only a `proposed` claim that is not itself a restatement is restated, and the original is never changed. Neither function sets a status other than `proposed`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: propose-verdict-from-probe
+    title: How do I register a probe, record its runs and propose a verdict?
+    domains: [verified-knowledge]
+    queries: [evidence.probes, evidence.probe_matrix, evidence.claim_verdicts, evidence.probe_revalidation_due]
+    aliases: [register probe, record probe run, propose verdict, write verdict, verdict write, agent proposed, revalidation write, probe write]
+    navigation: |
+      `tasks/write-verification-chain.md` → `functions/api/register_probe.md` → `functions/api/record_probe_run.md` → `functions/api/propose_verdict.md` → `q:evidence.claim_verdicts`.
+    operation: |
+      Three calls, in order (pipeline_agent, verifier_agent or control_plane).
+
+      ```sql
+      select api.register_probe(
+        p_idempotency_key => 'probe:P20', p_slug => 'P20-checkpoint-ns', p_title => 'Checkpoint namespaces',
+        p_hypothesis => 'a root checkpoint_ns in the config is not stored', p_kind => 'executed',
+        p_claims => '[{"claim_id":"0192b000-0000-7000-8000-000000000001","expectation":{"expected":"root_ns_stays_empty true in every cell"}}]',
+        p_script => '{"path":"probes/p20.py","sha256":"<64 hex>"}', p_matrix => '[{"label":"D3-latest"}]', p_model_policy => 'fake');
+      select api.record_probe_run(
+        p_idempotency_key => 'probe:P20:run:D3-latest:2026-11-16T09', p_probe_id => '0192e000-0000-7000-8000-000000000001',
+        p_cell_label => 'D3-latest', p_outcome => 'pass', p_started_at => '2026-11-16T09:00:00Z',
+        p_observations => '{"checks":{"root_ns_stays_empty":true}}', p_resolved => '{"langgraph":"1.2.22"}',
+        p_output => '{"capture_id":"0192d000-0000-7000-8000-000000000001","node_id":"0192d000-0000-7000-8000-000000000002","selector_kind":"json_pointer","pointer":"/runs/0"}');
+      select api.propose_verdict(
+        p_idempotency_key => 'probe:P20:verdict:claim-1:2026-11-16', p_claim_id => '0192b000-0000-7000-8000-000000000001',
+        p_probe_id => '0192e000-0000-7000-8000-000000000001', p_verdict => 'directly_supported',
+        p_cells => '{"D3-latest":{"root_ns_stays_empty":true}}', p_rationale => 'stored under the empty namespace in every cell');
+      ```
+
+      A run's `outcome` is about the probe's own checks, not about the claim. `p_run` carries `ended_at`, `exit_code`, `lock_sha256`, `python_version`, `platform`, `tokens_in`, `tokens_out`, `cost_usd`, `latency_ms`; `p_sweep_id` ties the run to an open sweep of the same mission.
+    expected_shape: |
+      `register_probe`: `probe_id`, `slug`, `state`, `claims`. `record_probe_run`: `probe_run_id`, `output_capture_id`, `output_locator_id`, `origin_kind`, `over_budget`. `propose_verdict`: `verdict_id`, `written`, `unchanged`, `review_state` (always `agent_proposed` for a written row), `supersedes_id`, `claim_status`, `claim_status_changed`, `needs_review`, `restatements_to_review`.
+    pitfalls: |
+      A verdict is a proposal: it never verifies a claim, and a person confirms or rejects it elsewhere. The same verdict again writes nothing (`unchanged`); a changed verdict is a new row that supersedes. A `contradicted` verdict from a deterministic probe (executed, static_docs, resolution, registry_check) moves a `proposed` claim to `disputed`; a live arm never does, and a verified claim is never changed (`needs_review` true instead). Every key of `p_cells` needs a recorded run: `VERDICT_CELL_NOT_RUN`. The claim must be one the probe was registered to test, or a restatement of one: `CLAIM_NOT_PROBED`. A run that passed or failed needs `p_output`; only a `live_model` probe reports tokens or cost. A verdict a person rejected is not proposed again: `VERDICT_REJECTED_BY_PERSON`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: triage-claims-and-assess-sources
+    title: How do I triage a claim candidate or record a source assessment?
+    domains: [verified-knowledge, source-intelligence]
+    queries: [evidence.claim_triage, evidence.source_registry, evidence.source_track_record]
+    aliases: [record triage, triage write, checkability, not checkable, duplicate claim, record source assessment, prior, derived assessment, source write]
+    navigation: |
+      `tasks/write-verification-chain.md` → `functions/api/record_triage.md` or `functions/api/record_source_assessment.md` → `q:evidence.claim_triage` / `q:evidence.source_registry`.
+    operation: |
+      Both are pipeline_agent, verifier_agent or control_plane.
+
+      ```sql
+      select api.record_triage(
+        p_idempotency_key => 'triage:claim-1:v1', p_claim_id => '0192b000-0000-7000-8000-000000000001',
+        p_disposition => 'probe', p_checkability => 'deterministic_local',
+        p_rationale => 'a short script with a fake model can observe the namespace', p_priority => 85,
+        p_components => '{"module_subject":true,"version_bounded":true}');
+      select api.record_source_assessment(
+        p_idempotency_key => 'source:forum:prior', p_subject_entity_id => '0192b000-0000-7000-8000-000000000021',
+        p_method => 'prior', p_source_role_code => 'community', p_conflict_of_interest => 'none', p_rationale => 'a community forum');
+      select api.record_source_assessment(
+        p_idempotency_key => 'source:forum:derived:2026-11-16', p_subject_entity_id => '0192b000-0000-7000-8000-000000000021',
+        p_method => 'derived', p_topic_entity_id => '0192b000-0000-7000-8000-000000000011');
+      ```
+
+      Triage says what to do with a candidate (`probe`, `docs_check`, `registry_check`, `not_checkable`, `duplicate` with `p_duplicate_of_claim_id`, `out_of_scope`); `p_probe_id` names the probe it became. A prior is scored by the role's `authority_rank`; a derived assessment is computed from the latest verdicts on the claims the source stated.
+    expected_shape: |
+      `record_triage`: `triage_id`, `written`, `unchanged`, `disposition`, `review_state`, `supersedes_id`. `record_source_assessment`: `assessment_id`, `method`, `written`, `unchanged`, `authority_score`, and for a derived row `claims_observed`, `claims_checked`, `self_checked`, `recommended_watch_level`, `supersedes_id`.
+    pitfalls: |
+      Triage never judges whether a claim is true, and only a `proposed` claim is triaged. Rows are append-only: a changed triage supersedes the agent's current row, the same triage again writes nothing, and a row a person reviewed is not superseded (`TRIAGE_REVIEWED_BY_PERSON`). The caller never passes a score. A derived assessment needs a prior first (`ASSESSMENT_BASE_REQUIRED`) and takes role, conflict of interest and disclosure from it. `p_method` `reviewed` is a person's judgment and is refused (`HUMAN_REVIEW_NOT_AGENT_WRITABLE`). A source is a `source_channel`, `community_actor`, `organization` or `person`. Read `authority_score` with `claims_checked`; a watch level is suggested only from five checked claims.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: run-attention-sweep
+    title: How do I open and settle an attention sweep under a mission budget?
+    domains: [source-intelligence]
+    queries: [acquisition.attention_due, acquisition.attention_policies, acquisition.open_sweeps]
+    aliases: [raise sweep, open sweep, settle sweep, close sweep, attention sweep write, budget gate, budget stopped, watch tick, watch mission write]
+    navigation: |
+      `tasks/what-is-due.md` → `q:acquisition.attention_due` → `functions/api/raise_attention_sweep.md` → the work → `functions/api/settle_attention_sweep.md`.
+    operation: |
+      A sweep is one execution of an attention policy (pipeline_agent or control_plane). Open it before the work, settle it once after.
+
+      ```sql
+      select api.raise_attention_sweep(
+        p_idempotency_key => 'run-2fa5:op-3:sweep:vendor-issues-on-release', p_policy => 'vendor-issues-on-release',
+        p_trigger_kind => 'event', p_trigger_ref => '{"release":"langgraph 1.2.22"}', p_note => 'watch tick',
+        p_actor => '{"label":"mc:watch","mission_id":"0192a000-0000-7000-8000-000000000001","mc":{"mission_id":"m-1","run_id":"2fa5e2ab","operation_id":"op-3","operation_attempt":1,"execution_generation":0,"lane":"deep_agents"}}');
+      -- do the work only when the result has "open": true
+      select api.settle_attention_sweep(
+        p_idempotency_key => 'run-2fa5:op-3:settle:vendor-issues-on-release', p_sweep_id => '0192f000-0000-7000-8000-000000000001',
+        p_outcome => 'completed', p_items_seen => 30, p_items_selected => 4, p_items_captured => 4,
+        p_rejected => '{"off_topic":26}', p_spend_usd => 0.12, p_credits => 0,
+        p_actor => '{"label":"mc:watch","mission_id":"0192a000-0000-7000-8000-000000000001"}');
+      ```
+
+      `p_policy` is the policy slug or id. Fetches and probe runs made in the sweep carry its id (`p_sweep_id` of `api.record_probe_run`).
+    expected_shape: |
+      `raise_attention_sweep`: `sweep_id`, `policy`, `origin_kind`, `open`, `budget_stopped`, `mission_spent_usd`, `mission_budget_usd`, `budget_usd_per_run`, `budget_credits_per_run`. `settle_attention_sweep`: `outcome`, `settled`, `over_budget_usd`, `over_budget_credits`, `mission_spent_usd`, `mission_budget_usd`, `mission_budget_exhausted`.
+    pitfalls: |
+      The budget gate runs before any work: when the mission's sweeps already spent its budget the sweep is written settled as `budget_stopped` and `open` is false; stop. A call made by a Mission Control invocation (`mc`) must name the mission (`MISSION_REQUIRED`). Only an active policy above W0 is swept (`ATTENTION_POLICY_NOT_SWEEPABLE`). A sweep is settled once, under the mission that opened it (`SWEEP_ALREADY_SETTLED`, `SWEEP_MISSION_MISMATCH`); `captured <= selected <= seen`. Spend is recorded as reported, even over the per-run budget (`over_budget_usd`). An unsettled sweep is found with `q:acquisition.open_sweeps`. Policies are a person's decisions: no function creates or changes one.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: what-agents-may-not-write
+    title: What is an agent not allowed to write?
+    domains: [verified-knowledge, source-intelligence]
+    queries: [evidence.verified_claims, evidence.claim_verdicts, chain.governed_writes]
+    aliases: [not allowed, forbidden write, agent limits, human review, human confirmed, verify claim, admission, release review, append-only, immutable, lines agents do not cross]
+    navigation: |
+      `tasks/write-verification-chain.md` → this page → `domains/verified-knowledge.md` (Verified).
+    operation: |
+      Three lines, enforced by the database for every bounded role (pipeline_agent, verifier_agent, executor_service, control_plane, app_reader) and for service_role, whether the write goes through a function or straight at a table.
+
+      1. **Verified.** A claim becomes `verified` only when Knowledge Services admits a sealed verification run (`verification.record_admitted_claim_verification`, called with the decision the verification component issued). No governed function sets a status other than `proposed`, or `disputed` after a deterministic contradiction. Setting the status directly fails `VERIFIED_CLAIM_REQUIRES_ADMITTED_USE`.
+      2. **A person's judgment.** `review_state` `human_confirmed` or `human_rejected` on `verification.probe_verdict` and `verification.claim_triage`, and `method` `reviewed` on `evidence.source_assessment`, say that a person decided. An agent role cannot write such a row (`HUMAN_REVIEW_NOT_AGENT_WRITABLE`), cannot label itself as a person (`ACTOR_INVALID`), and cannot call the product command that records a release review. Attention policies are a person's decisions too.
+      3. **Nothing rewritten.** Verdicts, triage rows, assessments, receipts, receipt targets, evidence locators and links, admissions and vector items are append-only or immutable: a change is a new row that supersedes. A verified claim is not deleted, restated or re-statused; a contradicting verdict on it is recorded as a proposal with `needs_review` true.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "what-did-the-agent-write",
+        "operations": [
+          { "opId": "writes", "kind": "named_query", "query": "chain.governed_writes", "params": { "function": null, "mc_run_id": null, "key": null, "limit": 20 } },
+          { "opId": "verdicts", "kind": "named_query", "query": "evidence.claim_verdicts", "params": { "claim_id": null, "verdict": null, "probe": null, "limit": 20 } }
+        ]
+      }
+      ```
+    expected_shape: |
+      `writes`: one row per governed write with `function`, `idempotency_key`, `session_role`, `actor_label`, `origin_kind`, `mc_run_id`, `mission_id`. `verdicts`: `review_state` is `agent_proposed` on every row an agent wrote and `decided_by` starts with `agent:`; `human_confirmed` rows were written by a person's path.
+    pitfalls: |
+      A supportive verdict is not verification and an agent's confidence is not a review: say "proposed" until `q:evidence.verified_claims` lists the claim. Do not transcribe a person's answer into a verdict, a triage row or a release review; ask for the review instead. An agent's changed verdict may supersede a row a person confirmed, as a new `agent_proposed` row flagged `needs_review`; the person's row stays as written. There is no agent function for a human confirmation, and none should be granted to an agent role.
+    provenance: model_assisted
+    reviewed: null

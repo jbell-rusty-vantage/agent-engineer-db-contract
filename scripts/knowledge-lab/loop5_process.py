@@ -6,7 +6,9 @@ reviews/BUILD-08-LOOP-5-6-SELECTION.md). Stages, idempotent, in order:
             releases with release_published events (payload cites the capture and the JSON pointer); move the monorepo sdk== / cli==
             tags from LangGraph to new langgraph-sdk / langgraph-cli library entities
   triage    one recorded model pass (claude-opus-5-5) classifies the open community claim candidates against a fixed rubric;
-            the rows go to verification.claim_triage (agent_proposed); the agent's selection of probes is applied in `select`
+            the rows go to verification.claim_triage (agent_proposed) through the governed write api.record_triage as
+            pipeline_agent (converted 2026-11-16 as the example of a lab stage that no longer inserts as postgres); the
+            agent's selection of probes is applied in `select`
   select    mark the selected candidates (disposition probe) and write the probe expectations into knowledge-loop-5/EXPECTED.json
   probes    register the loop-5 probes, their runs (captured as probe reports), units, locators and verdicts (rules over checks)
   revalidate  api.probe_revalidation_due now; a manual probe-revalidation sweep records what it found (and reruns if due)
@@ -130,8 +132,13 @@ def stage_triage():
         dup = cands[t["duplicate_of"]]["claim_id"] if isinstance(t.get("duplicate_of"), int) and 0 <= t["duplicate_of"] < len(cands) and t.get("disposition") == "duplicate" else None
         disp = t.get("disposition") if t.get("disposition") in ("probe", "docs_check", "registry_check", "not_checkable", "duplicate", "out_of_scope") else "not_checkable"
         chk = t.get("checkability") if t.get("checkability") in ("deterministic_local", "needs_live_model", "needs_external_service", "historical_only", "not_applicable") else "not_applicable"
-        sql(f"""insert into verification.claim_triage(claim_id, disposition, checkability, priority, components, duplicate_of_claim_id, rationale, decided_by)
-                values ({q(c['claim_id'])}, {q(disp)}, {q(chk)}, {prio}, {q(comps)}, {q(dup)}, {q(t.get('reason') or '')}, 'model:claude-opus-5-5 triage rubric (loop 5), agent_proposed')""")
+        if disp == "duplicate" and not dup:   # the rubric named no candidate it duplicates: the governed write refuses a duplicate of nothing
+            disp = "not_checkable"
+        # the governed write: validated, idempotent per claim, agent_proposed, with a receipt naming the role and this label
+        governed("record_triage", {"p_idempotency_key": f"loop5-triage:{c['claim_id']}", "p_claim_id": c["claim_id"], "p_disposition": disp, "p_checkability": chk,
+                                   "p_rationale": t.get("reason") or "no reason given by the triage rubric", "p_priority": prio, "p_components": comps,
+                                   "p_duplicate_of_claim_id": dup},
+                 role="pipeline_agent", actor={"label": "model:claude-opus-5-5 triage rubric (loop 5)"})
         n += 1
     log(f"triage rows written: {n} of {len(cands)} candidates")
 

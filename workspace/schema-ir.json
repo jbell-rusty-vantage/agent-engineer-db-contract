@@ -1,9 +1,9 @@
 {
   "build": {
-    "contract_version": "0.7.0",
-    "enrichment_sha256": "sha256:cb6affa02c52946cbd0019cc2b63fb3fc3855fb33ee4338c0039fcc878421a33",
-    "generated_types_sha256": "sha256:5858ae58ef064e6d3686492b0d1fefed037431b5c7ccf6f9a7253f6fe7a1615a",
-    "migration_head": "20261116120000",
+    "contract_version": "0.8.0",
+    "enrichment_sha256": "sha256:3d2e100fd2971e9d9964aa426481202d3e7a89b33747566c2f2ea111e11826a2",
+    "generated_types_sha256": "sha256:8031c7f4f795550e05dd2c745caf83ec39264187f57d7f2429391bf81ca67b5f",
+    "migration_head": "20261116130000",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -134,6 +134,27 @@
       "api.product_worker": [
         "fn:api.product_worker(text,jsonb)"
       ],
+      "api.propose_verdict": [
+        "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)"
+      ],
+      "api.raise_attention_sweep": [
+        "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)"
+      ],
+      "api.record_claim": [
+        "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)"
+      ],
+      "api.record_probe_run": [
+        "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)"
+      ],
+      "api.record_source_assessment": [
+        "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)"
+      ],
+      "api.record_triage": [
+        "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)"
+      ],
+      "api.register_probe": [
+        "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)"
+      ],
       "api.related": [
         "fn:api.related(uuid,text,text,timestamptz)"
       ],
@@ -152,6 +173,9 @@
       "api.resolve_entity": [
         "fn:api.resolve_entity(text)"
       ],
+      "api.restate_claim": [
+        "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)"
+      ],
       "api.search_knowledge": [
         "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)"
       ],
@@ -160,6 +184,9 @@
       ],
       "api.search_unified": [
         "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)"
+      ],
+      "api.settle_attention_sweep": [
+        "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)"
       ],
       "api.submit_intent": [
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)"
@@ -835,6 +862,33 @@
       ],
       "verification.assert_admitted_use": [
         "fn:verification.assert_admitted_use(uuid,text,text,int8,text)"
+      ],
+      "verification.chain_anchor": [
+        "fn:verification.chain_anchor(uuid,jsonb,text)"
+      ],
+      "verification.chain_begin": [
+        "fn:verification.chain_begin(text,text,jsonb,jsonb)"
+      ],
+      "verification.chain_fail": [
+        "fn:verification.chain_fail(text,text,text)"
+      ],
+      "verification.chain_norm": [
+        "fn:verification.chain_norm(text)"
+      ],
+      "verification.chain_record": [
+        "fn:verification.chain_record(text,jsonb,jsonb,jsonb,jsonb)"
+      ],
+      "verification.chain_sha": [
+        "fn:verification.chain_sha(text)"
+      ],
+      "verification.chain_target": [
+        "fn:verification.chain_target(jsonb,uuid,text,text,uuid,text,text,uuid)"
+      ],
+      "verification.chain_uuid": [
+        "fn:verification.chain_uuid(text,text)"
+      ],
+      "verification.guard_human_judgment": [
+        "fn:verification.guard_human_judgment()"
       ],
       "verification.guard_use_admission": [
         "fn:verification.guard_use_admission()"
@@ -3297,6 +3351,10 @@
       "rel:evidence.source": [
         "fn:util.set_updated_at()"
       ],
+      "rel:evidence.source_assessment": [
+        "fn:util.reject_mutation()",
+        "fn:verification.guard_human_judgment()"
+      ],
       "rel:evidence.source_capture": [
         "fn:evidence.validate_capture_artifact()",
         "fn:orchestration.guard_retired_artifact_reference()",
@@ -3705,6 +3763,14 @@
         "fn:temporal.guard_k()",
         "fn:temporal.require_sealed_batch()",
         "fn:temporal.stamp_k()"
+      ],
+      "rel:verification.claim_triage": [
+        "fn:util.reject_mutation()",
+        "fn:verification.guard_human_judgment()"
+      ],
+      "rel:verification.probe_verdict": [
+        "fn:util.reject_mutation()",
+        "fn:verification.guard_human_judgment()"
       ],
       "rel:verification.use_admission": [
         "fn:util.reject_mutation()",
@@ -4140,7 +4206,10 @@
           "pipeline_agent",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
+          "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)"
+        ]
       },
       "rel:acquisition.fetch": {
         "basis": "grants + best_effort body scan",
@@ -5200,7 +5269,10 @@
           "pipeline_agent",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)"
+        ]
       },
       "rel:evidence.capture_method": {
         "basis": "grants + best_effort body scan",
@@ -5219,6 +5291,9 @@
           "service_role"
         ],
         "via_functions": [
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)",
           "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
         ]
       },
@@ -5239,7 +5314,11 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)"
+        ]
       },
       "rel:evidence.claim_record": {
         "basis": "grants + best_effort body scan",
@@ -5257,7 +5336,10 @@
           "pipeline_agent",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)"
+        ]
       },
       "rel:evidence.claim_type": {
         "basis": "grants + best_effort body scan",
@@ -5320,7 +5402,9 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:verification.chain_anchor(uuid,jsonb,text)"
+        ]
       },
       "rel:evidence.provider_result": {
         "basis": "grants + best_effort body scan",
@@ -5385,6 +5469,7 @@
           "verifier_agent"
         ],
         "via_functions": [
+          "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)",
           "fn:evidence.derive_source_assessment(uuid,uuid,text,text)"
         ]
       },
@@ -6013,6 +6098,7 @@
         ],
         "via_functions": [
           "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
+          "fn:verification.chain_record(text,jsonb,jsonb,jsonb,jsonb)",
           "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
         ]
       },
@@ -6024,6 +6110,7 @@
           "service_role"
         ],
         "via_functions": [
+          "fn:verification.chain_record(text,jsonb,jsonb,jsonb,jsonb)",
           "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
         ]
       },
@@ -6034,6 +6121,7 @@
           "service_role"
         ],
         "via_functions": [
+          "fn:verification.chain_target(jsonb,uuid,text,text,uuid,text,text,uuid)",
           "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)"
         ]
       },
@@ -6681,7 +6769,9 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)"
+        ]
       },
       "rel:verification.probe": {
         "basis": "grants + best_effort body scan",
@@ -6691,7 +6781,9 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)"
+        ]
       },
       "rel:verification.probe_claim": {
         "basis": "grants + best_effort body scan",
@@ -6701,7 +6793,10 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+          "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)"
+        ]
       },
       "rel:verification.probe_run": {
         "basis": "grants + best_effort body scan",
@@ -6711,7 +6806,9 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)"
+        ]
       },
       "rel:verification.probe_verdict": {
         "basis": "grants + best_effort body scan",
@@ -6721,7 +6818,9 @@
           "service_role",
           "verifier_agent"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)"
+        ]
       },
       "rel:verification.use_admission": {
         "basis": "grants + best_effort body scan",
@@ -7762,9 +7861,12 @@
           "due list",
           "what to watch"
         ],
-        "body": "**Source registry.** `evidence.source_assessment` records what we know about a source (a\nchannel, an actor, an organization, a person) on a topic at a time, as components and never\na bare score: the role prior (`source_role_code`), `conflict_of_interest`,\n`method_disclosure`, the track record from verdicts (`claims_observed`, `claims_checked`,\n`confirmed`, `qualified`, `refuted`), `median_lead_days` against the first-party docs and\nthe sweep `noise_ratio`. Rows are append-only; `api.source_registry` shows the latest per\nsource and topic with the derived `authority_score` and a recommended watch level, which is\nsuggested only from five checked claims. Claims a source checked about itself are counted\nin `self_checked` and not scored.\n\n**Track record.** `api.source_track_record` is every claim a source stated with its latest\nverdict: the rows behind an assessment's counts. A claim and its verdict are read in the\nverified-knowledge domain (`q:evidence.claim`, `q:evidence.claim_verdicts`).\n\n**Attention.** `acquisition.attention_policy` says what we watch, how often (`cadence`,\n`triggers`), how deep (`depth`, `selection`) and on what budget. Watch levels: W0 ignore\n(registered, never swept), W1 reference, W2 sampled, W3 release-coupled. One execution of a\npolicy is an `acquisition.attention_sweep` (window, items seen, selected and captured,\nspend); every fetch it makes carries the sweep. `api.attention_policies` shows each policy\nwith its last sweep and totals.\n\n**Due.** `api.attention_due` is the contract a watch mission calls: the policies due at a\ntime because a trigger event happened inside its window since the last sweep, or because\nthe cadence elapsed. W0 and paused policies are never due. The other due lists\n(`api.probe_revalidation_due`, `api.releases_needing_review`) are in the verified-knowledge\ndomain; `tasks/what-is-due.md` reads all three.\n\nStart with `q:evidence.source_registry` for trust and `q:acquisition.attention_due` for\nwork. Assessments and policies are written by the pipeline and by a design interview, not\nby a read role.\n",
+        "body": "**Source registry.** `evidence.source_assessment` records what we know about a source (a\nchannel, an actor, an organization, a person) on a topic at a time, as components and never\na bare score: the role prior (`source_role_code`), `conflict_of_interest`,\n`method_disclosure`, the track record from verdicts (`claims_observed`, `claims_checked`,\n`confirmed`, `qualified`, `refuted`), `median_lead_days` against the first-party docs and\nthe sweep `noise_ratio`. Rows are append-only; `api.source_registry` shows the latest per\nsource and topic with the derived `authority_score` and a recommended watch level, which is\nsuggested only from five checked claims. Claims a source checked about itself are counted\nin `self_checked` and not scored.\n\n**Track record.** `api.source_track_record` is every claim a source stated with its latest\nverdict: the rows behind an assessment's counts. A claim and its verdict are read in the\nverified-knowledge domain (`q:evidence.claim`, `q:evidence.claim_verdicts`).\n\n**Attention.** `acquisition.attention_policy` says what we watch, how often (`cadence`,\n`triggers`), how deep (`depth`, `selection`) and on what budget. Watch levels: W0 ignore\n(registered, never swept), W1 reference, W2 sampled, W3 release-coupled. One execution of a\npolicy is an `acquisition.attention_sweep` (window, items seen, selected and captured,\nspend); every fetch it makes carries the sweep. `api.attention_policies` shows each policy\nwith its last sweep and totals.\n\n**Due.** `api.attention_due` is the contract a watch mission calls: the policies due at a\ntime because a trigger event happened inside its window since the last sweep, or because\nthe cadence elapsed. W0 and paused policies are never due. The other due lists\n(`api.probe_revalidation_due`, `api.releases_needing_review`) are in the verified-knowledge\ndomain; `tasks/what-is-due.md` reads all three.\n\nStart with `q:evidence.source_registry` for trust and `q:acquisition.attention_due` for\nwork. An agent role records a prior or a derived assessment with\n`api.record_source_assessment` and runs a sweep with `api.raise_attention_sweep` and\n`api.settle_attention_sweep` (`tasks/run-attention-sweep.md`). Policies (what to watch,\non what budget) and reviewed assessments are a person's decisions: no agent function\nwrites them, and a read role writes nothing.\n",
         "functions": [
-          "fn:api.attention_due(timestamptz)"
+          "fn:api.attention_due(timestamptz)",
+          "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)",
+          "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
+          "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)"
         ],
         "lens": "evidence",
         "provenance": "model_assisted",
@@ -7772,7 +7874,8 @@
           "evidence.source_registry",
           "evidence.source_track_record",
           "acquisition.attention_policies",
-          "acquisition.attention_due"
+          "acquisition.attention_due",
+          "acquisition.open_sweeps"
         ],
         "relations": [
           "rel:api.source_registry",
@@ -7788,7 +7891,10 @@
         "summary": "What we know about each source on each topic, from the claims it stated and how they checked out; and what we watch, how often, on what budget.",
         "tasks": [
           "how-trusted-is-source",
-          "what-is-due"
+          "what-is-due",
+          "run-attention-sweep",
+          "triage-claims-and-assess-sources",
+          "write-verification-chain"
         ],
         "title": "Source intelligence and attention (registry, track record, watch policies)"
       },
@@ -7918,13 +8024,19 @@
           "disputed claims",
           "what is verified"
         ],
-        "body": "Read through the `api` views; the tables behind them are not readable by app_reader or a\nsigned-in session.\n\n**A claim's life.** Every statement read from a source is a row of `evidence.claim`, shown\nby `api.claim_candidates` with its `path` (how it entered), `status` (`proposed`,\n`verified`, `disputed`), subjects and the document it was read from. Candidates are never\nfacts. `verification.claim_triage` (`api.claim_triage`) records what to do with a candidate\nbefore anyone checks it: probe it, check the docs or a registry, or leave it (not\ncheckable, duplicate, out of scope).\n\n**Probes and verdicts.** A `verification.probe` is an experiment that tests stated claims\nagainst a matrix of cells; a cell is a date (what an install resolved that day) or an\nexplicit pin. Each execution is a `verification.probe_run`; `api.probe_matrix` returns the\nlatest run per cell with the versions it resolved and what it observed. What the runs say\nabout one claim is a `verification.probe_verdict`: `directly_supported`,\n`supported_with_qualification`, `contradicted`, `not_supported` or `unverifiable`, proposed\nby an agent and confirmed or rejected by a person (`review_state`). `api.claim_verdicts`\nhas the latest verdict per claim; `api.probes` lists probes with their verdicts.\n\n**Verified.** A supportive verdict does not verify a claim. `api.verified_claims` holds the\nclaims that reached `verified` under a receipt bound to an admitted Knowledge Services use\ndecision (`use_decision_id`, `receipt_id`, the bound `effect`), with their current verdicts.\nOnly these are verified knowledge (source tier 0 in search). A deterministic probe that\ncontradicts a claim moves it to `disputed`.\n\n**Kept beside the claim.** `evidence.claim_conflict` (`api.claim_conflicts`) keeps a\ndisagreement between a first-party claim and another statement until someone reconciles\nit. `api.claim_restatements` pairs a restated claim with the attribution-framed original\nit was atomized from; the original stays `proposed`. `api.claim_surfaces` (talk claims and\nthe docs they concern) and `api.community_claims` (issue trackers, forums, comparison\narticles) are candidate views by channel.\n\n**What goes stale.** `api.probe_revalidation_due` lists probes whose latest cell ran on an\nolder version than the newest catalogued release; `api.releases_needing_review` lists our\nfrozen releases whose bound claims changed verdict since (a signed-in user sees those of\ntheir workspaces). `api.library_dossier` assembles releases, claims, probes and ranked\nsources for one library in one call.\n\nStart with `q:evidence.verified_claims`; one claim in depth is `q:evidence.claim`,\n`q:evidence.claim_verdicts` and `q:evidence.probe_matrix`. Sources and watch policies are\nthe source-intelligence domain. Writing a verdict or an admission is the pipeline's work\n(verifier_agent, executor_service), not a read role's.\n",
+        "body": "Read through the `api` views; the tables behind them are not readable by app_reader or a\nsigned-in session.\n\n**A claim's life.** Every statement read from a source is a row of `evidence.claim`, shown\nby `api.claim_candidates` with its `path` (how it entered), `status` (`proposed`,\n`verified`, `disputed`), subjects and the document it was read from. Candidates are never\nfacts. `verification.claim_triage` (`api.claim_triage`) records what to do with a candidate\nbefore anyone checks it: probe it, check the docs or a registry, or leave it (not\ncheckable, duplicate, out of scope).\n\n**Probes and verdicts.** A `verification.probe` is an experiment that tests stated claims\nagainst a matrix of cells; a cell is a date (what an install resolved that day) or an\nexplicit pin. Each execution is a `verification.probe_run`; `api.probe_matrix` returns the\nlatest run per cell with the versions it resolved and what it observed. What the runs say\nabout one claim is a `verification.probe_verdict`: `directly_supported`,\n`supported_with_qualification`, `contradicted`, `not_supported` or `unverifiable`, proposed\nby an agent and confirmed or rejected by a person (`review_state`). `api.claim_verdicts`\nhas the latest verdict per claim; `api.probes` lists probes with their verdicts.\n\n**Verified.** A supportive verdict does not verify a claim. `api.verified_claims` holds the\nclaims that reached `verified` under a receipt bound to an admitted Knowledge Services use\ndecision (`use_decision_id`, `receipt_id`, the bound `effect`), with their current verdicts.\nOnly these are verified knowledge (source tier 0 in search). A deterministic probe that\ncontradicts a claim moves it to `disputed`.\n\n**Kept beside the claim.** `evidence.claim_conflict` (`api.claim_conflicts`) keeps a\ndisagreement between a first-party claim and another statement until someone reconciles\nit. `api.claim_restatements` pairs a restated claim with the attribution-framed original\nit was atomized from; the original stays `proposed`. `api.claim_surfaces` (talk claims and\nthe docs they concern) and `api.community_claims` (issue trackers, forums, comparison\narticles) are candidate views by channel.\n\n**What goes stale.** `api.probe_revalidation_due` lists probes whose latest cell ran on an\nolder version than the newest catalogued release; `api.releases_needing_review` lists our\nfrozen releases whose bound claims changed verdict since (a signed-in user sees those of\ntheir workspaces). `api.library_dossier` assembles releases, claims, probes and ranked\nsources for one library in one call.\n\nStart with `q:evidence.verified_claims`; one claim in depth is `q:evidence.claim`,\n`q:evidence.claim_verdicts` and `q:evidence.probe_matrix`. Sources and watch policies are\nthe source-intelligence domain.\n\n**Writing.** An agent role writes this chain through governed functions, never by\ninserting rows: `api.record_claim`, `api.restate_claim`, `api.register_probe`,\n`api.record_probe_run`, `api.propose_verdict` and `api.record_triage`\n(`tasks/write-verification-chain.md`). Each is idempotent on a caller key and leaves a\nreceipt naming the role and the mission run. What they never do: verify a claim (only a\nKnowledge Services admission does) or record a person's review\n(`tasks/what-agents-may-not-write.md`). A read role writes nothing.\n",
         "functions": [
           "fn:api.probe_matrix(text)",
           "fn:api.probe_revalidation_due(timestamptz)",
           "fn:api.releases_needing_review()",
           "fn:api.library_dossier(text)",
-          "fn:api.interview_outputs(uuid)"
+          "fn:api.interview_outputs(uuid)",
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)",
+          "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)",
+          "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)",
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+          "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)"
         ],
         "lens": "evidence",
         "provenance": "model_assisted",
@@ -7966,7 +8078,12 @@
           "read-claim-with-evidence",
           "why-claim-disputed-or-restated",
           "what-is-due",
-          "what-a-release-affects"
+          "what-a-release-affects",
+          "write-verification-chain",
+          "record-claim-with-evidence",
+          "propose-verdict-from-probe",
+          "triage-claims-and-assess-sources",
+          "what-agents-may-not-write"
         ],
         "title": "Verified knowledge (claims, probes, verdicts)"
       }
@@ -8226,7 +8343,7 @@
       "version": "ingestion-rules.v1"
     },
     "queries": {
-      "catalog_version": "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace",
+      "catalog_version": "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1",
       "defaults": {
         "limit": 200,
         "maxLimit": 2000,
@@ -8467,6 +8584,83 @@
             "world_time": "n/a"
           },
           "title": "Fetch ledger rows for a URL (who fetched, with what tool, outcome, hash, spend)",
+          "volatile": true
+        },
+        {
+          "aliases": [
+            "open sweeps",
+            "unsettled sweeps",
+            "sweeps to settle",
+            "running sweeps"
+          ],
+          "cost_class": "cheap",
+          "domain": "source-intelligence",
+          "embedding": null,
+          "example": {
+            "limit": 50,
+            "mission_id": null
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:acquisition.open_sweeps",
+          "kind": "named_query",
+          "name": "acquisition.open_sweeps",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "mission_id",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "mission_id": {
+                "default": null,
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "sweep_id",
+              "policy",
+              "trigger_kind",
+              "origin_kind",
+              "mission_id",
+              "mc_run_id",
+              "started_at",
+              "note",
+              "budget_usd_per_run"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "pipeline_agent",
+          "sql": "select s.id as sweep_id, p.slug as policy, s.trigger_kind, s.origin_kind, s.mission_id, s.trigger_ref ->> 'mc_run_id' as mc_run_id,\n       s.started_at, s.note, p.budget_usd_per_run\nfrom acquisition.attention_sweep s\njoin acquisition.attention_policy p on p.id = s.policy_id\nwhere s.tenant_id = util.current_tenant_id() and s.ended_at is null\n  and ($1::uuid is null or s.mission_id = $1)\norder by s.started_at desc, s.id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+          "summary": "Attention sweeps that were opened and not settled yet, with their policy, trigger and mission",
+          "tasks": [
+            "run-attention-sweep"
+          ],
+          "temporal": {
+            "knowledge": "n/a",
+            "world_time": "now()"
+          },
+          "title": "Attention sweeps that were opened and not settled yet, with their policy, trigger and mission",
           "volatile": true
         },
         {
@@ -9594,6 +9788,104 @@
           },
           "title": "L1 talks with event, speakers, topics, linked repositories and recording links",
           "volatile": false
+        },
+        {
+          "aliases": [
+            "governed writes",
+            "chain writes",
+            "who wrote",
+            "agent writes",
+            "writes of a run",
+            "idempotency key lookup"
+          ],
+          "cost_class": "cheap",
+          "domain": "orchestration-ledger",
+          "embedding": null,
+          "example": {
+            "function": "api.propose_verdict",
+            "key": null,
+            "limit": 20,
+            "mc_run_id": null
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:chain.governed_writes",
+          "kind": "named_query",
+          "name": "chain.governed_writes",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "function",
+            "mc_run_id",
+            "key",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "function": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "key": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "limit": {
+                "default": 20,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "mc_run_id": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "intent_id",
+              "function",
+              "idempotency_key",
+              "session_role",
+              "actor_label",
+              "origin_kind",
+              "mc_run_id",
+              "mc_operation_id",
+              "mc_operation_attempt",
+              "mission_id",
+              "created_at"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "pipeline_agent",
+          "sql": "select i.id as intent_id, i.payload ->> 'function' as function, substr(i.idempotency_key, 7) as idempotency_key,\n       i.payload -> 'actor' ->> 'session_role' as session_role, i.payload -> 'actor' ->> 'label' as actor_label,\n       i.origin_kind, i.mc_run_id, i.mc_operation_id, i.mc_operation_attempt, i.mission_id, i.created_at\nfrom orchestration.operation_intent i\nwhere i.tenant_id = util.current_tenant_id() and i.intent_type = 'governed_chain_write'\n  and ($1::text is null or i.payload ->> 'function' = $1)\n  and ($2::text is null or i.mc_run_id = $2)\n  and ($3::text is null or i.idempotency_key = 'chain:' || $3)\norder by i.created_at desc, i.id\nlimit least(greatest(coalesce($4, 20), 1), 200)\n",
+          "summary": "Governed writes of the verification chain, by function, idempotency key or Mission Control run (who acted, for which mission)",
+          "tasks": [
+            "write-verification-chain",
+            "what-agents-may-not-write"
+          ],
+          "temporal": {
+            "knowledge": "n/a",
+            "world_time": "n/a"
+          },
+          "title": "Governed writes of the verification chain, by function, idempotency key or Mission Control run (who acted, for which mission)",
+          "volatile": true
         },
         {
           "aliases": [
@@ -15773,7 +16065,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:cb6affa02c52946cbd0019cc2b63fb3fc3855fb33ee4338c0039fcc878421a33",
+    "sha256": "sha256:3d2e100fd2971e9d9964aa426481202d3e7a89b33747566c2f2ea111e11826a2",
     "tasks": [
       {
         "aliases": [
@@ -16128,6 +16420,36 @@
       },
       {
         "aliases": [
+          "register probe",
+          "record probe run",
+          "propose verdict",
+          "write verdict",
+          "verdict write",
+          "agent proposed",
+          "revalidation write",
+          "probe write"
+        ],
+        "domains": [
+          "verified-knowledge"
+        ],
+        "expected_shape": "`register_probe`: `probe_id`, `slug`, `state`, `claims`. `record_probe_run`: `probe_run_id`, `output_capture_id`, `output_locator_id`, `origin_kind`, `over_budget`. `propose_verdict`: `verdict_id`, `written`, `unchanged`, `review_state` (always `agent_proposed` for a written row), `supersedes_id`, `claim_status`, `claim_status_changed`, `needs_review`, `restatements_to_review`.\n",
+        "id": "task:propose-verdict-from-probe",
+        "navigation": "`tasks/write-verification-chain.md` → `functions/api/register_probe.md` → `functions/api/record_probe_run.md` → `functions/api/propose_verdict.md` → `q:evidence.claim_verdicts`.\n",
+        "operation": "Three calls, in order (pipeline_agent, verifier_agent or control_plane).\n\n```sql\nselect api.register_probe(\n  p_idempotency_key => 'probe:P20', p_slug => 'P20-checkpoint-ns', p_title => 'Checkpoint namespaces',\n  p_hypothesis => 'a root checkpoint_ns in the config is not stored', p_kind => 'executed',\n  p_claims => '[{\"claim_id\":\"0192b000-0000-7000-8000-000000000001\",\"expectation\":{\"expected\":\"root_ns_stays_empty true in every cell\"}}]',\n  p_script => '{\"path\":\"probes/p20.py\",\"sha256\":\"<64 hex>\"}', p_matrix => '[{\"label\":\"D3-latest\"}]', p_model_policy => 'fake');\nselect api.record_probe_run(\n  p_idempotency_key => 'probe:P20:run:D3-latest:2026-11-16T09', p_probe_id => '0192e000-0000-7000-8000-000000000001',\n  p_cell_label => 'D3-latest', p_outcome => 'pass', p_started_at => '2026-11-16T09:00:00Z',\n  p_observations => '{\"checks\":{\"root_ns_stays_empty\":true}}', p_resolved => '{\"langgraph\":\"1.2.22\"}',\n  p_output => '{\"capture_id\":\"0192d000-0000-7000-8000-000000000001\",\"node_id\":\"0192d000-0000-7000-8000-000000000002\",\"selector_kind\":\"json_pointer\",\"pointer\":\"/runs/0\"}');\nselect api.propose_verdict(\n  p_idempotency_key => 'probe:P20:verdict:claim-1:2026-11-16', p_claim_id => '0192b000-0000-7000-8000-000000000001',\n  p_probe_id => '0192e000-0000-7000-8000-000000000001', p_verdict => 'directly_supported',\n  p_cells => '{\"D3-latest\":{\"root_ns_stays_empty\":true}}', p_rationale => 'stored under the empty namespace in every cell');\n```\n\nA run's `outcome` is about the probe's own checks, not about the claim. `p_run` carries `ended_at`, `exit_code`, `lock_sha256`, `python_version`, `platform`, `tokens_in`, `tokens_out`, `cost_usd`, `latency_ms`; `p_sweep_id` ties the run to an open sweep of the same mission.\n",
+        "pitfalls": "A verdict is a proposal: it never verifies a claim, and a person confirms or rejects it elsewhere. The same verdict again writes nothing (`unchanged`); a changed verdict is a new row that supersedes. A `contradicted` verdict from a deterministic probe (executed, static_docs, resolution, registry_check) moves a `proposed` claim to `disputed`; a live arm never does, and a verified claim is never changed (`needs_review` true instead). Every key of `p_cells` needs a recorded run: `VERDICT_CELL_NOT_RUN`. The claim must be one the probe was registered to test, or a restatement of one: `CLAIM_NOT_PROBED`. A run that passed or failed needs `p_output`; only a `live_model` probe reports tokens or cost. A verdict a person rejected is not proposed again: `VERDICT_REJECTED_BY_PERSON`.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.probes",
+          "evidence.probe_matrix",
+          "evidence.claim_verdicts",
+          "evidence.probe_revalidation_due"
+        ],
+        "reviewed": null,
+        "slug": "propose-verdict-from-probe",
+        "title": "How do I register a probe, record its runs and propose a verdict?"
+      },
+      {
+        "aliases": [
           "one claim",
           "claim detail",
           "evidence for a claim",
@@ -16180,6 +16502,39 @@
         "reviewed": null,
         "slug": "record-availability-change",
         "title": "Record an availability change"
+      },
+      {
+        "aliases": [
+          "record claim",
+          "write claim",
+          "new claim",
+          "claim candidate write",
+          "evidence anchor",
+          "locator",
+          "quote",
+          "restate claim",
+          "restatement write",
+          "atomized claim"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "evidence"
+        ],
+        "expected_shape": "`record_claim`: `claim_id`, `created`, `reused`, `status`, `locator_ids`, `subjects`, `attributions`. `restate_claim`: `claim_id`, `original_claim_id`, `created`, `reused`, `status`, `probe` (the probe of the original's current verdict, if any), `copied` (subjects, attributions, evidence links taken from the original).\n",
+        "id": "task:record-claim-with-evidence",
+        "navigation": "`tasks/write-verification-chain.md` → `functions/api/record_claim.md` or `functions/api/restate_claim.md` → `q:evidence.claim` to read it back.\n",
+        "operation": "`api.record_claim` (pipeline_agent, executor_service) stores a statement as `proposed` with 1 to 50 evidence anchors. An anchor is an existing locator, or a quote that is verbatim in a content unit of a capture:\n\n```sql\nselect api.record_claim(\n  p_idempotency_key => 'thread-36957:claim:2',\n  p_claim_type => 'assertion',\n  p_statement => 'The post states that checkpoint_ns in the config is not stored.',\n  p_evidence => '[{\"capture_id\":\"0192d000-0000-7000-8000-000000000001\",\"node_id\":\"0192d000-0000-7000-8000-000000000002\",\"quote\":\"checkpoint_ns is ignored\",\"role\":\"context\"},\n                  {\"locator_id\":\"0192d000-0000-7000-8000-000000000003\",\"role\":\"supports\"}]',\n  p_subjects => '[\"0192b000-0000-7000-8000-000000000011\"]',\n  p_attributions => '[{\"entity_id\":\"0192b000-0000-7000-8000-000000000012\",\"role\":\"stated_by\"}]',\n  p_structured => '{\"path\":\"community_thread\",\"source_role\":\"community\",\"stated_at\":\"2026-11-10\"}');\n```\n\n`api.restate_claim` turns an attribution-framed proposed claim (\"the post states that X\") into X, the statement a probe can test:\n\n```sql\nselect api.restate_claim(\n  p_idempotency_key => 'thread-36957:claim:2:restate',\n  p_original_claim_id => '0192b000-0000-7000-8000-000000000001',\n  p_statement => 'Passing checkpoint_ns in the config does not change where a root invoke stores checkpoints.',\n  p_qualified => false, p_dropped => 'attribution', p_polarity => '{\"negative\":true}');\n```\n\nFind `node_id` and the text to quote with `q:content.document_units`.\n",
+        "pitfalls": "A new anchor is stored only when the quote is in the unit's text (whitespace and typographic quotes aside): `QUOTE_NOT_IN_UNIT`; the unit must belong to a document version read from that capture: `EVIDENCE_UNIT_NOT_IN_CAPTURE`. New anchors are `text_quote`, or `json_pointer` with `pointer`; any other kind is passed as `locator_id`. The same statement again returns the existing claim with `reused` true and adds no evidence to it. `path` `restatement` is reserved for `api.restate_claim`. One restatement per original; only a `proposed` claim that is not itself a restatement is restated, and the original is never changed. Neither function sets a status other than `proposed`.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.claim",
+          "evidence.claim_restatements",
+          "content.document_units",
+          "evidence.captures_for_source"
+        ],
+        "reviewed": null,
+        "slug": "record-claim-with-evidence",
+        "title": "How do I record a claim with its evidence, or restate one?"
       },
       {
         "aliases": [
@@ -16258,6 +16613,36 @@
         "reviewed": null,
         "slug": "resolve-or-create-entity",
         "title": "Resolve or create an entity"
+      },
+      {
+        "aliases": [
+          "raise sweep",
+          "open sweep",
+          "settle sweep",
+          "close sweep",
+          "attention sweep write",
+          "budget gate",
+          "budget stopped",
+          "watch tick",
+          "watch mission write"
+        ],
+        "domains": [
+          "source-intelligence"
+        ],
+        "expected_shape": "`raise_attention_sweep`: `sweep_id`, `policy`, `origin_kind`, `open`, `budget_stopped`, `mission_spent_usd`, `mission_budget_usd`, `budget_usd_per_run`, `budget_credits_per_run`. `settle_attention_sweep`: `outcome`, `settled`, `over_budget_usd`, `over_budget_credits`, `mission_spent_usd`, `mission_budget_usd`, `mission_budget_exhausted`.\n",
+        "id": "task:run-attention-sweep",
+        "navigation": "`tasks/what-is-due.md` → `q:acquisition.attention_due` → `functions/api/raise_attention_sweep.md` → the work → `functions/api/settle_attention_sweep.md`.\n",
+        "operation": "A sweep is one execution of an attention policy (pipeline_agent or control_plane). Open it before the work, settle it once after.\n\n```sql\nselect api.raise_attention_sweep(\n  p_idempotency_key => 'run-2fa5:op-3:sweep:vendor-issues-on-release', p_policy => 'vendor-issues-on-release',\n  p_trigger_kind => 'event', p_trigger_ref => '{\"release\":\"langgraph 1.2.22\"}', p_note => 'watch tick',\n  p_actor => '{\"label\":\"mc:watch\",\"mission_id\":\"0192a000-0000-7000-8000-000000000001\",\"mc\":{\"mission_id\":\"m-1\",\"run_id\":\"2fa5e2ab\",\"operation_id\":\"op-3\",\"operation_attempt\":1,\"execution_generation\":0,\"lane\":\"deep_agents\"}}');\n-- do the work only when the result has \"open\": true\nselect api.settle_attention_sweep(\n  p_idempotency_key => 'run-2fa5:op-3:settle:vendor-issues-on-release', p_sweep_id => '0192f000-0000-7000-8000-000000000001',\n  p_outcome => 'completed', p_items_seen => 30, p_items_selected => 4, p_items_captured => 4,\n  p_rejected => '{\"off_topic\":26}', p_spend_usd => 0.12, p_credits => 0,\n  p_actor => '{\"label\":\"mc:watch\",\"mission_id\":\"0192a000-0000-7000-8000-000000000001\"}');\n```\n\n`p_policy` is the policy slug or id. Fetches and probe runs made in the sweep carry its id (`p_sweep_id` of `api.record_probe_run`).\n",
+        "pitfalls": "The budget gate runs before any work: when the mission's sweeps already spent its budget the sweep is written settled as `budget_stopped` and `open` is false; stop. A call made by a Mission Control invocation (`mc`) must name the mission (`MISSION_REQUIRED`). Only an active policy above W0 is swept (`ATTENTION_POLICY_NOT_SWEEPABLE`). A sweep is settled once, under the mission that opened it (`SWEEP_ALREADY_SETTLED`, `SWEEP_MISSION_MISMATCH`); `captured <= selected <= seen`. Spend is recorded as reported, even over the per-run budget (`over_budget_usd`). An unsettled sweep is found with `q:acquisition.open_sweeps`. Policies are a person's decisions: no function creates or changes one.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "acquisition.attention_due",
+          "acquisition.attention_policies",
+          "acquisition.open_sweeps"
+        ],
+        "reviewed": null,
+        "slug": "run-attention-sweep",
+        "title": "How do I open and settle an attention sweep under a mission budget?"
       },
       {
         "aliases": [
@@ -16446,6 +16831,37 @@
       },
       {
         "aliases": [
+          "record triage",
+          "triage write",
+          "checkability",
+          "not checkable",
+          "duplicate claim",
+          "record source assessment",
+          "prior",
+          "derived assessment",
+          "source write"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "source-intelligence"
+        ],
+        "expected_shape": "`record_triage`: `triage_id`, `written`, `unchanged`, `disposition`, `review_state`, `supersedes_id`. `record_source_assessment`: `assessment_id`, `method`, `written`, `unchanged`, `authority_score`, and for a derived row `claims_observed`, `claims_checked`, `self_checked`, `recommended_watch_level`, `supersedes_id`.\n",
+        "id": "task:triage-claims-and-assess-sources",
+        "navigation": "`tasks/write-verification-chain.md` → `functions/api/record_triage.md` or `functions/api/record_source_assessment.md` → `q:evidence.claim_triage` / `q:evidence.source_registry`.\n",
+        "operation": "Both are pipeline_agent, verifier_agent or control_plane.\n\n```sql\nselect api.record_triage(\n  p_idempotency_key => 'triage:claim-1:v1', p_claim_id => '0192b000-0000-7000-8000-000000000001',\n  p_disposition => 'probe', p_checkability => 'deterministic_local',\n  p_rationale => 'a short script with a fake model can observe the namespace', p_priority => 85,\n  p_components => '{\"module_subject\":true,\"version_bounded\":true}');\nselect api.record_source_assessment(\n  p_idempotency_key => 'source:forum:prior', p_subject_entity_id => '0192b000-0000-7000-8000-000000000021',\n  p_method => 'prior', p_source_role_code => 'community', p_conflict_of_interest => 'none', p_rationale => 'a community forum');\nselect api.record_source_assessment(\n  p_idempotency_key => 'source:forum:derived:2026-11-16', p_subject_entity_id => '0192b000-0000-7000-8000-000000000021',\n  p_method => 'derived', p_topic_entity_id => '0192b000-0000-7000-8000-000000000011');\n```\n\nTriage says what to do with a candidate (`probe`, `docs_check`, `registry_check`, `not_checkable`, `duplicate` with `p_duplicate_of_claim_id`, `out_of_scope`); `p_probe_id` names the probe it became. A prior is scored by the role's `authority_rank`; a derived assessment is computed from the latest verdicts on the claims the source stated.\n",
+        "pitfalls": "Triage never judges whether a claim is true, and only a `proposed` claim is triaged. Rows are append-only: a changed triage supersedes the agent's current row, the same triage again writes nothing, and a row a person reviewed is not superseded (`TRIAGE_REVIEWED_BY_PERSON`). The caller never passes a score. A derived assessment needs a prior first (`ASSESSMENT_BASE_REQUIRED`) and takes role, conflict of interest and disclosure from it. `p_method` `reviewed` is a person's judgment and is refused (`HUMAN_REVIEW_NOT_AGENT_WRITABLE`). A source is a `source_channel`, `community_actor`, `organization` or `person`. Read `authority_score` with `claims_checked`; a watch level is suggested only from five checked claims.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.claim_triage",
+          "evidence.source_registry",
+          "evidence.source_track_record"
+        ],
+        "reviewed": null,
+        "slug": "triage-claims-and-assess-sources",
+        "title": "How do I triage a claim candidate or record a source assessment?"
+      },
+      {
+        "aliases": [
           "receipt",
           "verify write",
           "post-ingest check"
@@ -16502,6 +16918,39 @@
         "reviewed": null,
         "slug": "what-a-release-affects",
         "title": "What does a software release affect (our modules, probes, releases)?"
+      },
+      {
+        "aliases": [
+          "not allowed",
+          "forbidden write",
+          "agent limits",
+          "human review",
+          "human confirmed",
+          "verify claim",
+          "admission",
+          "release review",
+          "append-only",
+          "immutable",
+          "lines agents do not cross"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "source-intelligence"
+        ],
+        "expected_shape": "`writes`: one row per governed write with `function`, `idempotency_key`, `session_role`, `actor_label`, `origin_kind`, `mc_run_id`, `mission_id`. `verdicts`: `review_state` is `agent_proposed` on every row an agent wrote and `decided_by` starts with `agent:`; `human_confirmed` rows were written by a person's path.\n",
+        "id": "task:what-agents-may-not-write",
+        "navigation": "`tasks/write-verification-chain.md` → this page → `domains/verified-knowledge.md` (Verified).\n",
+        "operation": "Three lines, enforced by the database for every bounded role (pipeline_agent, verifier_agent, executor_service, control_plane, app_reader) and for service_role, whether the write goes through a function or straight at a table.\n\n1. **Verified.** A claim becomes `verified` only when Knowledge Services admits a sealed verification run (`verification.record_admitted_claim_verification`, called with the decision the verification component issued). No governed function sets a status other than `proposed`, or `disputed` after a deterministic contradiction. Setting the status directly fails `VERIFIED_CLAIM_REQUIRES_ADMITTED_USE`.\n2. **A person's judgment.** `review_state` `human_confirmed` or `human_rejected` on `verification.probe_verdict` and `verification.claim_triage`, and `method` `reviewed` on `evidence.source_assessment`, say that a person decided. An agent role cannot write such a row (`HUMAN_REVIEW_NOT_AGENT_WRITABLE`), cannot label itself as a person (`ACTOR_INVALID`), and cannot call the product command that records a release review. Attention policies are a person's decisions too.\n3. **Nothing rewritten.** Verdicts, triage rows, assessments, receipts, receipt targets, evidence locators and links, admissions and vector items are append-only or immutable: a change is a new row that supersedes. A verified claim is not deleted, restated or re-statused; a contradicting verdict on it is recorded as a proposal with `needs_review` true.\n\n```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"what-did-the-agent-write\",\n  \"operations\": [\n    { \"opId\": \"writes\", \"kind\": \"named_query\", \"query\": \"chain.governed_writes\", \"params\": { \"function\": null, \"mc_run_id\": null, \"key\": null, \"limit\": 20 } },\n    { \"opId\": \"verdicts\", \"kind\": \"named_query\", \"query\": \"evidence.claim_verdicts\", \"params\": { \"claim_id\": null, \"verdict\": null, \"probe\": null, \"limit\": 20 } }\n  ]\n}\n```\n",
+        "pitfalls": "A supportive verdict is not verification and an agent's confidence is not a review: say \"proposed\" until `q:evidence.verified_claims` lists the claim. Do not transcribe a person's answer into a verdict, a triage row or a release review; ask for the review instead. An agent's changed verdict may supersede a row a person confirmed, as a new `agent_proposed` row flagged `needs_review`; the person's row stays as written. There is no agent function for a human confirmation, and none should be granted to an agent role.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.verified_claims",
+          "evidence.claim_verdicts",
+          "chain.governed_writes"
+        ],
+        "reviewed": null,
+        "slug": "what-agents-may-not-write",
+        "title": "What is an agent not allowed to write?"
       },
       {
         "aliases": [
@@ -16681,6 +17130,39 @@
         "reviewed": null,
         "slug": "why-claim-disputed-or-restated",
         "title": "Why is a claim disputed, or why was it restated?"
+      },
+      {
+        "aliases": [
+          "governed write",
+          "write a claim",
+          "agent write",
+          "mission write",
+          "idempotency key",
+          "p_actor",
+          "chain write",
+          "who may write",
+          "write functions"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "source-intelligence",
+          "orchestration-ledger"
+        ],
+        "expected_shape": "One JSON object: the ids written, plus `intent_id`, `receipt_id` and `replayed`. The same key with the same arguments returns the first result with `replayed` true and writes nothing (the actor is not compared, so a later attempt of the same operation replays). `q:chain.governed_writes` lists the writes of a function, a key or a Mission Control run.\n",
+        "id": "task:write-verification-chain",
+        "navigation": "`START_HERE.md` (Writing) → this page → the task for the step → `functions/api/<name>.md`.\n",
+        "operation": "Nine functions, one per write. Call them as a bounded role with the tenant set for the transaction; never insert the rows.\n\n| Step | Function | Roles | Task |\n|---|---|---|---|\n| record a claim with evidence | `api.record_claim` | pipeline_agent, executor_service | `tasks/record-claim-with-evidence.md` |\n| restate a claim | `api.restate_claim` | pipeline_agent, executor_service | same |\n| register a probe | `api.register_probe` | pipeline_agent, verifier_agent, control_plane | `tasks/propose-verdict-from-probe.md` |\n| record a probe run | `api.record_probe_run` | same three | same |\n| propose a verdict | `api.propose_verdict` | same three | same |\n| triage a candidate | `api.record_triage` | same three | `tasks/triage-claims-and-assess-sources.md` |\n| assess a source | `api.record_source_assessment` | same three | same |\n| open and settle a sweep | `api.raise_attention_sweep`, `api.settle_attention_sweep` | pipeline_agent, control_plane | `tasks/run-attention-sweep.md` |\n\n```sql\nbegin;\nselect set_config('app.tenant_id', '00000000-0000-7000-8000-000000000001', true);\nset local role pipeline_agent;\nselect api.record_claim(\n  p_idempotency_key => 'run-2fa5:claim:7',\n  p_claim_type => 'assertion',\n  p_statement => 'create_agent ends the loop when tool_calls is empty.',\n  p_evidence => '[{\"capture_id\":\"0192d000-0000-7000-8000-000000000001\",\"node_id\":\"0192d000-0000-7000-8000-000000000002\",\"quote\":\"the loop exits when tool_calls is empty\"}]',\n  p_actor => '{\"label\":\"ks:claim-extractor\",\"mission_id\":\"0192a000-0000-7000-8000-000000000001\",\"mc\":{\"mission_id\":\"m-1\",\"run_id\":\"2fa5e2ab\",\"operation_id\":\"op-3\",\"operation_attempt\":1,\"execution_generation\":0,\"lane\":\"deep_agents\"}}');\ncommit;\n```\n\nEvery function takes `p_idempotency_key` first and `p_actor` last. `p_actor` is optional: `label` (the agent or tool), `mission_id` (the `orchestration.mission` whose budget bounds the work), `mc` (the Mission Control invocation: all of `mission_id`, `run_id`, `operation_id`, `operation_attempt`, `execution_generation`, `lane`), `origin_digest`.\n",
+        "pitfalls": "The tenant is `app.tenant_id` of the transaction, never an argument: without it the call fails `TENANT_CONTEXT_REQUIRED`. A failure's message is a stable code; the SQLSTATE is its class (42501 not allowed, 22023 malformed argument, P0002 not found in the tenant, 23514 the row's state refuses, 23505 taken). The same key with other arguments is `IDEMPOTENCY_KEY_REUSED`: derive the key from the operation, not from the attempt. A `label` that starts with `human` is `ACTOR_INVALID`. Order matters: a verdict needs a registered probe with a recorded run in every cell it cites.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "chain.governed_writes",
+          "evidence.claim",
+          "evidence.claim_verdicts",
+          "acquisition.attention_due"
+        ],
+        "reviewed": null,
+        "slug": "write-verification-chain",
+        "title": "How do I write the verification chain (claim, probe, verdict, triage, assessment, sweep)?"
       }
     ],
     "terminology": [
@@ -16702,6 +17184,31 @@
         "reviewed": null,
         "slug": "admission",
         "term": "admission"
+      },
+      {
+        "aliases": [
+          "agent_proposed",
+          "human_confirmed",
+          "human_rejected",
+          "review state",
+          "human review",
+          "person's judgment",
+          "reviewed assessment"
+        ],
+        "definition": "The review state of every verdict and triage row an agent writes. human_confirmed and human_rejected (and a source assessment with method reviewed) record a person's judgment; the database refuses them from every bounded role, by function or by direct insert. An agent's proposal never verifies a claim and never rewrites a person's row; it can only be appended.",
+        "id": "term:agent-proposed",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:verification.probe_verdict",
+          "rel:verification.claim_triage",
+          "rel:evidence.source_assessment",
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+          "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)",
+          "task:what-agents-may-not-write"
+        ],
+        "reviewed": null,
+        "slug": "agent-proposed",
+        "term": "agent-proposed"
       },
       {
         "aliases": [
@@ -16794,6 +17301,29 @@
         "reviewed": null,
         "slug": "attention-policy",
         "term": "attention policy"
+      },
+      {
+        "aliases": [
+          "sweep",
+          "watch tick",
+          "budget gate",
+          "budget_stopped",
+          "settle a sweep"
+        ],
+        "definition": "One execution of an attention policy. It is opened before the work (api.raise_attention_sweep) and settled once after it (api.settle_attention_sweep) with what was seen, selected and captured and what was spent. Under a mission the budget gate runs at opening; when the mission's sweeps already spent its budget the sweep is written settled as budget_stopped and no work is done.",
+        "id": "term:attention-sweep",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:acquisition.attention_sweep",
+          "rel:acquisition.attention_policy",
+          "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
+          "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)",
+          "q:acquisition.open_sweeps",
+          "task:run-attention-sweep"
+        ],
+        "reviewed": null,
+        "slug": "attention-sweep",
+        "term": "attention sweep"
       },
       {
         "aliases": [
@@ -17009,6 +17539,29 @@
       },
       {
         "aliases": [
+          "anchor",
+          "locator",
+          "quote anchor",
+          "text_quote",
+          "json_pointer",
+          "verbatim quote"
+        ],
+        "definition": "What ties a claim or a probe run to captured bytes. Either an existing evidence.locator, or a new one made by a governed write from a capture, the content unit that holds the text, and the verbatim quote (text_quote) or a pointer into the captured document (json_pointer). A new anchor is stored only when the quote is in the unit and the unit belongs to a document version read from that capture.",
+        "id": "term:evidence-anchor",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:evidence.locator",
+          "rel:evidence.source_capture",
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)",
+          "task:record-claim-with-evidence"
+        ],
+        "reviewed": null,
+        "slug": "evidence-anchor",
+        "term": "evidence anchor"
+      },
+      {
+        "aliases": [
           "packet"
         ],
         "definition": "A retrieval-assembled bundle of members (verified claims, guidance items, source-faithful representations with scores and locators) for one question. Read with api.evidence_packet.",
@@ -17071,6 +17624,36 @@
         "reviewed": null,
         "slug": "fingerprint",
         "term": "fingerprint"
+      },
+      {
+        "aliases": [
+          "governed chain write",
+          "write function",
+          "agent write",
+          "chain write",
+          "idempotency key",
+          "p_actor",
+          "replayed"
+        ],
+        "definition": "A write of the verification chain made through an api function instead of a table insert. The function resolves the tenant from the session, takes a caller-supplied idempotency key (the same key with the same arguments replays the first result; other arguments are refused), validates what the chain depends on, and leaves an operation intent, a receipt and receipt targets that name the session role, the caller's label, the mission and the Mission Control invocation. Granted to named bounded roles only.",
+        "id": "term:governed-write",
+        "provenance": "model_assisted",
+        "refs": [
+          "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+          "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)",
+          "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)",
+          "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)",
+          "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+          "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)",
+          "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)",
+          "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
+          "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)",
+          "q:chain.governed_writes",
+          "task:write-verification-chain"
+        ],
+        "reviewed": null,
+        "slug": "governed-write",
+        "term": "governed write"
       },
       {
         "aliases": [
@@ -17906,7 +18489,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:b72ff7130a3107d5c20f6e0f24497fa8df6f3c72bca885e3bdac5940eb611a49",
+  "fingerprint": "sha256:0c3261c3215ba1fd32f76583b07e4cd3b7dd222d63e49f387bfb0a3fd12ee53e",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -21218,6 +21801,842 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"product_worker\"]",
       "volatility": "volatile"
     },
+    "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claim_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_probe_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_verdict",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_cells",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_rationale",
+          "type": "text"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:765d6888c88546883a30898ece1f7b9e8543db474abba3d5e5fd4687aed3b524",
+      "comment": "Governed write: propose what a probe's recorded runs say about a claim the probe tests. Always review_state agent_proposed: a person confirms or rejects through a path no agent role holds, and only a Knowledge Services admission verifies. Append-only: a changed verdict supersedes the current one; the same verdict again writes nothing. A deterministic contradiction moves a proposed claim to disputed; no other status is touched. Idempotent on p_idempotency_key. Returns {verdict_id, written, unchanged, verdict, review_state, supersedes_id, claim_status, claim_status_changed, evidence_locator_id, needs_review, restatements_to_review, receipt_id, intent_id, replayed}. Errors: the common ones, CLAIM_NOT_FOUND, PROBE_NOT_FOUND, VERDICT_INVALID, RATIONALE_REQUIRED, VERDICT_REQUIRES_RUNS, VERDICT_CELL_NOT_RUN, CLAIM_NOT_PROBED, VERDICT_REJECTED_BY_PERSON.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_claim_id uuid, p_probe_id uuid, p_verdict text, p_cells jsonb, p_rationale text, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "propose_verdict",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "verification.probe",
+          "verification.probe_run"
+        ],
+        "writes": [
+          "evidence.claim",
+          "evidence.claim_evidence_link",
+          "verification.probe_claim",
+          "verification.probe_verdict"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"propose_verdict\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_policy",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_trigger_kind",
+          "type": "text"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_trigger_ref",
+          "type": "jsonb"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_note",
+          "type": "text"
+        },
+        {
+          "default": "NULL::timestamp with time zone",
+          "mode": "in",
+          "name": "p_window_from",
+          "type": "timestamp with time zone"
+        },
+        {
+          "default": "NULL::timestamp with time zone",
+          "mode": "in",
+          "name": "p_window_to",
+          "type": "timestamp with time zone"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:bd0a0e7e92f4438f3843a63f607d4acca142859c16cb0a66d37734d119c06345",
+      "comment": "Governed write: open one execution (a sweep) of an active attention policy above W0, by slug or id. Under a mission the budget gate runs first: when the mission's sweeps already spent its budget, the sweep is written settled as budget_stopped and the result says budget_stopped true: do no work. Policies themselves (what to watch, how often, on what budget) are decided by a person and are not written here. Idempotent on p_idempotency_key. Returns {sweep_id, policy_id, policy, origin_kind, open, budget_stopped, mission_spent_usd, mission_budget_usd, budget_usd_per_run, budget_credits_per_run, receipt_id, intent_id, replayed}. Errors: the common ones, ATTENTION_POLICY_NOT_FOUND, ATTENTION_POLICY_NOT_SWEEPABLE, SWEEP_INVALID, MISSION_REQUIRED.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_policy text, p_trigger_kind text, p_trigger_ref jsonb, p_note text, p_window_from timestamp with time zone, p_window_to timestamp with time zone, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "raise_attention_sweep",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "acquisition.attention_policy"
+        ],
+        "writes": [
+          "acquisition.attention_sweep"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"raise_attention_sweep\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claim_type",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_statement",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_evidence",
+          "type": "jsonb"
+        },
+        {
+          "default": "'[]'::jsonb",
+          "mode": "in",
+          "name": "p_subjects",
+          "type": "jsonb"
+        },
+        {
+          "default": "'[]'::jsonb",
+          "mode": "in",
+          "name": "p_attributions",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_structured",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:68b17abfed8af867b471a07c0b506bec19ff43a6e8b4e6cbb31965885d9ee36a",
+      "comment": "Governed write: record a claim read from a source, with its evidence anchors, subjects and attributions. Always proposed. Each anchor is an existing locator or a quote that is verbatim in a content unit of a capture; structured.quote and structured.node_id default to the first anchor. The same statement again returns the existing claim (reused) and adds nothing to it. Idempotent on p_idempotency_key. Returns {claim_id, created, reused, status, locator_ids, receipt_id, intent_id, replayed}. Errors: TENANT_CONTEXT_REQUIRED, IDEMPOTENCY_KEY_REQUIRED, IDEMPOTENCY_KEY_REUSED, ACTOR_INVALID, MISSION_NOT_FOUND, MISSION_ENDED, STATEMENT_REQUIRED, CLAIM_TYPE_UNKNOWN, STRUCTURED_INVALID, STRUCTURED_RESERVED, EVIDENCE_REQUIRED, EVIDENCE_INVALID, EVIDENCE_NOT_FOUND, EVIDENCE_UNIT_NOT_IN_CAPTURE, EVIDENCE_SELECTOR_UNSUPPORTED, QUOTE_REQUIRED, QUOTE_NOT_IN_UNIT, SUBJECT_INVALID, SUBJECT_NOT_FOUND, ATTRIBUTION_INVALID, ATTRIBUTION_ENTITY_NOT_FOUND, ATTRIBUTION_SOURCE_NOT_FOUND.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "pipeline_agent",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_claim_type text, p_statement text, p_evidence jsonb, p_subjects jsonb, p_attributions jsonb, p_structured jsonb, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "record_claim",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_anchor",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target",
+          "verification.chain_uuid"
+        ],
+        "reads": [
+          "api.claim_verdicts",
+          "api.community_claims",
+          "catalog.entity",
+          "evidence.claim_type",
+          "evidence.locator",
+          "evidence.source"
+        ],
+        "writes": [
+          "evidence.attribution",
+          "evidence.claim",
+          "evidence.claim_evidence_link",
+          "evidence.claim_subject"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"record_claim\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_probe_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_cell_label",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_outcome",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_started_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_observations",
+          "type": "jsonb"
+        },
+        {
+          "default": "NULL::jsonb",
+          "mode": "in",
+          "name": "p_output",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_cell",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_resolved",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_run",
+          "type": "jsonb"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_sweep_id",
+          "type": "uuid"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:e30389aa11372925d1347c4ad68f6d76d60b4d71169585971edc98ca8a90d699",
+      "comment": "Governed write: record one execution of an active probe in one cell: outcome (about the probe's own checks), observations, the versions it resolved, and its captured output as an evidence anchor (required when it passed or failed). A probe that is not live reports no tokens or cost. A run under a mission names it; under a sweep, an open one of the same mission. Idempotent on p_idempotency_key. Returns {probe_run_id, probe_id, probe, cell_label, outcome, output_capture_id, output_locator_id, origin_kind, over_budget, receipt_id, intent_id, replayed}. Errors: the common ones and the evidence ones, PROBE_NOT_FOUND, PROBE_NOT_ACTIVE, PROBE_RUN_INVALID, PROBE_RUN_SPEND_NOT_ALLOWED, PROBE_RUN_OUTPUT_REQUIRED, PROBE_RUN_DUPLICATE, MISSION_REQUIRED, SWEEP_NOT_FOUND, SWEEP_NOT_OPEN, SWEEP_MISSION_MISMATCH.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_probe_id uuid, p_cell_label text, p_outcome text, p_started_at timestamp with time zone, p_observations jsonb, p_output jsonb, p_cell jsonb, p_resolved jsonb, p_run jsonb, p_sweep_id uuid, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "record_probe_run",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_anchor",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "acquisition.attention_sweep",
+          "verification.probe"
+        ],
+        "writes": [
+          "verification.probe_run"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"record_probe_run\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_subject_entity_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_method",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_topic_entity_id",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_source_role_code",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_conflict_of_interest",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_method_disclosure",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_rationale",
+          "type": "text"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:3f1e63254baeb6e0d836201168c76559a3879828fa5feb3ccae811fdbb88e5ab",
+      "comment": "Governed write: append what we know about a source (a channel, a handle, an organization, a person), on a topic or overall. method prior: the role prior, scored by the role's authority rank, never by the caller. method derived: evidence.derive_source_assessment over the latest verdicts on the claims the source stated (self-checked claims not scored, D-61; a watch level only from 5 checked claims, D-69); needs a prior. method reviewed is a person's and is refused. Idempotent on p_idempotency_key. Returns {assessment_id, method, written, unchanged, authority_score, claims_observed, claims_checked, self_checked, recommended_watch_level, supersedes_id, receipt_id, intent_id, replayed}. Errors: the common ones, HUMAN_REVIEW_NOT_AGENT_WRITABLE, ASSESSMENT_METHOD_INVALID, ASSESSMENT_SUBJECT_NOT_FOUND, ASSESSMENT_SUBJECT_INVALID, ASSESSMENT_TOPIC_NOT_FOUND, ASSESSMENT_ROLE_UNKNOWN, ASSESSMENT_INVALID, ASSESSMENT_REVIEWED_BY_PERSON, ASSESSMENT_BASE_REQUIRED.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_subject_entity_id uuid, p_method text, p_topic_entity_id uuid, p_source_role_code text, p_conflict_of_interest text, p_method_disclosure text, p_rationale text, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "record_source_assessment",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "evidence.derive_source_assessment",
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "catalog.entity",
+          "content.source_role"
+        ],
+        "writes": [
+          "evidence.source_assessment"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"record_source_assessment\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claim_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_disposition",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_checkability",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_rationale",
+          "type": "text"
+        },
+        {
+          "default": "NULL::numeric",
+          "mode": "in",
+          "name": "p_priority",
+          "type": "numeric"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_components",
+          "type": "jsonb"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_duplicate_of_claim_id",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_probe_id",
+          "type": "uuid"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:b3530002d9baf234cb83d339893546f1bf170e0a140198e4b45992fd8f06bee3",
+      "comment": "Governed write: record what to do with a proposed claim before anyone checks it (probe it, check the docs or a registry, not checkable, duplicate, out of scope). Never a judgment of truth. Always review_state agent_proposed; append-only: a changed triage supersedes the agent's current row, the same triage again writes nothing, and a row a person reviewed is not superseded by an agent. Idempotent on p_idempotency_key. Returns {triage_id, written, unchanged, disposition, review_state, supersedes_id, receipt_id, intent_id, replayed}. Errors: the common ones, CLAIM_NOT_FOUND, CLAIM_NOT_TRIAGEABLE, TRIAGE_INVALID, RATIONALE_REQUIRED, TRIAGE_DUPLICATE_INVALID, TRIAGE_PROBE_INVALID, TRIAGE_REVIEWED_BY_PERSON.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_claim_id uuid, p_disposition text, p_checkability text, p_rationale text, p_priority numeric, p_components jsonb, p_duplicate_of_claim_id uuid, p_probe_id uuid, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "record_triage",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "evidence.claim",
+          "verification.probe"
+        ],
+        "writes": [
+          "verification.claim_triage"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"record_triage\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_slug",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_title",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_hypothesis",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_kind",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_claims",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::uuid[]",
+          "mode": "in",
+          "name": "p_subject_entity_ids",
+          "type": "uuid[]"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_script",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_environment",
+          "type": "jsonb"
+        },
+        {
+          "default": "'[]'::jsonb",
+          "mode": "in",
+          "name": "p_matrix",
+          "type": "jsonb"
+        },
+        {
+          "default": "'none'::text",
+          "mode": "in",
+          "name": "p_model_policy",
+          "type": "text"
+        },
+        {
+          "default": "0",
+          "mode": "in",
+          "name": "p_budget_usd",
+          "type": "numeric"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:1424c22458d6fe30581a496699dca33069c1913d9f3baa5346ce4a143b2ae7f0",
+      "comment": "Governed write: register a probe (an experiment against a matrix of cells) with the claims it tests and what is expected of each before any run. Only a live_model probe has model_policy live and a budget. Idempotent on p_idempotency_key. Returns {probe_id, slug, state, claims, receipt_id, intent_id, replayed}. Errors: the common ones, PROBE_SLUG_INVALID, PROBE_INVALID, PROBE_KIND_INVALID, PROBE_MODEL_POLICY_INVALID, PROBE_MODEL_POLICY_MISMATCH, PROBE_BUDGET_INVALID, PROBE_CLAIMS_REQUIRED, CLAIM_NOT_FOUND, SUBJECT_NOT_FOUND, PROBE_SLUG_TAKEN.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_slug text, p_title text, p_hypothesis text, p_kind text, p_claims jsonb, p_subject_entity_ids uuid[], p_script jsonb, p_environment jsonb, p_matrix jsonb, p_model_policy text, p_budget_usd numeric, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "register_probe",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target",
+          "verification.chain_uuid"
+        ],
+        "reads": [
+          "catalog.entity",
+          "evidence.claim"
+        ],
+        "writes": [
+          "verification.probe",
+          "verification.probe_claim"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"register_probe\"]",
+      "volatility": "volatile"
+    },
     "fn:api.related(uuid,text,text,timestamptz)": {
       "arguments": [
         {
@@ -21696,6 +23115,109 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"resolve_entity\"]",
       "volatility": "stable"
     },
+    "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_original_claim_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_statement",
+          "type": "text"
+        },
+        {
+          "default": "false",
+          "mode": "in",
+          "name": "p_qualified",
+          "type": "boolean"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_dropped",
+          "type": "text"
+        },
+        {
+          "default": "NULL::jsonb",
+          "mode": "in",
+          "name": "p_polarity",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:f085a165d6fd66735dae95f94f7064bd03c3f2a90541fd971af3985592f280e7",
+      "comment": "Governed write (D-80): restate an attribution-framed proposed claim as the statement a probe can test. A new proposed claim with atomized_from_id, the original's subjects, attributions and evidence links copied; the original is not changed. One restatement per original. Its verdict is proposed separately (api.propose_verdict) and confirmed by a person. Idempotent on p_idempotency_key. Returns {claim_id, original_claim_id, created, reused, status, probe, copied, receipt_id, intent_id, replayed}. Errors: the common ones, CLAIM_NOT_FOUND, CLAIM_NOT_RESTATABLE, STATEMENT_REQUIRED, RESTATEMENT_UNCHANGED, RESTATEMENT_EXISTS, POLARITY_INVALID.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "pipeline_agent",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_original_claim_id uuid, p_statement text, p_qualified boolean, p_dropped text, p_polarity jsonb, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "restate_claim",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_norm",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "verification.probe",
+          "verification.probe_verdict"
+        ],
+        "writes": [
+          "evidence.attribution",
+          "evidence.claim",
+          "evidence.claim_evidence_link",
+          "evidence.claim_subject"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"restate_claim\"]",
+      "volatility": "volatile"
+    },
     "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)": {
       "arguments": [
         {
@@ -22107,6 +23629,121 @@
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"search_unified\"]",
       "volatility": "stable"
+    },
+    "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_sweep_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_outcome",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_items_seen",
+          "type": "integer"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_items_selected",
+          "type": "integer"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_items_captured",
+          "type": "integer"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_rejected",
+          "type": "jsonb"
+        },
+        {
+          "default": "0",
+          "mode": "in",
+          "name": "p_spend_usd",
+          "type": "numeric"
+        },
+        {
+          "default": "0",
+          "mode": "in",
+          "name": "p_credits",
+          "type": "integer"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:e7ef7cd38c6aef4149529745cdd20e5fa3247ca63947339dc6df87d4be30fe3f",
+      "comment": "Governed write: settle an open sweep once, with what it saw, selected and captured, the rejections by reason, and what it spent. Spend is recorded as reported; the result says whether it exceeds the policy's per-run budget and whether the mission's budget is now exhausted. Idempotent on p_idempotency_key. Returns {sweep_id, policy, outcome, settled, over_budget_usd, over_budget_credits, mission_spent_usd, mission_budget_usd, mission_budget_exhausted, receipt_id, intent_id, replayed}. Errors: the common ones, SWEEP_NOT_FOUND, SWEEP_ALREADY_SETTLED, SWEEP_MISSION_MISMATCH, SWEEP_INVALID, SWEEP_COUNTS_INVALID.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "pipeline_agent",
+        "service_role"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_sweep_id uuid, p_outcome text, p_items_seen integer, p_items_selected integer, p_items_captured integer, p_rejected jsonb, p_spend_usd numeric, p_credits integer, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "settle_attention_sweep",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [
+          "acquisition.attention_policy"
+        ],
+        "writes": [
+          "acquisition.attention_sweep"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"settle_attention_sweep\"]",
+      "volatility": "volatile"
     },
     "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)": {
       "arguments": [
@@ -37307,6 +38944,514 @@
         ]
       },
       "typescript": "Database[\"verification\"][\"Functions\"][\"assert_admitted_use\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.chain_anchor(uuid,jsonb,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_tenant",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_spec",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_function",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "out",
+          "name": "locator_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "out",
+          "name": "capture_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "out",
+          "name": "source_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "out",
+          "name": "created",
+          "type": "boolean"
+        }
+      ],
+      "body_sha256": "sha256:4bf66f4c05638ecf646da2b3025719e6a60378efb2d5a341b2d97eeeb0f4495c",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_anchor(uuid,jsonb,text)",
+      "identity_arguments": "p_tenant uuid, p_spec jsonb, p_function text, OUT locator_id uuid, OUT capture_id uuid, OUT source_id uuid, OUT created boolean",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "chain_anchor",
+      "raises": [],
+      "returns": "record",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7",
+          "verification.chain_fail",
+          "verification.chain_norm",
+          "verification.chain_sha",
+          "verification.chain_uuid"
+        ],
+        "reads": [
+          "content.document_node",
+          "content.document_representation",
+          "content.document_version_source_capture",
+          "evidence.source_capture"
+        ],
+        "writes": [
+          "evidence.locator"
+        ]
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_anchor\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.chain_begin(text,text,jsonb,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_function",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_request",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:5aa3caef8b7be2959f47772eff3b006c8a5398e3a12839b3b7906e78c6b454f3",
+      "comment": "Opens a governed chain write: resolves the tenant (util.current_tenant_id), takes the idempotency key (stored as chain:<key>; same key and same arguments replays the first result, other arguments are refused), reads the session role and validates the actor the caller passes (label, the AI Engineer mission, the Mission Control invocation).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_begin(text,text,jsonb,jsonb)",
+      "identity_arguments": "p_function text, p_key text, p_request jsonb, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "chain_begin",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id",
+          "verification.chain_fail",
+          "verification.chain_sha",
+          "verification.chain_uuid"
+        ],
+        "reads": [
+          "orchestration.mission",
+          "orchestration.operation_intent",
+          "orchestration.operation_receipt"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_begin\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.chain_fail(text,text,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_code",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_state",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_detail",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:620b1610c1669078c29448c2ab7215a8c2da75ff10c09fa277991b0a0c8123ac",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_fail(text,text,text)",
+      "identity_arguments": "p_code text, p_state text, p_detail text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "chain_fail",
+      "raises": [
+        "%"
+      ],
+      "returns": "void",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_fail\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.chain_norm(text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_text",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:628d1d1dfa3a90a80041e44d9e60952b7a0f39bd7f7a9c0a581f4324dcb40559",
+      "comment": "The comparison form of a quote and of the unit it is read from: typographic quotes folded to plain ones, runs of whitespace to one space (the rule the lab used to accept a verbatim quote).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_norm(text)",
+      "identity_arguments": "p_text text",
+      "kind": "function",
+      "language": "sql",
+      "name": "chain_norm",
+      "raises": [],
+      "returns": "text",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_norm\"]",
+      "volatility": "immutable"
+    },
+    "fn:verification.chain_record(text,jsonb,jsonb,jsonb,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_function",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_ctx",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_request",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_result",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_refs",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:98363ba8cc2e1b5db8f65b1adbf091af6a4c17c87802d76f744e6cbce4bc355a",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_record(text,jsonb,jsonb,jsonb,jsonb)",
+      "identity_arguments": "p_function text, p_ctx jsonb, p_request jsonb, p_result jsonb, p_refs jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "chain_record",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.uuidv7"
+        ],
+        "reads": [],
+        "writes": [
+          "orchestration.operation_intent",
+          "orchestration.operation_receipt"
+        ]
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_record\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.chain_sha(text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_text",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:ebb007518ed1e7ecf4f2142c4a5b8d2732296286c2ba8a1c26174c702aa6e482",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_sha(text)",
+      "identity_arguments": "p_text text",
+      "kind": "function",
+      "language": "sql",
+      "name": "chain_sha",
+      "raises": [],
+      "returns": "text",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_sha\"]",
+      "volatility": "immutable"
+    },
+    "fn:verification.chain_target(jsonb,uuid,text,text,uuid,text,text,uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_ctx",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_receipt",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_schema",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_table",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_id",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_role",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_action",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_claim",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:7150091c34a0516e447972e8bbb01ac3a4409ae06d7873066bb5106fb7bf56c4",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_target(jsonb,uuid,text,text,uuid,text,text,uuid)",
+      "identity_arguments": "p_ctx jsonb, p_receipt uuid, p_schema text, p_table text, p_id uuid, p_role text, p_action text, p_claim uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "chain_target",
+      "raises": [],
+      "returns": "void",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": [
+          "orchestration.operation_receipt_target"
+        ]
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_target\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.chain_uuid(text,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_text",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_code",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:261119f02f7a96531f2edf9af6dbb4857b4bf6188db77abfb18198320773e9bb",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.chain_uuid(text,text)",
+      "identity_arguments": "p_text text, p_code text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "chain_uuid",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "verification.chain_fail"
+        ],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"verification\"][\"Functions\"][\"chain_uuid\"]",
+      "volatility": "volatile"
+    },
+    "fn:verification.guard_human_judgment()": {
+      "arguments": [],
+      "body_sha256": "sha256:803bb9f77756d4d5d6416d719acb26233e25461cd5f9f9740386d5a0ffde2204",
+      "comment": "Refuses an insert of a row that records a person's judgment (probe_verdict / claim_triage review_state other than agent_proposed, source_assessment method reviewed) unless the acting role owns the table or is a superuser: no bounded role (pipeline_agent, verifier_agent, executor_service, control_plane, app_reader, service_role) can record a human review.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116130000_build08_governed_chain_writes.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:verification.guard_human_judgment()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "guard_human_judgment",
+      "raises": [
+        "HUMAN_REVIEW_NOT_AGENT_WRITABLE"
+      ],
+      "returns": "trigger",
+      "returns_set": false,
+      "schema": "verification",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": null,
       "volatility": "volatile"
     },
     "fn:verification.guard_use_admission()": {
@@ -92097,6 +94242,14 @@
           "unique": true
         },
         {
+          "definition": "CREATE INDEX claim_tenant_statement_md5_ix ON evidence.claim USING btree (tenant_id, md5(statement))",
+          "id": "idx:evidence.claim_tenant_statement_md5_ix",
+          "method": "btree",
+          "name": "claim_tenant_statement_md5_ix",
+          "predicate": null,
+          "unique": false
+        },
+        {
           "definition": "CREATE INDEX claim_type_idx ON evidence.claim USING btree (claim_type)",
           "id": "idx:evidence.claim_type_idx",
           "method": "btree",
@@ -92135,6 +94288,17 @@
             ],
             "using": "(tenant_id = util.current_tenant_id())",
             "with_check": "(tenant_id = util.current_tenant_id())"
+          },
+          {
+            "command": "SELECT",
+            "id": "pol:evidence.claim.product_api_owner_read",
+            "name": "product_api_owner_read",
+            "permissive": true,
+            "roles": [
+              "product_api_owner"
+            ],
+            "using": "(tenant_id = product.tenant())",
+            "with_check": null
           }
         ]
       },
@@ -98059,7 +100223,24 @@
         ]
       },
       "schema": "evidence",
-      "triggers": [],
+      "triggers": [
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER source_assessment_append_only BEFORE DELETE OR UPDATE ON evidence.source_assessment FOR EACH ROW EXECUTE FUNCTION util.reject_mutation()",
+          "function": "util.reject_mutation",
+          "id": "trg:evidence.source_assessment.source_assessment_append_only",
+          "initially_deferred": false,
+          "name": "source_assessment_append_only"
+        },
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER source_assessment_human_judgment BEFORE INSERT ON evidence.source_assessment FOR EACH ROW EXECUTE FUNCTION verification.guard_human_judgment()",
+          "function": "verification.guard_human_judgment",
+          "id": "trg:evidence.source_assessment.source_assessment_human_judgment",
+          "initially_deferred": false,
+          "name": "source_assessment_human_judgment"
+        }
+      ],
       "typescript": {
         "insert": "Database[\"evidence\"][\"Tables\"][\"source_assessment\"][\"Insert\"]",
         "row": "Database[\"evidence\"][\"Tables\"][\"source_assessment\"][\"Row\"]",
@@ -98731,6 +100912,17 @@
             ],
             "using": "(tenant_id = util.current_tenant_id())",
             "with_check": "(tenant_id = util.current_tenant_id())"
+          },
+          {
+            "command": "SELECT",
+            "id": "pol:evidence.source_capture.product_api_owner_read",
+            "name": "product_api_owner_read",
+            "permissive": true,
+            "roles": [
+              "product_api_owner"
+            ],
+            "using": "(tenant_id = product.tenant())",
+            "with_check": null
           }
         ]
       },
@@ -126960,7 +129152,7 @@
     "rel:orchestration.operation_receipt_target": {
       "checks": [
         {
-          "expression": "(action = ANY (ARRAY['created'::text, 'reused'::text, 'superseded'::text, 'staged'::text, 'verified'::text]))",
+          "expression": "(action = ANY (ARRAY['created'::text, 'reused'::text, 'superseded'::text, 'staged'::text, 'verified'::text, 'updated'::text]))",
           "name": "operation_receipt_target_action_check"
         },
         {
@@ -126980,7 +129172,7 @@
           "name": "operation_receipt_target_target_id_check"
         },
         {
-          "expression": "(target_schema = ANY (ARRAY['corpus'::text, 'staging'::text, 'temporal'::text, 'evidence'::text, 'knowledge'::text, 'ranking'::text, 'research'::text]))",
+          "expression": "(target_schema = ANY (ARRAY['corpus'::text, 'staging'::text, 'temporal'::text, 'evidence'::text, 'knowledge'::text, 'ranking'::text, 'research'::text, 'catalog'::text, 'guidance'::text, 'verification'::text, 'acquisition'::text]))",
           "name": "operation_receipt_target_target_schema_check"
         },
         {
@@ -127032,7 +129224,7 @@
           "type": "integer"
         },
         {
-          "comment": null,
+          "comment": "Schema of the native row. The pre-R2 names (corpus, knowledge, research) stay valid for receipts written before the rename; catalog, guidance, verification and acquisition are the current ones.",
           "default": null,
           "fk": null,
           "generated": null,
@@ -127110,7 +129302,7 @@
           "type": "text"
         },
         {
-          "comment": "created, reused, superseded, staged; verified (loop 6): the receipt, bound to an admitted knowledge_verification use decision, moved the target claim to status verified.",
+          "comment": "created, reused, superseded, staged; verified (loop 6): the receipt, bound to an admitted knowledge_verification use decision, moved the target claim to status verified; updated (governed chain writes): the receipt changed the row in place (an attention sweep settled, a proposed claim disputed by a deterministic contradiction).",
           "default": null,
           "fk": null,
           "generated": null,
@@ -154155,7 +156347,24 @@
         ]
       },
       "schema": "verification",
-      "triggers": [],
+      "triggers": [
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER claim_triage_append_only BEFORE DELETE OR UPDATE ON verification.claim_triage FOR EACH ROW EXECUTE FUNCTION util.reject_mutation()",
+          "function": "util.reject_mutation",
+          "id": "trg:verification.claim_triage.claim_triage_append_only",
+          "initially_deferred": false,
+          "name": "claim_triage_append_only"
+        },
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER claim_triage_human_judgment BEFORE INSERT ON verification.claim_triage FOR EACH ROW EXECUTE FUNCTION verification.guard_human_judgment()",
+          "function": "verification.guard_human_judgment",
+          "id": "trg:verification.claim_triage.claim_triage_human_judgment",
+          "initially_deferred": false,
+          "name": "claim_triage_human_judgment"
+        }
+      ],
       "typescript": {
         "insert": "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Insert\"]",
         "row": "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Row\"]",
@@ -155392,7 +157601,7 @@
           "type": "uuid"
         }
       ],
-      "comment": "Loop 4: what a probe's runs say about one claim. agent_proposed by default; a human confirmation is a separate state. An executed deterministic probe may move the claim to verified (supported) or disputed (contradicted); live arms and community claims never verify alone.",
+      "comment": "Loop 4: what a probe's runs say about one claim. Append-only: a changed verdict is a new row that supersedes. agent_proposed by default; human_confirmed and human_rejected record a person's review and are not writable by a bounded role. A supportive verdict never verifies a claim (only a Knowledge Services admission does); a deterministic probe that contradicts a proposed claim moves it to disputed.",
       "defined_in": [
         "20261113120000_build08_loop4_source_intelligence_experiments.sql"
       ],
@@ -155446,24 +157655,20 @@
         "authenticated": [],
         "control_plane": [
           "INSERT",
-          "SELECT",
-          "UPDATE"
+          "SELECT"
         ],
         "executor_service": [],
         "pipeline_agent": [
           "INSERT",
-          "SELECT",
-          "UPDATE"
+          "SELECT"
         ],
         "service_role": [
           "INSERT",
-          "SELECT",
-          "UPDATE"
+          "SELECT"
         ],
         "verifier_agent": [
           "INSERT",
-          "SELECT",
-          "UPDATE"
+          "SELECT"
         ]
       },
       "id": "rel:verification.probe_verdict",
@@ -155520,7 +157725,24 @@
         ]
       },
       "schema": "verification",
-      "triggers": [],
+      "triggers": [
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER probe_verdict_append_only BEFORE DELETE OR UPDATE ON verification.probe_verdict FOR EACH ROW EXECUTE FUNCTION util.reject_mutation()",
+          "function": "util.reject_mutation",
+          "id": "trg:verification.probe_verdict.probe_verdict_append_only",
+          "initially_deferred": false,
+          "name": "probe_verdict_append_only"
+        },
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER probe_verdict_human_judgment BEFORE INSERT ON verification.probe_verdict FOR EACH ROW EXECUTE FUNCTION verification.guard_human_judgment()",
+          "function": "verification.guard_human_judgment",
+          "id": "trg:verification.probe_verdict.probe_verdict_human_judgment",
+          "initially_deferred": false,
+          "name": "probe_verdict_human_judgment"
+        }
+      ],
       "typescript": {
         "insert": "Database[\"verification\"][\"Tables\"][\"probe_verdict\"][\"Insert\"]",
         "row": "Database[\"verification\"][\"Tables\"][\"probe_verdict\"][\"Row\"]",
@@ -155955,15 +158177,24 @@
         "fn:api.product_read(uuid,text,jsonb)",
         "fn:api.product_scope(text)",
         "fn:api.product_worker(text,jsonb)",
+        "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+        "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
+        "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
+        "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)",
+        "fn:api.record_source_assessment(text,uuid,text,uuid,text,text,text,text,jsonb)",
+        "fn:api.record_triage(text,uuid,text,text,text,numeric,jsonb,uuid,uuid,jsonb)",
+        "fn:api.register_probe(text,text,text,text,text,jsonb,uuid[],jsonb,jsonb,jsonb,text,numeric,jsonb)",
         "fn:api.related(uuid,text,text,timestamptz)",
         "fn:api.relationships(uuid,text,timestamptz,int8,text)",
         "fn:api.release_digest(uuid)",
         "fn:api.release_order(text)",
         "fn:api.releases_needing_review()",
         "fn:api.resolve_entity(text)",
+        "fn:api.restate_claim(text,uuid,text,bool,text,jsonb,jsonb)",
         "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)",
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)",
         "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
+        "fn:api.settle_attention_sweep(text,uuid,text,int4,int4,int4,jsonb,numeric,int4,jsonb)",
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
         "fn:api.summary_evidence(uuid)",
         "fn:api.symbol_changes(text,text,text)",
@@ -156819,6 +159050,15 @@
       "domain_ids": [],
       "function_ids": [
         "fn:verification.assert_admitted_use(uuid,text,text,int8,text)",
+        "fn:verification.chain_anchor(uuid,jsonb,text)",
+        "fn:verification.chain_begin(text,text,jsonb,jsonb)",
+        "fn:verification.chain_fail(text,text,text)",
+        "fn:verification.chain_norm(text)",
+        "fn:verification.chain_record(text,jsonb,jsonb,jsonb,jsonb)",
+        "fn:verification.chain_sha(text)",
+        "fn:verification.chain_target(jsonb,uuid,text,text,uuid,text,text,uuid)",
+        "fn:verification.chain_uuid(text,text)",
+        "fn:verification.guard_human_judgment()",
         "fn:verification.guard_use_admission()",
         "fn:verification.record_admitted_claim_verification(uuid,text,text,int8,text,text,text,text)",
         "fn:verification.require_admitted_use(uuid,text,text,int8,text)",
@@ -162368,6 +164608,11 @@
           "schema_version": 1
         },
         {
+          "code": "governed_chain_write",
+          "description": "A write of the research verification chain made through a governed api function (api.record_claim, api.restate_claim, api.register_probe, api.record_probe_run, api.propose_verdict, api.record_triage, api.record_source_assessment, api.raise_attention_sweep, api.settle_attention_sweep), applied in the calling transaction; payload.function names the function, payload.request the arguments, payload.actor who acted",
+          "schema_version": 1
+        },
+        {
           "code": "ingest_research_bundle",
           "description": "Register a verified source bundle, claims, candidates, and report",
           "schema_version": 1
@@ -162428,7 +164673,7 @@
           "schema_version": 1
         }
       ],
-      "rows_sha256": "sha256:afa462af44ac0c65a020e94fc08a843a309a4758344d053b2e25bb1b13461b31",
+      "rows_sha256": "sha256:f5783103b6978c5c22219d6e1f213274f92b7a012e2f7aac9ccd6fc04a0d8aed",
       "schema": "orchestration",
       "table": "intent_type"
     },
@@ -167906,7 +170151,7 @@
       "rel:authoring.distribution_offer": "unknown",
       "rel:authoring.event": "small",
       "rel:authoring.file_set": "unknown",
-      "rel:authoring.file_set_entry": "unknown",
+      "rel:authoring.file_set_entry": "small",
       "rel:authoring.publisher_grant": "unknown",
       "rel:authoring.release": "unknown",
       "rel:authoring.release_item": "small",
@@ -167915,8 +170160,8 @@
       "rel:authoring.runtime_requirement": "unknown",
       "rel:authoring.work": "small",
       "rel:authoring.work_revision": "small",
-      "rel:authoring.workspace": "unknown",
-      "rel:authoring.workspace_member": "unknown",
+      "rel:authoring.workspace": "small",
+      "rel:authoring.workspace_member": "small",
       "rel:catalog.distribution_kind": "unknown",
       "rel:catalog.entity": "medium",
       "rel:catalog.entity_alias": "unknown",
@@ -167962,7 +170207,7 @@
       "rel:conversation.thread": "unknown",
       "rel:curriculum.outcome": "unknown",
       "rel:curriculum.outcome_alignment": "unknown",
-      "rel:curriculum.part": "unknown",
+      "rel:curriculum.part": "small",
       "rel:curriculum.prerequisite": "unknown",
       "rel:curriculum.release_transition": "unknown",
       "rel:curriculum.requirement": "unknown",
@@ -168100,7 +170345,7 @@
       "rel:orchestration.mission_run_effects": "unknown",
       "rel:orchestration.operation_intent": "small",
       "rel:orchestration.operation_receipt": "small",
-      "rel:orchestration.operation_receipt_target": "unknown",
+      "rel:orchestration.operation_receipt_target": "small",
       "rel:orchestration.outbox_event": "unknown",
       "rel:orchestration.provider_route": "unknown",
       "rel:orchestration.verification_artifact_metadata": "unknown",
@@ -168184,9 +170429,9 @@
       "rel:verification.probe": "unknown",
       "rel:verification.probe_claim": "unknown",
       "rel:verification.probe_run": "unknown",
-      "rel:verification.probe_verdict": "unknown",
+      "rel:verification.probe_verdict": "small",
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+  "workspace_fingerprint": "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 }

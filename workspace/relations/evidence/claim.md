@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evidence.claim
 
@@ -55,7 +55,7 @@ table in domain `evidence`, lens `evidence`.
 
 ## Indexes
 
-4 indexes; see [details](claim.details.md).
+5 indexes; see [details](claim.details.md).
 
 ## Triggers
 
@@ -63,7 +63,7 @@ table in domain `evidence`, lens `evidence`.
 
 ## Row-level security
 
-Enabled; 1 policies in [details](claim.details.md).
+Enabled; 2 policies in [details](claim.details.md).
 
 ## Grants
 
@@ -78,7 +78,7 @@ Enabled; 1 policies in [details](claim.details.md).
 ## Write path
 
 - Direct DML: `executor_service`, `pipeline_agent`.
-- Via functions (best effort): [`verification.record_admitted_claim_verification`](../../functions/verification/record_admitted_claim_verification.md).
+- Via functions (best effort): [`api.propose_verdict`](../../functions/api/propose_verdict.md), [`api.record_claim`](../../functions/api/record_claim.md), [`api.restate_claim`](../../functions/api/restate_claim.md), [`verification.record_admitted_claim_verification`](../../functions/verification/record_admitted_claim_verification.md).
 
 ## TypeScript
 

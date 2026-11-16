@@ -490,3 +490,31 @@ terms:
     refs: [api.attention_due, api.probe_revalidation_due, api.releases_needing_review, q:acquisition.attention_due, task:what-is-due]
     provenance: model_assisted
     reviewed: null
+  - slug: governed-write
+    term: governed write
+    aliases: [governed chain write, write function, agent write, chain write, idempotency key, p_actor, replayed]
+    definition: A write of the verification chain made through an api function instead of a table insert. The function resolves the tenant from the session, takes a caller-supplied idempotency key (the same key with the same arguments replays the first result; other arguments are refused), validates what the chain depends on, and leaves an operation intent, a receipt and receipt targets that name the session role, the caller's label, the mission and the Mission Control invocation. Granted to named bounded roles only.
+    refs: [api.record_claim, api.restate_claim, api.register_probe, api.record_probe_run, api.propose_verdict, api.record_triage, api.record_source_assessment, api.raise_attention_sweep, api.settle_attention_sweep, q:chain.governed_writes, task:write-verification-chain]
+    provenance: model_assisted
+    reviewed: null
+  - slug: agent-proposed
+    term: agent-proposed
+    aliases: [agent_proposed, human_confirmed, human_rejected, review state, human review, person's judgment, reviewed assessment]
+    definition: The review state of every verdict and triage row an agent writes. human_confirmed and human_rejected (and a source assessment with method reviewed) record a person's judgment; the database refuses them from every bounded role, by function or by direct insert. An agent's proposal never verifies a claim and never rewrites a person's row; it can only be appended.
+    refs: [verification.probe_verdict, verification.claim_triage, evidence.source_assessment, api.propose_verdict, api.record_triage, task:what-agents-may-not-write]
+    provenance: model_assisted
+    reviewed: null
+  - slug: evidence-anchor
+    term: evidence anchor
+    aliases: [anchor, locator, quote anchor, text_quote, json_pointer, verbatim quote]
+    definition: What ties a claim or a probe run to captured bytes. Either an existing evidence.locator, or a new one made by a governed write from a capture, the content unit that holds the text, and the verbatim quote (text_quote) or a pointer into the captured document (json_pointer). A new anchor is stored only when the quote is in the unit and the unit belongs to a document version read from that capture.
+    refs: [evidence.locator, evidence.source_capture, api.record_claim, api.record_probe_run, task:record-claim-with-evidence]
+    provenance: model_assisted
+    reviewed: null
+  - slug: attention-sweep
+    term: attention sweep
+    aliases: [sweep, watch tick, budget gate, budget_stopped, settle a sweep]
+    definition: One execution of an attention policy. It is opened before the work (api.raise_attention_sweep) and settled once after it (api.settle_attention_sweep) with what was seen, selected and captured and what was spent. Under a mission the budget gate runs at opening; when the mission's sweeps already spent its budget the sweep is written settled as budget_stopped and no work is done.
+    refs: [acquisition.attention_sweep, acquisition.attention_policy, api.raise_attention_sweep, api.settle_attention_sweep, q:acquisition.open_sweeps, task:run-attention-sweep]
+    provenance: model_assisted
+    reviewed: null

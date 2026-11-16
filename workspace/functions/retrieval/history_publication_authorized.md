@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [evaluation.promotion_gate_result, knowledge_service.operation, knowledge_service.review_decision, knowledge_service.review_subject, retrieval.authorized_publication_execution, retrieval.content_promotion_decision, retrieval.content_promotion_proposal, retrieval.embedding_item, retrieval.embedding_run, retrieval.publication_switch_receipt, retrieval.space_publication, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space_version, retrieval.vector_store, retrieval.vector_store_space], writes: [] }
 tokens: [retrieval, history_publication_authorized, retrieval.history_publication_authorized]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # retrieval.history_publication_authorized
 

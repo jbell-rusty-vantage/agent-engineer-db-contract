@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, content.digest_item, content.document_digest, content.document_version], writes: [] }
 tokens: [api, document_digest, api.document_digest]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # api.document_digest
 

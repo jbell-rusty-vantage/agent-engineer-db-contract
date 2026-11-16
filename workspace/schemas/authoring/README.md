@@ -6,7 +6,7 @@ lens: ours
 domains: [authoring]
 relations: 20
 functions: 0
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # authoring
 
@@ -23,7 +23,7 @@ Lens `ours`. Domains: [`authoring`](../../domains/authoring.md).
 | [`distribution_offer`](../../relations/authoring/distribution_offer.md) | table | unknown | — | → `auth.users`, → `authoring.event`, → `authoring.distribution`, → `authoring.release` |
 | [`event`](../../relations/authoring/event.md) | table | small | — | → `auth.users`, → `authoring.workspace`, → `authoring.work`, → `authoring.work_revision` |
 | [`file_set`](../../relations/authoring/file_set.md) | table | unknown | — | → `auth.users`, → `authoring.workspace` |
-| [`file_set_entry`](../../relations/authoring/file_set_entry.md) | table | unknown | — | → `orchestration.artifact`, → `authoring.file_set` |
+| [`file_set_entry`](../../relations/authoring/file_set_entry.md) | table | small | — | → `orchestration.artifact`, → `authoring.file_set` |
 | [`publisher_grant`](../../relations/authoring/publisher_grant.md) | table | unknown | — | → `auth.users` |
 | [`release`](../../relations/authoring/release.md) | table | unknown | — | → `auth.users`, → `orchestration.artifact`, → `authoring.event`, → `authoring.work_revision` |
 | [`release_item`](../../relations/authoring/release_item.md) | table | small | — | → `authoring.revision_binding`, → `auth.users`, → `orchestration.artifact`, → `evidence.source_capture` |
@@ -32,8 +32,8 @@ Lens `ours`. Domains: [`authoring`](../../domains/authoring.md).
 | [`runtime_requirement`](../../relations/authoring/runtime_requirement.md) | table | unknown | — | → `catalog.entity`, → `authoring.work_revision` |
 | [`work`](../../relations/authoring/work.md) | table | small | Identity of an authored thing (course, module, lesson, activity, brief, report, template,… | → `auth.users`, → `authoring.work_revision`, → `authoring.workspace` |
 | [`work_revision`](../../relations/authoring/work_revision.md) | table | small | Immutable revision of a work (title, body blocks, content hash); product operations creat… | → `auth.users`, → `library.removal`, → `temporal.knowledge_batch`, → `authoring.work` |
-| [`workspace`](../../relations/authoring/workspace.md) | table | unknown | — | → `auth.users` |
-| [`workspace_member`](../../relations/authoring/workspace_member.md) | table | unknown | — | → `auth.users`, → `authoring.workspace` |
+| [`workspace`](../../relations/authoring/workspace.md) | table | small | — | → `auth.users` |
+| [`workspace_member`](../../relations/authoring/workspace_member.md) | table | small | — | → `auth.users`, → `authoring.workspace` |
 
 Functions: none.
 

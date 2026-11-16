@@ -7,18 +7,18 @@ domain: verified-knowledge
 lens: evidence
 aliases: []
 tokens: [verification, probe_verdict, verification.probe_verdict, id, tenant_id, claim_id, probe_id, verdict, cells, rationale, decided_by, review_state, decided_at, supersedes_id]
-summary: "Loop 4: what a probe's runs say about one claim. agent_proposed by default; a human confirmation is a separate state. An executed deterministic probe may move the claim to verified (supported) or disputed (contradicted); live arms and community claims never verify alone."
+summary: "Loop 4: what a probe's runs say about one claim. Append-only: a changed verdict is a new row that supersedes. agent_proposed by default; human_confirmed and human_rejected record a person's review and are not writable by a bounded role. A supportive verdict never verifies a claim (only a Knowledge Services admission does); a deterministic probe that contradicts a proposed claim moves it to disputed."
 summary_basis: comment
 rls: enabled
 readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agent]
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe_verdict\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # verification.probe_verdict
 
-table in domain `verified-knowledge`, lens `evidence` — Loop 4: what a probe's runs say about one claim. agent_proposed by default; a human confirmation is a separate state. An executed deterministic probe may move the claim to verified (supported) or disputed (contradicted); live arms and community claims never verify alone..
+table in domain `verified-knowledge`, lens `evidence` — Loop 4: what a probe's runs say about one claim. Append-only: a changed verdict is a new row that supersedes. agent_proposed by default; human_confirmed and human_rejected record a person's review and are not writable by a bounded role. A supportive verdict never verifies a claim (only a Knowledge Services admission does); a deterministic probe that contradicts a proposed claim moves it to disputed..
 
 ## Columns
 
@@ -52,7 +52,8 @@ Inbound: [`verification.probe_verdict`](probe_verdict.md).supersedes_id.
 
 ## Triggers
 
-_None._
+- `probe_verdict_append_only` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+- `probe_verdict_human_judgment` → [`verification.guard_human_judgment`](../../functions/verification/guard_human_judgment.md)
 
 ## Row-level security
 
@@ -61,7 +62,7 @@ Enabled.
 
 ## Grants
 
-`app_reader`: SELECT; `control_plane`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: INSERT, SELECT, UPDATE. None: `anon`, `authenticated`, `executor_service`.
+`app_reader`: SELECT; `control_plane`: INSERT, SELECT; `pipeline_agent`: INSERT, SELECT; `service_role`: INSERT, SELECT; `verifier_agent`: INSERT, SELECT. None: `anon`, `authenticated`, `executor_service`.
 
 ## Read paths
 
@@ -72,6 +73,7 @@ Enabled.
 ## Write path
 
 - Direct DML: `control_plane`, `pipeline_agent`, `verifier_agent`.
+- Via functions (best effort): [`api.propose_verdict`](../../functions/api/propose_verdict.md).
 
 ## TypeScript
 

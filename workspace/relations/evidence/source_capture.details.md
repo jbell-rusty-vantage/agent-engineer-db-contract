@@ -4,7 +4,7 @@ kind: details
 schema: evidence
 name: source_capture
 of: "rel:evidence.source_capture"
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evidence.source_capture — details
 
@@ -37,3 +37,4 @@ Polymorphic: exactly one of `produced_by_attempt_id`, `knowledge_operation_id`, 
 
 Enabled.
 - `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: using `(tenant_id = util.current_tenant_id())`; with check `(tenant_id = util.current_tenant_id())`
+- `product_api_owner_read` (SELECT) for `product_api_owner`: using `(tenant_id = product.tenant())`

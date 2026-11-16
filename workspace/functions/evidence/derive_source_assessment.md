@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [acquisition.attention_policy, acquisition.attention_sweep, catalog.entity, content.source_role, evidence.attribution, evidence.claim, evidence.claim_subject, evidence.source, verification.probe_verdict], writes: [evidence.source_assessment] }
 tokens: [evidence, derive_source_assessment, evidence.derive_source_assessment]
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120200_build08_loop4_fixup_assessment.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evidence.derive_source_assessment
 

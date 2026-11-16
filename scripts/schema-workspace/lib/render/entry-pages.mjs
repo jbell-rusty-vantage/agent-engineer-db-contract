@@ -25,6 +25,8 @@ const ROUTER = [
   },
 ];
 const REPORT_OPERATION = "create_work";
+/** The task page that lists the governed writes of the verification chain (claims, probes, verdicts, triage, sweeps). */
+const CHAIN_WRITE_TASK = "write-verification-chain";
 const MAP_SUMMARY_LENGTH = 64;
 
 function relationLinkByName(model, fromPage, qualifiedName) {
@@ -49,6 +51,13 @@ function routerLine(model, fromPage, row) {
 function hiddenLensLine(model) {
   const hidden = (model.lenses.hidden ?? []).filter((lens) => Object.values(model.lenses.schemas ?? {}).includes(lens));
   return hidden.length > 0 ? `${hidden.join(" and ")}: see ${link("INDEX.md", pages.start, pages.index)}.` : "";
+}
+
+/** One sentence of the Writing section, present when the selection carries the task (a scope may leave it out). */
+function chainWriteLine(model, fromPage) {
+  if (!model.selection.taskSlugs.has(CHAIN_WRITE_TASK)) return "";
+  const target = pages.task(CHAIN_WRITE_TASK);
+  return ` Claims, probes, verdicts, triage and sweeps go through governed ${code("api")} writes: ${link(target, fromPage, target)}.`;
 }
 
 export function renderStartHere(model) {
@@ -78,7 +87,7 @@ export function renderStartHere(model) {
       heading(2, "Entry points"),
       `${link("MAP.md", page, pages.map)} schemas by lens · ${link("INDEX.md", page, pages.index)} domains, ops, counts · ${code("relations.txt")} · ${link("rules/README.md", page, pages.rulesReadme)} ingestion rules.`,
       heading(2, "Writing"),
-      `Apps and agents write through product operations (${code("ops/")}); canonical facts only via ${code("executor_service")} (${code("temporal.begin_batch")} → ${code("assert_*")} → ${code("commit_batch")}, under a receipt). You author intents; the executor writes.`,
+      `Apps and agents write through product operations (${code("ops/")}); canonical facts only via ${code("executor_service")} (${code("temporal.begin_batch")} → ${code("assert_*")} → ${code("commit_batch")}, under a receipt). You author intents; the executor writes.${chainWriteLine(model, page)}`,
     ]);
   return { path: page, content };
 }

@@ -2093,3 +2093,74 @@ queries:
     execute: true
     provenance: model_assisted
     reviewed: null
+
+  # ---------------------------------------------------------------- governed chain writes (contract 0.8.0)
+  - name: chain.governed_writes
+    title: Governed writes of the verification chain, by function, idempotency key or Mission Control run (who acted, for which mission)
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select i.id as intent_id, i.payload ->> 'function' as function, substr(i.idempotency_key, 7) as idempotency_key,
+             i.payload -> 'actor' ->> 'session_role' as session_role, i.payload -> 'actor' ->> 'label' as actor_label,
+             i.origin_kind, i.mc_run_id, i.mc_operation_id, i.mc_operation_attempt, i.mission_id, i.created_at
+      from orchestration.operation_intent i
+      where i.tenant_id = util.current_tenant_id() and i.intent_type = 'governed_chain_write'
+        and ($1::text is null or i.payload ->> 'function' = $1)
+        and ($2::text is null or i.mc_run_id = $2)
+        and ($3::text is null or i.idempotency_key = 'chain:' || $3)
+      order by i.created_at desc, i.id
+      limit least(greatest(coalesce($4, 20), 1), 200)
+    paramOrder: [function, mc_run_id, key, limit]
+    params:
+      type: object
+      properties:
+        function: { type: ["string", "null"], default: null }
+        mc_run_id: { type: ["string", "null"], default: null }
+        key: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 20 }
+      additionalProperties: false
+    result: { shape: rows, columns: [intent_id, function, idempotency_key, session_role, actor_label, origin_kind, mc_run_id, mc_operation_id, mc_operation_attempt, mission_id, created_at] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: orchestration-ledger
+    tasks: [write-verification-chain, what-agents-may-not-write]
+    aliases: [governed writes, chain writes, who wrote, agent writes, writes of a run, idempotency key lookup]
+    example: { function: "api.propose_verdict", mc_run_id: null, key: null, limit: 20 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: acquisition.open_sweeps
+    title: Attention sweeps that were opened and not settled yet, with their policy, trigger and mission
+    kind: named_query
+    role: pipeline_agent
+    sql: |
+      select s.id as sweep_id, p.slug as policy, s.trigger_kind, s.origin_kind, s.mission_id, s.trigger_ref ->> 'mc_run_id' as mc_run_id,
+             s.started_at, s.note, p.budget_usd_per_run
+      from acquisition.attention_sweep s
+      join acquisition.attention_policy p on p.id = s.policy_id
+      where s.tenant_id = util.current_tenant_id() and s.ended_at is null
+        and ($1::uuid is null or s.mission_id = $1)
+      order by s.started_at desc, s.id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [mission_id, limit]
+    params:
+      type: object
+      properties:
+        mission_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [sweep_id, policy, trigger_kind, origin_kind, mission_id, mc_run_id, started_at, note, budget_usd_per_run] }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: source-intelligence
+    tasks: [run-attention-sweep]
+    aliases: [open sweeps, unsettled sweeps, sweeps to settle, running sweeps]
+    example: { mission_id: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null

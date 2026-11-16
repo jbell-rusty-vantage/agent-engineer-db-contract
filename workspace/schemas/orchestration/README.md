@@ -6,7 +6,7 @@ lens: machinery
 domains: [orchestration-ledger]
 relations: 37
 functions: 48
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # orchestration
 
@@ -33,7 +33,7 @@ Missions, work graph, sessions, capability catalog, intents, receipts, artifacts
 | [`mission_run_effects`](../../relations/orchestration/mission_run_effects.md) | view | unknown | Native effects by Mission Control run: intent (with its mc_* coordinates and origin diges… | — |
 | [`operation_intent`](../../relations/orchestration/operation_intent.md) | table | small | Durable proposed operation with unique idempotency_key. | → `orchestration.intent_type`, → `orchestration.mission`, → `orchestration.attempt` |
 | [`operation_receipt`](../../relations/orchestration/operation_receipt.md) | table | small | Immutable outcome of one intent (applied, rejected, noop, partial). | → `orchestration.operation_intent` |
-| [`operation_receipt_target`](../../relations/orchestration/operation_receipt_target.md) | table | unknown | Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence… | → `taxonomy.entity_kind`, → `orchestration.operation_receipt`, → `evidence.claim`, → `catalog.entity` |
+| [`operation_receipt_target`](../../relations/orchestration/operation_receipt_target.md) | table | small | Normalized targets of one native operation receipt: each corpus/staging/temporal/evidence… | → `taxonomy.entity_kind`, → `orchestration.operation_receipt`, → `evidence.claim`, → `catalog.entity` |
 | [`outbox_event`](../../relations/orchestration/outbox_event.md) | table | unknown | — | → `orchestration.mission` |
 | [`provider_route`](../../relations/orchestration/provider_route.md) | table | unknown | — | — |
 | [`verification_artifact_metadata`](../../relations/orchestration/verification_artifact_metadata.md) | table | unknown | Immutable verification.v1 metadata for an artifact whose canonical identity remains orche… | → `orchestration.artifact` |

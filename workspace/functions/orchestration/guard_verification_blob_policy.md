@@ -13,7 +13,7 @@ raises: [artifact blob policy mismatch]
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, guard_verification_blob_policy, orchestration.guard_verification_blob_policy]
 defined_in: ["20260914010000_artifact_logical_custody.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # orchestration.guard_verification_blob_policy
 

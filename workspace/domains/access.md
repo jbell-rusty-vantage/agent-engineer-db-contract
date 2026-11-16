@@ -10,7 +10,7 @@ tasks: [search-my-notes]
 summary: "Who may act (lens ours): account profiles, MCP/CLI client grants, guardian consent, processing authorizations, policy versions, source restrictions."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # Access (accounts, grants, policies, consent)
 

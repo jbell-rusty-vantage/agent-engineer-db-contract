@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.release, authoring.release_item, authoring.revision_binding, evidence.claim, verification.probe_verdict], writes: [] }
 tokens: [api, releases_needing_review, api.releases_needing_review]
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", "20261116120000_build08_api_default_closed.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # api.releases_needing_review
 

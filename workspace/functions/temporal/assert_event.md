@@ -13,7 +13,7 @@ raises: [event object kind mismatch, event subject kind mismatch, no open knowle
 touches: { reads: [catalog.entity, temporal.event_kind], writes: [temporal.event, temporal.event_occurrence] }
 tokens: [temporal, assert_event, temporal.assert_event]
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # temporal.assert_event
 

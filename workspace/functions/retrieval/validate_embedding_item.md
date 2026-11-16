@@ -13,7 +13,7 @@ raises: ["embedding dimensions %, expected % and canonical physical dimension 15
 touches: { reads: [retrieval.embedding_run], writes: [] }
 tokens: [retrieval, validate_embedding_item, retrieval.validate_embedding_item]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # retrieval.validate_embedding_item
 

@@ -85,3 +85,83 @@ export type ApiReleaseNeedingReview = ApiFunctionRows<"releases_needing_review">
 // views and functions above answer it. api.product_scope(scope) is the client-grant check of api.product_read on its own, for
 // a service that composes such a read and received a client token.
 export type ApiKnowledgeSearchHit = ApiFunctionRows<"search_knowledge">[number];
+// Build 08 AIDB-2 (2026-11-16, contract 0.8.0): the governed writes of the research verification chain. Nine api functions, each
+// callable by named bounded roles only (never anon, a signed-in user or app_reader), each taking a caller-supplied
+// p_idempotency_key first and an optional p_actor last, each returning one JSON object. The tenant comes from the session
+// (app.tenant_id), never from an argument. A failure raises with the stable code as the message and its class as the SQLSTATE.
+type ApiFunctionArgs<N extends keyof Database["api"]["Functions"]> = Database["api"]["Functions"][N]["Args"];
+export type ApiRecordClaimArgs = ApiFunctionArgs<"record_claim">;
+export type ApiRestateClaimArgs = ApiFunctionArgs<"restate_claim">;
+export type ApiRegisterProbeArgs = ApiFunctionArgs<"register_probe">;
+export type ApiRecordProbeRunArgs = ApiFunctionArgs<"record_probe_run">;
+export type ApiProposeVerdictArgs = ApiFunctionArgs<"propose_verdict">;
+export type ApiRecordTriageArgs = ApiFunctionArgs<"record_triage">;
+export type ApiRecordSourceAssessmentArgs = ApiFunctionArgs<"record_source_assessment">;
+export type ApiRaiseAttentionSweepArgs = ApiFunctionArgs<"raise_attention_sweep">;
+export type ApiSettleAttentionSweepArgs = ApiFunctionArgs<"settle_attention_sweep">;
+/** p_actor: who acted. The session role is recorded by the database; a label never names a person. */
+export interface ApiGovernedActor {
+  label?: string;
+  /** orchestration.mission id of the AI Engineer mission whose budget bounds the work (required with `mc` for sweeps and probe runs). */
+  mission_id?: string;
+  /** The Mission Control invocation that caused the write; all fields but activation_id are required together. */
+  mc?: { mission_id: string; run_id: string; operation_id: string; operation_attempt: number; execution_generation: number; lane: string; activation_id?: string };
+  /** sha256:<64 hex>; computed from the actor when absent. */
+  origin_digest?: string;
+}
+export type ApiEvidenceLinkRole = "supports" | "contradicts" | "qualifies" | "context";
+/** One evidence anchor: an existing locator, or a quote that is verbatim in a content unit of a capture. */
+export type ApiEvidenceAnchor =
+  | { locator_id: string; role?: ApiEvidenceLinkRole }
+  | { capture_id: string; node_id: string; quote: string; selector_kind?: "text_quote"; role?: ApiEvidenceLinkRole }
+  | { capture_id: string; node_id: string; pointer: string; selector_kind: "json_pointer"; quote?: string; role?: ApiEvidenceLinkRole };
+/** Returned by every governed write: the ledger rows it left, and whether this call replayed an earlier one with the same key. */
+export interface ApiGovernedWriteReceipt { intent_id: string; receipt_id: string; replayed: boolean }
+export interface ApiRecordClaimResult extends ApiGovernedWriteReceipt {
+  claim_id: string; created: boolean; reused: boolean; status: "proposed" | "verified" | "disputed" | "retracted" | "superseded"; locator_ids: string[]; subjects?: number; attributions?: number;
+}
+export interface ApiRestateClaimResult extends ApiGovernedWriteReceipt {
+  claim_id: string; original_claim_id: string; created: boolean; reused: boolean; status: string; probe?: string;
+  copied?: { subjects: number; attributions: number; evidence_links: number };
+}
+export interface ApiRegisterProbeResult extends ApiGovernedWriteReceipt { probe_id: string; slug: string; state: "active"; claims: number }
+export interface ApiRecordProbeRunResult extends ApiGovernedWriteReceipt {
+  probe_run_id: string; probe_id: string; probe: string; cell_label: string; outcome: "pass" | "fail" | "error" | "skipped";
+  output_capture_id?: string; output_locator_id?: string; origin_kind: "standalone" | "mission"; over_budget: boolean;
+}
+export interface ApiProposeVerdictResult extends ApiGovernedWriteReceipt {
+  verdict_id: string; written: boolean; unchanged: boolean; verdict: Database["evidence"]["Enums"]["support_verdict"];
+  /** agent_proposed for every row this function writes; an unchanged result reports the state of the current row. */
+  review_state: "agent_proposed" | "human_confirmed" | "human_rejected"; supersedes_id?: string;
+  claim_status: string; claim_status_changed: boolean; evidence_locator_id?: string; needs_review: boolean; restatements_to_review: string[];
+}
+export interface ApiRecordTriageResult extends ApiGovernedWriteReceipt {
+  triage_id: string; written: boolean; unchanged: boolean; disposition: string; review_state: "agent_proposed"; supersedes_id?: string;
+}
+export interface ApiRecordSourceAssessmentResult extends ApiGovernedWriteReceipt {
+  assessment_id: string; method: "prior" | "derived"; written: boolean; unchanged: boolean; authority_score?: number;
+  claims_observed?: number; claims_checked?: number; self_checked?: number; recommended_watch_level?: "W0" | "W1" | "W2" | "W3"; supersedes_id?: string;
+}
+export interface ApiRaiseAttentionSweepResult extends ApiGovernedWriteReceipt {
+  sweep_id: string; policy_id: string; policy: string; origin_kind: "standalone" | "mission";
+  /** false with budget_stopped true: the mission's budget is spent, the sweep is already settled, do no work. */
+  open: boolean; budget_stopped: boolean; mission_spent_usd?: number; mission_budget_usd?: number; budget_usd_per_run: number; budget_credits_per_run: number;
+}
+export interface ApiSettleAttentionSweepResult extends ApiGovernedWriteReceipt {
+  sweep_id: string; policy: string; outcome: "completed" | "partial" | "failed" | "budget_stopped"; settled: true;
+  over_budget_usd: boolean; over_budget_credits: boolean; mission_spent_usd?: number; mission_budget_usd?: number; mission_budget_exhausted?: boolean;
+}
+/** The message of a refused governed write. SQLSTATE: 42501 not allowed, 22023 malformed argument, P0002 not found in the tenant, 23514 state refuses, 23505 taken. */
+export type ApiGovernedWriteErrorCode =
+  | "TENANT_CONTEXT_REQUIRED" | "HUMAN_REVIEW_NOT_AGENT_WRITABLE"
+  | "IDEMPOTENCY_KEY_REQUIRED" | "ACTOR_INVALID" | "MISSION_REQUIRED" | "STATEMENT_REQUIRED" | "CLAIM_TYPE_UNKNOWN" | "STRUCTURED_INVALID" | "STRUCTURED_RESERVED"
+  | "EVIDENCE_REQUIRED" | "EVIDENCE_INVALID" | "EVIDENCE_SELECTOR_UNSUPPORTED" | "QUOTE_REQUIRED" | "SUBJECT_INVALID" | "ATTRIBUTION_INVALID" | "RESTATEMENT_UNCHANGED" | "POLARITY_INVALID"
+  | "PROBE_SLUG_INVALID" | "PROBE_INVALID" | "PROBE_KIND_INVALID" | "PROBE_MODEL_POLICY_INVALID" | "PROBE_MODEL_POLICY_MISMATCH" | "PROBE_BUDGET_INVALID" | "PROBE_CLAIMS_REQUIRED"
+  | "PROBE_RUN_INVALID" | "PROBE_RUN_OUTPUT_REQUIRED" | "VERDICT_INVALID" | "VERDICT_REQUIRES_RUNS" | "RATIONALE_REQUIRED" | "TRIAGE_INVALID" | "TRIAGE_DUPLICATE_INVALID" | "TRIAGE_PROBE_INVALID"
+  | "ASSESSMENT_METHOD_INVALID" | "ASSESSMENT_SUBJECT_INVALID" | "ASSESSMENT_ROLE_UNKNOWN" | "ASSESSMENT_INVALID" | "SWEEP_INVALID" | "SWEEP_COUNTS_INVALID"
+  | "MISSION_NOT_FOUND" | "EVIDENCE_NOT_FOUND" | "EVIDENCE_UNIT_NOT_IN_CAPTURE" | "SUBJECT_NOT_FOUND" | "ATTRIBUTION_ENTITY_NOT_FOUND" | "ATTRIBUTION_SOURCE_NOT_FOUND" | "CLAIM_NOT_FOUND"
+  | "PROBE_NOT_FOUND" | "SWEEP_NOT_FOUND" | "ASSESSMENT_SUBJECT_NOT_FOUND" | "ASSESSMENT_TOPIC_NOT_FOUND" | "ATTENTION_POLICY_NOT_FOUND"
+  | "MISSION_ENDED" | "QUOTE_NOT_IN_UNIT" | "CLAIM_NOT_RESTATABLE" | "CLAIM_NOT_TRIAGEABLE" | "CLAIM_NOT_PROBED" | "PROBE_NOT_ACTIVE" | "PROBE_RUN_SPEND_NOT_ALLOWED"
+  | "VERDICT_CELL_NOT_RUN" | "VERDICT_REJECTED_BY_PERSON" | "TRIAGE_REVIEWED_BY_PERSON" | "ASSESSMENT_BASE_REQUIRED" | "ASSESSMENT_REVIEWED_BY_PERSON"
+  | "ATTENTION_POLICY_NOT_SWEEPABLE" | "SWEEP_NOT_OPEN" | "SWEEP_ALREADY_SETTLED" | "SWEEP_MISSION_MISMATCH"
+  | "IDEMPOTENCY_KEY_REUSED" | "IDEMPOTENCY_KEY_FOREIGN_TENANT" | "RESTATEMENT_EXISTS" | "PROBE_SLUG_TAKEN" | "PROBE_RUN_DUPLICATE";

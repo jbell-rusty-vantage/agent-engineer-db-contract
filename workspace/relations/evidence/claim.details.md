@@ -4,7 +4,7 @@ kind: details
 schema: evidence
 name: claim
 of: "rel:evidence.claim"
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # evidence.claim — details
 
@@ -23,6 +23,7 @@ Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) 
 | `claim_producer_idx` | `CREATE INDEX claim_producer_idx ON evidence.claim USING btree (producer_attempt_id)` |
 | `claim_status_idx` | `CREATE INDEX claim_status_idx ON evidence.claim USING btree (status, created_at DESC)` |
 | `claim_tenant_id_uq` | `CREATE UNIQUE INDEX claim_tenant_id_uq ON evidence.claim USING btree (tenant_id, id)` |
+| `claim_tenant_statement_md5_ix` | `CREATE INDEX claim_tenant_statement_md5_ix ON evidence.claim USING btree (tenant_id, md5(statement))` |
 | `claim_type_idx` | `CREATE INDEX claim_type_idx ON evidence.claim USING btree (claim_type)` |
 
 ## Triggers
@@ -37,3 +38,4 @@ Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) 
 
 Enabled.
 - `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: using `(tenant_id = util.current_tenant_id())`; with check `(tenant_id = util.current_tenant_id())`
+- `product_api_owner_read` (SELECT) for `product_api_owner`: using `(tenant_id = product.tenant())`

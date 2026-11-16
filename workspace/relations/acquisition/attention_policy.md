@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role]
 typescript: "Database[\"acquisition\"][\"Tables\"][\"attention_policy\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
 ---
 # acquisition.attention_policy
 
@@ -86,7 +86,7 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:acquisition.attention_due`, `q:acquisition.attention_policies`, `q:evidence.source_registry`.
+- Named queries: `q:acquisition.attention_due`, `q:acquisition.attention_policies`, `q:acquisition.open_sweeps`, `q:evidence.source_registry`.
 - Exposed through: [`api.attention_policies`](../api/attention_policies.md), [`api.source_registry`](../api/source_registry.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
