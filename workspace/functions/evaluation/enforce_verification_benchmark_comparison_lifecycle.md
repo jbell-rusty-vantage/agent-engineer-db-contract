@@ -13,7 +13,7 @@ raises: [benchmark comparison permits only complete then seal transitions, bench
 touches: { reads: [], writes: [] }
 tokens: [evaluation, enforce_verification_benchmark_comparison_lifecycle, evaluation.enforce_verification_benchmark_comparison_lifecycle]
 defined_in: ["20260906030500_verification_benchmark_comparison_lifecycle.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # evaluation.enforce_verification_benchmark_comparison_lifecycle
 

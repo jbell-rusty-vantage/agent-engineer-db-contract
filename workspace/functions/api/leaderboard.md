@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, ranking.leaderboard, ranking.leaderboard_edition, ranking.leaderboard_entry], writes: [] }
 tokens: [api, leaderboard, api.leaderboard]
 defined_in: ["20260826001500_api_and_grants.sql", "20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.leaderboard
 

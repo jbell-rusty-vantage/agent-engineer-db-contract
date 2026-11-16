@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [evidence.claim, orchestration.operation_receipt, orchestration.operation_receipt_target, verification.use_admission], writes: [] }
 tokens: [retrieval, history_claim_authorized, retrieval.history_claim_authorized]
 defined_in: ["20260914011100_retrieval_history.sql", "20261025010000_withdraw_legacy_verification_truth.sql", "20261113150000_build08_ks_admission_verified_claims.sql", "20261113150000_build08_loop6_ks_admission.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # retrieval.history_claim_authorized
 

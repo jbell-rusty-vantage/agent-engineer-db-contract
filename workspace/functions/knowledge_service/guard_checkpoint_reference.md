@@ -13,7 +13,7 @@ raises: [checkpoint requires available live artifact custody]
 touches: { reads: [orchestration.artifact, orchestration.artifact_tombstone], writes: [] }
 tokens: [knowledge_service, guard_checkpoint_reference, knowledge_service.guard_checkpoint_reference]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # knowledge_service.guard_checkpoint_reference
 

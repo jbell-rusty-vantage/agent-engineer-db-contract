@@ -13,7 +13,7 @@ raises: ["unknown vector item %"]
 touches: { reads: [retrieval.vector_item, retrieval.vector_space, retrieval.vector_space_version], writes: [retrieval.vector_item_embedding_1536] }
 tokens: [retrieval, store_embedding, retrieval.store_embedding]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # retrieval.store_embedding
 

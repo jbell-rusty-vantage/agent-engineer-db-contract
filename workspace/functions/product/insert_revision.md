@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.asset_scope, authoring.distribution_offer, authoring.file_set, authoring.release_item, authoring.revision_block, authoring.work, authoring.workspace, evidence.claim], writes: [authoring.revision_binding, authoring.runtime_requirement, authoring.work_revision, curriculum.outcome, curriculum.outcome_alignment, curriculum.part, curriculum.prerequisite, curriculum.requirement, curriculum.requirement_option, inquiry.assertion] }
 tokens: [product, insert_revision, product.insert_revision]
 defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # product.insert_revision
 

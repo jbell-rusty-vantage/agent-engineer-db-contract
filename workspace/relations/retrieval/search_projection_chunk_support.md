@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"search_projection_chunk_support\"][\"Row\"]"
 defined_in: ["20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # retrieval.search_projection_chunk_support
 

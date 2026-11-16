@@ -822,6 +822,27 @@
     "reviewed": null,
     "term": "restatement"
   },
+  "review-request": {
+    "aliases": [
+      "ready for review",
+      "revision_proposed",
+      "hand-over",
+      "submitted for review",
+      "review status",
+      "awaiting_review",
+      "superseded"
+    ],
+    "definition": "The author's own mark that an exact revision is ready for a person's review, an authoring event of kind revision_proposed made by mark_ready_for_review with the release closure the database computes at a ceiling, the hand-over note and the conversation that holds it. It is not a review. list_reviews derives its status, reviewed only after a person's review_revision on that revision and superseded when the work has a newer head.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:authoring.event",
+      "fn:api.product_command(uuid,text,text,uuid,jsonb)",
+      "fn:api.product_read(uuid,text,jsonb)",
+      "task:hand-over-for-review"
+    ],
+    "reviewed": null,
+    "term": "review request"
+  },
   "rls": {
     "aliases": [
       "row level security"

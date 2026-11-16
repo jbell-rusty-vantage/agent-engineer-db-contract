@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [], writes: [orchestration.operation_intent, orchestration.operation_receipt] }
 tokens: [verification, chain_record, verification.chain_record]
 defined_in: ["20261116130000_build08_governed_chain_writes.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # verification.chain_record
 

@@ -10,7 +10,7 @@ tasks: [propose-verdict-from-probe, read-claim-with-evidence, record-claim-with-
 summary: A claim is a candidate until a probe judges it and a Knowledge Services admission verifies it; conflicts and restatements are kept beside it.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # Verified knowledge (claims, probes, verdicts)
 

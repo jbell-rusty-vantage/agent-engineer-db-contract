@@ -13,7 +13,7 @@ raises: [canonical vector space requires its current typed projection target, em
 touches: { reads: [evidence.claim, retrieval.embedding_item, retrieval.embedding_run, retrieval.projection_target, retrieval.search_projection, retrieval.vector_space, retrieval.vector_space_version], writes: [] }
 tokens: [retrieval, enforce_canonical_source, retrieval.enforce_canonical_source]
 defined_in: ["20260826001000_retrieval.sql", "20260914011001_vector_item_canonical_source.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # retrieval.enforce_canonical_source
 

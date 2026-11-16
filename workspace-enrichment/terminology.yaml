@@ -518,3 +518,10 @@ terms:
     refs: [acquisition.attention_sweep, acquisition.attention_policy, api.raise_attention_sweep, api.settle_attention_sweep, q:acquisition.open_sweeps, task:run-attention-sweep]
     provenance: model_assisted
     reviewed: null
+  - slug: review-request
+    term: review request
+    aliases: [ready for review, revision_proposed, hand-over, submitted for review, review status, awaiting_review, superseded]
+    definition: The author's own mark that an exact revision is ready for a person's review, an authoring event of kind revision_proposed made by mark_ready_for_review with the release closure the database computes at a ceiling, the hand-over note and the conversation that holds it. It is not a review. list_reviews derives its status, reviewed only after a person's review_revision on that revision and superseded when the work has a newer head.
+    refs: [authoring.event, api.product_command, api.product_read, task:hand-over-for-review]
+    provenance: model_assisted
+    reviewed: null

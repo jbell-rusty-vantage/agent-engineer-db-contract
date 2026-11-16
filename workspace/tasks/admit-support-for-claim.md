@@ -7,7 +7,7 @@ queries: [evidence.claims_for_entity, evidence.claim_support, evidence.captures_
 aliases: [support, quote]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # Admit support for a claim
 

@@ -13,7 +13,7 @@ raises: [artifact custody registration clock is immutable]
 touches: { reads: [], writes: [] }
 tokens: [orchestration, guard_artifact_registration_clock, orchestration.guard_artifact_registration_clock]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # orchestration.guard_artifact_registration_clock
 

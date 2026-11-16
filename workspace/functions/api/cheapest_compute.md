@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, catalog.relationship, evidence.segment_support, temporal.knowledge_batch, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, cheapest_compute, api.cheapest_compute]
 defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.cheapest_compute
 

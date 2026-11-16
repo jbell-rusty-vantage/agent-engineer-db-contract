@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, current_tenant_id, util.current_tenant_id]
 defined_in: ["20260826001550_rls_policies.sql", "20260903010200_knowledge_runtime_security.sql", "20261115130000_build08_d82_signed_in_knowledge_reads.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # util.current_tenant_id
 

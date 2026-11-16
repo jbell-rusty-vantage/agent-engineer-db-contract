@@ -13,7 +13,7 @@ raises: [benchmark comparison canonical operation binding mismatch, benchmark co
 touches: { reads: [evaluation.verification_benchmark_arm_publication, evaluation.verification_benchmark_run, knowledge_service.operation, knowledge_service.operation_step, knowledge_service.receipt], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_comparison, evaluation.validate_verification_benchmark_comparison]
 defined_in: ["20260906030500_verification_benchmark_comparison_lifecycle.sql", "20260906030700_verification_benchmark_comparison_publication_type.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # evaluation.validate_verification_benchmark_comparison
 

@@ -12,8 +12,8 @@ executors: [authenticated]
 raises: []
 touches: { reads: [access.client_grant], writes: [] }
 tokens: [api, product_read, api.product_read]
-defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+defined_in: ["20261105010300_product_api.sql", "20261116140000_build08_authoring_review_reads.sql"]
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.product_read
 
@@ -31,8 +31,8 @@ function, volatile, security definer, language plpgsql, config `search_path=""`.
 
 Execute: `authenticated`.
 
-Touches (best effort): reads [`access.client_grant`](../../relations/access/client_grant.md); writes —; calls [`product.actor`](../product/actor.md), [`product.client_grant`](../product/client_grant.md), [`product.dispatch_read`](../product/dispatch_read.md).
+Touches (best effort): reads [`access.client_grant`](../../relations/access/client_grant.md); writes —; calls [`product.actor`](../product/actor.md), [`product.client_grant`](../product/client_grant.md), [`product.dispatch_authoring_read`](../product/dispatch_authoring_read.md), [`product.dispatch_read`](../product/dispatch_read.md).
 
 TypeScript: `Database["api"]["Functions"]["product_read"]`.
 
-Defined in: `20261105010300_product_api.sql`.
+Defined in: `20261105010300_product_api.sql`, `20261116140000_build08_authoring_review_reads.sql`.

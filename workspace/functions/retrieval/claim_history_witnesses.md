@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.relationship, evidence.segment_support, temporal.event, temporal.event_occurrence, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
 tokens: [retrieval, claim_history_witnesses, retrieval.claim_history_witnesses]
 defined_in: ["20260914011100_retrieval_history.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # retrieval.claim_history_witnesses
 

@@ -1,9 +1,9 @@
 {
   "build": {
-    "contract_version": "0.8.0",
-    "enrichment_sha256": "sha256:3d2e100fd2971e9d9964aa426481202d3e7a89b33747566c2f2ea111e11826a2",
-    "generated_types_sha256": "sha256:8031c7f4f795550e05dd2c745caf83ec39264187f57d7f2429391bf81ca67b5f",
-    "migration_head": "20261116130000",
+    "contract_version": "0.9.0",
+    "enrichment_sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
+    "generated_types_sha256": "sha256:374a85ba3ec324eb3c5f2857482b912b390b9592a978864268b4473bd8062052",
+    "migration_head": "20261116140000",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -568,6 +568,12 @@
       ],
       "product.dataset_work": [
         "fn:product.dataset_work(uuid,uuid)"
+      ],
+      "product.dispatch_authoring_command": [
+        "fn:product.dispatch_authoring_command(uuid,text,uuid,jsonb,uuid,client_grant)"
+      ],
+      "product.dispatch_authoring_read": [
+        "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)"
       ],
       "product.dispatch_command": [
         "fn:product.dispatch_command(uuid,text,uuid,jsonb,uuid,client_grant)"
@@ -1630,6 +1636,35 @@
         "call_function_id": "fn:api.product_read(uuid,text,jsonb)",
         "calls": [
           "product.fail",
+          "product.role_in",
+          "product.tenant"
+        ],
+        "dispatcher": "authoring",
+        "function": "product.dispatch_authoring_read",
+        "function_id": "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)",
+        "id": "op:get_revision_structure",
+        "name": "get_revision_structure",
+        "reads": [
+          "authoring.revision_binding",
+          "authoring.runtime_requirement",
+          "authoring.work",
+          "authoring.work_revision",
+          "curriculum.outcome",
+          "curriculum.outcome_alignment",
+          "curriculum.part",
+          "curriculum.prerequisite",
+          "curriculum.requirement",
+          "curriculum.requirement_option",
+          "inquiry.assertion"
+        ],
+        "writes": []
+      },
+      {
+        "basis": "best_effort",
+        "call": "api.product_read",
+        "call_function_id": "fn:api.product_read(uuid,text,jsonb)",
+        "calls": [
+          "product.fail",
           "product.readable_revision"
         ],
         "dispatcher": "read",
@@ -1829,6 +1864,28 @@
         "call": "api.product_read",
         "call_function_id": "fn:api.product_read(uuid,text,jsonb)",
         "calls": [
+          "product.fail",
+          "product.require_role"
+        ],
+        "dispatcher": "authoring",
+        "function": "product.dispatch_authoring_read",
+        "function_id": "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)",
+        "id": "op:list_reviews",
+        "name": "list_reviews",
+        "reads": [
+          "authoring.event",
+          "authoring.work",
+          "authoring.work_revision",
+          "conversation.message",
+          "conversation.thread"
+        ],
+        "writes": []
+      },
+      {
+        "basis": "best_effort",
+        "call": "api.product_read",
+        "call_function_id": "fn:api.product_read(uuid,text,jsonb)",
+        "calls": [
           "product.require_role"
         ],
         "dispatcher": "research",
@@ -1847,6 +1904,24 @@
         "call": "api.product_read",
         "call_function_id": "fn:api.product_read(uuid,text,jsonb)",
         "calls": [
+          "product.tenant"
+        ],
+        "dispatcher": "authoring",
+        "function": "product.dispatch_authoring_read",
+        "function_id": "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)",
+        "id": "op:list_workspaces",
+        "name": "list_workspaces",
+        "reads": [
+          "authoring.workspace",
+          "authoring.workspace_member"
+        ],
+        "writes": []
+      },
+      {
+        "basis": "best_effort",
+        "call": "api.product_read",
+        "call_function_id": "fn:api.product_read(uuid,text,jsonb)",
+        "calls": [
           "product.require_role"
         ],
         "dispatcher": "read",
@@ -1856,6 +1931,30 @@
         "name": "list_works",
         "reads": [
           "authoring.work"
+        ],
+        "writes": []
+      },
+      {
+        "basis": "best_effort",
+        "call": "api.product_command",
+        "call_function_id": "fn:api.product_command(uuid,text,text,uuid,jsonb)",
+        "calls": [
+          "product.exposure",
+          "product.fail",
+          "product.new_event",
+          "product.nonblank",
+          "product.require_role"
+        ],
+        "dispatcher": "authoring",
+        "function": "product.dispatch_authoring_command",
+        "function_id": "fn:product.dispatch_authoring_command(uuid,text,uuid,jsonb,uuid,client_grant)",
+        "id": "op:mark_ready_for_review",
+        "name": "mark_ready_for_review",
+        "reads": [
+          "authoring.event",
+          "authoring.work_revision",
+          "conversation.message",
+          "conversation.thread"
         ],
         "writes": []
       },
@@ -7039,7 +7138,7 @@
           "assets",
           "deployments"
         ],
-        "body": "`authoring.workspace` is a personal or shared team container with `authoring.workspace_member`\nroles (owner, editor, reader). `authoring.work` is the identity of a course, module, lesson,\nactivity, brief, report, template or dataset; `authoring.work_revision` is immutable and\n`work.head_revision_id` is the mutable pointer (`revise_work` requires `p_expected_head`).\nBodies are typed blocks (`authoring.revision_block`, `authoring.block_type`);\n`authoring.revision_binding` records which catalog entities, software or software versions a\nrevision uses or covers, and `authoring.runtime_requirement` what it needs to run — this is\nwhat `api.works_authored.covers_concepts/uses_software` and\n`api.modules_affected_by_release` read.\n\nEvery state change is an `authoring.event` (actor kind human/agent, surface web/harness,\nreview decisions with `closure_sha256`) and every command an `authoring.command` row keyed\nby idempotency key and input digest. Release: `freeze_release` computes the exposure of a\nroot revision (`product.exposure`), applies author decisions to blockers and freezes\n`authoring.release` + `authoring.release_item`; `open_distribution` / `offer_release` publish\nit through `authoring.distribution` and `authoring.distribution_offer` to members or the\npublic library; `authoring.publisher_grant` gates official publication. Assets\n(`authoring.asset_scope`, `authoring.file_set`, `authoring.deployment`) register uploaded\nartifacts, file sets and deployed static sites.\n\nRead our works with `q:ours.works_authored`; write only through operations\n(`ops/create_work.md`, `ops/revise_work.md`, `ops/review_revision.md`,\n`ops/freeze_release.md`, `ops/offer_release.md`). Released course material is indexed with\nlens ours, tier 1, in the `own_content` space. Trap: agents may propose but not record human\nreviews (release_review, official_publication).\n",
+        "body": "`authoring.workspace` is a personal or shared team container with `authoring.workspace_member`\nroles (owner, editor, reader). `authoring.work` is the identity of a course, module, lesson,\nactivity, brief, report, template or dataset; `authoring.work_revision` is immutable and\n`work.head_revision_id` is the mutable pointer (`revise_work` requires `p_expected_head`).\nBodies are typed blocks (`authoring.revision_block`, `authoring.block_type`);\n`authoring.revision_binding` records which catalog entities, software or software versions a\nrevision uses or covers, and `authoring.runtime_requirement` what it needs to run — this is\nwhat `api.works_authored.covers_concepts/uses_software` and\n`api.modules_affected_by_release` read.\n\nEvery state change is an `authoring.event` (actor kind human/agent, surface web/harness,\nreview decisions with `closure_sha256`) and every command an `authoring.command` row keyed\nby idempotency key and input digest. Release: `freeze_release` computes the exposure of a\nroot revision (`product.exposure`), applies author decisions to blockers and freezes\n`authoring.release` + `authoring.release_item`; `open_distribution` / `offer_release` publish\nit through `authoring.distribution` and `authoring.distribution_offer` to members or the\npublic library; `authoring.publisher_grant` gates official publication. Assets\n(`authoring.asset_scope`, `authoring.file_set`, `authoring.deployment`) register uploaded\nartifacts, file sets and deployed static sites.\n\nRead our works with `q:ours.works_authored`; write only through operations\n(`ops/create_work.md`, `ops/revise_work.md`, `ops/review_revision.md`,\n`ops/freeze_release.md`, `ops/offer_release.md`). Released course material is indexed with\nlens ours, tier 1, in the `own_content` space. Trap: agents may propose but not record human\nreviews (release_review, official_publication).\n\nAn author reads back and hands over through the same entrypoints: `list_workspaces` (the\ncaller's memberships), `get_revision_structure` (what a saved revision binds, contains,\npromises and requires), `mark_ready_for_review` (an `authoring.event` of kind\nrevision_proposed with the closure the database computes) and `list_reviews` (requests with a\nderived status, the reviews recorded since and the replies in the hand-over conversation).\nTasks: `tasks/read-back-saved-revision.md`, `tasks/hand-over-for-review.md`.\n",
         "functions": [
           "fn:api.product_command(uuid,text,text,uuid,jsonb)",
           "fn:api.product_read(uuid,text,jsonb)",
@@ -7085,7 +7184,9 @@
         "summary": "What we author (lens ours): immutable revisions of courses, modules, lessons, activities, briefs, reports and datasets; releases freeze closures for distribution.",
         "tasks": [
           "modules-covering-concept",
-          "modules-affected-by-release"
+          "modules-affected-by-release",
+          "read-back-saved-revision",
+          "hand-over-for-review"
         ],
         "title": "Authoring (works, revisions, releases, distribution)"
       },
@@ -16065,7 +16166,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:3d2e100fd2971e9d9964aa426481202d3e7a89b33747566c2f2ea111e11826a2",
+    "sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
     "tasks": [
       {
         "aliases": [
@@ -16304,6 +16405,35 @@
       },
       {
         "aliases": [
+          "ready for review",
+          "request review",
+          "review request",
+          "hand over",
+          "hand-over",
+          "submitted for review",
+          "review status",
+          "feedback",
+          "reviewer replies",
+          "awaiting review"
+        ],
+        "domains": [
+          "authoring"
+        ],
+        "expected_shape": "`mark_ready_for_review`: `eventId`, `workId`, `revisionId`, `ceiling`, `closureSha256` (computed by the database, equal to `preview_exposure` at that ceiling), `items`, `blockers`, `threadId`, `alreadyRequested` (true when the same revision was already marked at that ceiling; the first request is returned). `list_reviews`: `requests` `[{requestId, revisionId, revisionNo, title, isHead, status, ceiling, closureSha256, note, threadId, actorKind, reviews: [{eventId, kind, reviewType, decision, actorKind, byYou, payload}], replies: [{seq, role, fromPerson, content}]}]` and `reviews` (reviews recorded on a revision without a request).\n",
+        "id": "task:hand-over-for-review",
+        "navigation": "`ops/preview_exposure.md` → `ops/create_thread.md` and `ops/append_message.md` (the note) → `ops/mark_ready_for_review.md` → `ops/list_reviews.md`; the person's act is `ops/review_revision.md`.\n",
+        "operation": "```sql\n-- the author's own act: an owner or editor marks an exact revision ready, naming the hand-over conversation\nselect api.product_command('0192a000-0000-7000-8000-000000000001', 'mark_ready_for_review', 'module-7:ready:1', null,\n  '{\"revision_id\": \"0192a000-0000-7000-8000-000000000002\", \"ceiling\": \"workspace\",\n    \"note\": \"Module 7: two lessons and the activity; every lesson was run.\", \"thread_id\": \"0192a000-0000-7000-8000-000000000003\"}'::jsonb);\n-- requests with their status, the reviews recorded since and the replies after the note\nselect api.product_read('0192a000-0000-7000-8000-000000000001', 'list_reviews', '{\"status\": \"awaiting_review\"}'::jsonb);\n```\n",
+        "pitfalls": "Marking ready records no review and changes nothing a release needs: a person still records `review_revision` (release_review with the closure and ceiling) before `freeze_release`. `status` is `reviewed` only after a person's review (actor kind human); an agent's own review event is listed with actor kind agent and leaves the request awaiting review. A request whose revision is no longer the work's head and was not reviewed is `superseded`. Replies are the messages after the note, from a workspace-visible conversation; a private conversation of another member cannot be attached (NOT_FOUND). Readers of the workspace can list reviews; only owners and editors can mark ready.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "ours.works_authored"
+        ],
+        "reviewed": null,
+        "slug": "hand-over-for-review",
+        "title": "How do I hand a revision to a person for review, and what feedback did I get?"
+      },
+      {
+        "aliases": [
           "source trust",
           "trustworthy source",
           "authority",
@@ -16447,6 +16577,36 @@
         "reviewed": null,
         "slug": "propose-verdict-from-probe",
         "title": "How do I register a probe, record its runs and propose a verdict?"
+      },
+      {
+        "aliases": [
+          "my workspaces",
+          "shared workspaces",
+          "workspace id",
+          "can I write",
+          "read back",
+          "saved structure",
+          "what did I save",
+          "bindings of a revision",
+          "parts of a module",
+          "revision structure"
+        ],
+        "domains": [
+          "authoring",
+          "curriculum"
+        ],
+        "expected_shape": "`list_workspaces`: `[{workspaceId, name, kind, role, canWrite, ownedByYou, memberSince}]`, the personal workspace first (absent until `ensure_personal_workspace` has run once). `get_revision_structure`: `revisionId`, `workId`, `workKind`, `workSlug`, `workspaceId`, `revisionNo`, `title`, `origin`, `contentSha256`, `isHead`, `headRevisionId`, and the arrays `bindings` (`localKey`, `relation`, `target` {kind, id}, `role`, `blockKey`, `usage`), `parts` (`occurrenceKey`, `ordinal`, `role`, `childRevisionId`, `childKind`, `childTitle`, `childIsHead`), `outcomes` (with `evidenceRule` and `alignments`), `requirements` (`kind`, `outcomeKey` or `occurrenceKey`, `options` with `route` and `approvalState`), `prerequisites`, `runtime` (`versionSpec`, `resolvedVersion`), `statements` (`blockKey`, `supportStatus`, `usesClaimId`).\n",
+        "id": "task:read-back-saved-revision",
+        "navigation": "`domains/authoring.md` → `ops/list_workspaces.md` → `ops/list_works.md` → `ops/get_revision_structure.md` (and `ops/get_report.md` for the body and statements with support counts).\n",
+        "operation": "```sql\n-- the caller's own memberships; {\"writable_only\": true} keeps owner and editor\nselect api.product_read(null, 'list_workspaces', '{\"writable_only\": true}'::jsonb);\n-- one saved revision: bindings, parts, outcomes, requirements with routes, prerequisites, runtime, statements\nselect api.product_read('0192a000-0000-7000-8000-000000000001', 'get_revision_structure',\n                        '{\"revision_id\": \"0192a000-0000-7000-8000-000000000002\"}'::jsonb);\n```\n",
+        "pitfalls": "The structure read answers members of the revision's workspace only; a learner who reads a released revision uses `get_lesson_view`, and a non-member gets NOT_FOUND. A client grant that names workspaces narrows both reads to them. `childIsHead` false means the child was revised after it was placed: revise the parent to place the new revision. The body and blocks are `get_revision`; this read does not repeat them.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "ours.works_authored"
+        ],
+        "reviewed": null,
+        "slug": "read-back-saved-revision",
+        "title": "Which workspaces can I write to, and what exactly did I save in this revision?"
       },
       {
         "aliases": [
@@ -18093,6 +18253,29 @@
       },
       {
         "aliases": [
+          "ready for review",
+          "revision_proposed",
+          "hand-over",
+          "submitted for review",
+          "review status",
+          "awaiting_review",
+          "superseded"
+        ],
+        "definition": "The author's own mark that an exact revision is ready for a person's review, an authoring event of kind revision_proposed made by mark_ready_for_review with the release closure the database computes at a ceiling, the hand-over note and the conversation that holds it. It is not a review. list_reviews derives its status, reviewed only after a person's review_revision on that revision and superseded when the work has a newer head.",
+        "id": "term:review-request",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:authoring.event",
+          "fn:api.product_command(uuid,text,text,uuid,jsonb)",
+          "fn:api.product_read(uuid,text,jsonb)",
+          "task:hand-over-for-review"
+        ],
+        "reviewed": null,
+        "slug": "review-request",
+        "term": "review request"
+      },
+      {
+        "aliases": [
           "row level security"
         ],
         "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Private-lens rows (library.passage, conversation.*) are additionally isolated per workspace; api.search_unified returns them only for the workspaces passed in, so only trusted roles execute it (not anon, not authenticated); a signed-in session searches the shared lenses with api.search_knowledge and reads private passages through the product search operation.",
@@ -18489,7 +18672,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:0c3261c3215ba1fd32f76583b07e4cd3b7dd222d63e49f387bfb0a3fd12ee53e",
+  "fingerprint": "sha256:399f954e4289b40362558269e1b4296c678fdb46b9ef6962cc551e91e3279ef1",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -21586,13 +21769,14 @@
           "type": "jsonb"
         }
       ],
-      "body_sha256": "sha256:3115d51bc4fb3427db7251f7fecec17f856bd8084948f96aadbe5c1a067350d6",
+      "body_sha256": "sha256:96dbc54f9ceba53039895adb670cf16091177343a1d267bf0fc237b828b8cd82",
       "comment": null,
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
-        "20261105010300_product_api.sql"
+        "20261105010300_product_api.sql",
+        "20261116140000_build08_authoring_review_reads.sql"
       ],
       "executors": [
         "authenticated"
@@ -21617,6 +21801,7 @@
         "calls": [
           "product.actor",
           "product.client_grant",
+          "product.dispatch_authoring_command",
           "product.dispatch_command",
           "product.fail",
           "product.personal_workspace",
@@ -21655,13 +21840,14 @@
           "type": "jsonb"
         }
       ],
-      "body_sha256": "sha256:f6b3294cc18f90060d05db3252f91900649f8654bdf6e83c17d9613a8c177817",
+      "body_sha256": "sha256:f1ade20f8788d43fa93168ff2b9fdabbeb840185b856af712a1754234f7d3af9",
       "comment": null,
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
-        "20261105010300_product_api.sql"
+        "20261105010300_product_api.sql",
+        "20261116140000_build08_authoring_review_reads.sql"
       ],
       "executors": [
         "authenticated"
@@ -21686,6 +21872,7 @@
         "calls": [
           "product.actor",
           "product.client_grant",
+          "product.dispatch_authoring_read",
           "product.dispatch_read"
         ],
         "reads": [
@@ -32306,6 +32493,169 @@
       },
       "typescript": "Database[\"product\"][\"Functions\"][\"dataset_work\"]",
       "volatility": "volatile"
+    },
+    "fn:product.dispatch_authoring_command(uuid,text,uuid,jsonb,uuid,client_grant)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "ws",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "op",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "head",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "pl",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "g",
+          "type": "access.client_grant"
+        }
+      ],
+      "body_sha256": "sha256:631df2f6b54d4fb0daf3cbf388d4ad4967b3cb3c479ba66ee2bde01335c002a4",
+      "comment": "Product command mark_ready_for_review, routed by api.product_command: an owner or editor of the workspace marks an exact revision ready for a person's review (authoring.event kind revision_proposed) with the exposure closure the database computes at the ceiling, the note and optionally the workspace conversation that holds the hand-over. It records no review and no decision; actor_kind is agent for an MCP, harness or API client grant, as in product.dispatch_command.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116140000_build08_authoring_review_reads.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:product.dispatch_authoring_command(uuid,text,uuid,jsonb,uuid,client_grant)",
+      "identity_arguments": "ws uuid, op text, head uuid, pl jsonb, p uuid, g access.client_grant",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "dispatch_authoring_command",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "product",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "product.exposure",
+          "product.fail",
+          "product.new_event",
+          "product.nonblank",
+          "product.require_role"
+        ],
+        "reads": [
+          "authoring.event",
+          "authoring.work_revision",
+          "conversation.message",
+          "conversation.thread"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"product\"][\"Functions\"][\"dispatch_authoring_command\"]",
+      "volatility": "volatile"
+    },
+    "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "ws",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "op",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "pl",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "g",
+          "type": "access.client_grant"
+        }
+      ],
+      "body_sha256": "sha256:f2ca37fadcd0d62dcb2dddc6c5cc7c1afa1667521e6ed65e8cae1273948b6a8f",
+      "comment": "Product reads list_workspaces, get_revision_structure and list_reviews, routed by api.product_read. The principal comes from product.actor() and the client grant from product.client_grant; membership (product.role_in) decides what is visible: a caller sees only its own memberships, the structure of revisions in workspaces it belongs to, and the review requests, reviews and workspace-visible hand-over replies of a workspace it belongs to.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116140000_build08_authoring_review_reads.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)",
+      "identity_arguments": "ws uuid, op text, pl jsonb, p uuid, g access.client_grant",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "dispatch_authoring_read",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "product",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "product.fail",
+          "product.require_role",
+          "product.role_in",
+          "product.tenant"
+        ],
+        "reads": [
+          "authoring.event",
+          "authoring.revision_binding",
+          "authoring.runtime_requirement",
+          "authoring.work",
+          "authoring.work_revision",
+          "authoring.workspace",
+          "authoring.workspace_member",
+          "conversation.message",
+          "conversation.thread",
+          "curriculum.outcome",
+          "curriculum.outcome_alignment",
+          "curriculum.part",
+          "curriculum.prerequisite",
+          "curriculum.requirement",
+          "curriculum.requirement_option",
+          "inquiry.assertion"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"product\"][\"Functions\"][\"dispatch_authoring_read\"]",
+      "volatility": "stable"
     },
     "fn:product.dispatch_command(uuid,text,uuid,jsonb,uuid,client_grant)": {
       "arguments": [
@@ -158778,6 +159128,8 @@
         "fn:product.dataset_edit(uuid,uuid,jsonb,uuid,bool)",
         "fn:product.dataset_snapshot(uuid,int4)",
         "fn:product.dataset_work(uuid,uuid)",
+        "fn:product.dispatch_authoring_command(uuid,text,uuid,jsonb,uuid,client_grant)",
+        "fn:product.dispatch_authoring_read(uuid,text,jsonb,uuid,client_grant)",
         "fn:product.dispatch_command(uuid,text,uuid,jsonb,uuid,client_grant)",
         "fn:product.dispatch_read(uuid,text,jsonb,uuid)",
         "fn:product.dispatch_research_command(uuid,text,uuid,jsonb,uuid,client_grant,bool,text)",
@@ -170214,9 +170566,9 @@
       "rel:curriculum.requirement_option": "unknown",
       "rel:curriculum.requirement_transition": "unknown",
       "rel:dataset.cell": "small",
-      "rel:dataset.field": "unknown",
+      "rel:dataset.field": "small",
       "rel:dataset.proposal": "unknown",
-      "rel:dataset.row": "unknown",
+      "rel:dataset.row": "small",
       "rel:evaluation.eval_case": "unknown",
       "rel:evaluation.eval_case_expected_filter": "unknown",
       "rel:evaluation.eval_case_provenance": "unknown",
@@ -170278,10 +170630,10 @@
       "rel:guidance.item": "unknown",
       "rel:guidance.item_kind": "unknown",
       "rel:guidance.item_subject": "unknown",
-      "rel:inquiry.acceptance": "unknown",
+      "rel:inquiry.acceptance": "small",
       "rel:inquiry.assertion": "unknown",
       "rel:inquiry.delivery": "unknown",
-      "rel:inquiry.obligation": "unknown",
+      "rel:inquiry.obligation": "small",
       "rel:inquiry.support": "small",
       "rel:inquiry.watch": "unknown",
       "rel:knowledge_service.callback_delivery": "unknown",
@@ -170315,7 +170667,7 @@
       "rel:learning.submission": "unknown",
       "rel:library.connected_item": "unknown",
       "rel:library.connection": "unknown",
-      "rel:library.passage": "unknown",
+      "rel:library.passage": "small",
       "rel:library.preparation": "unknown",
       "rel:library.removal": "unknown",
       "rel:library.resource_control": "unknown",
@@ -170328,7 +170680,7 @@
       "rel:observability.usage_rollup": "unknown",
       "rel:orchestration.agent_session": "unknown",
       "rel:orchestration.artifact": "small",
-      "rel:orchestration.artifact_lineage": "unknown",
+      "rel:orchestration.artifact_lineage": "none",
       "rel:orchestration.artifact_manifest": "unknown",
       "rel:orchestration.artifact_tombstone": "unknown",
       "rel:orchestration.artifact_type": "unknown",
@@ -170403,7 +170755,7 @@
       "rel:retrieval.vector_store_ingestion_run": "unknown",
       "rel:retrieval.vector_store_lifecycle_event": "unknown",
       "rel:retrieval.vector_store_space": "unknown",
-      "rel:staging.candidate": "unknown",
+      "rel:staging.candidate": "none",
       "rel:staging.identity_match": "unknown",
       "rel:staging.resolution_decision": "unknown",
       "rel:staging.vetting_decision": "unknown",
@@ -170427,11 +170779,11 @@
       "rel:temporal.stream_kind": "small",
       "rel:verification.claim_triage": "small",
       "rel:verification.probe": "unknown",
-      "rel:verification.probe_claim": "unknown",
+      "rel:verification.probe_claim": "small",
       "rel:verification.probe_run": "unknown",
       "rel:verification.probe_verdict": "small",
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+  "workspace_fingerprint": "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 }

@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document_node, evidence.claim, evidence.extraction_record, evidence.locator, evidence.segment_support, evidence.source, evidence.source_capture, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, fact_locators, api.fact_locators]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.fact_locators
 

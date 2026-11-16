@@ -6,7 +6,7 @@ name: document_type
 rows: 67
 rows_sha256: "sha256:873d3ab241fa299ed96810049c8a83d85494bfcfc980d24599a93aebc9025e8d"
 codes: [agent_plugin_manifest, agent_skill_manifest, aie_talk, analysis_post, api_reference, api_surface, arxiv_paper, changelog, comparison_article, conference_paper, course_module, dataset_card, document_summary, earnings_call_transcript, earnings_release, entity_profile, forum_thread, framework_docs_page, funding_announcement, github_release, guide, interview, investor_letter, issue_thread, job_posting, journal_article, leaderboard_page, livestream_transcript, market_report, mcp_server_manifest, model_card, model_hub_page, news_article, newsletter_issue, notebook, official_blog_post, official_docs_page, openapi_spec, package_manifest, package_version_page, patent, podcast_transcript, press_release, pricing_page, probe_report, product_page, registry_listing_page, release_notes, repository_file, repository_readme, research_report, sec_10k, sec_10q, sec_8k, sec_form_d, sec_s1, security_advisory_page, social_post, status_incident, system_card, tech_report, terms_of_service, thirdparty_blog_post, timeline_digest, unclassified, video_transcript, webinar_transcript]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # content.document_type
 

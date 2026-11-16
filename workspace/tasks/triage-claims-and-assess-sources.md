@@ -7,7 +7,7 @@ queries: [evidence.claim_triage, evidence.source_registry, evidence.source_track
 aliases: [record triage, triage write, checkability, not checkable, duplicate claim, record source assessment, prior, derived assessment, source write]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # How do I triage a claim candidate or record a source assessment?
 

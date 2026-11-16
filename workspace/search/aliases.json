@@ -208,6 +208,12 @@
   "availability": [
     "task:record-availability-change"
   ],
+  "awaiting review": [
+    "task:hand-over-for-review"
+  ],
+  "awaiting_review": [
+    "term:review-request"
+  ],
   "baseline": [
     "task:what-do-we-know-about-entity"
   ],
@@ -234,6 +240,9 @@
     "rel:catalog.work",
     "term:work"
   ],
+  "bindings of a revision": [
+    "task:read-back-saved-revision"
+  ],
   "bitemporal": [
     "dom:temporal-facts",
     "term:two-clocks"
@@ -259,6 +268,9 @@
   ],
   "cadence": [
     "term:attention-policy"
+  ],
+  "can i write": [
+    "task:read-back-saved-revision"
   ],
   "candidate": [
     "rel:staging.candidate",
@@ -335,6 +347,8 @@
     "op:append_message",
     "op:create_thread",
     "op:get_thread",
+    "op:list_reviews",
+    "op:mark_ready_for_review",
     "op:search",
     "rel:conversation.thread"
   ],
@@ -507,6 +521,8 @@
     "op:get_dataset_diff",
     "op:get_lesson_view",
     "op:get_report",
+    "op:get_revision_structure",
+    "op:list_reviews",
     "op:list_works",
     "op:preview_removal",
     "op:propose_research",
@@ -839,6 +855,9 @@
     "dom:guidance",
     "q:guidance.items"
   ],
+  "feedback": [
+    "task:hand-over-for-review"
+  ],
   "fetch": [
     "dom:acquisition",
     "rel:acquisition.fetch",
@@ -918,6 +937,9 @@
   "get revision": [
     "op:get_revision"
   ],
+  "get revision structure": [
+    "op:get_revision_structure"
+  ],
   "get support": [
     "op:get_support"
   ],
@@ -979,6 +1001,13 @@
   ],
   "guidance table": [
     "rel:api.guidance_items"
+  ],
+  "hand over": [
+    "task:hand-over-for-review"
+  ],
+  "hand-over": [
+    "task:hand-over-for-review",
+    "term:review-request"
   ],
   "harness grant": [
     "dom:access"
@@ -1067,6 +1096,9 @@
     "op:get_lesson_view",
     "op:get_report",
     "op:get_revision",
+    "op:get_revision_structure",
+    "op:list_reviews",
+    "op:mark_ready_for_review",
     "op:preview_exposure",
     "op:preview_removal",
     "op:propose_equivalence",
@@ -1252,11 +1284,17 @@
   "list library": [
     "op:list_library"
   ],
+  "list reviews": [
+    "op:list_reviews"
+  ],
   "list watches": [
     "op:list_watches"
   ],
   "list works": [
     "op:list_works"
+  ],
+  "list workspaces": [
+    "op:list_workspaces"
   ],
   "locator": [
     "q:facts.locators",
@@ -1278,6 +1316,9 @@
   ],
   "mapping": [
     "term:assertion-mapping"
+  ],
+  "mark ready for review": [
+    "op:mark_ready_for_review"
   ],
   "mastery": [
     "dom:learning"
@@ -1350,6 +1391,8 @@
     "op:get_dataset_diff",
     "op:get_lesson_view",
     "op:get_report",
+    "op:get_revision_structure",
+    "op:list_reviews",
     "op:list_works",
     "op:preview_removal",
     "op:propose_research",
@@ -1377,6 +1420,9 @@
     "op:search",
     "rel:library.passage",
     "task:search-my-notes"
+  ],
+  "my workspaces": [
+    "task:read-back-saved-revision"
   ],
   "named query": [
     "term:named-query"
@@ -1533,6 +1579,9 @@
   ],
   "papers": [
     "q:catalog.papers"
+  ],
+  "parts of a module": [
+    "task:read-back-saved-revision"
   ],
   "passage": [
     "op:confirm_removal",
@@ -1721,8 +1770,15 @@
     "dom:ranking",
     "q:ranking.leaderboard"
   ],
+  "read back": [
+    "task:read-back-saved-revision"
+  ],
   "reads": [
     "dom:product-operations"
+  ],
+  "ready for review": [
+    "task:hand-over-for-review",
+    "term:review-request"
   ],
   "rebase": [
     "q:entity.what_changed",
@@ -1863,6 +1919,8 @@
     "op:get_dataset_diff",
     "op:get_lesson_view",
     "op:get_report",
+    "op:get_revision_structure",
+    "op:list_reviews",
     "op:list_works",
     "op:preview_removal",
     "op:propose_research",
@@ -1880,6 +1938,9 @@
   ],
   "request environment": [
     "op:request_environment"
+  ],
+  "request review": [
+    "task:hand-over-for-review"
   ],
   "requirements": [
     "dom:curriculum"
@@ -1942,6 +2003,10 @@
   "review queue": [
     "q:staging.unresolved"
   ],
+  "review request": [
+    "task:hand-over-for-review",
+    "term:review-request"
+  ],
   "review revision": [
     "op:review_revision"
   ],
@@ -1949,11 +2014,18 @@
     "term:agent-proposed",
     "term:verdict"
   ],
+  "review status": [
+    "task:hand-over-for-review",
+    "term:review-request"
+  ],
   "review tasks": [
     "dom:evaluation"
   ],
   "reviewed assessment": [
     "term:agent-proposed"
+  ],
+  "reviewer replies": [
+    "task:hand-over-for-review"
   ],
   "revise work": [
     "op:revise_work"
@@ -1970,6 +2042,9 @@
     "op:get_lesson_view",
     "op:get_report",
     "op:get_revision",
+    "op:get_revision_structure",
+    "op:list_reviews",
+    "op:mark_ready_for_review",
     "op:preview_exposure",
     "op:preview_removal",
     "op:propose_equivalence",
@@ -1981,6 +2056,12 @@
     "op:trace_reverse",
     "rel:authoring.work_revision",
     "term:head-revision"
+  ],
+  "revision structure": [
+    "task:read-back-saved-revision"
+  ],
+  "revision_proposed": [
+    "term:review-request"
   ],
   "revisions": [
     "dom:authoring"
@@ -2012,6 +2093,9 @@
   ],
   "running sweeps": [
     "q:acquisition.open_sweeps"
+  ],
+  "saved structure": [
+    "task:read-back-saved-revision"
   ],
   "schema workspace": [
     "term:workspace"
@@ -2115,6 +2199,9 @@
   ],
   "sha256": [
     "term:fingerprint"
+  ],
+  "shared workspaces": [
+    "task:read-back-saved-revision"
   ],
   "skills": [
     "q:catalog.software"
@@ -2259,6 +2346,10 @@
   "submit attempt": [
     "op:submit_attempt"
   ],
+  "submitted for review": [
+    "task:hand-over-for-review",
+    "term:review-request"
+  ],
   "summaries": [
     "dom:content"
   ],
@@ -2267,6 +2358,9 @@
   ],
   "summary with anchors": [
     "q:content.document_digest"
+  ],
+  "superseded": [
+    "term:review-request"
   ],
   "support": [
     "dom:inquiry",
@@ -2379,6 +2473,8 @@
     "op:append_message",
     "op:create_thread",
     "op:get_thread",
+    "op:list_reviews",
+    "op:mark_ready_for_review",
     "op:search",
     "rel:conversation.thread"
   ],
@@ -2639,6 +2735,9 @@
   "what changed on a leaderboard": [
     "dom:ranking"
   ],
+  "what did i save": [
+    "task:read-back-saved-revision"
+  ],
   "what do we teach about": [
     "task:modules-covering-concept"
   ],
@@ -2727,6 +2826,8 @@
     "op:get_dataset_diff",
     "op:get_lesson_view",
     "op:get_report",
+    "op:get_revision_structure",
+    "op:list_reviews",
     "op:list_works",
     "op:preview_removal",
     "op:propose_research",
@@ -2751,6 +2852,9 @@
   ],
   "workspace fingerprint": [
     "term:fingerprint"
+  ],
+  "workspace id": [
+    "task:read-back-saved-revision"
   ],
   "world time": [
     "term:world-time"

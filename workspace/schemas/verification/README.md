@@ -6,7 +6,7 @@ lens: evidence
 domains: [evidence, verified-knowledge]
 relations: 6
 functions: 14
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # verification
 
@@ -16,7 +16,7 @@ Evidence acts 4-5: verification observations and use decisions admitted into thi
 | --- | --- | --- | --- | --- |
 | [`claim_triage`](../../relations/verification/claim_triage.md) | table | small | Loop 5: what to do with a claim candidate before anyone checks it: probe it, check the do… | → `evidence.claim`, → `verification.probe` |
 | [`probe`](../../relations/verification/probe.md) | table | unknown | Loop 4: an experiment that tests stated claims against a matrix of environments. Cells ar… | → `conversation.thread` |
-| [`probe_claim`](../../relations/verification/probe_claim.md) | table | unknown | — | → `evidence.claim`, → `verification.probe` |
+| [`probe_claim`](../../relations/verification/probe_claim.md) | table | small | — | → `evidence.claim`, → `verification.probe` |
 | [`probe_run`](../../relations/verification/probe_run.md) | table | unknown | Loop 4: one execution of a probe in one cell. outcome pass/fail is about the probe's own … | → `orchestration.mission`, → `evidence.source_capture`, → `evidence.locator`, → `verification.probe` |
 | [`probe_verdict`](../../relations/verification/probe_verdict.md) | table | small | Loop 4: what a probe's runs say about one claim. Append-only: a changed verdict is a new … | → `evidence.claim`, → `verification.probe` |
 | [`use_admission`](../../relations/verification/use_admission.md) | table | unknown | Append-only record that knowledge_verification admitted a use decision inside the writing… | — |

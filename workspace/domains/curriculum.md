@@ -6,11 +6,11 @@ schemas: [curriculum]
 aliases: [course structure, learning outcomes, requirements, prerequisites, release transitions]
 relations: [curriculum.part, curriculum.outcome, curriculum.requirement, curriculum.requirement_option, curriculum.prerequisite, curriculum.outcome_alignment, curriculum.release_transition, curriculum.requirement_transition]
 functions: []
-tasks: [modules-affected-by-release, modules-covering-concept]
+tasks: [modules-affected-by-release, modules-covering-concept, read-back-saved-revision]
 summary: "Structure, outcomes and requirements of authored course works, keyed to authoring revisions (machinery lens: written by product operations)."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # Curriculum structure
 
@@ -57,6 +57,6 @@ Structure, outcomes and requirements of authored course works, keyed to authorin
 
 ## Tasks
 
-[`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md)
+[`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md), [`read-back-saved-revision`](../tasks/read-back-saved-revision.md)
 
 Schemas: [`curriculum`](../schemas/curriculum/README.md).

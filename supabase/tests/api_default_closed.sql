@@ -5,7 +5,7 @@
 -- role that opened the plan.
 begin;
 create extension if not exists pgtap with schema extensions;
-select extensions.plan(52);
+select extensions.plan(54);
 
 \set tenant '00000000-0000-7000-8000-000000000001'
 \set user_a 'adc00000-0000-4000-8000-00000000000a'
@@ -96,6 +96,17 @@ select extensions.is((select coalesce(string_agg(f, ', ' order by f), '') from u
     'api.search_knowledge(text, extensions.halfvec, text[], smallint[], text[], text[], text[], uuid[], timestamptz, text[], text[], integer, integer, integer, double precision, boolean)',
     'api.product_command(uuid, text, text, uuid, jsonb)', 'api.product_read(uuid, text, jsonb)', 'api.product_scope(text)']) f
    where not has_function_privilege('authenticated', f, 'execute')), '', 'authenticated executes every function the service calls');
+-- The product dispatchers (20261105010300, 20261108120000, 20261116140000) run inside api.product_command / api.product_read as
+-- their owner; none is executable by any reading or service role, directly or through PUBLIC.
+select extensions.is((select coalesce(string_agg(p.oid::regprocedure::text, ', ' order by p.oid::regprocedure::text), '') from pg_proc p
+   where p.pronamespace = 'product'::regnamespace and p.proname like 'dispatch_%'
+     and (exists (select 1 from aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a where a.grantee = 0)
+          or exists (select 1 from pg_roles r where r.rolname in ('anon','authenticated','service_role','app_reader','pipeline_agent','executor_service','verifier_agent','control_plane')
+                       and has_function_privilege(r.oid, p.oid, 'execute')))), '',
+  'no product dispatcher, the authoring reads and hand-off included, is executable by PUBLIC or any reading or service role');
+select extensions.is((select count(*) from pg_proc p where p.oid in ('api.product_command(uuid, text, text, uuid, jsonb)'::regprocedure, 'api.product_read(uuid, text, jsonb)'::regprocedure)
+     and p.prosecdef and p.proowner = 'product_api_owner'::regrole and p.proconfig @> array['search_path=""']), 2::bigint,
+  'the product entrypoints, re-created by 20261116140000, keep SECURITY DEFINER, their owner and an empty search path');
 select extensions.is((select coalesce(string_agg(v, ', ' order by v), '') from unnest(array['api.claim_candidates', 'api.verified_claims', 'api.claim_verdicts', 'api.claim_restatements',
     'api.claim_conflicts', 'api.source_registry', 'api.source_track_record']) v where not has_table_privilege('authenticated', v, 'select')), '', 'authenticated selects every view the service reads');
 

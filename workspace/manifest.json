@@ -14,20 +14,20 @@
   },
   "build": {
     "catalog_version": "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1",
-    "contract_version": "0.8.0",
-    "enrichment_sha256": "sha256:3d2e100fd2971e9d9964aa426481202d3e7a89b33747566c2f2ea111e11826a2",
-    "fingerprint": "sha256:0c3261c3215ba1fd32f76583b07e4cd3b7dd222d63e49f387bfb0a3fd12ee53e",
-    "generated_types_sha256": "sha256:8031c7f4f795550e05dd2c745caf83ec39264187f57d7f2429391bf81ca67b5f",
-    "migration_head": "20261116130000",
+    "contract_version": "0.9.0",
+    "enrichment_sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
+    "fingerprint": "sha256:399f954e4289b40362558269e1b4296c678fdb46b9ef6962cc551e91e3279ef1",
+    "generated_types_sha256": "sha256:374a85ba3ec324eb3c5f2857482b912b390b9592a978864268b4473bd8062052",
+    "migration_head": "20261116140000",
     "renderer_version": "4.0.0",
     "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-16T21:44:28.954Z",
+      "introspected_at": "2026-11-16T22:57:44.650Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+    "workspace_fingerprint": "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
   },
   "entry_points": [
     "START_HERE.md",
@@ -40,24 +40,24 @@
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
     "domains": 25,
-    "functions": 297,
-    "operations": 81,
+    "functions": 299,
+    "operations": 85,
     "queries": 71,
     "relation_details": 85,
     "relation_stubs": 0,
     "relations": 350,
     "schemas": 27,
-    "tasks": 39,
+    "tasks": 41,
     "types": 10,
     "vocabularies": 13
   },
   "scope": null,
   "sizes": {
-    "files": 939,
+    "files": 947,
     "largest": {
-      "bytes": 5292004,
+      "bytes": 5308616,
       "path": "schema-ir.json"
     },
-    "total_bytes": 9065053
+    "total_bytes": 9112148
   }
 }

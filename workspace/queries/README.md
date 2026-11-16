@@ -3,7 +3,7 @@ id: queries
 kind: entry
 queries: 71
 catalog_version: "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1"
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # Named queries
 

@@ -18440,6 +18440,27 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      dispatch_authoring_command: {
+        Args: {
+          g: Database["access"]["Tables"]["client_grant"]["Row"]
+          head: string
+          op: string
+          p: string
+          pl: Json
+          ws: string
+        }
+        Returns: Json
+      }
+      dispatch_authoring_read: {
+        Args: {
+          g: Database["access"]["Tables"]["client_grant"]["Row"]
+          op: string
+          p: string
+          pl: Json
+          ws: string
+        }
+        Returns: Json
+      }
       dispatch_command: {
         Args: {
           g: Database["access"]["Tables"]["client_grant"]["Row"]

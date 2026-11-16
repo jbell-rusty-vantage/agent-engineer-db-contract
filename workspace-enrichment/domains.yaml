@@ -603,7 +603,7 @@ domains:
     schemas: [authoring]
     relations: [authoring.workspace, authoring.workspace_member, authoring.work, authoring.work_revision, authoring.revision_block, authoring.block_type, authoring.revision_binding, authoring.runtime_requirement, authoring.event, authoring.command, authoring.release, authoring.release_item, authoring.distribution, authoring.distribution_offer, authoring.distribution_member, authoring.publisher_grant, authoring.asset_scope, authoring.file_set, authoring.file_set_entry, authoring.deployment]
     functions: [api.product_command, api.product_read, api.modules_affected_by_release, product.insert_revision, product.exposure, product.walk_blocks, product.validate_body]
-    tasks: [modules-covering-concept, modules-affected-by-release]
+    tasks: [modules-covering-concept, modules-affected-by-release, read-back-saved-revision, hand-over-for-review]
     queries: [ours.works_authored, ours.modules_affected_by_release]
     summary: "What we author (lens ours): immutable revisions of courses, modules, lessons, activities, briefs, reports and datasets; releases freeze closures for distribution."
     body: |
@@ -632,6 +632,13 @@ domains:
       `ops/freeze_release.md`, `ops/offer_release.md`). Released course material is indexed with
       lens ours, tier 1, in the `own_content` space. Trap: agents may propose but not record human
       reviews (release_review, official_publication).
+
+      An author reads back and hands over through the same entrypoints: `list_workspaces` (the
+      caller's memberships), `get_revision_structure` (what a saved revision binds, contains,
+      promises and requires), `mark_ready_for_review` (an `authoring.event` of kind
+      revision_proposed with the closure the database computes) and `list_reviews` (requests with a
+      derived status, the reviews recorded since and the replies in the hand-over conversation).
+      Tasks: `tasks/read-back-saved-revision.md`, `tasks/hand-over-for-review.md`.
 
   - slug: learning
     title: Learning (enrollment, attempts, assessment)

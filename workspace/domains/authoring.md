@@ -6,11 +6,11 @@ schemas: [authoring]
 aliases: [works, revisions, courses, modules, releases, distributions, offers, assets, deployments]
 relations: [authoring.workspace, authoring.workspace_member, authoring.work, authoring.work_revision, authoring.revision_block, authoring.block_type, authoring.revision_binding, authoring.runtime_requirement, authoring.event, authoring.command, authoring.release, authoring.release_item, authoring.distribution, authoring.distribution_offer, authoring.distribution_member, authoring.publisher_grant, authoring.asset_scope, authoring.file_set, authoring.file_set_entry, authoring.deployment]
 functions: [api.modules_affected_by_release, api.product_command, api.product_read, product.exposure, product.insert_revision, product.validate_body, product.walk_blocks]
-tasks: [modules-affected-by-release, modules-covering-concept, what-a-release-affects, what-is-due]
+tasks: [hand-over-for-review, modules-affected-by-release, modules-covering-concept, read-back-saved-revision, what-a-release-affects, what-is-due]
 summary: "What we author (lens ours): immutable revisions of courses, modules, lessons, activities, briefs, reports and datasets; releases freeze closures for distribution."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # Authoring (works, revisions, releases, distribution)
 
@@ -41,6 +41,13 @@ What we author (lens ours): immutable revisions of courses, modules, lessons, ac
 > `ops/freeze_release.md`, `ops/offer_release.md`). Released course material is indexed with
 > lens ours, tier 1, in the `own_content` space. Trap: agents may propose but not record human
 > reviews (release_review, official_publication).
+> 
+> An author reads back and hands over through the same entrypoints: `list_workspaces` (the
+> caller's memberships), `get_revision_structure` (what a saved revision binds, contains,
+> promises and requires), `mark_ready_for_review` (an `authoring.event` of kind
+> revision_proposed with the closure the database computes) and `list_reviews` (requests with a
+> derived status, the reviews recorded since and the replies in the hand-over conversation).
+> Tasks: `tasks/read-back-saved-revision.md`, `tasks/hand-over-for-review.md`.
 
 ## Relations that matter
 
@@ -77,6 +84,6 @@ What we author (lens ours): immutable revisions of courses, modules, lessons, ac
 
 ## Tasks
 
-[`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md), [`what-a-release-affects`](../tasks/what-a-release-affects.md), [`what-is-due`](../tasks/what-is-due.md)
+[`hand-over-for-review`](../tasks/hand-over-for-review.md), [`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md), [`read-back-saved-revision`](../tasks/read-back-saved-revision.md), [`what-a-release-affects`](../tasks/what-a-release-affects.md), [`what-is-due`](../tasks/what-is-due.md)
 
 Schemas: [`authoring`](../schemas/authoring/README.md).

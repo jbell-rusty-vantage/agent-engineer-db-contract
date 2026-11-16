@@ -13,7 +13,7 @@ raises: [verification metadata requires complete generated parent edges before c
 touches: { reads: [orchestration.artifact_lineage], writes: [] }
 tokens: [orchestration, validate_verification_parent_edge_completeness, orchestration.validate_verification_parent_edge_completeness]
 defined_in: ["20260906020000_verification_artifact_contract_marker.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # orchestration.validate_verification_parent_edge_completeness
 

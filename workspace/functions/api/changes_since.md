@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, content.document, content.document_node, content.document_version, content.unit_change, temporal.event, temporal.event_occurrence, temporal.knowledge_batch, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, changes_since, api.changes_since]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261109130000_build08_loop2_numbers_compute_apis.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.changes_since
 

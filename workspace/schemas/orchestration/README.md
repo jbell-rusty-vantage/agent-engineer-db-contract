@@ -6,7 +6,7 @@ lens: machinery
 domains: [orchestration-ledger]
 relations: 37
 functions: 48
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # orchestration
 
@@ -16,7 +16,7 @@ Missions, work graph, sessions, capability catalog, intents, receipts, artifacts
 | --- | --- | --- | --- | --- |
 | [`agent_session`](../../relations/orchestration/agent_session.md) | table | unknown | — | → `orchestration.mission` |
 | [`artifact`](../../relations/orchestration/artifact.md) | table | small | Content-addressed stored object typed by artifact_type; product uploads and course assets… | → `orchestration.artifact_type`, → `orchestration.mission`, → `orchestration.attempt` |
-| [`artifact_lineage`](../../relations/orchestration/artifact_lineage.md) | table | unknown | Typed edge between artifacts (derived_from, supersedes, corrects, produced_by, consumed_b… | → `orchestration.operation_receipt`, → `orchestration.artifact`, → `content.transformation_run` |
+| [`artifact_lineage`](../../relations/orchestration/artifact_lineage.md) | table | none | Typed edge between artifacts (derived_from, supersedes, corrects, produced_by, consumed_b… | → `orchestration.operation_receipt`, → `orchestration.artifact`, → `content.transformation_run` |
 | [`artifact_manifest`](../../relations/orchestration/artifact_manifest.md) | table | unknown | — | → `orchestration.mission`, → `orchestration.work_item` |
 | [`artifact_tombstone`](../../relations/orchestration/artifact_tombstone.md) | table | unknown | — | → `orchestration.artifact` |
 | [`artifact_type`](../../relations/orchestration/artifact_type.md) | table | unknown | — | — |

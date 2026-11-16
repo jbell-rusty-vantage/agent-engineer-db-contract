@@ -6,7 +6,7 @@ name: item_kind
 rows: 10
 rows_sha256: "sha256:1ffd615df305bcea22d99e82ec7e3e6d456f436ccb931900915ed7a8aef00c9e"
 codes: [advanced_usage_pattern, compatibility_constraint, failure_mode, implementation_example, operational_practice, research_direction, security_consideration, setup_guide_step, solution_pattern, technical_problem]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # guidance.item_kind
 

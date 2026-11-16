@@ -13,7 +13,7 @@ raises: [benchmark checkpoints are append-only]
 touches: { reads: [], writes: [] }
 tokens: [evaluation, enforce_verification_benchmark_checkpoint_immutable, evaluation.enforce_verification_benchmark_checkpoint_immutable]
 defined_in: ["20260906029000_verification_benchmark_durable_run.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # evaluation.enforce_verification_benchmark_checkpoint_immutable
 

@@ -13,7 +13,7 @@ raises: [provider response capture active claim required, provider response capt
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt], writes: [] }
 tokens: [orchestration, verification_provider_response_capture_guard, orchestration.verification_provider_response_capture_guard]
 defined_in: ["20260906031400_verification_provider_response_capture.sql", "20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # orchestration.verification_provider_response_capture_guard
 

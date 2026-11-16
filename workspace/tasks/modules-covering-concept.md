@@ -7,7 +7,7 @@ queries: [catalog.concepts, ours.works_authored, guidance.items, retrieval.searc
 aliases: [coverage, modules about, course coverage, what do we teach about]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # Which of our modules cover <concept>, and what guidance exists for it?
 

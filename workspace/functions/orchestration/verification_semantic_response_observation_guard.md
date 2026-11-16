@@ -13,7 +13,7 @@ raises: [semantic observation artifact inadmissible, semantic observation exact 
 touches: { reads: [knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt, orchestration.verification_provider_response_capture], writes: [] }
 tokens: [orchestration, verification_semantic_response_observation_guard, orchestration.verification_semantic_response_observation_guard]
 defined_in: ["20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # orchestration.verification_semantic_response_observation_guard
 

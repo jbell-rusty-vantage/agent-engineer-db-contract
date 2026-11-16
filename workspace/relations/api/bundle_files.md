@@ -14,7 +14,7 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"bundle_files\"][\"Row\"]"
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql"]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.bundle_files
 

@@ -14,7 +14,7 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"people\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:ccec60ca7715c4edc1685d828a7324ce66fa6f9af95ad2a789d9a2fc6418dc0e"
+workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
 ---
 # api.people
 
