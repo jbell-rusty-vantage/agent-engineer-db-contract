@@ -1,9 +1,9 @@
 {
   "build": {
     "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
-    "generated_types_sha256": "sha256:b241f627071ec6d82613c9fd08b6c590a17ab75253a9b9ee816fbc35dee8a0c8",
-    "migration_head": "20261115120100",
+    "enrichment_sha256": "sha256:e34fe120eb8b1d16c195897e2a67255f66c053efe4147d736eb54f4730c04c02",
+    "generated_types_sha256": "sha256:ce31d5908c9a845c1ccf5aa75dc5595588f45e6f6554f96f4f96593f5541b094",
+    "migration_head": "20261115130200",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -128,6 +128,9 @@
       "api.product_read": [
         "fn:api.product_read(uuid,text,jsonb)"
       ],
+      "api.product_scope": [
+        "fn:api.product_scope(text)"
+      ],
       "api.product_worker": [
         "fn:api.product_worker(text,jsonb)"
       ],
@@ -148,6 +151,9 @@
       ],
       "api.resolve_entity": [
         "fn:api.resolve_entity(text)"
+      ],
+      "api.search_knowledge": [
+        "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)"
       ],
       "api.search_knowledge_1536": [
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)"
@@ -6809,7 +6815,7 @@
           "catalog views",
           "models table"
         ],
-        "body": "`api` has no tables. **L1 catalog views** (lens corpus unless noted) answer filter / compare /\nrank questions with no embeddings: `api.models` (one row per model version with developer,\nrelease date, context, modalities, capability statuses, cutoff, availability and the minimum\ncurrent price per 1M tokens), `api.model_offerings` (model as sold by a provider, normalized\nUSD per 1M tokens for input/output/cached/batch, with the exact claim and locator behind the\ninput price), `api.software` (+ the `api.libraries`, `api.repositories`, `api.mcp_servers`,\n`api.agent_skills` slices), `api.software_releases`, `api.talks`, `api.people`,\n`api.organizations`, `api.events`, `api.concepts`, `api.papers`, `api.benchmark_scores`,\n`api.guidance_items`, and `api.works_authored` (lens ours, tier 1: our courses, modules,\nreports at head). Every L1 row carries `as_of_knowledge_seq` or `learned_k` so you can cite\nthe head.\n\n**L2 facts and time**: `api.changes_since(since, stream_kinds, entity_kinds, document_types)`,\n`api.price_history(offering, meter)`, `api.fact_locators(entity, stream_kind, scope_key)`,\n`api.entity_at`, `api.what_changed`, `api.models_at` / `api.model_offerings_at` (L1 replayed\nat a world time), `api.modules_affected_by_release(release)`.\n\n**L3 scoped semantic**: `api.search_unified` (facets: lens, tier, space, document type, unit\nkind, entity, as-of, workspace), `api.talk_segments(talk, from_ms, to_ms, query)`,\n`api.document_units(document, unit_kinds)`, `api.document_digest(document)`.\n\n**Product**: `api.product_command(workspace, operation, idempotency_key, expected_head,\npayload)`, `api.product_read(workspace, operation, payload)` for `authenticated`;\n`api.product_worker(operation, payload)` for `service_role`. The operations are one page\neach under `ops/` (see INDEX.md).\n\nOlder surface: `api.entities`, `api.current_facts` (applies `k_to is null` and\n`valid_during @> now()` — the usual trap; historical reads use `api.entity_at`),\n`api.current_relationships`, `api.events_current`, `api.hybrid_knowledge_search_1536`.\n`util.current_tenant_id` reads the app.tenant_id GUC and fails closed; every call needs it.\nInvariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new\ncatalog entries, not raw SQL.\n",
+        "body": "`api` has no tables. **L1 catalog views** (lens corpus unless noted) answer filter / compare /\nrank questions with no embeddings: `api.models` (one row per model version with developer,\nrelease date, context, modalities, capability statuses, cutoff, availability and the minimum\ncurrent price per 1M tokens), `api.model_offerings` (model as sold by a provider, normalized\nUSD per 1M tokens for input/output/cached/batch, with the exact claim and locator behind the\ninput price), `api.software` (+ the `api.libraries`, `api.repositories`, `api.mcp_servers`,\n`api.agent_skills` slices), `api.software_releases`, `api.talks`, `api.people`,\n`api.organizations`, `api.events`, `api.concepts`, `api.papers`, `api.benchmark_scores`,\n`api.guidance_items`, and `api.works_authored` (lens ours, tier 1: our courses, modules,\nreports at head). Every L1 row carries `as_of_knowledge_seq` or `learned_k` so you can cite\nthe head.\n\n**L2 facts and time**: `api.changes_since(since, stream_kinds, entity_kinds, document_types)`,\n`api.price_history(offering, meter)`, `api.fact_locators(entity, stream_kind, scope_key)`,\n`api.entity_at`, `api.what_changed`, `api.models_at` / `api.model_offerings_at` (L1 replayed\nat a world time), `api.modules_affected_by_release(release)`.\n\n**L3 scoped semantic**: `api.search_unified` (facets: lens, tier, space, document type, unit\nkind, entity, as-of, workspace; trusted roles only) and `api.search_knowledge` (the same\nsearch for a signed-in session: corpus and evidence lenses, no workspace),\n`api.talk_segments(talk, from_ms, to_ms, query)`,\n`api.document_units(document, unit_kinds)`, `api.document_digest(document)`.\n\n**Product**: `api.product_command(workspace, operation, idempotency_key, expected_head,\npayload)`, `api.product_read(workspace, operation, payload)` for `authenticated`;\n`api.product_worker(operation, payload)` for `service_role`. The operations are one page\neach under `ops/` (see INDEX.md). `api.product_scope(scope)` is the client-grant check of\n`api.product_read` on its own: a service that composes a read from the views and functions\nabove calls it first when the request carries a client token (D-82).\n\nOlder surface: `api.entities`, `api.current_facts` (applies `k_to is null` and\n`valid_during @> now()` — the usual trap; historical reads use `api.entity_at`),\n`api.current_relationships`, `api.events_current`, `api.hybrid_knowledge_search_1536`.\n`util.current_tenant_id` reads the app.tenant_id GUC and fails closed; every database\nsession needs it. The one exception (D-82): a signed-in PostgREST session (role\n`authenticated` with a verified subject) reads the single deployment tenant, so the\ntenant-filtered views and functions answer it; `anon` and `service_role` get no tenant.\nInvariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new\ncatalog entries, not raw SQL.\n",
         "functions": [
           "fn:api.resolve_entity(text)",
           "fn:api.entity_card(uuid)",
@@ -6824,6 +6830,7 @@
           "fn:api.model_offerings_at(timestamptz)",
           "fn:api.modules_affected_by_release(uuid)",
           "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
+          "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)",
           "fn:api.talk_segments(uuid,int4,int4,text)",
           "fn:api.document_units(uuid,text[])",
           "fn:api.document_digest(uuid)",
@@ -6834,6 +6841,7 @@
           "fn:api.product_command(uuid,text,text,uuid,jsonb)",
           "fn:api.product_read(uuid,text,jsonb)",
           "fn:api.product_worker(text,jsonb)",
+          "fn:api.product_scope(text)",
           "fn:util.current_tenant_id()"
         ],
         "lens": null,
@@ -7686,9 +7694,10 @@
           "tier",
           "spaces"
         ],
-        "body": "Build 08 collapsed retrieval into one stack. `retrieval.vector_item` is the searchable\nitem: `search_text`, `lens` (corpus | ours | private | evidence), `source_tier` (T0 verified\nassertions, T1 our content, T2 primary corpus, T3 third-party, T4 live web — a filter and a\nmild boost, never a truth claim), and facets `document_type_code`, `unit_kind`,\n`entity_id`, `document_id`, `source_role_code`, `valid_during`, `knowledge_seq`,\n`assurance_rank`, `start_ms`/`end_ms`, `workspace_id` for private items. Embeddings live in\n`retrieval.vector_item_embedding_1536` partitions.\n\n`retrieval.projection_target` says what an item is about — exactly one of entity card,\nguidance item (`record_id`), chunk, claim, summary, typed unit (`document_node_id`), digest,\none of our authored revisions, or a private passage. `retrieval.index_text_item` is the one\nway a text becomes searchable (idempotent on identical text). Spaces (`retrieval.vector_space`\nslugs units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, …)\nare facets, not separate engines; publication (`retrieval.space_publication`) still gates\nwhat `app_reader` may read.\n\n`q:retrieval.search_unified` (`api.search_unified`) is L3: resolve the scope first (lenses,\ntiers, space slugs, document types, unit kinds, entity ids, as-of, workspace ids for\nprivate), then fuse english full-text, trigram and ANN (when the executor supplies an\nembedding) with RRF. Private items are returned only for the workspaces passed in; the\nproduct `search` operation passes the caller's workspaces. `q:retrieval.hybrid_search` is\nthe older per-space-version entry (needs an embedding, `execute: false`).\n\nPackets (`retrieval.evidence_packet`, `retrieval.packet_member`) assemble verified claims,\nguidance items and source-faithful representations with scores and locators for one\nquestion; `q:retrieval.evidence_packet` returns one with node timecodes. Agents never write\nembeddings; projection rebuilds are governed runtime operations. Trap: expecting\n`search_unified` to embed the query in-database — without an embedding it is lexical only.\n",
+        "body": "Build 08 collapsed retrieval into one stack. `retrieval.vector_item` is the searchable\nitem: `search_text`, `lens` (corpus | ours | private | evidence), `source_tier` (T0 verified\nassertions, T1 our content, T2 primary corpus, T3 third-party, T4 live web — a filter and a\nmild boost, never a truth claim), and facets `document_type_code`, `unit_kind`,\n`entity_id`, `document_id`, `source_role_code`, `valid_during`, `knowledge_seq`,\n`assurance_rank`, `start_ms`/`end_ms`, `workspace_id` for private items. Embeddings live in\n`retrieval.vector_item_embedding_1536` partitions.\n\n`retrieval.projection_target` says what an item is about — exactly one of entity card,\nguidance item (`record_id`), chunk, claim, summary, typed unit (`document_node_id`), digest,\none of our authored revisions, or a private passage. `retrieval.index_text_item` is the one\nway a text becomes searchable (idempotent on identical text). Spaces (`retrieval.vector_space`\nslugs units, digests, entity_cards, assertions, own_content, learner_notes, knowledge_text, …)\nare facets, not separate engines; publication (`retrieval.space_publication`) still gates\nwhat `app_reader` may read.\n\n`q:retrieval.search_unified` (`api.search_unified`) is L3: resolve the scope first (lenses,\ntiers, space slugs, document types, unit kinds, entity ids, as-of, workspace ids for\nprivate), then fuse english full-text, trigram and ANN (when the executor supplies an\nembedding) with RRF. Private items are returned only for the workspaces passed in; the\nproduct `search` operation passes the caller's workspaces. Because the scope comes from the\ncaller, `api.search_unified` is executable by trusted roles only (D-82): not `anon`, not\n`authenticated`. A signed-in session searches with `api.search_knowledge`, the same stack\nrestricted to the corpus and evidence lenses with no workspace parameter.\n`q:retrieval.hybrid_search` is the older per-space-version entry (needs an embedding,\n`execute: false`; not executable by `authenticated`).\n\nPackets (`retrieval.evidence_packet`, `retrieval.packet_member`) assemble verified claims,\nguidance items and source-faithful representations with scores and locators for one\nquestion; `q:retrieval.evidence_packet` returns one with node timecodes. Agents never write\nembeddings; projection rebuilds are governed runtime operations. Trap: expecting\n`search_unified` to embed the query in-database — without an embedding it is lexical only.\n",
         "functions": [
           "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
+          "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)",
           "fn:retrieval.index_text_item(text,text,uuid,text,text,int2,text,uuid,uuid[],text,text,uuid,uuid,text,tstzrange,int8,uuid,text,timestamptz,int4,int4,text,int2)",
           "fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)",
           "fn:api.evidence_packet(uuid)",
@@ -14466,7 +14475,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
+    "sha256": "sha256:e34fe120eb8b1d16c195897e2a67255f66c053efe4147d736eb54f4730c04c02",
     "tasks": [
       {
         "aliases": [
@@ -15869,7 +15878,7 @@
         "aliases": [
           "row level security"
         ],
-        "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Private-lens rows (library.passage, conversation.*) are additionally isolated per workspace; api.search_unified returns them only for the workspaces passed in.",
+        "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Private-lens rows (library.passage, conversation.*) are additionally isolated per workspace; api.search_unified returns them only for the workspaces passed in, so only trusted roles execute it (not anon, not authenticated); a signed-in session searches the shared lenses with api.search_knowledge and reads private passages through the product search operation.",
         "id": "term:rls",
         "provenance": "model_assisted",
         "refs": [
@@ -16048,7 +16057,7 @@
         "aliases": [
           "tenant_id"
         ],
-        "definition": "Isolation key read from GUC app.tenant_id by util.current_tenant_id(). Missing context fails closed. RLS policies compare tenant_id to that function.",
+        "definition": "Isolation key read from GUC app.tenant_id by util.current_tenant_id(). Missing context fails closed, with one exception (D-82), a signed-in PostgREST session (role authenticated, verified subject) reads the single deployment tenant. RLS policies compare tenant_id to that function.",
         "id": "term:tenant",
         "provenance": "model_assisted",
         "refs": [
@@ -16199,7 +16208,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:d133fc74f972525ea3085654444e259dc2a4db39061dcd56b016f6ae2c3b4765",
+  "fingerprint": "sha256:a6b0154786cd7633657b283b02ea67af4abed45f3da69f65bc39acc230cfc233",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -18049,7 +18058,6 @@
       ],
       "executors": [
         "app_reader",
-        "authenticated",
         "control_plane",
         "executor_service",
         "pipeline_agent",
@@ -18058,9 +18066,6 @@
       ],
       "grants": {
         "app_reader": [
-          "EXECUTE"
-        ],
-        "authenticated": [
           "EXECUTE"
         ],
         "control_plane": [
@@ -18204,16 +18209,12 @@
       ],
       "executors": [
         "app_reader",
-        "authenticated",
         "control_plane",
         "executor_service",
         "service_role"
       ],
       "grants": {
         "app_reader": [
-          "EXECUTE"
-        ],
-        "authenticated": [
           "EXECUTE"
         ],
         "control_plane": [
@@ -19536,6 +19537,57 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"product_read\"]",
       "volatility": "volatile"
     },
+    "fn:api.product_scope(text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_scope",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:67aba53419321191ee091e5e069b6992693a737556d3480b098c767243f2a6e8",
+      "comment": "The client-grant check of api.product_read for a named scope (read, author, learn, library, assess), for reads composed outside it (D-82): raises AUTH_REQUIRED, CLIENT_GRANT_INVALID or CLIENT_SCOPE_DENIED like the product operations; returns the principal and the grant that applies (clientGrantId is null when the request carries no client token).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261115130000_build08_d82_signed_in_knowledge_reads.sql",
+        "20261115130200_build08_d82_product_scope.sql"
+      ],
+      "executors": [
+        "authenticated"
+      ],
+      "grants": {
+        "authenticated": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.product_scope(text)",
+      "identity_arguments": "p_scope text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "product_scope",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "product.actor",
+          "product.client_grant",
+          "product.fail"
+        ],
+        "reads": [
+          "access.client_grant"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"product_scope\"]",
+      "volatility": "volatile"
+    },
     "fn:api.product_worker(text,jsonb)": {
       "arguments": [
         {
@@ -20086,6 +20138,168 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"resolve_entity\"]",
       "volatility": "stable"
     },
+    "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_query",
+          "type": "text"
+        },
+        {
+          "default": "NULL::halfvec",
+          "mode": "in",
+          "name": "p_query_embedding",
+          "type": "halfvec"
+        },
+        {
+          "default": "ARRAY['corpus'::text, 'evidence'::text]",
+          "mode": "in",
+          "name": "p_lenses",
+          "type": "text[]"
+        },
+        {
+          "default": "NULL::smallint[]",
+          "mode": "in",
+          "name": "p_tiers",
+          "type": "smallint[]"
+        },
+        {
+          "default": "NULL::text[]",
+          "mode": "in",
+          "name": "p_space_slugs",
+          "type": "text[]"
+        },
+        {
+          "default": "NULL::text[]",
+          "mode": "in",
+          "name": "p_document_types",
+          "type": "text[]"
+        },
+        {
+          "default": "NULL::text[]",
+          "mode": "in",
+          "name": "p_unit_kinds",
+          "type": "text[]"
+        },
+        {
+          "default": "NULL::uuid[]",
+          "mode": "in",
+          "name": "p_entity_ids",
+          "type": "uuid[]"
+        },
+        {
+          "default": "NULL::timestamp with time zone",
+          "mode": "in",
+          "name": "p_as_of",
+          "type": "timestamp with time zone"
+        },
+        {
+          "default": "NULL::text[]",
+          "mode": "in",
+          "name": "p_source_roles",
+          "type": "text[]"
+        },
+        {
+          "default": "NULL::text[]",
+          "mode": "in",
+          "name": "p_content_kinds",
+          "type": "text[]"
+        },
+        {
+          "default": "20",
+          "mode": "in",
+          "name": "p_limit",
+          "type": "integer"
+        },
+        {
+          "default": "100",
+          "mode": "in",
+          "name": "p_candidate_limit",
+          "type": "integer"
+        },
+        {
+          "default": "60",
+          "mode": "in",
+          "name": "p_rrf_k",
+          "type": "integer"
+        },
+        {
+          "default": "0.15",
+          "mode": "in",
+          "name": "p_evidence_weight",
+          "type": "double precision"
+        },
+        {
+          "default": "true",
+          "mode": "in",
+          "name": "p_collapse",
+          "type": "boolean"
+        }
+      ],
+      "body_sha256": "sha256:66b99a7274e6a57cf37c4cdd3efaa4d4e07494674bac029c43fac2348199ed54",
+      "comment": "Search of the shared industry knowledge for a signed-in session (D-82): api.search_unified restricted to the corpus and evidence lenses, with no workspace parameter; any other lens is refused. Private notes and released course material are read through api.product_read('search'), which derives the scope from the caller's identity.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261115130000_build08_d82_signed_in_knowledge_reads.sql"
+      ],
+      "executors": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)",
+      "identity_arguments": "p_query text, p_query_embedding halfvec, p_lenses text[], p_tiers smallint[], p_space_slugs text[], p_document_types text[], p_unit_kinds text[], p_entity_ids uuid[], p_as_of timestamp with time zone, p_source_roles text[], p_content_kinds text[], p_limit integer, p_candidate_limit integer, p_rrf_k integer, p_evidence_weight double precision, p_collapse boolean",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "search_knowledge",
+      "raises": [
+        "search_knowledge reads the corpus and evidence lenses only"
+      ],
+      "returns": "TABLE(vector_item_id uuid, lens text, source_tier smallint, content_kind text, document_type_code text, unit_kind text, entity_id uuid, document_id uuid, document_version_id uuid, target_kind text, target_id uuid, workspace_id uuid, snippet text, start_ms integer, end_ms integer, observed_at timestamp with time zone, valid_during tstzrange, space_slug text, fused_score double precision, channel_scores jsonb)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "api.search_unified"
+        ],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"search_knowledge\"]",
+      "volatility": "stable"
+    },
     "fn:api.search_knowledge_1536(uuid,halfvec,int4)": {
       "arguments": [
         {
@@ -20117,14 +20331,10 @@
       ],
       "executors": [
         "app_reader",
-        "authenticated",
         "service_role"
       ],
       "grants": {
         "app_reader": [
-          "EXECUTE"
-        ],
-        "authenticated": [
           "EXECUTE"
         ],
         "service_role": [
@@ -20266,7 +20476,7 @@
         }
       ],
       "body_sha256": "sha256:3654f4a3cd8647b5e19bd223ab96b23e0556ecc2e1c65f429823baa7cef163e0",
-      "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, an evidence factor 1 + weight x signal (loop 5, D-62, reported as channel_scores.evidence) and (loop 7, D-77) one hit per target: items of one claim, passage or unit in several spaces collapse to the best-ranked one, the others listed in channel_scores.collapsed (best first, the returned item at index 0 removed). p_collapse = false and p_evidence_weight = 0 reproduce the loop-4 order.",
+      "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, an evidence factor 1 + weight x signal (loop 5, D-62, reported as channel_scores.evidence) and (loop 7, D-77) one hit per target: items of one claim, passage or unit in several spaces collapse to the best-ranked one, the others listed in channel_scores.collapsed (best first, the returned item at index 0 removed). p_collapse = false and p_evidence_weight = 0 reproduce the loop-4 order. Trusted callers only (D-82): it takes the private scope from p_workspace_ids, so it is not executable by anon or authenticated; signed-in sessions use api.search_knowledge, and private or released course material is read through api.product_read('search').",
       "config": [
         "search_path=\"\""
       ],
@@ -20281,9 +20491,7 @@
         "part3_retrieval.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
-        "authenticated",
         "control_plane",
         "executor_service",
         "pipeline_agent",
@@ -20291,13 +20499,7 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
-          "EXECUTE"
-        ],
-        "authenticated": [
           "EXECUTE"
         ],
         "control_plane": [
@@ -34874,14 +35076,15 @@
     },
     "fn:util.current_tenant_id()": {
       "arguments": [],
-      "body_sha256": "sha256:436244735781492020abb804949f13ec5be118735b89307fd03172aced4b809d",
-      "comment": "Active tenant for RLS: the app.tenant_id GUC when set, else the single default tenant.",
+      "body_sha256": "sha256:1c574e7d4c3177918ba97dc0ff5aeef4a265b2e46e7ab2ed7b2637bf9b6f3e3f",
+      "comment": "Active tenant: the app.tenant_id setting when set; a malformed or nil value resolves to NULL. Without the setting it resolves to NULL (tenant predicates match no rows), except for a PostgREST session of role authenticated whose verified JWT carries role authenticated and a subject: that session reads the single deployment tenant, util.default_tenant_id() (Build 08 D-82).",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20260826001550_rls_policies.sql",
-        "20260903010200_knowledge_runtime_security.sql"
+        "20260903010200_knowledge_runtime_security.sql",
+        "20261115130000_build08_d82_signed_in_knowledge_reads.sql"
       ],
       "executors": [
         "anon",
@@ -34928,10 +35131,12 @@
       "returns": "uuid",
       "returns_set": false,
       "schema": "util",
-      "security": "invoker",
+      "security": "definer",
       "touches": {
         "basis": "best_effort",
-        "calls": [],
+        "calls": [
+          "util.default_tenant_id"
+        ],
         "reads": [],
         "writes": []
       },
@@ -154055,6 +154260,7 @@
         "fn:api.probe_revalidation_due(timestamptz)",
         "fn:api.product_command(uuid,text,text,uuid,jsonb)",
         "fn:api.product_read(uuid,text,jsonb)",
+        "fn:api.product_scope(text)",
         "fn:api.product_worker(text,jsonb)",
         "fn:api.related(uuid,text,text,timestamptz)",
         "fn:api.relationships(uuid,text,timestamptz,int8,text)",
@@ -154062,6 +154268,7 @@
         "fn:api.release_order(text)",
         "fn:api.releases_needing_review()",
         "fn:api.resolve_entity(text)",
+        "fn:api.search_knowledge(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,text[],text[],int4,int4,int4,float8,bool)",
         "fn:api.search_knowledge_1536(uuid,halfvec,int4)",
         "fn:api.search_unified(text,halfvec,text[],int2[],text[],text[],text[],uuid[],timestamptz,uuid[],text[],text[],int4,int4,int4,float8,bool)",
         "fn:api.submit_intent(text,jsonb,text,uuid,uuid,jsonb)",
@@ -166285,5 +166492,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+  "workspace_fingerprint": "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 }

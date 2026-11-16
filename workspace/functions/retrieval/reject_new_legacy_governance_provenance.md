@@ -13,7 +13,7 @@ raises: [legacy provenance is migration-owned and cannot be asserted for a new r
 touches: { reads: [], writes: [] }
 tokens: [retrieval, reject_new_legacy_governance_provenance, retrieval.reject_new_legacy_governance_provenance]
 defined_in: ["20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # retrieval.reject_new_legacy_governance_provenance
 

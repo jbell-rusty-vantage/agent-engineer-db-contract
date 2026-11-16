@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.hybrid_knowledge_search_1536(uuid,text,halfvec,jsonb,int4,int4,int4,text[],uuid[],text[],text[],timestamptz,int8,int2,uuid)"]
 security: definer
 volatility: volatile
-executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: [query text length must be between 1 and 4096, result/candidate/RRF bounds are invalid, unsupported hard filter, valid app.tenant_id context is required, vector-space version is not actively published for this tenant]
 touches: { reads: [retrieval.space_publication, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space, retrieval.vector_space_version, retrieval.vector_store_space], writes: [] }
 tokens: [api, hybrid_knowledge_search_1536, api.hybrid_knowledge_search_1536]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql", "20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # api.hybrid_knowledge_search_1536
 
@@ -41,7 +41,7 @@ function, volatile, security definer, language plpgsql, config `search_path=""`.
 | `p_min_assurance` | `smallint` | `NULL::smallint` | — |
 | `p_publication_id` | `uuid` | `NULL::uuid` | — |
 
-Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Raises (mechanically extracted): `query text length must be between 1 and 4096`; `result/candidate/RRF bounds are invalid`; `unsupported hard filter`; `valid app.tenant_id context is required`; `vector-space version is not actively published for this tenant`.
 

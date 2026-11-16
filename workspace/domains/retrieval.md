@@ -5,12 +5,12 @@ lens: corpus
 schemas: [retrieval]
 aliases: [search, embeddings, packets, publication, lens, tier, spaces]
 relations: [retrieval.vector_item, retrieval.projection_target, retrieval.search_projection, retrieval.vector_space, retrieval.vector_space_version, retrieval.space_publication, retrieval.vector_store_space, retrieval.retrieval_chunk, retrieval.chunk_span, retrieval.evidence_packet, retrieval.packet_member, retrieval.retrieval_run]
-functions: [api.evidence_packet, api.hybrid_knowledge_search_1536, api.search_unified, retrieval.index_text_item, retrieval.retire_items_for_passages]
+functions: [api.evidence_packet, api.hybrid_knowledge_search_1536, api.search_knowledge, api.search_unified, retrieval.index_text_item, retrieval.retire_items_for_passages]
 tasks: [build-evidence-packet, modules-covering-concept, run-hybrid-search, search-my-notes, talks-on-topic]
 summary: "One retrieval stack: every searchable text is a vector item with lens, source tier and facets; api.search_unified scopes then fuses."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # Retrieval (one stack, lens and tier)
 
@@ -36,8 +36,12 @@ One retrieval stack: every searchable text is a vector item with lens, source ti
 > tiers, space slugs, document types, unit kinds, entity ids, as-of, workspace ids for
 > private), then fuse english full-text, trigram and ANN (when the executor supplies an
 > embedding) with RRF. Private items are returned only for the workspaces passed in; the
-> product `search` operation passes the caller's workspaces. `q:retrieval.hybrid_search` is
-> the older per-space-version entry (needs an embedding, `execute: false`).
+> product `search` operation passes the caller's workspaces. Because the scope comes from the
+> caller, `api.search_unified` is executable by trusted roles only (D-82): not `anon`, not
+> `authenticated`. A signed-in session searches with `api.search_knowledge`, the same stack
+> restricted to the corpus and evidence lenses with no workspace parameter.
+> `q:retrieval.hybrid_search` is the older per-space-version entry (needs an embedding,
+> `execute: false`; not executable by `authenticated`).
 > 
 > Packets (`retrieval.evidence_packet`, `retrieval.packet_member`) assemble verified claims,
 > guidance items and source-faithful representations with scores and locators for one
@@ -64,7 +68,7 @@ One retrieval stack: every searchable text is a vector item with lens, source ti
 
 ## Functions
 
-[`api.evidence_packet`](../functions/api/evidence_packet.md), [`api.hybrid_knowledge_search_1536`](../functions/api/hybrid_knowledge_search_1536.md), [`api.search_unified`](../functions/api/search_unified.md), [`retrieval.index_text_item`](../functions/retrieval/index_text_item.md), [`retrieval.retire_items_for_passages`](../functions/retrieval/retire_items_for_passages.md)
+[`api.evidence_packet`](../functions/api/evidence_packet.md), [`api.hybrid_knowledge_search_1536`](../functions/api/hybrid_knowledge_search_1536.md), [`api.search_knowledge`](../functions/api/search_knowledge.md), [`api.search_unified`](../functions/api/search_unified.md), [`retrieval.index_text_item`](../functions/retrieval/index_text_item.md), [`retrieval.retire_items_for_passages`](../functions/retrieval/retire_items_for_passages.md)
 
 ## Named queries
 

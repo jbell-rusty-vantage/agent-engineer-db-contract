@@ -598,7 +598,7 @@
     "aliases": [
       "row level security"
     ],
-    "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Private-lens rows (library.passage, conversation.*) are additionally isolated per workspace; api.search_unified returns them only for the workspaces passed in.",
+    "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Private-lens rows (library.passage, conversation.*) are additionally isolated per workspace; api.search_unified returns them only for the workspaces passed in, so only trusted roles execute it (not anon, not authenticated); a signed-in session searches the shared lenses with api.search_knowledge and reads private passages through the product search operation.",
     "provenance": "model_assisted",
     "refs": [
       "fn:util.current_tenant_id()",
@@ -755,7 +755,7 @@
     "aliases": [
       "tenant_id"
     ],
-    "definition": "Isolation key read from GUC app.tenant_id by util.current_tenant_id(). Missing context fails closed. RLS policies compare tenant_id to that function.",
+    "definition": "Isolation key read from GUC app.tenant_id by util.current_tenant_id(). Missing context fails closed, with one exception (D-82), a signed-in PostgREST session (role authenticated, verified subject) reads the single deployment tenant. RLS policies compare tenant_id to that function.",
     "provenance": "model_assisted",
     "refs": [
       "fn:util.current_tenant_id()"

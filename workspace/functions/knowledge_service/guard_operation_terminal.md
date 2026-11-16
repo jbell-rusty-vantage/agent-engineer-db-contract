@@ -13,7 +13,7 @@ raises: ["% state cannot be deleted", retry may only reset execution state, "ter
 touches: { reads: [], writes: [] }
 tokens: [knowledge_service, guard_operation_terminal, knowledge_service.guard_operation_terminal]
 defined_in: ["20260903010200_knowledge_runtime_security.sql", "20260903010800_authorized_operation_retry.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # knowledge_service.guard_operation_terminal
 

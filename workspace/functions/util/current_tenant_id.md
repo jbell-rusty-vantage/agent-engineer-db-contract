@@ -6,14 +6,14 @@ name: current_tenant_id
 domain: api-surface
 lens: machinery
 overloads: ["fn:util.current_tenant_id()"]
-security: invoker
+security: definer
 volatility: stable
 executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [], writes: [] }
 tokens: [util, current_tenant_id, util.current_tenant_id]
-defined_in: ["20260826001550_rls_policies.sql", "20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+defined_in: ["20260826001550_rls_policies.sql", "20260903010200_knowledge_runtime_security.sql", "20261115130000_build08_d82_signed_in_knowledge_reads.sql"]
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # util.current_tenant_id
 
@@ -21,14 +21,16 @@ Domain `api-surface`, lens `machinery`. Used by views: [`api.advisories`](../../
 
 ## current_tenant_id() → uuid
 
-function, stable, security invoker, language plpgsql, config `search_path=""`. Active tenant for RLS: the app.tenant_id GUC when set, else the single default tenant.
+function, stable, security definer, language plpgsql, config `search_path=""`. Active tenant: the app.tenant_id setting when set; a malformed or nil value resolves to NULL. Without the setting it resolves to NULL (tenant predicates match no rows), except for a PostgREST session of role authenticated whose verified JWT carries role authenticated and a subject: that session reads the single deployment tenant, util.default_tenant_id() (Build 08 D-82).
 
 No arguments.
 
 Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
+Touches (best effort): reads —; writes —; calls [`util.default_tenant_id`](default_tenant_id.md).
+
 Named queries: `q:acquisition.fetches_for_url`, `q:artifacts.by_type`, `q:content.refresh_checks`, `q:content.unit_changes`, `q:entity.attributes`, `q:entity.by_identifier`, `q:evidence.captures_for_source`, `q:evidence.claim_support`, `q:evidence.claims_for_entity`, `q:evidence.sources_by_domain`, `q:facts.history_for_stream`, `q:receipts.for_intent`, `q:receipts.recent_for_mission`, `q:staging.candidates_for_kind`, `q:staging.unresolved`.
 
 TypeScript: `Database["util"]["Functions"]["current_tenant_id"]`.
 
-Defined in: `20260826001550_rls_policies.sql`, `20260903010200_knowledge_runtime_security.sql`.
+Defined in: `20260826001550_rls_policies.sql`, `20260903010200_knowledge_runtime_security.sql`, `20261115130000_build08_d82_signed_in_knowledge_reads.sql`.

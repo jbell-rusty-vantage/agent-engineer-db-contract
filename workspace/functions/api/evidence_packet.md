@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document_node, retrieval.evidence_packet, retrieval.packet_member], writes: [] }
 tokens: [api, evidence_packet, api.evidence_packet]
 defined_in: ["20260826001500_api_and_grants.sql", "20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # api.evidence_packet
 

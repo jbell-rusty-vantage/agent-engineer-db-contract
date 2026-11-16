@@ -8,12 +8,12 @@ lens: machinery
 overloads: ["fn:api.search_knowledge_1536(uuid,halfvec,int4)"]
 security: definer
 volatility: stable
-executors: [app_reader, authenticated, service_role]
+executors: [app_reader, service_role]
 raises: [p_limit must be between 1 and 200, valid app.tenant_id context is required, vector space version is not published for the active tenant]
 touches: { reads: [retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space_version], writes: [] }
 tokens: [api, search_knowledge_1536, api.search_knowledge_1536]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # api.search_knowledge_1536
 
@@ -29,7 +29,7 @@ function, stable, security definer, language plpgsql, config `search_path=""`.
 | `p_query` | `halfvec` | — | — |
 | `p_limit` | `integer` | `20` | — |
 
-Execute: `app_reader`, `authenticated`, `service_role`.
+Execute: `app_reader`, `service_role`.
 
 Raises (mechanically extracted): `p_limit must be between 1 and 200`; `valid app.tenant_id context is required`; `vector space version is not published for the active tenant`.
 

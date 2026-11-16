@@ -79,3 +79,9 @@ export type ApiClaimRestatement = ApiView<"claim_restatements">;
 export type ApiClaimTriage = ApiView<"claim_triage">;
 export type ApiProbeRevalidationDueRow = ApiFunctionRows<"probe_revalidation_due">[number];
 export type ApiReleaseNeedingReview = ApiFunctionRows<"releases_needing_review">[number];
+// Build 08 D-82 (2026-11-15): the search a signed-in session calls, api.search_knowledge (corpus and evidence lenses, no workspace
+// parameter; the same row shape as search_unified). api.search_unified takes the private scope from its caller and is not
+// executable by anon or authenticated. A signed-in PostgREST session now resolves the deployment tenant, so the tenant-filtered
+// views and functions above answer it. api.product_scope(scope) is the client-grant check of api.product_read on its own, for
+// a service that composes such a read and received a client token.
+export type ApiKnowledgeSearchHit = ApiFunctionRows<"search_knowledge">[number];

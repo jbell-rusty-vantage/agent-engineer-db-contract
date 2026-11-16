@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [temporal.event, temporal.event_occurrence], writes: [] }
 tokens: [api, current_event_rows, api.current_event_rows]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # api.current_event_rows
 

@@ -13,7 +13,7 @@ raises: [knowledge batch already open, rebase_required]
 touches: { reads: [], writes: [temporal.knowledge_head] }
 tokens: [temporal, begin_batch, temporal.begin_batch]
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # temporal.begin_batch
 

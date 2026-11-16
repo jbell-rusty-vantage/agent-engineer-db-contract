@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step], writes: [] }
 tokens: [orchestration, verification_provider_scope_tuple_is_live, orchestration.verification_provider_scope_tuple_is_live]
 defined_in: ["20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # orchestration.verification_provider_scope_tuple_is_live
 

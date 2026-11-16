@@ -13,7 +13,7 @@ raises: [checkpoint head requires the next committed revision, checkpoint scope 
 touches: { reads: [knowledge_service.scoped_checkpoint], writes: [] }
 tokens: [knowledge_service, guard_checkpoint_scope, knowledge_service.guard_checkpoint_scope]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # knowledge_service.guard_checkpoint_scope
 

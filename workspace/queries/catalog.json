@@ -3692,7 +3692,7 @@
       "volatile": false
     }
   ],
-  "migrationHead": "20261115120100",
+  "migrationHead": "20261115130200",
   "schemaVersion": "knowledge-query-catalog.v1",
-  "workspaceFingerprint": "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+  "workspaceFingerprint": "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 }

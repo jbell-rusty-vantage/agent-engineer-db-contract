@@ -5,12 +5,12 @@ lens: corpus
 schemas: [api, util]
 aliases: [rpc, views, app_reader, L1, catalog views, models table]
 relations: [api.models, api.model_offerings, api.software, api.software_releases, api.talks, api.people, api.organizations, api.events, api.concepts, api.papers, api.benchmark_scores, api.works_authored, api.guidance_items, api.libraries, api.repositories, api.mcp_servers, api.agent_skills, api.entities, api.current_facts, api.current_relationships, api.events_current]
-functions: [api.changes_since, api.document_digest, api.document_units, api.entity_at, api.entity_card, api.entity_timeline, api.evidence_packet, api.fact_locators, api.knowledge_head, api.leaderboard, api.model_offerings_at, api.models_at, api.modules_affected_by_release, api.price_history, api.product_command, api.product_read, api.product_worker, api.relationships, api.resolve_entity, api.search_unified, api.summary_evidence, api.talk_segments, api.what_changed, util.current_tenant_id]
+functions: [api.changes_since, api.document_digest, api.document_units, api.entity_at, api.entity_card, api.entity_timeline, api.evidence_packet, api.fact_locators, api.knowledge_head, api.leaderboard, api.model_offerings_at, api.models_at, api.modules_affected_by_release, api.price_history, api.product_command, api.product_read, api.product_scope, api.product_worker, api.relationships, api.resolve_entity, api.search_knowledge, api.search_unified, api.summary_evidence, api.talk_segments, api.what_changed, util.current_tenant_id]
 tasks: [cheapest-qualified-model, check-knowledge-head, compare-models, modules-affected-by-release, modules-covering-concept, price-with-locator, release-history, talk-passage-at-timecode, talk-to-repo-to-paper, talks-on-topic, what-changed-since, what-do-we-know-about-entity]
 summary: The only surface apps and agents see; invoker views and definer RPCs organised as the L1–L3 knowledge continuum.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # API surface (L1 views, L2 and L3 functions)
 
@@ -34,18 +34,25 @@ The only surface apps and agents see; invoker views and definer RPCs organised a
 > at a world time), `api.modules_affected_by_release(release)`.
 > 
 > **L3 scoped semantic**: `api.search_unified` (facets: lens, tier, space, document type, unit
-> kind, entity, as-of, workspace), `api.talk_segments(talk, from_ms, to_ms, query)`,
+> kind, entity, as-of, workspace; trusted roles only) and `api.search_knowledge` (the same
+> search for a signed-in session: corpus and evidence lenses, no workspace),
+> `api.talk_segments(talk, from_ms, to_ms, query)`,
 > `api.document_units(document, unit_kinds)`, `api.document_digest(document)`.
 > 
 > **Product**: `api.product_command(workspace, operation, idempotency_key, expected_head,
 > payload)`, `api.product_read(workspace, operation, payload)` for `authenticated`;
 > `api.product_worker(operation, payload)` for `service_role`. The operations are one page
-> each under `ops/` (see INDEX.md).
+> each under `ops/` (see INDEX.md). `api.product_scope(scope)` is the client-grant check of
+> `api.product_read` on its own: a service that composes a read from the views and functions
+> above calls it first when the request carries a client token (D-82).
 > 
 > Older surface: `api.entities`, `api.current_facts` (applies `k_to is null` and
 > `valid_during @> now()` — the usual trap; historical reads use `api.entity_at`),
 > `api.current_relationships`, `api.events_current`, `api.hybrid_knowledge_search_1536`.
-> `util.current_tenant_id` reads the app.tenant_id GUC and fails closed; every call needs it.
+> `util.current_tenant_id` reads the app.tenant_id GUC and fails closed; every database
+> session needs it. The one exception (D-82): a signed-in PostgREST session (role
+> `authenticated` with a verified subject) reads the single deployment tenant, so the
+> tenant-filtered views and functions answer it; `anon` and `service_role` get no tenant.
 > Invariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new
 > catalog entries, not raw SQL.
 
@@ -77,7 +84,7 @@ The only surface apps and agents see; invoker views and definer RPCs organised a
 
 ## Functions
 
-[`api.changes_since`](../functions/api/changes_since.md), [`api.document_digest`](../functions/api/document_digest.md), [`api.document_units`](../functions/api/document_units.md), [`api.entity_at`](../functions/api/entity_at.md), [`api.entity_card`](../functions/api/entity_card.md), [`api.entity_timeline`](../functions/api/entity_timeline.md), [`api.evidence_packet`](../functions/api/evidence_packet.md), [`api.fact_locators`](../functions/api/fact_locators.md), [`api.knowledge_head`](../functions/api/knowledge_head.md), [`api.leaderboard`](../functions/api/leaderboard.md), [`api.model_offerings_at`](../functions/api/model_offerings_at.md), [`api.models_at`](../functions/api/models_at.md), [`api.modules_affected_by_release`](../functions/api/modules_affected_by_release.md), [`api.price_history`](../functions/api/price_history.md), [`api.product_command`](../functions/api/product_command.md), [`api.product_read`](../functions/api/product_read.md), [`api.product_worker`](../functions/api/product_worker.md), [`api.relationships`](../functions/api/relationships.md), [`api.resolve_entity`](../functions/api/resolve_entity.md), [`api.search_unified`](../functions/api/search_unified.md), [`api.summary_evidence`](../functions/api/summary_evidence.md), [`api.talk_segments`](../functions/api/talk_segments.md), [`api.what_changed`](../functions/api/what_changed.md), [`util.current_tenant_id`](../functions/util/current_tenant_id.md)
+[`api.changes_since`](../functions/api/changes_since.md), [`api.document_digest`](../functions/api/document_digest.md), [`api.document_units`](../functions/api/document_units.md), [`api.entity_at`](../functions/api/entity_at.md), [`api.entity_card`](../functions/api/entity_card.md), [`api.entity_timeline`](../functions/api/entity_timeline.md), [`api.evidence_packet`](../functions/api/evidence_packet.md), [`api.fact_locators`](../functions/api/fact_locators.md), [`api.knowledge_head`](../functions/api/knowledge_head.md), [`api.leaderboard`](../functions/api/leaderboard.md), [`api.model_offerings_at`](../functions/api/model_offerings_at.md), [`api.models_at`](../functions/api/models_at.md), [`api.modules_affected_by_release`](../functions/api/modules_affected_by_release.md), [`api.price_history`](../functions/api/price_history.md), [`api.product_command`](../functions/api/product_command.md), [`api.product_read`](../functions/api/product_read.md), [`api.product_scope`](../functions/api/product_scope.md), [`api.product_worker`](../functions/api/product_worker.md), [`api.relationships`](../functions/api/relationships.md), [`api.resolve_entity`](../functions/api/resolve_entity.md), [`api.search_knowledge`](../functions/api/search_knowledge.md), [`api.search_unified`](../functions/api/search_unified.md), [`api.summary_evidence`](../functions/api/summary_evidence.md), [`api.talk_segments`](../functions/api/talk_segments.md), [`api.what_changed`](../functions/api/what_changed.md), [`util.current_tenant_id`](../functions/util/current_tenant_id.md)
 
 ## Named queries
 

@@ -4170,6 +4170,7 @@ export type Database = {
         Args: { p_operation: string; p_payload: Json; p_workspace_id: string }
         Returns: Json
       }
+      product_scope: { Args: { p_scope: string }; Returns: Json }
       product_worker: {
         Args: { p_operation: string; p_payload: Json }
         Returns: Json
@@ -4234,6 +4235,48 @@ export type Database = {
           entity_id: string
           kind: string
           score: number
+        }[]
+      }
+      search_knowledge: {
+        Args: {
+          p_as_of?: string
+          p_candidate_limit?: number
+          p_collapse?: boolean
+          p_content_kinds?: string[]
+          p_document_types?: string[]
+          p_entity_ids?: string[]
+          p_evidence_weight?: number
+          p_lenses?: string[]
+          p_limit?: number
+          p_query: string
+          p_query_embedding?: unknown
+          p_rrf_k?: number
+          p_source_roles?: string[]
+          p_space_slugs?: string[]
+          p_tiers?: number[]
+          p_unit_kinds?: string[]
+        }
+        Returns: {
+          channel_scores: Json
+          content_kind: string
+          document_id: string
+          document_type_code: string
+          document_version_id: string
+          end_ms: number
+          entity_id: string
+          fused_score: number
+          lens: string
+          observed_at: string
+          snippet: string
+          source_tier: number
+          space_slug: string
+          start_ms: number
+          target_id: string
+          target_kind: string
+          unit_kind: string
+          valid_during: unknown
+          vector_item_id: string
+          workspace_id: string
         }[]
       }
       search_knowledge_1536: {

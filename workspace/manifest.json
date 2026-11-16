@@ -15,19 +15,19 @@
   "build": {
     "catalog_version": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
     "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:0e1aa3559284efa3f841b6f24dc23c446c3a66667603dfaf3f97fb114f0e93de",
-    "fingerprint": "sha256:d133fc74f972525ea3085654444e259dc2a4db39061dcd56b016f6ae2c3b4765",
-    "generated_types_sha256": "sha256:b241f627071ec6d82613c9fd08b6c590a17ab75253a9b9ee816fbc35dee8a0c8",
-    "migration_head": "20261115120100",
+    "enrichment_sha256": "sha256:e34fe120eb8b1d16c195897e2a67255f66c053efe4147d736eb54f4730c04c02",
+    "fingerprint": "sha256:a6b0154786cd7633657b283b02ea67af4abed45f3da69f65bc39acc230cfc233",
+    "generated_types_sha256": "sha256:ce31d5908c9a845c1ccf5aa75dc5595588f45e6f6554f96f4f96593f5541b094",
+    "migration_head": "20261115130200",
     "renderer_version": "4.0.0",
     "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-15T15:10:50.289Z",
+      "introspected_at": "2026-11-16T04:48:08.401Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+    "workspace_fingerprint": "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
   },
   "entry_points": [
     "START_HERE.md",
@@ -40,7 +40,7 @@
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
     "domains": 23,
-    "functions": 274,
+    "functions": 276,
     "operations": 81,
     "queries": 55,
     "relation_details": 85,
@@ -53,11 +53,11 @@
   },
   "scope": null,
   "sizes": {
-    "files": 902,
+    "files": 904,
     "largest": {
-      "bytes": 5106798,
+      "bytes": 5115999,
       "path": "schema-ir.json"
     },
-    "total_bytes": 8638922
+    "total_bytes": 8657784
   }
 }

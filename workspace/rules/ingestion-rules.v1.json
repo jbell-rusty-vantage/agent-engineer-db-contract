@@ -1,5 +1,5 @@
 {
-  "migrationHead": "20261115120100",
+  "migrationHead": "20261115130200",
   "rules": [
     {
       "action": "reject",

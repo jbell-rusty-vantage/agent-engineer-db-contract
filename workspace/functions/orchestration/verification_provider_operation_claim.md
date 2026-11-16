@@ -13,7 +13,7 @@ raises: [provider attempt active closed-scope lease claim required, provider att
 touches: { reads: [orchestration.verification_provider_reconciliation], writes: [] }
 tokens: [orchestration, verification_provider_operation_claim, orchestration.verification_provider_operation_claim]
 defined_in: ["20260906031300_verification_provider_operation_scope.sql", "20260906032800_verification_provider_reconciliation_ledger.sql", "20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # orchestration.verification_provider_operation_claim
 

@@ -8,7 +8,7 @@ call: api.product_read
 lens: ours
 relations: [authoring.asset_scope, authoring.distribution_offer, authoring.release_item, authoring.work, authoring.work_revision, authoring.workspace_member, conversation.message, conversation.thread, library.passage, library.resource_control]
 tokens: [search, read, api.product_read]
-workspace_fingerprint: "sha256:195a7bf46350274849f7ac517bb02381bbf8851afdacebee2c17dad0d348934c"
+workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
 ---
 # search
 
