@@ -37,6 +37,13 @@
   "admitted": [
     "term:admission"
   ],
+  "admitted claim": [
+    "term:verified-claim"
+  ],
+  "admitted claims": [
+    "q:evidence.verified_claims",
+    "task:what-is-verified-about-subject"
+  ],
   "admitted support": [
     "term:support"
   ],
@@ -45,6 +52,9 @@
   ],
   "adopt release": [
     "op:adopt_release"
+  ],
+  "affected by release": [
+    "task:what-a-release-affects"
   ],
   "affected modules": [
     "q:ours.modules_affected_by_release"
@@ -117,11 +127,41 @@
   "at minute": [
     "task:talk-passage-at-timecode"
   ],
+  "atomized claim": [
+    "q:evidence.claim_restatements",
+    "term:restatement"
+  ],
   "attempts": [
     "dom:learning"
   ],
+  "attention due": [
+    "q:acquisition.attention_due",
+    "term:due-list"
+  ],
+  "attention policies": [
+    "rel:api.attention_policies"
+  ],
+  "attention policy": [
+    "dom:source-intelligence",
+    "q:acquisition.attention_policies",
+    "term:attention-policy"
+  ],
   "attributes": [
     "q:entity.attributes"
+  ],
+  "attribution": [
+    "q:evidence.claim_restatements"
+  ],
+  "attribution-framed claim": [
+    "term:restatement"
+  ],
+  "authority": [
+    "task:how-trusted-is-source"
+  ],
+  "authority score": [
+    "dom:source-intelligence",
+    "q:evidence.source_registry",
+    "term:source-registry"
   ],
   "authority tier": [
     "term:source-tier"
@@ -174,8 +214,12 @@
   "budget model": [
     "task:cheapest-qualified-model"
   ],
+  "cadence": [
+    "term:attention-policy"
+  ],
   "candidate": [
     "rel:staging.candidate",
+    "term:claim-candidate",
     "term:staging-candidate"
   ],
   "candidates": [
@@ -212,8 +256,12 @@
   "catalog work": [
     "term:work"
   ],
+  "cell": [
+    "term:probe"
+  ],
   "cells": [
-    "dom:inquiry"
+    "dom:inquiry",
+    "q:evidence.probe_matrix"
   ],
   "census": [
     "dom:content",
@@ -249,6 +297,16 @@
   "cheapest with tool use": [
     "task:cheapest-qualified-model"
   ],
+  "checkability": [
+    "q:evidence.claim_triage",
+    "term:claim-triage"
+  ],
+  "checked claims of a source": [
+    "q:evidence.source_track_record"
+  ],
+  "checked statements": [
+    "task:what-is-verified-about-subject"
+  ],
   "citation for a fact": [
     "q:facts.locators"
   ],
@@ -259,15 +317,43 @@
     "task:build-evidence-packet"
   ],
   "claim": [
+    "q:evidence.claim",
     "rel:evidence.claim",
     "term:claim"
+  ],
+  "claim candidate": [
+    "q:evidence.claim",
+    "term:claim-candidate"
+  ],
+  "claim candidates": [
+    "dom:verified-knowledge"
+  ],
+  "claim conflict": [
+    "term:claim-conflict"
+  ],
+  "claim detail": [
+    "task:read-claim-with-evidence"
+  ],
+  "claim path": [
+    "term:claim-candidate"
   ],
   "claim role": [
     "rel:evidence.claim_subject"
   ],
+  "claim status": [
+    "q:evidence.claim",
+    "term:claim-candidate"
+  ],
+  "claim triage": [
+    "dom:verified-knowledge",
+    "term:claim-triage"
+  ],
   "claims": [
     "dom:evidence",
     "q:evidence.claims_for_entity"
+  ],
+  "claims by source": [
+    "q:evidence.source_track_record"
   ],
   "client grant": [
     "dom:access"
@@ -304,6 +390,17 @@
   "confirm removal": [
     "op:confirm_removal"
   ],
+  "conflict": [
+    "q:evidence.claim_conflicts",
+    "task:why-claim-disputed-or-restated",
+    "term:claim-conflict"
+  ],
+  "conflict of interest": [
+    "term:source-registry"
+  ],
+  "conflicts": [
+    "dom:verified-knowledge"
+  ],
   "connections": [
     "dom:library"
   ],
@@ -315,6 +412,16 @@
   ],
   "continuum": [
     "term:knowledge-continuum"
+  ],
+  "contradicted": [
+    "task:why-claim-disputed-or-restated",
+    "term:verdict"
+  ],
+  "contradicted claims": [
+    "q:evidence.claim_verdicts"
+  ],
+  "contradiction between sources": [
+    "q:evidence.claim_conflicts"
   ],
   "contradicts": [
     "task:find-stale-facts"
@@ -472,12 +579,28 @@
   "digests": [
     "dom:content"
   ],
+  "directly_supported": [
+    "term:verdict"
+  ],
+  "disagreement": [
+    "q:evidence.claim_conflicts",
+    "term:claim-conflict"
+  ],
   "dispatch": [
     "dom:product-operations",
     "term:operation"
   ],
+  "disposition": [
+    "term:claim-triage"
+  ],
   "disputed": [
-    "term:belief"
+    "q:evidence.claim_conflicts",
+    "task:why-claim-disputed-or-restated",
+    "term:belief",
+    "term:claim-conflict"
+  ],
+  "disputed claims": [
+    "dom:verified-knowledge"
   ],
   "distributions": [
     "dom:authoring"
@@ -506,6 +629,18 @@
   ],
   "domain": [
     "term:domain"
+  ],
+  "due": [
+    "task:what-is-due",
+    "term:due-list"
+  ],
+  "due list": [
+    "dom:source-intelligence",
+    "q:acquisition.attention_due",
+    "q:evidence.probe_revalidation_due",
+    "q:ours.releases_needing_review",
+    "task:what-is-due",
+    "term:due-list"
   ],
   "edge": [
     "rel:catalog.relationship"
@@ -585,12 +720,22 @@
   "evidence claim": [
     "term:claim"
   ],
+  "evidence for a claim": [
+    "task:read-claim-with-evidence"
+  ],
   "evidence packet": [
     "term:evidence-packet"
   ],
   "expected head": [
     "task:check-knowledge-head",
     "term:head-revision"
+  ],
+  "experiment": [
+    "term:probe"
+  ],
+  "experiments": [
+    "q:evidence.probes",
+    "rel:api.probes"
   ],
   "expert item": [
     "term:guidance-item"
@@ -649,7 +794,8 @@
   ],
   "flywheel": [
     "q:ours.modules_affected_by_release",
-    "task:modules-affected-by-release"
+    "task:modules-affected-by-release",
+    "task:what-a-release-affects"
   ],
   "format axis": [
     "rel:content.format"
@@ -780,6 +926,9 @@
   "how-to": [
     "dom:guidance"
   ],
+  "human_confirmed": [
+    "term:verdict"
+  ],
   "hybrid search": [
     "q:retrieval.hybrid_search",
     "term:hybrid-search"
@@ -858,6 +1007,9 @@
   "issue provided credential": [
     "op:issue_provided_credential"
   ],
+  "judged claims": [
+    "q:evidence.claim_verdicts"
+  ],
   "k": [
     "term:knowledge-head"
   ],
@@ -930,6 +1082,9 @@
   ],
   "labs": [
     "q:catalog.organizations"
+  ],
+  "lead days": [
+    "term:source-registry"
   ],
   "leaderboard": [
     "dom:ranking",
@@ -1119,12 +1274,20 @@
   "needs review after release": [
     "task:modules-affected-by-release"
   ],
+  "new version": [
+    "task:what-a-release-affects"
+  ],
   "node": [
     "rel:content.document_node",
     "term:typed-unit"
   ],
   "nodes": [
     "dom:content"
+  ],
+  "not checkable": [
+    "q:evidence.claim_triage",
+    "task:why-claim-disputed-or-restated",
+    "term:claim-triage"
   ],
   "note passage": [
     "op:confirm_removal",
@@ -1161,6 +1324,10 @@
   "offers": [
     "dom:authoring"
   ],
+  "one claim": [
+    "q:evidence.claim",
+    "task:read-claim-with-evidence"
+  ],
   "op": [
     "term:operation"
   ],
@@ -1194,6 +1361,11 @@
   "organizations": [
     "q:catalog.organizations"
   ],
+  "original claim": [
+    "q:evidence.claim_restatements",
+    "task:why-claim-disputed-or-restated",
+    "term:restatement"
+  ],
   "our works": [
     "q:ours.works_authored",
     "rel:api.works_authored"
@@ -1206,6 +1378,10 @@
   ],
   "output_tokens": [
     "term:meter"
+  ],
+  "overdue": [
+    "task:what-is-due",
+    "term:due-list"
   ],
   "overview": [
     "q:entity.card"
@@ -1244,6 +1420,9 @@
   ],
   "people": [
     "q:catalog.people"
+  ],
+  "pin": [
+    "term:probe"
   ],
   "point in time": [
     "q:entity.at"
@@ -1297,6 +1476,43 @@
   "private search": [
     "task:search-my-notes"
   ],
+  "probe": [
+    "term:probe"
+  ],
+  "probe list": [
+    "rel:api.probes"
+  ],
+  "probe matrix": [
+    "dom:verified-knowledge",
+    "q:evidence.probe_matrix",
+    "term:probe"
+  ],
+  "probe run": [
+    "term:probe"
+  ],
+  "probe runs": [
+    "dom:verified-knowledge",
+    "q:evidence.probe_matrix"
+  ],
+  "probe runs for a claim": [
+    "task:read-claim-with-evidence"
+  ],
+  "probe verdict": [
+    "q:evidence.claim_verdicts",
+    "term:verdict"
+  ],
+  "probe verdicts": [
+    "rel:api.probes"
+  ],
+  "probes": [
+    "dom:verified-knowledge",
+    "q:evidence.probes",
+    "rel:api.probes"
+  ],
+  "probes to rerun": [
+    "q:evidence.probe_revalidation_due",
+    "task:what-is-due"
+  ],
   "product api": [
     "dom:product-operations"
   ],
@@ -1325,6 +1541,9 @@
   ],
   "propose research": [
     "op:propose_research"
+  ],
+  "proposed claim": [
+    "term:claim-candidate"
   ],
   "prose summary": [
     "rel:content.document_summary"
@@ -1379,6 +1598,9 @@
     "q:facts.changes_since",
     "task:what-changed-since"
   ],
+  "reconciliation": [
+    "term:claim-conflict"
+  ],
   "record deployment": [
     "op:record_deployment"
   ],
@@ -1430,7 +1652,11 @@
   ],
   "release impact": [
     "q:ours.modules_affected_by_release",
-    "task:modules-affected-by-release"
+    "task:modules-affected-by-release",
+    "task:what-a-release-affects"
+  ],
+  "release review": [
+    "q:ours.releases_needing_review"
   ],
   "release transitions": [
     "dom:curriculum"
@@ -1440,8 +1666,16 @@
     "q:catalog.software_releases",
     "task:release-history"
   ],
+  "releases needing review": [
+    "q:ours.releases_needing_review",
+    "task:what-is-due",
+    "term:due-list"
+  ],
   "releases table": [
     "rel:api.software_releases"
+  ],
+  "reliability": [
+    "task:how-trusted-is-source"
   ],
   "replace": [
     "task:supersede-stale-fact"
@@ -1497,11 +1731,36 @@
   "resolve appeal": [
     "op:resolve_appeal"
   ],
+  "restated": [
+    "task:why-claim-disputed-or-restated"
+  ],
+  "restated claim": [
+    "q:evidence.claim_restatements",
+    "term:restatement"
+  ],
+  "restatement": [
+    "q:evidence.claim_restatements",
+    "task:why-claim-disputed-or-restated",
+    "term:restatement"
+  ],
+  "restatements": [
+    "dom:verified-knowledge"
+  ],
   "restrict source": [
     "op:restrict_source"
   ],
   "restrictions": [
     "dom:access"
+  ],
+  "revalidate after release": [
+    "task:what-a-release-affects"
+  ],
+  "revalidation": [
+    "task:what-is-due"
+  ],
+  "revalidation due": [
+    "q:evidence.probe_revalidation_due",
+    "term:due-list"
   ],
   "review": [
     "dom:staging"
@@ -1511,6 +1770,9 @@
   ],
   "review revision": [
     "op:review_revision"
+  ],
+  "review state": [
+    "term:verdict"
   ],
   "review tasks": [
     "dom:evaluation"
@@ -1586,6 +1848,9 @@
   ],
   "scope key": [
     "term:scope-key"
+  ],
+  "scope mismatch": [
+    "term:claim-conflict"
   ],
   "scoped search": [
     "q:retrieval.search_unified"
@@ -1689,11 +1954,28 @@
   "source": [
     "rel:evidence.source"
   ],
+  "source assessment": [
+    "dom:source-intelligence",
+    "q:evidence.source_registry",
+    "task:how-trusted-is-source",
+    "term:source-registry"
+  ],
+  "source registry": [
+    "dom:source-intelligence",
+    "q:evidence.source_registry",
+    "task:how-trusted-is-source",
+    "term:source-registry"
+  ],
   "source role": [
     "rel:content.source_role"
   ],
   "source tier": [
     "term:source-tier"
+  ],
+  "source trust": [
+    "dom:source-intelligence",
+    "task:how-trusted-is-source",
+    "term:source-registry"
   ],
   "sources": [
     "q:evidence.sources_by_domain"
@@ -1731,13 +2013,17 @@
   ],
   "stale": [
     "task:find-stale-facts",
-    "task:supersede-stale-fact"
+    "task:supersede-stale-fact",
+    "task:what-is-due"
   ],
   "stale head": [
     "term:rebase-required"
   ],
   "stale modules": [
     "task:modules-affected-by-release"
+  ],
+  "stale probe": [
+    "q:evidence.probe_revalidation_due"
   ],
   "start attempt": [
     "op:start_attempt"
@@ -1798,6 +2084,22 @@
     "rel:evidence.segment_support",
     "task:admit-support-for-claim",
     "term:support"
+  ],
+  "supported claims": [
+    "q:evidence.claim_verdicts"
+  ],
+  "supported_with_qualification": [
+    "term:verdict"
+  ],
+  "sweep": [
+    "dom:source-intelligence",
+    "term:attention-policy"
+  ],
+  "sweep history": [
+    "rel:api.attention_policies"
+  ],
+  "sweeps": [
+    "q:acquisition.attention_policies"
   ],
   "synonym": [
     "rel:catalog.entity_alias",
@@ -1873,6 +2175,9 @@
   "terms": [
     "dom:relationships"
   ],
+  "tests of a claim": [
+    "q:evidence.probes"
+  ],
   "thread": [
     "op:append_message",
     "op:create_thread",
@@ -1886,6 +2191,12 @@
   "tier": [
     "dom:retrieval",
     "term:source-tier"
+  ],
+  "tier 0": [
+    "q:evidence.verified_claims"
+  ],
+  "tier 0 about a library": [
+    "task:what-is-verified-about-subject"
   ],
   "timecode": [
     "q:content.talk_segments",
@@ -1907,6 +2218,12 @@
   "traces": [
     "dom:observability"
   ],
+  "track record": [
+    "dom:source-intelligence",
+    "q:evidence.source_track_record",
+    "task:how-trusted-is-source",
+    "term:source-registry"
+  ],
   "transcript": [
     "q:content.talk_segments"
   ],
@@ -1915,6 +2232,19 @@
   ],
   "transcripts": [
     "dom:content"
+  ],
+  "triage": [
+    "q:evidence.claim_triage",
+    "term:claim-triage"
+  ],
+  "trigger": [
+    "term:attention-policy"
+  ],
+  "trust": [
+    "q:evidence.source_registry"
+  ],
+  "trustworthy source": [
+    "task:how-trusted-is-source"
   ],
   "two clocks": [
     "term:two-clocks"
@@ -1965,6 +2295,9 @@
   "unresolved": [
     "q:staging.unresolved"
   ],
+  "upgrade impact": [
+    "task:what-a-release-affects"
+  ],
   "uploads": [
     "dom:library"
   ],
@@ -1993,11 +2326,41 @@
   "vector space": [
     "term:vector-space"
   ],
+  "verdict": [
+    "q:evidence.claim_verdicts",
+    "term:verdict"
+  ],
+  "verdict changed after release": [
+    "q:ours.releases_needing_review"
+  ],
+  "verdict of a claim": [
+    "task:read-claim-with-evidence"
+  ],
+  "verdicts": [
+    "dom:verified-knowledge"
+  ],
   "verification": [
     "dom:evidence"
   ],
   "verification run": [
     "term:verification-run"
+  ],
+  "verified": [
+    "task:what-is-verified-about-subject",
+    "term:verified-claim"
+  ],
+  "verified claim": [
+    "term:verified-claim"
+  ],
+  "verified claims": [
+    "dom:verified-knowledge",
+    "q:evidence.verified_claims"
+  ],
+  "verified claims about": [
+    "task:what-is-verified-about-subject"
+  ],
+  "verified knowledge": [
+    "term:verified-claim"
   ],
   "verify write": [
     "task:verify-ingestion-result"
@@ -2014,8 +2377,42 @@
   "vocabulary": [
     "term:vocabulary"
   ],
+  "w0": [
+    "term:attention-policy"
+  ],
+  "w1": [
+    "term:attention-policy"
+  ],
+  "w2": [
+    "term:attention-policy"
+  ],
+  "w3": [
+    "term:attention-policy"
+  ],
   "watch": [
     "dom:inquiry"
+  ],
+  "watch due": [
+    "q:acquisition.attention_due",
+    "task:what-is-due"
+  ],
+  "watch level": [
+    "dom:source-intelligence",
+    "q:acquisition.attention_policies",
+    "term:attention-policy"
+  ],
+  "watch levels": [
+    "rel:api.attention_policies"
+  ],
+  "watch policies": [
+    "rel:api.attention_policies"
+  ],
+  "watch policy": [
+    "q:acquisition.attention_policies",
+    "term:attention-policy"
+  ],
+  "what breaks": [
+    "task:what-a-release-affects"
   ],
   "what changed": [
     "q:facts.changes_since"
@@ -2026,8 +2423,32 @@
   "what do we teach about": [
     "task:modules-covering-concept"
   ],
+  "what is due": [
+    "term:due-list"
+  ],
+  "what is verified": [
+    "dom:verified-knowledge",
+    "q:evidence.verified_claims",
+    "task:what-is-verified-about-subject",
+    "term:verified-claim"
+  ],
+  "what needs attention": [
+    "task:what-is-due"
+  ],
   "what shipped": [
     "task:release-history"
+  ],
+  "what the probe observed": [
+    "q:evidence.probe_matrix"
+  ],
+  "what to sweep now": [
+    "q:acquisition.attention_due"
+  ],
+  "what to watch": [
+    "dom:source-intelligence"
+  ],
+  "what we watch": [
+    "q:acquisition.attention_policies"
   ],
   "what's new": [
     "task:what-changed-since"
@@ -2039,8 +2460,14 @@
     "dom:evidence",
     "q:facts.locators"
   ],
+  "which claims become probes": [
+    "q:evidence.claim_triage"
+  ],
   "which model": [
     "task:compare-models"
+  ],
+  "who is reliable on a topic": [
+    "q:evidence.source_registry"
   ],
   "who speaks": [
     "rel:content.source_role"
@@ -2048,8 +2475,17 @@
   "who spoke about": [
     "task:talks-on-topic"
   ],
+  "who to believe about": [
+    "task:how-trusted-is-source"
+  ],
   "whose knowledge": [
     "term:lens"
+  ],
+  "why is this claim verified": [
+    "task:read-claim-with-evidence"
+  ],
+  "why not verified": [
+    "task:why-claim-disputed-or-restated"
   ],
   "withdraw acceptance": [
     "op:withdraw_acceptance"

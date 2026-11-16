@@ -44,6 +44,7 @@ Run from this repository root; choose checks relevant to the change. Commands ar
 
 - `npm run typecheck`
 - `npm run types:check`
+- `npm run version:check`
 - `npm run workspace:check`
 - `npm run workspace:validate`
 

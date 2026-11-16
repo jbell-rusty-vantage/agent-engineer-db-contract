@@ -23,7 +23,7 @@ begin
         representation_class,media_type,content_sha256,acceptance_state)
       values(tenant,version,artifact,'plain_text','structural_extraction','text/plain',content_digest,'pending')
       returning id into representation;
-    insert into content.document_node(tenant_id,representation_id,ordinal,stable_local_key,node_kind,inline_text,normalized_content_sha256)
+    insert into content.document_node(tenant_id,representation_id,ordinal,stable_local_key,unit_kind,inline_text,normalized_content_sha256)
       values(tenant,representation,0,'fixture','paragraph',tenant::text,content_digest) returning id into node;
     insert into retrieval.chunking_procedure_version(tenant_id,slug,version,supported_content_classes,tokenizer,schema_contract,code_sha256,status)
       values(tenant,'content-link-rls','1','[]','fixture','{}',content_digest,'candidate') returning id into procedure;

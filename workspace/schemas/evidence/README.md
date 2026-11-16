@@ -3,14 +3,14 @@ id: "sch:evidence"
 kind: schema
 name: evidence
 lens: evidence
-domains: [evidence]
+domains: [evidence, source-intelligence, verified-knowledge]
 relations: 27
 functions: 11
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # evidence
 
-Sources, captures, locators, signatures, claims, support, verification. PROVISIONAL until the attribution lab stabilizes it. Lens `evidence`. Domains: [`evidence`](../../domains/evidence.md).
+Sources, captures, locators, signatures, claims, support, verification. PROVISIONAL until the attribution lab stabilizes it. Lens `evidence`. Domains: [`evidence`](../../domains/evidence.md), [`source-intelligence`](../../domains/source-intelligence.md), [`verified-knowledge`](../../domains/verified-knowledge.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |

@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # evidence.claim
 
@@ -71,7 +71,7 @@ Enabled; 1 policies in [details](claim.details.md).
 
 ## Read paths
 
-- Named queries: `q:evidence.claims_for_entity`, `q:facts.locators`.
+- Named queries: `q:evidence.claim`, `q:evidence.claim_conflicts`, `q:evidence.claim_restatements`, `q:evidence.claim_triage`, `q:evidence.claim_verdicts`, `q:evidence.claims_for_entity`, `q:evidence.probes`, `q:evidence.source_track_record`, `q:evidence.verified_claims`, `q:facts.locators`, `q:ours.releases_needing_review`.
 - Exposed through: [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_conflicts`](../api/claim_conflicts.md), [`api.claim_restatements`](../api/claim_restatements.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.claim_triage`](../api/claim_triage.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.community_claims`](../api/community_claims.md), [`api.probes`](../api/probes.md), [`api.source_track_record`](../api/source_track_record.md), [`api.verified_claims`](../api/verified_claims.md).
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 

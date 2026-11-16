@@ -13,7 +13,7 @@ raises: [query text length must be between 1 and 4096, result/candidate/RRF boun
 touches: { reads: [retrieval.space_publication, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space, retrieval.vector_space_version, retrieval.vector_store_space], writes: [] }
 tokens: [api, hybrid_knowledge_search_1536, api.hybrid_knowledge_search_1536]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql", "20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.hybrid_knowledge_search_1536
 

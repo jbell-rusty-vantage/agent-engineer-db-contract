@@ -4,7 +4,7 @@ kind: details
 schema: evaluation
 name: verification_benchmark_comparison
 of: "rel:evaluation.verification_benchmark_comparison"
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # evaluation.verification_benchmark_comparison — details
 

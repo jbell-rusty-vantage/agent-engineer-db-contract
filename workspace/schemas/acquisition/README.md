@@ -3,14 +3,14 @@ id: "sch:acquisition"
 kind: schema
 name: acquisition
 lens: corpus
-domains: [acquisition]
+domains: [acquisition, source-intelligence]
 relations: 3
 functions: 0
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # acquisition
 
-How bytes were obtained: every product/harness/mission fetch is a ledger row before it becomes an evidence.source_capture. Search/provider attempts stay in evidence until the KS executor moves (deferred). Lens `corpus`. Domains: [`acquisition`](../../domains/acquisition.md).
+How bytes were obtained: every product/harness/mission fetch is a ledger row before it becomes an evidence.source_capture. Search/provider attempts stay in evidence until the KS executor moves (deferred). Lens `corpus`. Domains: [`acquisition`](../../domains/acquisition.md), [`source-intelligence`](../../domains/source-intelligence.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |

@@ -3,7 +3,7 @@ id: "rel:verification.claim_triage"
 kind: table
 schema: verification
 name: claim_triage
-domain: evidence
+domain: verified-knowledge
 lens: evidence
 aliases: []
 tokens: [verification, claim_triage, verification.claim_triage, id, tenant_id, claim_id, disposition, checkability, priority, components, duplicate_of_claim_id, probe_id, rationale, decided_by, review_state, decided_at, supersedes_id]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"claim_triage\"][\"Row\"]"
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # verification.claim_triage
 
-table in domain `evidence`, lens `evidence` — Loop 5: what to do with a claim candidate before anyone checks it: probe it, check the docs or the registry, or not checkable (advice, experience, opinion), duplicate, out of scope; with checkability, priority components, rationale and the probe it became. Append-only; a later row supersedes..
+table in domain `verified-knowledge`, lens `evidence` — Loop 5: what to do with a claim candidate before anyone checks it: probe it, check the docs or the registry, or not checkable (advice, experience, opinion), duplicate, out of scope; with checkability, priority components, rationale and the probe it became. Append-only; a later row supersedes..
 
 ## Columns
 
@@ -70,6 +70,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim_triage`.
 - Exposed through: [`api.claim_triage`](../api/claim_triage.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

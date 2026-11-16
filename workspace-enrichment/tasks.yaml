@@ -837,3 +837,178 @@ tasks:
       The receipt is the record; the agent's own log is not. Zero `closed` rows after a "stale fix" is a failed fix. Do not re-apply the intent to "make sure": the same `intentId` is `duplicateOf`. Cite `receipt_id` and `knowledgeHead.after` in the report.
     provenance: model_assisted
     reviewed: null
+
+  # ---------------------------------------------------------------- verified knowledge, source intelligence, due lists (Build 08 loops 4-7)
+  - slug: what-is-verified-about-subject
+    title: What is verified about <subject>?
+    domains: [verified-knowledge, evidence]
+    queries: [evidence.verified_claims, evidence.claim_verdicts, evidence.probes]
+    aliases: [verified, what is verified, verified claims about, checked statements, admitted claims, tier 0 about a library]
+    navigation: |
+      `START_HERE.md` (L1) → `relations/api/verified_claims.md` → `q:evidence.verified_claims`; one claim in depth is `tasks/read-claim-with-evidence.md`.
+    operation: |
+      One read: verified claims whose wording or subject matches. Add the judged-but-not-verified claims when the question is "what do we know", not "what may I state as fact".
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "verified-about-langgraph",
+        "operations": [
+          { "opId": "verified", "kind": "named_query", "query": "evidence.verified_claims", "params": { "text": "LangGraph", "limit": 50 } },
+          { "opId": "judged", "kind": "named_query", "query": "evidence.claim_verdicts", "params": { "claim_id": null, "verdict": null, "probe": null, "limit": 50 } },
+          { "opId": "probes", "kind": "named_query", "query": "evidence.probes", "params": { "text": "langgraph", "limit": 20 } }
+        ]
+      }
+      ```
+    expected_shape: |
+      `verified` rows: `claim_id`, `statement`, `claim_type`, `subjects` (entity names), `verified_at`, `use_decision_id` and `receipt_id` (the Knowledge Services admission), `executor_version`, `verdicts` (array of `probe`, `verdict`, `review_state`). `judged` rows carry the latest `verdict` (`directly_supported`, `supported_with_qualification`, `contradicted`, `not_supported`, `unverifiable`) and `review_state` (`agent_proposed`, `human_confirmed`, `human_rejected`). No row means nothing is verified about it, not that the subject is unknown: check `q:entity.resolve`.
+    pitfalls: |
+      Only `api.verified_claims` is verified knowledge. A row of `api.claim_candidates` or `api.claim_verdicts` with a supportive verdict is still a candidate until an admission verifies it; a probe that used a live model, and a community claim, never verify alone. `supported_with_qualification` is verified with a condition: quote the qualification from `rationale`, not the bare statement. The match is on wording and subject names, so resolve an alias first. Verified is about the versions the probe ran: `q:evidence.probe_matrix` shows them, and `tasks/what-is-due.md` shows what a newer release has put in question.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: read-claim-with-evidence
+    title: Read one claim with its evidence and verdicts
+    domains: [verified-knowledge, evidence]
+    queries: [evidence.claim, evidence.verified_claims, evidence.claim_verdicts, evidence.probe_matrix, evidence.claim_restatements, evidence.claim_conflicts]
+    aliases: [one claim, claim detail, evidence for a claim, why is this claim verified, verdict of a claim, probe runs for a claim]
+    navigation: |
+      `tasks/what-is-verified-about-subject.md` or a search hit (`target_kind` claim) gives the `claim_id` → `relations/api/claim_candidates.md` → `q:evidence.claim` → `q:evidence.claim_verdicts` → `q:evidence.probe_matrix`.
+    operation: |
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "claim-in-depth",
+        "operations": [
+          { "opId": "claim", "kind": "named_query", "query": "evidence.claim", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001" } },
+          { "opId": "verdict", "kind": "named_query", "query": "evidence.claim_verdicts", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "verdict": null, "probe": null, "limit": 5 } },
+          { "opId": "runs", "kind": "named_query", "query": "evidence.probe_matrix", "params": { "probe": "$verdict.rows[0].probe" } },
+          { "opId": "restated", "kind": "named_query", "query": "evidence.claim_restatements", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "limit": 20 } },
+          { "opId": "conflicts", "kind": "named_query", "query": "evidence.claim_conflicts", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "limit": 20 } }
+        ]
+      }
+      ```
+
+      The claim is a row of `api.claim_candidates`, its latest verdict a row of `api.claim_verdicts`, the runs come from `api.probe_matrix`. The admission behind a verified status is the matching row of `q:evidence.verified_claims` (`use_decision_id`, `receipt_id`, `effect`).
+    expected_shape: |
+      `claim`: `status` (`proposed`, `verified`, `disputed`), `path` (how it entered: `deterministic_first_party`, `L1_candidate`, `community_thread`, `restatement`, `own_probe_finding`, …), `source_role`, `subjects`, `speakers`, `document_node_id` and `document_title` (where it was read). `verdict`: who stated it (`stated_by`, `channel`, `stated_at`, `quote`), the latest `verdict`, `probe`, `review_state`, `decided_by`, `cells` (per-cell summary) and `rationale`. `runs`: one row per cell with `outcome`, `resolved` (package versions that cell installed), `observations`, `started_at`, `locator_id`.
+    pitfalls: |
+      A probe run's `outcome` (pass or fail) is about the probe's own checks, not about the claim; the claim's answer is the `verdict`. A cell is a date (what a tutorial follower got that day) or an explicit pin: read `resolved` before saying which version a verdict covers. `api.claim_verdicts` holds the latest verdict only; a verified claim lists every current one in `api.verified_claims.verdicts`. A claim read from a document carries `document_node_id`; the exact locator of a fact is `q:facts.locators`, and claim-to-fact support is `q:evidence.claim_support` (pipeline_agent).
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: why-claim-disputed-or-restated
+    title: Why is a claim disputed, or why was it restated?
+    domains: [verified-knowledge, evidence]
+    queries: [evidence.claim, evidence.claim_conflicts, evidence.claim_restatements, evidence.claim_verdicts, evidence.claim_triage]
+    aliases: [disputed, conflict, contradicted, restated, restatement, original claim, not checkable, why not verified]
+    navigation: |
+      `relations/api/claim_conflicts.md` or `relations/api/claim_restatements.md` → `q:evidence.claim_conflicts` / `q:evidence.claim_restatements` → `q:evidence.claim_verdicts` → `q:evidence.claim_triage`.
+    operation: |
+      Four different reasons a claim is not simply verified: a contradicting verdict (`api.claim_verdicts`), a kept conflict (`api.claim_conflicts`), a restatement (`api.claim_restatements`) or a triage outcome (`api.claim_triage`). Read all four for one `claim_id`.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "why-not-verified",
+        "operations": [
+          { "opId": "claim", "kind": "named_query", "query": "evidence.claim", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001" } },
+          { "opId": "verdict", "kind": "named_query", "query": "evidence.claim_verdicts", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "verdict": null, "probe": null, "limit": 5 } },
+          { "opId": "conflicts", "kind": "named_query", "query": "evidence.claim_conflicts", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "limit": 20 } },
+          { "opId": "restated", "kind": "named_query", "query": "evidence.claim_restatements", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "limit": 20 } },
+          { "opId": "triage", "kind": "named_query", "query": "evidence.claim_triage", "params": { "claim_id": "0192b000-0000-7000-8000-000000000001", "disposition": null, "limit": 5 } }
+        ]
+      }
+      ```
+    expected_shape: |
+      `verdict`: `contradicted` or `not_supported` with `rationale` and `cells` is a probe result that moved the claim to `disputed`. `conflicts`: `conflict_kind` (value, scope or subject disagreement, for example `scope_mismatch`), both statements with their status, `other_source_role`, `detected_by`, and `reconciliation` (null until someone decides). `restated`: the restated claim (`statement`, `status`, `qualified`, `dropped`, `probe`) beside `original_claim_id`, `original_statement`, `original_status`. `triage`: `disposition` (`probe`, `docs_check`, `registry_check`, `not_checkable`, `duplicate`, `out_of_scope`), `checkability`, `rationale`, `duplicate_of_claim_id`.
+    pitfalls: |
+      Disputed is not false: it means a deterministic probe contradicted the statement as worded, in the cells it ran. A conflict is kept, never averaged away; with `reconciliation` null neither side wins. A restatement exists because the original was attribution-framed ("the post states that X"): the probe verifies X, and the original stays `proposed` as the record of what the source said, so do not count both. `qualified` true means the restated claim holds only with the condition in its statement; `dropped` says what was left out. `not_checkable` (advice, experience, opinion) is a triage outcome, not a verdict.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: how-trusted-is-source
+    title: How much is a source trusted on a topic?
+    domains: [source-intelligence, evidence]
+    queries: [evidence.source_registry, evidence.source_track_record, acquisition.attention_policies]
+    aliases: [source trust, trustworthy source, authority, reliability, track record, source registry, source assessment, who to believe about]
+    navigation: |
+      `START_HERE.md` (L1) → `relations/api/source_registry.md` → `q:evidence.source_registry` → `q:evidence.source_track_record` for the claims behind the counts.
+    operation: |
+      `api.source_registry` is the latest assessment per source and topic; `api.source_track_record` is the claims it rests on.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "sources-on-langchain",
+        "operations": [
+          { "opId": "registry", "kind": "named_query", "query": "evidence.source_registry", "params": { "source": null, "topic": "LangChain", "limit": 20 } },
+          { "opId": "record", "kind": "named_query", "query": "evidence.source_track_record", "params": { "source_entity_id": "$registry.rows[0].source_entity_id", "source": null, "limit": 50 } }
+        ]
+      }
+      ```
+    expected_shape: |
+      `registry` rows, one per source and topic at its latest assessment (`as_of`): `source`, `source_kind`, `platform`, `url`, `topic`, `source_role_code`, `conflict_of_interest`, `method_disclosure`, `claims_observed`, `claims_checked`, `confirmed`, `qualified`, `refuted`, `self_checked`, `median_lead_days`, `noise_ratio`, `authority_score`, `recommended_watch_level`, `current_watch_level`, `rationale`. `record` rows: each claim the source stated with `status`, `stated_at`, `first_party_at`, `verdict`, `probe`.
+    pitfalls: |
+      Read the components, not the score alone: `authority_score` is derived from the role prior and the checked claims, and with few `claims_checked` it is mostly the prior. A watch level is recommended only from five checked claims. `self_checked` counts claims the source checked about itself; they are shown and not scored. A null `topic` is the source overall; a topic row is trust on that topic only. `median_lead_days` is how long before the first-party docs the source said it. Trust is about what was checked: `q:evidence.source_track_record` shows which claims, and a refuted claim there is `tasks/why-claim-disputed-or-restated.md`.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: what-is-due
+    title: What is due (sources to sweep, probes to rerun, releases to review)?
+    domains: [source-intelligence, verified-knowledge, authoring]
+    queries: [acquisition.attention_due, evidence.probe_revalidation_due, ours.releases_needing_review, acquisition.attention_policies, facts.changes_since]
+    aliases: [due, due list, what needs attention, watch due, probes to rerun, revalidation, releases needing review, stale, overdue]
+    navigation: |
+      `START_HERE.md` (L2) → `functions/api/attention_due.md`, `functions/api/probe_revalidation_due.md`, `functions/api/releases_needing_review.md` → the three queries below.
+    operation: |
+      Three lists, one per kind of work: `api.attention_due` (sources to sweep), `api.probe_revalidation_due` (probes to rerun), `api.releases_needing_review` (our releases to review). An empty list is an answer.
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "due-now",
+        "operations": [
+          { "opId": "sweeps", "kind": "named_query", "query": "acquisition.attention_due", "params": { "as_of": null } },
+          { "opId": "probes", "kind": "named_query", "query": "evidence.probe_revalidation_due", "params": { "as_of": null } },
+          { "opId": "releases", "kind": "named_query", "query": "ours.releases_needing_review", "params": {} }
+        ]
+      }
+      ```
+
+      `as_of` null means now. What was learned since a time is `q:facts.changes_since`; every policy with its last sweep is `q:acquisition.attention_policies`.
+    expected_shape: |
+      `sweeps`: `policy_id`, `slug`, `watch_level`, `reason` (a trigger event inside its window, or the cadence elapsed), `trigger_ref`, `last_sweep_at`, `budget_usd_per_run`, `mission`. `probes`: `probe`, `cell_label`, `last_run_at`, `library`, `resolved_version`, `newest_version`, `newest_released_at`, `reason`. `releases`: `release_id`, `release_no`, `root_work_id`, `released_at`, `claim_id`, `statement`, `verdict_at_release`, `verdict_now`, `status_now`, `decided_at`.
+    pitfalls: |
+      These readers filter on the session tenant: a database session without `app.tenant_id` gets no rows, which reads as "nothing due"; check `q:knowledge.head` first. W0 and paused policies are never due. A probe is due only on its latest unpinned cell; a pinned cell never goes stale. A release needs review when a bound claim's verdict changed after the release was frozen; a human confirmation of the same verdict does not count. A signed-in user sees the releases of workspaces they are a member of; app_reader and the pipeline roles see all. The due lists say what to do, they do not do it: a watch mission runs the sweep under the policy budget.
+    provenance: model_assisted
+    reviewed: null
+
+  - slug: what-a-release-affects
+    title: What does a software release affect (our modules, probes, releases)?
+    domains: [verified-knowledge, authoring, api-surface]
+    queries: [catalog.software_releases, ours.modules_affected_by_release, evidence.probe_revalidation_due, ours.releases_needing_review, evidence.verified_claims]
+    aliases: [release impact, affected by release, new version, what breaks, revalidate after release, flywheel, upgrade impact]
+    navigation: |
+      `relations/api/software_releases.md` → `q:catalog.software_releases` (get `release_id`) → `functions/api/modules_affected_by_release.md` → `q:ours.modules_affected_by_release` → `q:evidence.probe_revalidation_due`.
+    operation: |
+      A release reaches three things: our head revisions that use the software (`api.modules_affected_by_release`), the probes that ran against an older version (`api.probe_revalidation_due`), and our frozen releases whose claims those probes judge (`api.releases_needing_review`).
+
+      ```json
+      {
+        "schemaVersion": "knowledge-read-intent.v1",
+        "intentId": "release-impact-langgraph",
+        "operations": [
+          { "opId": "releases", "kind": "named_query", "query": "catalog.software_releases", "params": { "software_id": null, "text": "langgraph", "limit": 5 } },
+          { "opId": "modules", "kind": "named_query", "query": "ours.modules_affected_by_release", "params": { "release_id": "$releases.rows[0].release_id" } },
+          { "opId": "probes", "kind": "named_query", "query": "evidence.probe_revalidation_due", "params": { "as_of": null } },
+          { "opId": "frozen", "kind": "named_query", "query": "ours.releases_needing_review", "params": {} }
+        ]
+      }
+      ```
+    expected_shape: |
+      `modules`: `work_id`, `work_kind`, `work_slug`, `revision_id`, `revision_title`, `software`, `release`, `released_at`, `breaking`, `binding`, `version_spec`. `probes`: the probes whose latest cell resolved an older version of that library (`library`, `resolved_version`, `newest_version`, `reason`). `frozen`: our releases whose bound claims changed verdict since they were frozen.
+    pitfalls: |
+      The order is causal and takes time: a release makes probes due, a rerun may change a verdict, and only then does a frozen release need review, so `frozen` is empty right after a release. `modules` lists head revisions authored before the release; `breaking` rows first. Verified claims about the software were verified on the versions in `q:evidence.probe_matrix`; until the due probes rerun, say which version a claim was checked on. A signed-in user sees the modules they may read and the releases of their workspaces; database roles see all. Authoring the fix is `tasks/modules-affected-by-release.md`.
+    provenance: model_assisted
+    reviewed: null

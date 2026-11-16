@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.release_digest(uuid)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [content.digest_item, content.document_digest, content.document_node, content.document_version, content.unit_entity_role], writes: [] }
 tokens: [api, release_digest, api.release_digest]
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.release_digest
 
@@ -27,7 +27,7 @@ function, stable, security definer, language sql, config `search_path=""`. What 
 | --- | --- | --- | --- |
 | `p_release` | `uuid` | — | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`content.digest_item`](../../relations/content/digest_item.md), [`content.document_digest`](../../relations/content/document_digest.md), [`content.document_node`](../../relations/content/document_node.md), [`content.document_version`](../../relations/content/document_version.md), [`content.unit_entity_role`](../../relations/content/unit_entity_role.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
 

@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.current_fact_rows()"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [temporal.segment, temporal.stream], writes: [] }
 tokens: [api, current_fact_rows, api.current_fact_rows]
 defined_in: ["20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.current_fact_rows
 
@@ -25,7 +25,7 @@ function, stable, security definer, language sql, config `search_path=""`.
 
 No arguments.
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
 

@@ -3,7 +3,7 @@ id: "rel:api.community_claims"
 kind: view
 schema: api
 name: community_claims
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, community_claims, api.community_claims, claim_id, statement, claim_type, status, quote, stated_at, channel_slug, channel, stated_by, stated_by_kind, thread_url, thread, thread_state, subjects, extracted_by, verdict]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"community_claims\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120400_build08_loop4_fixup_community_claims.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.community_claims
 
-view in domain `api-surface`, lens `corpus` — Claims stated on a community or editorial channel (issue trackers, forums, aggregators, comparison articles): quote, who stated it (handle as published), thread and its state, subjects, whether a model extracted it, and the latest probe verdict if any. Candidates, never facts..
+view in domain `verified-knowledge`, lens `corpus` — Claims stated on a community or editorial channel (issue trackers, forums, aggregators, comparison articles): quote, who stated it (handle as published), thread and its state, subjects, whether a model extracted it, and the latest probe verdict if any. Candidates, never facts..
 
 ## Columns
 

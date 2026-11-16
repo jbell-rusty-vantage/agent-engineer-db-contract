@@ -12,8 +12,8 @@ insert into orchestration.operation_intent(id,tenant_id,intent_type,payload,idem
  ('97000000-0000-4000-8000-000000000010',util.current_tenant_id(),'knowledge_ingestion','{}','receipt-custody-test'),
  ('97000000-0000-4000-8000-000000000011','98000000-0000-4000-8000-000000000001','knowledge_ingestion','{}','receipt-custody-other-tenant');
 select lives_ok($q$
- set constraints corpus.entity_created_by_receipt_id_fkey,staging.resolution_decision_receipt_id_fkey,evidence.claim_created_by_receipt_id_fkey,corpus.entity_receipt_tenant deferred;
- insert into corpus.entity(id,kind,display_name,slug,created_by_receipt_id) values('97000000-0000-4000-8000-000000000020','organization','Receipt custody test','receipt-custody-test','97000000-0000-4000-8000-000000000030');
+ set constraints catalog.entity_created_by_receipt_id_fkey,staging.resolution_decision_receipt_id_fkey,evidence.claim_created_by_receipt_id_fkey,catalog.entity_receipt_tenant deferred;
+ insert into catalog.entity(id,kind,display_name,slug,created_by_receipt_id) values('97000000-0000-4000-8000-000000000020','organization','Receipt custody test','receipt-custody-test','97000000-0000-4000-8000-000000000030');
  insert into evidence.claim(id,tenant_id,claim_type,statement,created_by_receipt_id,producer_attempt_id) select '97000000-0000-4000-8000-000000000021',util.current_tenant_id(),code,'Receipt custody claim','97000000-0000-4000-8000-000000000030','97000000-0000-4000-8000-000000000052' from evidence.claim_type order by code limit 1;
  insert into staging.candidate(id,proposed_kind,proposed_payload) values('97000000-0000-4000-8000-000000000022','organization','{}');
  insert into staging.resolution_decision(candidate_id,entity_id,decision,receipt_id) values('97000000-0000-4000-8000-000000000022','97000000-0000-4000-8000-000000000020','create','97000000-0000-4000-8000-000000000030');
@@ -23,15 +23,15 @@ $q$,'apply entity, claim and resolution before inserting the immutable final rec
 select is((select jsonb_array_length(affected_refs) from orchestration.operation_receipt where id='97000000-0000-4000-8000-000000000030'),2,'final receipt contains actual effects');
 select throws_ok($q$update orchestration.operation_receipt set affected_refs='[]' where id='97000000-0000-4000-8000-000000000030'$q$,'23001',null,'final receipt remains immutable');
 select throws_ok($q$
- set constraints corpus.entity_created_by_receipt_id_fkey,corpus.entity_receipt_tenant deferred;
- insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('organization','Missing receipt','receipt-custody-missing','97000000-0000-4000-8000-000000000099');
+ set constraints catalog.entity_created_by_receipt_id_fkey,catalog.entity_receipt_tenant deferred;
+ insert into catalog.entity(kind,display_name,slug,created_by_receipt_id) values('organization','Missing receipt','receipt-custody-missing','97000000-0000-4000-8000-000000000099');
  set constraints all immediate;
 $q$,'23503',null,'deferred writes cannot commit without their final receipt');
-select is((select count(*) from corpus.entity where slug='receipt-custody-missing'),0::bigint,'failed finalization rolls back entity effects');
+select is((select count(*) from catalog.entity where slug='receipt-custody-missing'),0::bigint,'failed finalization rolls back entity effects');
 insert into orchestration.operation_receipt(id,intent_id,executor_version,outcome) values('97000000-0000-4000-8000-000000000031','97000000-0000-4000-8000-000000000011','test','noop');
 select throws_ok($q$
- set constraints corpus.entity_created_by_receipt_id_fkey,corpus.entity_receipt_tenant deferred;
- insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('organization','Wrong tenant','receipt-custody-cross-tenant','97000000-0000-4000-8000-000000000031');
+ set constraints catalog.entity_created_by_receipt_id_fkey,catalog.entity_receipt_tenant deferred;
+ insert into catalog.entity(kind,display_name,slug,created_by_receipt_id) values('organization','Wrong tenant','receipt-custody-cross-tenant','97000000-0000-4000-8000-000000000031');
  set constraints all immediate;
 $q$,'P0001','entity/record receipt tenant mismatch','deferred tenant guard rejects cross-tenant receipt');
 insert into orchestration.artifact(id,tenant_id,artifact_type,sha256,bucket_class,storage_bucket,object_path,media_type,size_bytes,storage_state,available_at)

@@ -1677,3 +1677,419 @@ queries:
     execute: true
     provenance: model_assisted
     reviewed: null
+
+  # ---------------------------------------------------------------- verified knowledge: claims, probes, verdicts (Build 08 loops 4-7)
+  - name: evidence.verified_claims
+    title: Claims verified through a Knowledge Services admission, by subject or wording, with the verdicts behind them
+    kind: named_query
+    role: app_reader
+    sql: |
+      select v.claim_id, v.statement, v.claim_type, c.subjects, v.verified_at, v.executor_version, v.use_decision_id, v.receipt_id, v.verdicts
+      from api.verified_claims v
+      left join api.claim_candidates c on c.claim_id = v.claim_id
+      where ($1::text is null or v.statement ilike '%' || $1 || '%' or exists (select 1 from unnest(c.subjects) s where s ilike '%' || $1 || '%'))
+      order by v.verified_at desc, v.claim_id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [text, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [claim_id, statement, claim_type, subjects, verified_at, executor_version, use_decision_id, receipt_id, verdicts] }
+    cost_class: medium
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: verified-knowledge
+    tasks: [what-is-verified-about-subject, read-claim-with-evidence]
+    aliases: [verified claims, what is verified, admitted claims, tier 0]
+    example: { text: LangGraph, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claim
+    title: One claim, its status, path, subjects and the document it was read from
+    kind: named_query
+    role: app_reader
+    sql: |
+      select claim_id, claim_type, statement, status, path, source_role, subjects, speakers, attribution, learned_at,
+             agrees_with_first_party_claim, document_node_id, document_title, created_at
+      from api.claim_candidates
+      where claim_id = $1::uuid
+    paramOrder: [claim_id]
+    params:
+      type: object
+      required: [claim_id]
+      properties:
+        claim_id: { type: string, format: uuid, pgType: uuid }
+      additionalProperties: false
+    result: { shape: rows, columns: [claim_id, claim_type, statement, status, path, source_role, subjects, speakers, attribution, learned_at, agrees_with_first_party_claim, document_node_id, document_title, created_at] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: verified-knowledge
+    tasks: [read-claim-with-evidence, why-claim-disputed-or-restated]
+    aliases: [claim, claim candidate, claim status, one claim]
+    example: { claim_id: "0192b000-0000-7000-8000-000000000001" }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claim_verdicts
+    title: The latest probe verdict of each judged claim, with who stated it, the review state and the per-cell summary
+    kind: named_query
+    role: app_reader
+    sql: |
+      select claim_id, statement, claim_type, status, verdict, probe, review_state, decided_by, decided_at, stated_by, channel, stated_at, quote, cells, rationale
+      from api.claim_verdicts
+      where ($1::uuid is null or claim_id = $1)
+        and ($2::text is null or verdict = $2)
+        and ($3::text is null or probe = $3)
+      order by decided_at desc, claim_id
+      limit least(greatest(coalesce($4, 50), 1), 200)
+    paramOrder: [claim_id, verdict, probe, limit]
+    params:
+      type: object
+      properties:
+        claim_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        verdict: { type: ["string", "null"], default: null }
+        probe: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [claim_id, statement, claim_type, status, verdict, probe, review_state, decided_by, decided_at, stated_by, channel, stated_at, quote, cells, rationale] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: verified-knowledge
+    tasks: [read-claim-with-evidence, what-is-verified-about-subject, why-claim-disputed-or-restated]
+    aliases: [verdict, probe verdict, judged claims, contradicted claims, supported claims]
+    example: { claim_id: null, verdict: contradicted, probe: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claim_conflicts
+    title: Kept disagreements between a first-party claim and another statement, for one claim or all
+    kind: named_query
+    role: app_reader
+    sql: |
+      select conflict_id, conflict_kind, detected_by, detected_at, first_party_claim_id, first_party_statement, first_party_status,
+             other_claim_id, other_statement, other_status, other_source_role, other_provenance, reconciliation
+      from api.claim_conflicts
+      where ($1::uuid is null or first_party_claim_id = $1 or other_claim_id = $1)
+      order by detected_at desc, conflict_id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [claim_id, limit]
+    params:
+      type: object
+      properties:
+        claim_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [conflict_id, conflict_kind, detected_by, detected_at, first_party_claim_id, first_party_statement, first_party_status, other_claim_id, other_statement, other_status, other_source_role, other_provenance, reconciliation] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: verified-knowledge
+    tasks: [why-claim-disputed-or-restated, read-claim-with-evidence]
+    aliases: [conflict, disagreement, disputed, contradiction between sources]
+    example: { claim_id: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claim_restatements
+    title: Restated claims and the attribution-framed originals they were atomized from, for one claim or all
+    kind: named_query
+    role: app_reader
+    sql: |
+      select claim_id, statement, status, qualified, dropped, probe, original_claim_id, original_statement, original_status, created_at
+      from api.claim_restatements
+      where ($1::uuid is null or claim_id = $1 or original_claim_id = $1)
+      order by created_at desc, claim_id
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [claim_id, limit]
+    params:
+      type: object
+      properties:
+        claim_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [claim_id, statement, status, qualified, dropped, probe, original_claim_id, original_statement, original_status, created_at] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: verified-knowledge
+    tasks: [why-claim-disputed-or-restated, read-claim-with-evidence]
+    aliases: [restatement, restated claim, atomized claim, original claim, attribution]
+    example: { claim_id: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.claim_triage
+    title: What was decided about each claim candidate before checking it (probe, docs check, registry check, not checkable, duplicate)
+    kind: named_query
+    role: app_reader
+    sql: |
+      select claim_id, statement, claim_type, status, disposition, checkability, priority, rationale, probe, duplicate_of_claim_id,
+             decided_by, review_state, decided_at, verdict
+      from api.claim_triage
+      where ($1::uuid is null or claim_id = $1)
+        and ($2::text is null or disposition = $2)
+      order by priority desc nulls last, decided_at desc, claim_id
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [claim_id, disposition, limit]
+    params:
+      type: object
+      properties:
+        claim_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        disposition: { type: ["string", "null"], enum: [probe, docs_check, registry_check, not_checkable, duplicate, out_of_scope, null], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [claim_id, statement, claim_type, status, disposition, checkability, priority, rationale, probe, duplicate_of_claim_id, decided_by, review_state, decided_at, verdict] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: verified-knowledge
+    tasks: [why-claim-disputed-or-restated]
+    aliases: [triage, checkability, not checkable, which claims become probes]
+    example: { claim_id: null, disposition: probe, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.probes
+    title: Probes (experiments that test stated claims), their subjects, claim and run counts and verdicts
+    kind: named_query
+    role: app_reader
+    sql: |
+      select probe_id, slug, title, kind, hypothesis, model_policy, subjects, claims, runs, last_run_at, verdicts
+      from api.probes
+      where ($1::text is null or slug ilike '%' || $1 || '%' or title ilike '%' || $1 || '%'
+             or exists (select 1 from unnest(subjects) s where s ilike '%' || $1 || '%'))
+      order by last_run_at desc nulls last, slug
+      limit least(greatest(coalesce($2, 50), 1), 200)
+    paramOrder: [text, limit]
+    params:
+      type: object
+      properties:
+        text: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [probe_id, slug, title, kind, hypothesis, model_policy, subjects, claims, runs, last_run_at, verdicts] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: verified-knowledge
+    tasks: [read-claim-with-evidence, what-is-verified-about-subject]
+    aliases: [probes, experiments, tests of a claim]
+    example: { text: langgraph, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.probe_matrix
+    title: The latest run of one probe in each cell (a date or an explicit pin), with outcome, resolved versions and observations
+    kind: named_query
+    role: app_reader
+    sql: select * from api.probe_matrix($1::text)
+    paramOrder: [probe]
+    params:
+      type: object
+      required: [probe]
+      properties:
+        probe: { type: string, minLength: 1 }
+      additionalProperties: false
+    result: { shape: rows, columns: [cell_label, cell, outcome, resolved, observations, started_at, run_id, locator_id] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: null
+    volatile: false
+    domain: verified-knowledge
+    tasks: [read-claim-with-evidence]
+    aliases: [probe matrix, probe runs, cells, what the probe observed]
+    example: { probe: P1-crea-deprecation }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.probe_revalidation_due
+    title: Probes whose latest cell ran against an older version of a subject library than its newest catalogued release
+    kind: named_query
+    role: app_reader
+    sql: select * from api.probe_revalidation_due(coalesce($1::timestamptz, now()))
+    paramOrder: [as_of]
+    params:
+      type: object
+      properties:
+        as_of: { type: ["string", "null"], format: date-time, pgType: timestamptz, default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [probe_id, probe, cell_label, last_run_at, library, resolved_version, newest_version, newest_released_at, reason] }
+    cost_class: cheap
+    temporal: { world_time: as_of, knowledge: head }
+    pagination: null
+    volatile: true
+    domain: verified-knowledge
+    tasks: [what-is-due, what-a-release-affects]
+    aliases: [revalidation due, probes to rerun, stale probe, due list]
+    example: { as_of: null }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: ours.releases_needing_review
+    title: Our releases whose bound claims got a different probe verdict after the release was frozen
+    kind: named_query
+    role: app_reader
+    sql: select * from api.releases_needing_review()
+    paramOrder: []
+    params:
+      type: object
+      properties: {}
+      additionalProperties: false
+    result: { shape: rows, columns: [release_id, release_no, root_work_id, released_at, claim_id, statement, verdict_at_release, verdict_now, status_now, decided_at] }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: head }
+    pagination: null
+    volatile: true
+    domain: verified-knowledge
+    tasks: [what-is-due, what-a-release-affects]
+    aliases: [releases needing review, release review, verdict changed after release, due list]
+    example: {}
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  # ---------------------------------------------------------------- source intelligence and attention (Build 08 loops 4-5)
+  - name: evidence.source_registry
+    title: Latest assessment of each source on each topic (role, conflict of interest, checked claims, score, watch suggestion)
+    kind: named_query
+    role: app_reader
+    sql: |
+      select source_entity_id, source_kind, source, platform, url, topic, as_of, source_role_code, conflict_of_interest, method_disclosure,
+             claims_observed, claims_checked, confirmed, qualified, refuted, self_checked, median_lead_days, noise_ratio, authority_score,
+             recommended_watch_level, current_watch_level, rationale
+      from api.source_registry
+      where ($1::text is null or source ilike '%' || $1 || '%')
+        and ($2::text is null or topic ilike '%' || $2 || '%')
+      order by authority_score desc nulls last, claims_checked desc nulls last, source
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [source, topic, limit]
+    params:
+      type: object
+      properties:
+        source: { type: ["string", "null"], default: null }
+        topic: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [source_entity_id, source_kind, source, platform, url, topic, as_of, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, self_checked, median_lead_days, noise_ratio, authority_score, recommended_watch_level, current_watch_level, rationale] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: source-intelligence
+    tasks: [how-trusted-is-source]
+    aliases: [source registry, source assessment, trust, authority score, who is reliable on a topic]
+    example: { source: null, topic: LangChain, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: evidence.source_track_record
+    title: Every claim a source stated, with its latest verdict (the rows behind the counts of an assessment)
+    kind: named_query
+    role: app_reader
+    sql: |
+      select source_entity_id, source, source_kind, claim_id, statement, status, stated_at, first_party_at, verdict, probe
+      from api.source_track_record
+      where ($1::uuid is null or source_entity_id = $1)
+        and ($2::text is null or source ilike '%' || $2 || '%')
+      order by stated_at desc nulls last, claim_id
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [source_entity_id, source, limit]
+    params:
+      type: object
+      properties:
+        source_entity_id: { type: ["string", "null"], format: uuid, pgType: uuid, default: null }
+        source: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [source_entity_id, source, source_kind, claim_id, statement, status, stated_at, first_party_at, verdict, probe] }
+    cost_class: cheap
+    temporal: { world_time: n/a, knowledge: head }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: false
+    domain: source-intelligence
+    tasks: [how-trusted-is-source]
+    aliases: [track record, claims by source, checked claims of a source]
+    example: { source_entity_id: null, source: langchain, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: acquisition.attention_policies
+    title: Attention policies (what we watch, watch level, cadence, triggers, budget) with their sweep history
+    kind: named_query
+    role: app_reader
+    sql: |
+      select policy_id, slug, title, scope_kind, watch_level, cadence, triggers, budget_usd_per_run, state, channels, subjects, mission,
+             last_sweep_at, last_outcome, last_seen, last_selected, sweeps, spend_usd, rationale
+      from api.attention_policies
+      where ($1::text is null or watch_level = $1)
+        and ($2::text is null or state = $2)
+      order by watch_level desc, slug
+      limit least(greatest(coalesce($3, 50), 1), 200)
+    paramOrder: [watch_level, state, limit]
+    params:
+      type: object
+      properties:
+        watch_level: { type: ["string", "null"], enum: [W0, W1, W2, W3, null], default: null }
+        state: { type: ["string", "null"], default: null }
+        limit: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      additionalProperties: false
+    result: { shape: rows, columns: [policy_id, slug, title, scope_kind, watch_level, cadence, triggers, budget_usd_per_run, state, channels, subjects, mission, last_sweep_at, last_outcome, last_seen, last_selected, sweeps, spend_usd, rationale] }
+    cost_class: cheap
+    temporal: { world_time: now(), knowledge: n/a }
+    pagination: { kind: limit, limitParam: limit }
+    volatile: true
+    domain: source-intelligence
+    tasks: [what-is-due, how-trusted-is-source]
+    aliases: [attention policy, watch policy, watch level, sweeps, what we watch]
+    example: { watch_level: null, state: null, limit: 50 }
+    execute: true
+    provenance: model_assisted
+    reviewed: null
+
+  - name: acquisition.attention_due
+    title: Attention policies due at a time, by trigger event or elapsed cadence (the due list a watch mission calls)
+    kind: named_query
+    role: app_reader
+    sql: select * from api.attention_due(coalesce($1::timestamptz, now()))
+    paramOrder: [as_of]
+    params:
+      type: object
+      properties:
+        as_of: { type: ["string", "null"], format: date-time, pgType: timestamptz, default: null }
+      additionalProperties: false
+    result: { shape: rows, columns: [policy_id, slug, watch_level, reason, trigger_ref, last_sweep_at, budget_usd_per_run, mission] }
+    cost_class: cheap
+    temporal: { world_time: as_of, knowledge: n/a }
+    pagination: null
+    volatile: true
+    domain: source-intelligence
+    tasks: [what-is-due]
+    aliases: [attention due, due list, watch due, what to sweep now]
+    example: { as_of: null }
+    execute: true
+    provenance: model_assisted
+    reviewed: null

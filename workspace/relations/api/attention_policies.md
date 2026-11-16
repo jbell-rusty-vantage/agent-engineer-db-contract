@@ -3,22 +3,24 @@ id: "rel:api.attention_policies"
 kind: view
 schema: api
 name: attention_policies
-domain: api-surface
+domain: source-intelligence
 lens: corpus
-aliases: []
+aliases: [attention policies, watch policies, watch levels, sweep history]
 tokens: [api, attention_policies, api.attention_policies, policy_id, slug, title, scope_kind, watch_level, cadence, depth, selection, triggers, budget_usd_per_run, budget_credits_per_run, state, rationale, decided_by, channels, subjects, mission, designed_in_thread_id, last_sweep_at, last_outcome, last_seen, last_selected, sweeps, spend_usd]
-summary: null
-summary_basis: none
+summary: "Attention policies (what we watch, watch level W0 to W3, cadence, triggers, budget) with their last sweep and sweep totals."
+summary_basis: curated
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"attention_policies\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.attention_policies
 
-view in domain `api-surface`, lens `corpus`.
+view in domain `source-intelligence`, lens `corpus`.
+
+> curated (model_assisted, unreviewed) — Attention policies (what we watch, watch level W0 to W3, cadence, triggers, budget) with their last sweep and sweep totals.
 
 ## Columns
 
@@ -76,6 +78,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:acquisition.attention_policies`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
@@ -89,5 +92,14 @@ See [details](attention_policies.details.md).
 ## TypeScript
 
 row: `Database["api"]["Views"]["attention_policies"]["Row"]`
+
+## Examples
+
+Every policy with its last sweep
+
+```bash
+knowledge db query acquisition.attention_policies --param limit=50 --param state=null --param watch_level=null
+```
+Which of them are due now is `q:acquisition.attention_due`.
 
 Defined in: `20261113120000_build08_loop4_source_intelligence_experiments.sql`.

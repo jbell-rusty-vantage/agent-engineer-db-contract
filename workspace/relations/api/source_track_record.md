@@ -3,7 +3,7 @@ id: "rel:api.source_track_record"
 kind: view
 schema: api
 name: source_track_record
-domain: api-surface
+domain: source-intelligence
 lens: corpus
 aliases: []
 tokens: [api, source_track_record, api.source_track_record, source_entity_id, source, source_kind, claim_id, statement, status, stated_at, first_party_at, verdict, probe]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"source_track_record\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.source_track_record
 
-view in domain `api-surface`, lens `corpus` — Every claim a source stated, with its latest verdict: the rows behind an assessment's counts..
+view in domain `source-intelligence`, lens `corpus` — Every claim a source stated, with its latest verdict: the rows behind an assessment's counts..
 
 ## Columns
 
@@ -62,6 +62,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.source_track_record`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

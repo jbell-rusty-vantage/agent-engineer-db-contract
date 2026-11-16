@@ -13,7 +13,7 @@ raises: [benchmark comparison terminal success requires dedicated publication ar
 touches: { reads: [evaluation.verification_benchmark_comparison, knowledge_service.operation], writes: [] }
 tokens: [evaluation, guard_verification_benchmark_comparison_terminal_artifact, evaluation.guard_verification_benchmark_comparison_terminal_artifact]
 defined_in: ["20260906031200_verification_benchmark_comparison_terminal_artifact_type.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # evaluation.guard_verification_benchmark_comparison_terminal_artifact
 

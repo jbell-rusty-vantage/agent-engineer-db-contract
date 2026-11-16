@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, pipeline_agent, service_r
 writers: []
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"verification_component_binding\"][\"Row\"]"
 defined_in: ["20261024010000_knowledge_component_binding.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # knowledge_service.verification_component_binding
 

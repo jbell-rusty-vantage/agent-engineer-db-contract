@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.block_type, authoring.deployment, authoring.revision_binding, authoring.work, authoring.work_revision], writes: [authoring.revision_block] }
 tokens: [product, walk_blocks, product.walk_blocks]
 defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # product.walk_blocks
 

@@ -3,7 +3,7 @@ id: "rel:api.claim_restatements"
 kind: view
 schema: api
 name: claim_restatements
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, claim_restatements, api.claim_restatements, claim_id, statement, status, qualified, dropped, probe, original_claim_id, original_statement, original_status, created_at]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"claim_restatements\"][\"Row\"]"
 defined_in: ["20261115120000_build08_loop7_search_collapse_restatements.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.claim_restatements
 
-view in domain `api-surface`, lens `corpus` — Loop 7 (D-80): restated claims and the attribution-framed originals they were atomized from (the original stays proposed as the record of what a source said)..
+view in domain `verified-knowledge`, lens `corpus` — Loop 7 (D-80): restated claims and the attribution-framed originals they were atomized from (the original stays proposed as the record of what a source said)..
 
 ## Columns
 
@@ -62,6 +62,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim_restatements`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -3,7 +3,7 @@ id: "rel:api.verified_claims"
 kind: view
 schema: api
 name: verified_claims
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, verified_claims, api.verified_claims, claim_id, statement, claim_type, receipt_id, use_decision_id, bound_effect_digest, verified_at, executor_version, effect, verdicts]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, pipeline_agent, service_role
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"verified_claims\"][\"Row\"]"
 defined_in: ["20261113150000_build08_ks_admission_verified_claims.sql", "20261113150000_build08_loop6_ks_admission.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.verified_claims
 
-view in domain `api-surface`, lens `corpus` — Loop 6: claims that reached verified through a Knowledge Services admission, with the use decision, the admission-bound receipt, the bound native payload and the current probe verdicts..
+view in domain `verified-knowledge`, lens `corpus` — Loop 6: claims that reached verified through a Knowledge Services admission, with the use decision, the admission-bound receipt, the bound native payload and the current probe verdicts..
 
 ## Columns
 
@@ -62,6 +62,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.verified_claims`.
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

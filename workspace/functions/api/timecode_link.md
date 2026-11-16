@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.timecode_link(text,int4)"]
 security: invoker
 volatility: immutable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [], writes: [] }
 tokens: [api, timecode_link, api.timecode_link]
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.timecode_link
 
@@ -28,7 +28,7 @@ function, immutable, security invoker, language sql, config `search_path=""`.
 | `p_url` | `text` | — | — |
 | `p_start_ms` | `integer` | — | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 TypeScript: `Database["api"]["Functions"]["timecode_link"]`.
 

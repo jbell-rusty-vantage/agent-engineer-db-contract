@@ -6,11 +6,11 @@ schemas: [authoring]
 aliases: [works, revisions, courses, modules, releases, distributions, offers, assets, deployments]
 relations: [authoring.workspace, authoring.workspace_member, authoring.work, authoring.work_revision, authoring.revision_block, authoring.block_type, authoring.revision_binding, authoring.runtime_requirement, authoring.event, authoring.command, authoring.release, authoring.release_item, authoring.distribution, authoring.distribution_offer, authoring.distribution_member, authoring.publisher_grant, authoring.asset_scope, authoring.file_set, authoring.file_set_entry, authoring.deployment]
 functions: [api.modules_affected_by_release, api.product_command, api.product_read, product.exposure, product.insert_revision, product.validate_body, product.walk_blocks]
-tasks: [modules-affected-by-release, modules-covering-concept]
+tasks: [modules-affected-by-release, modules-covering-concept, what-a-release-affects, what-is-due]
 summary: "What we author (lens ours): immutable revisions of courses, modules, lessons, activities, briefs, reports and datasets; releases freeze closures for distribution."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # Authoring (works, revisions, releases, distribution)
 
@@ -77,6 +77,6 @@ What we author (lens ours): immutable revisions of courses, modules, lessons, ac
 
 ## Tasks
 
-[`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md)
+[`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md), [`what-a-release-affects`](../tasks/what-a-release-affects.md), [`what-is-due`](../tasks/what-is-due.md)
 
 Schemas: [`authoring`](../schemas/authoring/README.md).

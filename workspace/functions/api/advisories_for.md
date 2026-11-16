@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.advisories_for(text,text)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [api.advisories, catalog.entity], writes: [] }
 tokens: [api, advisories_for, api.advisories_for]
 defined_in: ["20261109130000_build08_loop2_numbers_compute_apis.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.advisories_for
 
@@ -28,7 +28,7 @@ function, stable, security definer, language sql, config `search_path=""`. L2: a
 | `p_software` | `text` | — | — |
 | `p_version` | `text` | `NULL::text` | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`api.advisories`](../../relations/api/advisories.md), [`catalog.entity`](../../relations/catalog/entity.md); writes —; calls —.
 

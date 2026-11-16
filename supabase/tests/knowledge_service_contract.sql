@@ -8,26 +8,26 @@ select extensions.lives_ok($test$
 $test$,'same-tenant source fixture is accepted');
 
 select extensions.throws_ok($test$
-  insert into content.document(tenant_id,document_kind,canonical_title,canonical_source_id)
-  values('20000000-0000-7000-8000-000000000002','documentation','must fail','10000000-0000-7000-8000-000000000010')
+  insert into content.document(tenant_id,document_type_code,canonical_title,canonical_source_id)
+  values('20000000-0000-7000-8000-000000000002','official_docs_page','must fail','10000000-0000-7000-8000-000000000010')
 $test$,'23503',null,'composite FK rejects a cross-tenant source');
 
-insert into content.document(id,tenant_id,document_kind,canonical_title,created_at) values
- ('10000000-0000-7000-8000-000000000020','10000000-0000-7000-8000-000000000001','documentation','immutable',clock_timestamp()),
- ('10000000-0000-7000-8000-000000000021','10000000-0000-7000-8000-000000000001','documentation','predecessor',clock_timestamp());
+insert into content.document(id,tenant_id,document_type_code,canonical_title,created_at) values
+ ('10000000-0000-7000-8000-000000000020','10000000-0000-7000-8000-000000000001','official_docs_page','immutable',clock_timestamp()),
+ ('10000000-0000-7000-8000-000000000021','10000000-0000-7000-8000-000000000001','official_docs_page','predecessor',clock_timestamp());
 
 select extensions.throws_ok($test$
  update content.document set canonical_title='mutated' where id='10000000-0000-7000-8000-000000000020'
 $test$,'23001',null,'content identities are immutable');
 
 select extensions.lives_ok($test$
- insert into content.document(id,tenant_id,document_kind,canonical_title,supersedes_id,created_at)
- values('10000000-0000-7000-8000-000000000022','10000000-0000-7000-8000-000000000001','documentation','successor','10000000-0000-7000-8000-000000000021',clock_timestamp()+interval '1 second')
+ insert into content.document(id,tenant_id,document_type_code,canonical_title,supersedes_id,created_at)
+ values('10000000-0000-7000-8000-000000000022','10000000-0000-7000-8000-000000000001','official_docs_page','successor','10000000-0000-7000-8000-000000000021',clock_timestamp()+interval '1 second')
 $test$,'a newer immutable row may supersede its predecessor');
 
 select extensions.throws_ok($test$
- insert into content.document(id,tenant_id,document_kind,canonical_title,supersedes_id,created_at)
- values('10000000-0000-7000-8000-000000000023','10000000-0000-7000-8000-000000000001','documentation','time reversal','10000000-0000-7000-8000-000000000022',clock_timestamp()-interval '1 day')
+ insert into content.document(id,tenant_id,document_type_code,canonical_title,supersedes_id,created_at)
+ values('10000000-0000-7000-8000-000000000023','10000000-0000-7000-8000-000000000001','official_docs_page','time reversal','10000000-0000-7000-8000-000000000022',clock_timestamp()-interval '1 day')
 $test$,'23514',null,'supersession cannot point forward in time');
 
 select extensions.throws_ok(

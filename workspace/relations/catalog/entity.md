@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"catalog\"][\"Tables\"][\"entity\"][\"Row\"]"
 defined_in: []
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # catalog.entity
 
@@ -63,7 +63,7 @@ Enabled; 1 policies in [details](entity.details.md).
 
 ## Read paths
 
-- Named queries: `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.software_releases`, `q:catalog.talks`, `q:content.document_digest`, `q:entity.at`, `q:entity.attributes`, `q:entity.by_identifier`, `q:entity.card`, `q:entity.resolve`, `q:facts.changes_since`, `q:ours.works_authored`, `q:ranking.leaderboard`.
+- Named queries: `q:acquisition.attention_due`, `q:acquisition.attention_policies`, `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.model_offerings`, `q:catalog.model_offerings_at`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.software_releases`, `q:catalog.talks`, `q:content.document_digest`, `q:entity.at`, `q:entity.attributes`, `q:entity.by_identifier`, `q:entity.card`, `q:entity.resolve`, `q:evidence.claim`, `q:evidence.claim_verdicts`, `q:evidence.probe_revalidation_due`, `q:evidence.probes`, `q:evidence.source_registry`, `q:evidence.source_track_record`, `q:evidence.verified_claims`, `q:facts.changes_since`, `q:ours.works_authored`, `q:ranking.leaderboard`.
 - Exposed through: [`api.advisories`](../api/advisories.md), [`api.attention_policies`](../api/attention_policies.md), [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.benchmarks`](../api/benchmarks.md), [`api.bundle_files`](../api/bundle_files.md), [`api.capabilities`](../api/capabilities.md), [`api.claim_candidates`](../api/claim_candidates.md), [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.community_claims`](../api/community_claims.md), [`api.compute_devices`](../api/compute_devices.md), [`api.compute_offerings`](../api/compute_offerings.md), [`api.concepts`](../api/concepts.md), [`api.digest_items`](../api/digest_items.md), [`api.entities`](../api/entities.md), [`api.events`](../api/events.md), [`api.hook_entries`](../api/hook_entries.md), [`api.model_offerings`](../api/model_offerings.md), [`api.models`](../api/models.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.probes`](../api/probes.md), [`api.protocol_versions`](../api/protocol_versions.md), [`api.registry_listings`](../api/registry_listings.md), [`api.software`](../api/software.md), [`api.software_releases`](../api/software_releases.md), [`api.source_registry`](../api/source_registry.md), [`api.source_track_record`](../api/source_track_record.md), [`api.talks`](../api/talks.md), [`api.works_authored`](../api/works_authored.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 

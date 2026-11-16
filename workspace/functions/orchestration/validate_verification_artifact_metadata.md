@@ -13,7 +13,7 @@ raises: [verification metadata requires a marked same-tenant artifact, verificat
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, validate_verification_artifact_metadata, orchestration.validate_verification_artifact_metadata]
 defined_in: ["20260906020000_verification_artifact_contract_marker.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # orchestration.validate_verification_artifact_metadata
 

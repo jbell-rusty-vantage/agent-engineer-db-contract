@@ -6,7 +6,8 @@
     "domains": [
       "acquisition",
       "content",
-      "temporal-facts"
+      "temporal-facts",
+      "source-intelligence"
     ],
     "relations": [
       "evidence.source",
@@ -52,7 +53,9 @@
     "release-history",
     "find-stale-facts",
     "talk-passage-at-timecode",
-    "price-with-locator"
+    "price-with-locator",
+    "what-is-due",
+    "how-trusted-is-source"
   ],
   "queries": [
     "content.*",
@@ -65,7 +68,11 @@
     "vocab.stream_kind",
     "evidence.captures_for_source",
     "evidence.sources_by_domain",
-    "knowledge.head"
+    "knowledge.head",
+    "evidence.source_registry",
+    "evidence.source_track_record",
+    "evidence.probe_revalidation_due",
+    "ours.releases_needing_review"
   ],
   "operations": [
     "restrict_source",

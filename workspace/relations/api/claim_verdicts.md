@@ -3,7 +3,7 @@ id: "rel:api.claim_verdicts"
 kind: view
 schema: api
 name: claim_verdicts
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, claim_verdicts, api.claim_verdicts, claim_id, statement, claim_type, status, stated_at, quote, stated_by, channel, verdict, probe, review_state, decided_by, decided_at, cells, rationale]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"claim_verdicts\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.claim_verdicts
 
-view in domain `api-surface`, lens `corpus` — Claims that a probe has judged, with who stated them, on which channel, the latest verdict, its review state and the per-cell summary..
+view in domain `verified-knowledge`, lens `corpus` — Claims that a probe has judged, with who stated them, on which channel, the latest verdict, its review state and the per-cell summary..
 
 ## Columns
 
@@ -67,6 +67,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim_verdicts`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

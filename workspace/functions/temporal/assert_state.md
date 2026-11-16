@@ -13,7 +13,7 @@ raises: [entity stream cannot target relationship, no open knowledge batch, rela
 touches: { reads: [catalog.entity, catalog.relationship, taxonomy.relationship_kind, temporal.stream_kind], writes: [temporal.segment, temporal.stream] }
 tokens: [temporal, assert_state, temporal.assert_state]
 defined_in: ["20260912010400_km_04_temporal.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # temporal.assert_state
 

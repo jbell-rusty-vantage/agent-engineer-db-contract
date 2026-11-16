@@ -10,7 +10,9 @@
       "evidence",
       "staging",
       "api-surface",
-      "guidance"
+      "guidance",
+      "verified-knowledge",
+      "source-intelligence"
     ],
     "relations": [
       "orchestration.operation_intent",
@@ -66,7 +68,13 @@
     "compose-ingestion-intent",
     "verify-ingestion-result",
     "compare-models",
-    "price-with-locator"
+    "price-with-locator",
+    "what-is-verified-about-subject",
+    "read-claim-with-evidence",
+    "why-claim-disputed-or-restated",
+    "how-trusted-is-source",
+    "what-is-due",
+    "what-a-release-affects"
   ],
   "queries": [
     "entity.*",
@@ -82,7 +90,11 @@
     "retrieval.*",
     "catalog.*",
     "guidance.items",
-    "content.*"
+    "content.*",
+    "acquisition.attention_policies",
+    "acquisition.attention_due",
+    "ours.releases_needing_review",
+    "ours.modules_affected_by_release"
   ],
   "operations": []
 }

@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
+  "catalogVersion": "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace",
   "defaults": {
     "limit": 200,
     "maxLimit": 2000,
@@ -11,6 +11,151 @@
     }
   },
   "entries": [
+    {
+      "cost_class": "cheap",
+      "domain": "source-intelligence",
+      "embedding": null,
+      "example": {
+        "as_of": null
+      },
+      "id": "q:acquisition.attention_due",
+      "kind": "named_query",
+      "name": "acquisition.attention_due",
+      "pagination": null,
+      "paramOrder": [
+        "as_of"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "default": null,
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "policy_id",
+          "slug",
+          "watch_level",
+          "reason",
+          "trigger_ref",
+          "last_sweep_at",
+          "budget_usd_per_run",
+          "mission"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.attention_due(coalesce($1::timestamptz, now()))",
+      "tasks": [
+        "what-is-due"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "as_of"
+      },
+      "title": "Attention policies due at a time, by trigger event or elapsed cadence (the due list a watch mission calls)",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "source-intelligence",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "state": null,
+        "watch_level": null
+      },
+      "id": "q:acquisition.attention_policies",
+      "kind": "named_query",
+      "name": "acquisition.attention_policies",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "watch_level",
+        "state",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "state": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "watch_level": {
+            "default": null,
+            "enum": [
+              "W0",
+              "W1",
+              "W2",
+              "W3",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "policy_id",
+          "slug",
+          "title",
+          "scope_kind",
+          "watch_level",
+          "cadence",
+          "triggers",
+          "budget_usd_per_run",
+          "state",
+          "channels",
+          "subjects",
+          "mission",
+          "last_sweep_at",
+          "last_outcome",
+          "last_seen",
+          "last_selected",
+          "sweeps",
+          "spend_usd",
+          "rationale"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select policy_id, slug, title, scope_kind, watch_level, cadence, triggers, budget_usd_per_run, state, channels, subjects, mission,\n       last_sweep_at, last_outcome, last_seen, last_selected, sweeps, spend_usd, rationale\nfrom api.attention_policies\nwhere ($1::text is null or watch_level = $1)\n  and ($2::text is null or state = $2)\norder by watch_level desc, slug\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "what-is-due",
+        "how-trusted-is-source"
+      ],
+      "temporal": {
+        "knowledge": "n/a",
+        "world_time": "now()"
+      },
+      "title": "Attention policies (what we watch, watch level, cadence, triggers, budget) with their sweep history",
+      "volatile": true
+    },
     {
       "cost_class": "cheap",
       "domain": "acquisition",
@@ -2012,6 +2157,205 @@
     },
     {
       "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "claim_id": "0192b000-0000-7000-8000-000000000001"
+      },
+      "id": "q:evidence.claim",
+      "kind": "named_query",
+      "name": "evidence.claim",
+      "pagination": null,
+      "paramOrder": [
+        "claim_id"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "claim_id",
+          "claim_type",
+          "statement",
+          "status",
+          "path",
+          "source_role",
+          "subjects",
+          "speakers",
+          "attribution",
+          "learned_at",
+          "agrees_with_first_party_claim",
+          "document_node_id",
+          "document_title",
+          "created_at"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select claim_id, claim_type, statement, status, path, source_role, subjects, speakers, attribution, learned_at,\n       agrees_with_first_party_claim, document_node_id, document_title, created_at\nfrom api.claim_candidates\nwhere claim_id = $1::uuid\n",
+      "tasks": [
+        "read-claim-with-evidence",
+        "why-claim-disputed-or-restated"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "One claim, its status, path, subjects and the document it was read from",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "claim_id": null,
+        "limit": 50
+      },
+      "id": "q:evidence.claim_conflicts",
+      "kind": "named_query",
+      "name": "evidence.claim_conflicts",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "claim_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "conflict_id",
+          "conflict_kind",
+          "detected_by",
+          "detected_at",
+          "first_party_claim_id",
+          "first_party_statement",
+          "first_party_status",
+          "other_claim_id",
+          "other_statement",
+          "other_status",
+          "other_source_role",
+          "other_provenance",
+          "reconciliation"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select conflict_id, conflict_kind, detected_by, detected_at, first_party_claim_id, first_party_statement, first_party_status,\n       other_claim_id, other_statement, other_status, other_source_role, other_provenance, reconciliation\nfrom api.claim_conflicts\nwhere ($1::uuid is null or first_party_claim_id = $1 or other_claim_id = $1)\norder by detected_at desc, conflict_id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "why-claim-disputed-or-restated",
+        "read-claim-with-evidence"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Kept disagreements between a first-party claim and another statement, for one claim or all",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "claim_id": null,
+        "limit": 50
+      },
+      "id": "q:evidence.claim_restatements",
+      "kind": "named_query",
+      "name": "evidence.claim_restatements",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "claim_id",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "claim_id",
+          "statement",
+          "status",
+          "qualified",
+          "dropped",
+          "probe",
+          "original_claim_id",
+          "original_statement",
+          "original_status",
+          "created_at"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select claim_id, statement, status, qualified, dropped, probe, original_claim_id, original_statement, original_status, created_at\nfrom api.claim_restatements\nwhere ($1::uuid is null or claim_id = $1 or original_claim_id = $1)\norder by created_at desc, claim_id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "why-claim-disputed-or-restated",
+        "read-claim-with-evidence"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Restated claims and the attribution-framed originals they were atomized from, for one claim or all",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
       "domain": "evidence",
       "embedding": null,
       "example": {
@@ -2051,6 +2395,187 @@
         "world_time": "n/a"
       },
       "title": "Segment and occurrence support rows for one claim",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "claim_id": null,
+        "disposition": "probe",
+        "limit": 50
+      },
+      "id": "q:evidence.claim_triage",
+      "kind": "named_query",
+      "name": "evidence.claim_triage",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "claim_id",
+        "disposition",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "disposition": {
+            "default": null,
+            "enum": [
+              "probe",
+              "docs_check",
+              "registry_check",
+              "not_checkable",
+              "duplicate",
+              "out_of_scope",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "claim_id",
+          "statement",
+          "claim_type",
+          "status",
+          "disposition",
+          "checkability",
+          "priority",
+          "rationale",
+          "probe",
+          "duplicate_of_claim_id",
+          "decided_by",
+          "review_state",
+          "decided_at",
+          "verdict"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select claim_id, statement, claim_type, status, disposition, checkability, priority, rationale, probe, duplicate_of_claim_id,\n       decided_by, review_state, decided_at, verdict\nfrom api.claim_triage\nwhere ($1::uuid is null or claim_id = $1)\n  and ($2::text is null or disposition = $2)\norder by priority desc nulls last, decided_at desc, claim_id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "why-claim-disputed-or-restated"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "What was decided about each claim candidate before checking it (probe, docs check, registry check, not checkable, duplicate)",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "claim_id": null,
+        "limit": 50,
+        "probe": null,
+        "verdict": "contradicted"
+      },
+      "id": "q:evidence.claim_verdicts",
+      "kind": "named_query",
+      "name": "evidence.claim_verdicts",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "claim_id",
+        "verdict",
+        "probe",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "claim_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "probe": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "verdict": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "claim_id",
+          "statement",
+          "claim_type",
+          "status",
+          "verdict",
+          "probe",
+          "review_state",
+          "decided_by",
+          "decided_at",
+          "stated_by",
+          "channel",
+          "stated_at",
+          "quote",
+          "cells",
+          "rationale"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select claim_id, statement, claim_type, status, verdict, probe, review_state, decided_by, decided_at, stated_by, channel, stated_at, quote, cells, rationale\nfrom api.claim_verdicts\nwhere ($1::uuid is null or claim_id = $1)\n  and ($2::text is null or verdict = $2)\n  and ($3::text is null or probe = $3)\norder by decided_at desc, claim_id\nlimit least(greatest(coalesce($4, 50), 1), 200)\n",
+      "tasks": [
+        "read-claim-with-evidence",
+        "what-is-verified-about-subject",
+        "why-claim-disputed-or-restated"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "The latest probe verdict of each judged claim, with who stated it, the review state and the per-cell summary",
       "volatile": false
     },
     {
@@ -2118,6 +2643,343 @@
     },
     {
       "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "probe": "P1-crea-deprecation"
+      },
+      "id": "q:evidence.probe_matrix",
+      "kind": "named_query",
+      "name": "evidence.probe_matrix",
+      "pagination": null,
+      "paramOrder": [
+        "probe"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "probe": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "probe"
+        ],
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "cell_label",
+          "cell",
+          "outcome",
+          "resolved",
+          "observations",
+          "started_at",
+          "run_id",
+          "locator_id"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.probe_matrix($1::text)",
+      "tasks": [
+        "read-claim-with-evidence"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "The latest run of one probe in each cell (a date or an explicit pin), with outcome, resolved versions and observations",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "as_of": null
+      },
+      "id": "q:evidence.probe_revalidation_due",
+      "kind": "named_query",
+      "name": "evidence.probe_revalidation_due",
+      "pagination": null,
+      "paramOrder": [
+        "as_of"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "default": null,
+            "format": "date-time",
+            "pgType": "timestamptz",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "probe_id",
+          "probe",
+          "cell_label",
+          "last_run_at",
+          "library",
+          "resolved_version",
+          "newest_version",
+          "newest_released_at",
+          "reason"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.probe_revalidation_due(coalesce($1::timestamptz, now()))",
+      "tasks": [
+        "what-is-due",
+        "what-a-release-affects"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "as_of"
+      },
+      "title": "Probes whose latest cell ran against an older version of a subject library than its newest catalogued release",
+      "volatile": true
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "text": "langgraph"
+      },
+      "id": "q:evidence.probes",
+      "kind": "named_query",
+      "name": "evidence.probes",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "probe_id",
+          "slug",
+          "title",
+          "kind",
+          "hypothesis",
+          "model_policy",
+          "subjects",
+          "claims",
+          "runs",
+          "last_run_at",
+          "verdicts"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select probe_id, slug, title, kind, hypothesis, model_policy, subjects, claims, runs, last_run_at, verdicts\nfrom api.probes\nwhere ($1::text is null or slug ilike '%' || $1 || '%' or title ilike '%' || $1 || '%'\n       or exists (select 1 from unnest(subjects) s where s ilike '%' || $1 || '%'))\norder by last_run_at desc nulls last, slug\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "read-claim-with-evidence",
+        "what-is-verified-about-subject"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Probes (experiments that test stated claims), their subjects, claim and run counts and verdicts",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "source-intelligence",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "source": null,
+        "topic": "LangChain"
+      },
+      "id": "q:evidence.source_registry",
+      "kind": "named_query",
+      "name": "evidence.source_registry",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "source",
+        "topic",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "source": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "topic": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "source_entity_id",
+          "source_kind",
+          "source",
+          "platform",
+          "url",
+          "topic",
+          "as_of",
+          "source_role_code",
+          "conflict_of_interest",
+          "method_disclosure",
+          "claims_observed",
+          "claims_checked",
+          "confirmed",
+          "qualified",
+          "refuted",
+          "self_checked",
+          "median_lead_days",
+          "noise_ratio",
+          "authority_score",
+          "recommended_watch_level",
+          "current_watch_level",
+          "rationale"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select source_entity_id, source_kind, source, platform, url, topic, as_of, source_role_code, conflict_of_interest, method_disclosure,\n       claims_observed, claims_checked, confirmed, qualified, refuted, self_checked, median_lead_days, noise_ratio, authority_score,\n       recommended_watch_level, current_watch_level, rationale\nfrom api.source_registry\nwhere ($1::text is null or source ilike '%' || $1 || '%')\n  and ($2::text is null or topic ilike '%' || $2 || '%')\norder by authority_score desc nulls last, claims_checked desc nulls last, source\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "how-trusted-is-source"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Latest assessment of each source on each topic (role, conflict of interest, checked claims, score, watch suggestion)",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "source-intelligence",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "source": "langchain",
+        "source_entity_id": null
+      },
+      "id": "q:evidence.source_track_record",
+      "kind": "named_query",
+      "name": "evidence.source_track_record",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "source_entity_id",
+        "source",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "source": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_entity_id": {
+            "default": null,
+            "format": "uuid",
+            "pgType": "uuid",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "source_entity_id",
+          "source",
+          "source_kind",
+          "claim_id",
+          "statement",
+          "status",
+          "stated_at",
+          "first_party_at",
+          "verdict",
+          "probe"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select source_entity_id, source, source_kind, claim_id, statement, status, stated_at, first_party_at, verdict, probe\nfrom api.source_track_record\nwhere ($1::uuid is null or source_entity_id = $1)\n  and ($2::text is null or source ilike '%' || $2 || '%')\norder by stated_at desc nulls last, claim_id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+      "tasks": [
+        "how-trusted-is-source"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Every claim a source stated, with its latest verdict (the rows behind the counts of an assessment)",
+      "volatile": false
+    },
+    {
+      "cost_class": "cheap",
       "domain": "evidence",
       "embedding": null,
       "example": {
@@ -2167,6 +3029,71 @@
         "world_time": "n/a"
       },
       "title": "Sources filtered by registrable domain",
+      "volatile": false
+    },
+    {
+      "cost_class": "medium",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {
+        "limit": 50,
+        "text": "LangGraph"
+      },
+      "id": "q:evidence.verified_claims",
+      "kind": "named_query",
+      "name": "evidence.verified_claims",
+      "pagination": {
+        "kind": "limit",
+        "limitParam": "limit"
+      },
+      "paramOrder": [
+        "text",
+        "limit"
+      ],
+      "params": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 50,
+            "maximum": 200,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "text": {
+            "default": null,
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "claim_id",
+          "statement",
+          "claim_type",
+          "subjects",
+          "verified_at",
+          "executor_version",
+          "use_decision_id",
+          "receipt_id",
+          "verdicts"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select v.claim_id, v.statement, v.claim_type, c.subjects, v.verified_at, v.executor_version, v.use_decision_id, v.receipt_id, v.verdicts\nfrom api.verified_claims v\nleft join api.claim_candidates c on c.claim_id = v.claim_id\nwhere ($1::text is null or v.statement ilike '%' || $1 || '%' or exists (select 1 from unnest(c.subjects) s where s ilike '%' || $1 || '%'))\norder by v.verified_at desc, v.claim_id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+      "tasks": [
+        "what-is-verified-about-subject",
+        "read-claim-with-evidence"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "n/a"
+      },
+      "title": "Claims verified through a Knowledge Services admission, by subject or wording, with the verdicts behind them",
       "volatile": false
     },
     {
@@ -2753,6 +3680,49 @@
       },
       "title": "Our head revisions that bind or require the software a release belongs to and were authored before it",
       "volatile": false
+    },
+    {
+      "cost_class": "cheap",
+      "domain": "verified-knowledge",
+      "embedding": null,
+      "example": {},
+      "id": "q:ours.releases_needing_review",
+      "kind": "named_query",
+      "name": "ours.releases_needing_review",
+      "pagination": null,
+      "paramOrder": [],
+      "params": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      },
+      "result": {
+        "columns": [
+          "release_id",
+          "release_no",
+          "root_work_id",
+          "released_at",
+          "claim_id",
+          "statement",
+          "verdict_at_release",
+          "verdict_now",
+          "status_now",
+          "decided_at"
+        ],
+        "shape": "rows"
+      },
+      "role": "app_reader",
+      "sql": "select * from api.releases_needing_review()",
+      "tasks": [
+        "what-is-due",
+        "what-a-release-affects"
+      ],
+      "temporal": {
+        "knowledge": "head",
+        "world_time": "now()"
+      },
+      "title": "Our releases whose bound claims got a different probe verdict after the release was frozen",
+      "volatile": true
     },
     {
       "cost_class": "medium",
@@ -3692,7 +4662,7 @@
       "volatile": false
     }
   ],
-  "migrationHead": "20261115130200",
+  "migrationHead": "20261116120000",
   "schemaVersion": "knowledge-query-catalog.v1",
-  "workspaceFingerprint": "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+  "workspaceFingerprint": "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 }

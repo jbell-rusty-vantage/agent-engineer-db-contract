@@ -13,7 +13,7 @@ raises: [guarded publication digest changed, publication must exist and be appro
 touches: { reads: [retrieval.content_promotion_decision], writes: [retrieval.publication_switch_receipt, retrieval.space_publication, retrieval.vector_space_version, retrieval.vector_store_space] }
 tokens: [retrieval, publish_vector_space, retrieval.publish_vector_space]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # retrieval.publish_vector_space
 

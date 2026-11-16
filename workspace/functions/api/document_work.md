@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.document_work(uuid)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [catalog.work, content.document, content.document_about_entity], writes: [] }
 tokens: [api, document_work, api.document_work]
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.document_work
 
@@ -27,7 +27,7 @@ function, stable, security definer, language sql, config `search_path=""`.
 | --- | --- | --- | --- |
 | `p_document` | `uuid` | — | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`catalog.work`](../../relations/catalog/work.md), [`content.document`](../../relations/content/document.md), [`content.document_about_entity`](../../relations/content/document_about_entity.md); writes —; calls —.
 

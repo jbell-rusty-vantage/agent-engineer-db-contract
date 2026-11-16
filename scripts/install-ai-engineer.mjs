@@ -7,7 +7,8 @@
 //   3. domain-migrations  this repository's supabase/migrations via `supabase migration up --local --workdir`
 //   4. custody-grants     verify (never re-issue) the binding pin row, capability-role grants, forced RLS on custody
 //                         and on the research admission/projection tables,
-//                         and that the withdrawn legacy verification objects are absent
+//                         that the withdrawn legacy verification objects are absent, and that the api surface is
+//                         closed (no api routine executable, no api relation readable, by PUBLIC or anon: API_SURFACE_OPEN)
 //   5. seal-key           (OVE-169 W1 D25) pin the PUBLIC half of the KS executor's run-seal key in
 //                         knowledge_verification.seal_signing_key via the KS CLI `knowledge-db seal-key` (derived from the
 //                         private PEM path, never printed); current on repeat, refuses another key for the id, optionally
@@ -340,7 +341,19 @@ async function custodyGrants(context) {
       if ((await c.query("select to_regclass($1) is not null as present", [name])).rows[0].present) survivors.push(name);
     }
     if (survivors.length) throw new Refused("LEGACY_VERIFICATION_PRESENT", survivors.join(","));
-    return { status: "verified", details: { pin: { version: pin.component_version, keys: pin.migration_keys }, grants: EXPECTED_GRANTS.length, custodyRlsForced: true, researchRlsForced: 4, withdrawnAbsent: WITHDRAWN.length } };
+    // The api surface is closed by default (20261116120000_build08_api_default_closed): PostgreSQL grants EXECUTE on a new
+    // function to PUBLIC, so a later migration that creates an api function and forgets to revoke it is refused here.
+    const open = (await c.query(`select p.oid::regprocedure::text as name from pg_proc p
+      where p.pronamespace = to_regnamespace('api') and (has_function_privilege('anon', p.oid, 'execute')
+        or exists (select 1 from aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) a where a.grantee = 0))
+      union all
+      select c.oid::regclass::text from pg_class c
+      where c.relnamespace = to_regnamespace('api') and c.relkind in ('r','v','m','p') and (has_table_privilege('anon', c.oid, 'select')
+        or exists (select 1 from aclexplode(coalesce(c.relacl, acldefault('r', c.relowner))) a where a.grantee = 0))
+      order by 1`)).rows.map((r) => r.name);
+    if (open.length) throw new Refused("API_SURFACE_OPEN", `executable or readable by PUBLIC or anon: ${open.slice(0, 20).join(", ")}${open.length > 20 ? `, and ${open.length - 20} more` : ""}`);
+    const apiRoutines = Number((await c.query("select count(*) as n from pg_proc where pronamespace = to_regnamespace('api')")).rows[0].n);
+    return { status: "verified", details: { pin: { version: pin.component_version, keys: pin.migration_keys }, grants: EXPECTED_GRANTS.length, custodyRlsForced: true, researchRlsForced: 4, withdrawnAbsent: WITHDRAWN.length, apiSurfaceClosed: { routines: apiRoutines, openToPublicOrAnon: 0 } } };
   });
 }
 

@@ -3,7 +3,7 @@ id: "rel:api.claim_conflicts"
 kind: view
 schema: api
 name: claim_conflicts
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, claim_conflicts, api.claim_conflicts, conflict_id, conflict_kind, detected_by, detected_at, first_party_claim_id, first_party_statement, first_party_status, other_claim_id, other_statement, other_status, other_source_role, other_provenance, reconciliation]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"claim_conflicts\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120500_build08_r2_fixups5.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.claim_conflicts
 
-view in domain `api-surface`, lens `corpus` — Kept disagreements between a first-party claim and another statement (value, scope or subject ambiguity); never averaged away, reconciled only by an explicit decision..
+view in domain `verified-knowledge`, lens `corpus` — Kept disagreements between a first-party claim and another statement (value, scope or subject ambiguity); never averaged away, reconciled only by an explicit decision..
 
 ## Columns
 
@@ -65,6 +65,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim_conflicts`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

@@ -5,8 +5,8 @@ select plan(1);
 set local app.tenant_id='00000000-0000-7000-8000-000000000001';
 do $$ declare i uuid;r uuid;e uuid;
 begin
- if(select count(*) from pg_inherits where inhparent='retrieval.vector_item_embedding_1536'::regclass)<>11 then raise exception 'expected eleven vector partitions';end if;
- if(select count(*) from pg_index idx join pg_class c on c.oid=idx.indexrelid join pg_am am on am.oid=c.relam where am.amname='hnsw' and idx.indrelid in(select inhrelid from pg_inherits where inhparent='retrieval.vector_item_embedding_1536'::regclass))<>11 then raise exception 'expected eleven HNSW indexes';end if;
+ if(select count(*) from pg_inherits where inhparent='retrieval.vector_item_embedding_1536'::regclass)<>18 then raise exception 'expected eighteen vector partitions';end if;
+ if(select count(*) from pg_index idx join pg_class c on c.oid=idx.indexrelid join pg_am am on am.oid=c.relam where am.amname='hnsw' and idx.indrelid in(select inhrelid from pg_inherits where inhparent='retrieval.vector_item_embedding_1536'::regclass))<>18 then raise exception 'expected eighteen HNSW indexes';end if;
  begin
   perform temporal.begin_batch();
   set constraints all immediate;
@@ -18,8 +18,9 @@ begin
  if temporal.payload_valid('{"name":2}','{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}') then raise exception 'JSON schema validation failed';end if;
  insert into orchestration.operation_intent(intent_type,payload,idempotency_key) values('upsert_entity','{}','km-invariants-'||util.uuidv7()) returning id into i;
  insert into orchestration.operation_receipt(intent_id,executor_version,outcome) values(i,'test','applied') returning id into r;
+ set constraints all immediate;
  begin
-  insert into corpus.entity(tenant_id,kind,display_name,slug,created_by_receipt_id) values('11111111-1111-7111-8111-111111111111','person','Bad tenant','bad-tenant',r);
+  insert into catalog.entity(tenant_id,kind,display_name,slug,created_by_receipt_id) values('11111111-1111-7111-8111-111111111111','person','Bad tenant','bad-tenant',r);
   raise exception 'cross-tenant receipt accepted';
  exception when raise_exception then if sqlerrm='cross-tenant receipt accepted' then raise;end if;end;
 end $$;

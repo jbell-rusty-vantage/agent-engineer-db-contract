@@ -806,3 +806,103 @@ domains:
       `provenance` and `research_private` schemas. What remains in `public` is two trigger
       helpers (`public.set_updated_at`, `public.reject_immutable_row_change`) used by older
       tables. Nothing here is a navigation target; it is listed so INDEX.md stays complete.
+
+  - slug: verified-knowledge
+    title: Verified knowledge (claims, probes, verdicts)
+    lens: evidence
+    provenance: model_assisted
+    reviewed: null
+    aliases: [verified claims, claim candidates, verdicts, probes, probe runs, probe matrix, conflicts, restatements, claim triage, disputed claims, what is verified]
+    schemas: []
+    relations: [api.verified_claims, api.claim_candidates, api.claim_verdicts, api.claim_conflicts, api.claim_restatements, api.claim_triage, api.claim_surfaces, api.community_claims, api.probes, verification.probe, verification.probe_claim, verification.probe_run, verification.probe_verdict, verification.claim_triage, evidence.claim_conflict]
+    functions: [api.probe_matrix, api.probe_revalidation_due, api.releases_needing_review, api.library_dossier, api.interview_outputs]
+    tasks: [what-is-verified-about-subject, read-claim-with-evidence, why-claim-disputed-or-restated, what-is-due, what-a-release-affects]
+    queries: [evidence.verified_claims, evidence.claim, evidence.claim_verdicts, evidence.claim_conflicts, evidence.claim_restatements, evidence.claim_triage, evidence.probes, evidence.probe_matrix, evidence.probe_revalidation_due, ours.releases_needing_review]
+    summary: A claim is a candidate until a probe judges it and a Knowledge Services admission verifies it; conflicts and restatements are kept beside it.
+    body: |
+      Read through the `api` views; the tables behind them are not readable by app_reader or a
+      signed-in session.
+
+      **A claim's life.** Every statement read from a source is a row of `evidence.claim`, shown
+      by `api.claim_candidates` with its `path` (how it entered), `status` (`proposed`,
+      `verified`, `disputed`), subjects and the document it was read from. Candidates are never
+      facts. `verification.claim_triage` (`api.claim_triage`) records what to do with a candidate
+      before anyone checks it: probe it, check the docs or a registry, or leave it (not
+      checkable, duplicate, out of scope).
+
+      **Probes and verdicts.** A `verification.probe` is an experiment that tests stated claims
+      against a matrix of cells; a cell is a date (what an install resolved that day) or an
+      explicit pin. Each execution is a `verification.probe_run`; `api.probe_matrix` returns the
+      latest run per cell with the versions it resolved and what it observed. What the runs say
+      about one claim is a `verification.probe_verdict`: `directly_supported`,
+      `supported_with_qualification`, `contradicted`, `not_supported` or `unverifiable`, proposed
+      by an agent and confirmed or rejected by a person (`review_state`). `api.claim_verdicts`
+      has the latest verdict per claim; `api.probes` lists probes with their verdicts.
+
+      **Verified.** A supportive verdict does not verify a claim. `api.verified_claims` holds the
+      claims that reached `verified` under a receipt bound to an admitted Knowledge Services use
+      decision (`use_decision_id`, `receipt_id`, the bound `effect`), with their current verdicts.
+      Only these are verified knowledge (source tier 0 in search). A deterministic probe that
+      contradicts a claim moves it to `disputed`.
+
+      **Kept beside the claim.** `evidence.claim_conflict` (`api.claim_conflicts`) keeps a
+      disagreement between a first-party claim and another statement until someone reconciles
+      it. `api.claim_restatements` pairs a restated claim with the attribution-framed original
+      it was atomized from; the original stays `proposed`. `api.claim_surfaces` (talk claims and
+      the docs they concern) and `api.community_claims` (issue trackers, forums, comparison
+      articles) are candidate views by channel.
+
+      **What goes stale.** `api.probe_revalidation_due` lists probes whose latest cell ran on an
+      older version than the newest catalogued release; `api.releases_needing_review` lists our
+      frozen releases whose bound claims changed verdict since (a signed-in user sees those of
+      their workspaces). `api.library_dossier` assembles releases, claims, probes and ranked
+      sources for one library in one call.
+
+      Start with `q:evidence.verified_claims`; one claim in depth is `q:evidence.claim`,
+      `q:evidence.claim_verdicts` and `q:evidence.probe_matrix`. Sources and watch policies are
+      the source-intelligence domain. Writing a verdict or an admission is the pipeline's work
+      (verifier_agent, executor_service), not a read role's.
+
+  - slug: source-intelligence
+    title: Source intelligence and attention (registry, track record, watch policies)
+    lens: evidence
+    provenance: model_assisted
+    reviewed: null
+    aliases: [source registry, source assessment, track record, source trust, authority score, attention policy, watch level, sweep, due list, what to watch]
+    schemas: []
+    relations: [api.source_registry, api.source_track_record, api.attention_policies, evidence.source_assessment, acquisition.attention_policy, acquisition.attention_sweep]
+    functions: [api.attention_due]
+    tasks: [how-trusted-is-source, what-is-due]
+    queries: [evidence.source_registry, evidence.source_track_record, acquisition.attention_policies, acquisition.attention_due]
+    summary: What we know about each source on each topic, from the claims it stated and how they checked out; and what we watch, how often, on what budget.
+    body: |
+      **Source registry.** `evidence.source_assessment` records what we know about a source (a
+      channel, an actor, an organization, a person) on a topic at a time, as components and never
+      a bare score: the role prior (`source_role_code`), `conflict_of_interest`,
+      `method_disclosure`, the track record from verdicts (`claims_observed`, `claims_checked`,
+      `confirmed`, `qualified`, `refuted`), `median_lead_days` against the first-party docs and
+      the sweep `noise_ratio`. Rows are append-only; `api.source_registry` shows the latest per
+      source and topic with the derived `authority_score` and a recommended watch level, which is
+      suggested only from five checked claims. Claims a source checked about itself are counted
+      in `self_checked` and not scored.
+
+      **Track record.** `api.source_track_record` is every claim a source stated with its latest
+      verdict: the rows behind an assessment's counts. A claim and its verdict are read in the
+      verified-knowledge domain (`q:evidence.claim`, `q:evidence.claim_verdicts`).
+
+      **Attention.** `acquisition.attention_policy` says what we watch, how often (`cadence`,
+      `triggers`), how deep (`depth`, `selection`) and on what budget. Watch levels: W0 ignore
+      (registered, never swept), W1 reference, W2 sampled, W3 release-coupled. One execution of a
+      policy is an `acquisition.attention_sweep` (window, items seen, selected and captured,
+      spend); every fetch it makes carries the sweep. `api.attention_policies` shows each policy
+      with its last sweep and totals.
+
+      **Due.** `api.attention_due` is the contract a watch mission calls: the policies due at a
+      time because a trigger event happened inside its window since the last sweep, or because
+      the cadence elapsed. W0 and paused policies are never due. The other due lists
+      (`api.probe_revalidation_due`, `api.releases_needing_review`) are in the verified-knowledge
+      domain; `tasks/what-is-due.md` reads all three.
+
+      Start with `q:evidence.source_registry` for trust and `q:acquisition.attention_due` for
+      work. Assessments and policies are written by the pipeline and by a design interview, not
+      by a read role.

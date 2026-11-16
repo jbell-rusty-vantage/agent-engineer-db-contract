@@ -73,7 +73,7 @@ begin
   insert into orchestration.attempt(id,tenant_id,work_item_id,attempt_no,agent_deployment_id)
     values(producer,tenant,work_item,1,'retrieval-history-probe');
   receipt_seed := pg_temp.probe_receipt(tenant,mission,producer);
-  insert into corpus.entity(id,tenant_id,kind,display_name,slug,created_by_receipt_id)
+  insert into catalog.entity(id,tenant_id,kind,display_name,slug,created_by_receipt_id)
     values(product,tenant,'product','Synthetic preview product','synthetic-preview-product-'||replace(tenant::text,'-',''),receipt_seed);
   insert into evidence.claim(id,tenant_id,claim_type,statement,status,producer_attempt_id) values
     (claim_announce,tenant,'capability','The product was announced.','proposed',producer),

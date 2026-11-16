@@ -3,7 +3,7 @@ id: "rel:verification.probe_claim"
 kind: table
 schema: verification
 name: probe_claim
-domain: evidence
+domain: verified-knowledge
 lens: evidence
 aliases: []
 tokens: [verification, probe_claim, verification.probe_claim, tenant_id, probe_id, claim_id, expectation]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe_claim\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # verification.probe_claim
 
-table in domain `evidence`, lens `evidence`.
+table in domain `verified-knowledge`, lens `evidence`.
 
 ## Columns
 
@@ -57,6 +57,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.probes`.
 - Exposed through: [`api.probes`](../api/probes.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

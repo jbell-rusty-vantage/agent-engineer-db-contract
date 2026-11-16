@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # evidence.source
 
@@ -88,7 +88,7 @@ Enabled; 1 policies in [details](source.details.md).
 
 ## Read paths
 
-- Named queries: `q:entity.card`, `q:evidence.sources_by_domain`, `q:facts.locators`.
+- Named queries: `q:entity.card`, `q:evidence.claim_verdicts`, `q:evidence.source_registry`, `q:evidence.sources_by_domain`, `q:facts.locators`.
 - Exposed through: [`api.claim_surfaces`](../api/claim_surfaces.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.community_claims`](../api/community_claims.md), [`api.source_registry`](../api/source_registry.md), [`api.symbol_docs`](../api/symbol_docs.md).
 - Direct SELECT: `executor_service`, `pipeline_agent`, `verifier_agent`.
 

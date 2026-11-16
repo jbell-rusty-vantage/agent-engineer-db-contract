@@ -13,7 +13,7 @@ raises: [locator tenant mismatch, no open knowledge batch]
 touches: { reads: [evidence.locator], writes: [temporal.extent] }
 tokens: [temporal, make_extent, temporal.make_extent]
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # temporal.make_extent
 

@@ -3,21 +3,21 @@ id: "sch:api"
 kind: schema
 name: api
 lens: corpus
-domains: [api-surface, authoring, guidance]
+domains: [api-surface, authoring, guidance, source-intelligence, verified-knowledge]
 relations: 51
 functions: 59
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api
 
-Views and functions only. The sole surface exposed to apps and agents. Lens `corpus`. Domains: [`api-surface`](../../domains/api-surface.md), [`authoring`](../../domains/authoring.md), [`guidance`](../../domains/guidance.md).
+Views and functions only. The sole surface exposed to apps and agents. Lens `corpus`. Domains: [`api-surface`](../../domains/api-surface.md), [`authoring`](../../domains/authoring.md), [`guidance`](../../domains/guidance.md), [`source-intelligence`](../../domains/source-intelligence.md), [`verified-knowledge`](../../domains/verified-knowledge.md).
 
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
 | [`advisories`](../../relations/api/advisories.md) | view | unknown | L1: security advisories with the affected software, vulnerable range and first patched ve… | — |
 | [`agent_skills`](../../relations/api/agent_skills.md) | view | unknown | — | — |
 | [`api_symbols`](../../relations/api/api_symbols.md) | view | unknown | L1: public API symbols per repository release (R3). When a release surface was parsed mor… | — |
-| [`attention_policies`](../../relations/api/attention_policies.md) | view | unknown | — | — |
+| [`attention_policies`](../../relations/api/attention_policies.md) | view | unknown | Attention policies (what we watch, watch level W0 to W3, cadence, triggers, budget) with … | — |
 | [`benchmark_scores`](../../relations/api/benchmark_scores.md) | view | unknown | L1: current conditioned benchmark scores: subject, benchmark version and parent benchmark… | — |
 | [`benchmarks`](../../relations/api/benchmarks.md) | view | unknown | L1: benchmarks with their versions, organizer, metric/score type and how many conditioned… | — |
 | [`bundle_files`](../../relations/api/bundle_files.md) | view | unknown | L1: the C1 file manifest of a capability bundle at a pinned commit (path, size, mode, exe… | — |
@@ -52,7 +52,7 @@ Views and functions only. The sole surface exposed to apps and agents. Lens `cor
 | [`organizations`](../../relations/api/organizations.md) | view | unknown | L1: organizations with kind, site, country, founding date and counts of what they develop… | — |
 | [`papers`](../../relations/api/papers.md) | view | unknown | L1: papers with authors, code, citing talks/papers, cited papers and the ingestion level … | — |
 | [`people`](../../relations/api/people.md) | view | unknown | L1: people with current affiliations (employed_by, as of now) and how many talks/works th… | — |
-| [`probes`](../../relations/api/probes.md) | view | unknown | — | — |
+| [`probes`](../../relations/api/probes.md) | view | unknown | Probes (experiments that test stated claims) with their subjects, the number of claims an… | — |
 | [`protocol_versions`](../../relations/api/protocol_versions.md) | view | unknown | L1: protocol revisions (MCP) with status, changelog, highlights and the software releases… | — |
 | [`registry_listings`](../../relations/api/registry_listings.md) | view | unknown | L1: servers listed in a registry with transports, namespace-inferred first-party flag and… | — |
 | [`repositories`](../../relations/api/repositories.md) | view | unknown | — | — |

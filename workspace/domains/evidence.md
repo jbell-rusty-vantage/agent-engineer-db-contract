@@ -6,11 +6,11 @@ schemas: [evidence, verification]
 aliases: [claims, captures, locators, verification, admission, where was it read]
 relations: [evidence.source, evidence.source_capture, evidence.locator, evidence.claim, evidence.claim_subject, evidence.segment_support, evidence.extraction_record, evidence.extraction_run, evidence.source_query, evidence.provider_result, evidence.source_encounter, evidence.capture_method, evidence.search_provider, verification.use_admission]
 functions: [api.fact_locators, temporal.admit_support, temporal.withdraw_support, verification.assert_admitted_use, verification.require_receipt_admission]
-tasks: [admit-support-for-claim, build-evidence-packet, compose-ingestion-intent, find-stale-facts, price-with-locator, what-do-we-know-about-entity]
+tasks: [admit-support-for-claim, build-evidence-packet, compose-ingestion-intent, find-stale-facts, how-trusted-is-source, price-with-locator, read-claim-with-evidence, what-do-we-know-about-entity, what-is-verified-about-subject, why-claim-disputed-or-restated]
 summary: Source to capture to locator to claim; facts attach through segment_support; verified use is admitted in verification.use_admission.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # Source, evidence and admission
 
@@ -75,6 +75,6 @@ Source to capture to locator to claim; facts attach through segment_support; ver
 
 ## Tasks
 
-[`admit-support-for-claim`](../tasks/admit-support-for-claim.md), [`build-evidence-packet`](../tasks/build-evidence-packet.md), [`compose-ingestion-intent`](../tasks/compose-ingestion-intent.md), [`find-stale-facts`](../tasks/find-stale-facts.md), [`price-with-locator`](../tasks/price-with-locator.md), [`what-do-we-know-about-entity`](../tasks/what-do-we-know-about-entity.md)
+[`admit-support-for-claim`](../tasks/admit-support-for-claim.md), [`build-evidence-packet`](../tasks/build-evidence-packet.md), [`compose-ingestion-intent`](../tasks/compose-ingestion-intent.md), [`find-stale-facts`](../tasks/find-stale-facts.md), [`how-trusted-is-source`](../tasks/how-trusted-is-source.md), [`price-with-locator`](../tasks/price-with-locator.md), [`read-claim-with-evidence`](../tasks/read-claim-with-evidence.md), [`what-do-we-know-about-entity`](../tasks/what-do-we-know-about-entity.md), [`what-is-verified-about-subject`](../tasks/what-is-verified-about-subject.md), [`why-claim-disputed-or-restated`](../tasks/why-claim-disputed-or-restated.md)
 
 Schemas: [`evidence`](../schemas/evidence/README.md), [`verification`](../schemas/verification/README.md).

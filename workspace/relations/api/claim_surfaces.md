@@ -3,7 +3,7 @@ id: "rel:api.claim_surfaces"
 kind: view
 schema: api
 name: claim_surfaces
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, claim_surfaces, api.claim_surfaces, claim_id, claim_type, statement, status, path, assertion_mode, speakers, quote, start_ms, deep_link, talk_id, talk, consistency, consistency_note, compared_by, subjects, surfaces, conflicts]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"claim_surfaces\"][\"Row\"]"
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.claim_surfaces
 
-view in domain `api-surface`, lens `corpus` — Claim candidates from talks (speaker, timecode, exact quote; always proposed, never adjudicated) with the library surfaces they concern (evidence links of role context) and the recorded reading: appears_consistent | appears_inconsistent | not_addressed | not_compared..
+view in domain `verified-knowledge`, lens `corpus` — Claim candidates from talks (speaker, timecode, exact quote; always proposed, never adjudicated) with the library surfaces they concern (evidence links of role context) and the recorded reading: appears_consistent | appears_inconsistent | not_addressed | not_compared..
 
 ## Columns
 

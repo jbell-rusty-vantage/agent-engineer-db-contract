@@ -15,7 +15,9 @@
       "ranking",
       "staging",
       "api-surface",
-      "inquiry"
+      "inquiry",
+      "verified-knowledge",
+      "source-intelligence"
     ],
     "relations": [
       "authoring.work",
@@ -69,7 +71,13 @@
     "build-evidence-packet",
     "run-hybrid-search",
     "check-knowledge-head",
-    "what-changed-since-head"
+    "what-changed-since-head",
+    "what-is-verified-about-subject",
+    "read-claim-with-evidence",
+    "why-claim-disputed-or-restated",
+    "how-trusted-is-source",
+    "what-is-due",
+    "what-a-release-affects"
   ],
   "queries": [
     "catalog.*",
@@ -86,7 +94,8 @@
     "evidence.*",
     "acquisition.*",
     "ranking.*",
-    "staging.*"
+    "staging.*",
+    "ours.releases_needing_review"
   ],
   "operations": [
     "propose_research",

@@ -13,7 +13,7 @@ raises: ["revision % committed without a seal"]
 touches: { reads: [authoring.work_revision], writes: [] }
 tokens: [product, check_revision_sealed, product.check_revision_sealed]
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # product.check_revision_sealed
 

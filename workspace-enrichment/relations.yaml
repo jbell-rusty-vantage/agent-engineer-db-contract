@@ -1218,3 +1218,26 @@ relations:
         note: revision_id and revision_created_at come from this table.
     provenance: model_assisted
     reviewed: null
+
+  # ---------------------------------------------------------------- verified knowledge and source intelligence (views without a catalog comment)
+  - relation: api.probes
+    aliases: [probes, experiments, probe list, probe verdicts]
+    summary: "Probes (experiments that test stated claims) with their subjects, the number of claims and runs, the last run and the verdict each gave."
+    examples:
+      - title: Probes whose subject is LangGraph
+        query: evidence.probes
+        params: { text: langgraph, limit: 20 }
+        note: One row per probe; the per-cell runs of one probe are `q:evidence.probe_matrix`.
+    provenance: model_assisted
+    reviewed: null
+
+  - relation: api.attention_policies
+    aliases: [attention policies, watch policies, watch levels, sweep history]
+    summary: "Attention policies (what we watch, watch level W0 to W3, cadence, triggers, budget) with their last sweep and sweep totals."
+    examples:
+      - title: Every policy with its last sweep
+        query: acquisition.attention_policies
+        params: { watch_level: null, state: null, limit: 50 }
+        note: Which of them are due now is `q:acquisition.attention_due`.
+    provenance: model_assisted
+    reviewed: null

@@ -8,14 +8,14 @@ const ROUTER = [
   {
     level: "L1 catalog",
     question: "filter, compare, rank a kind of thing (no embeddings)",
-    relations: ["api.models", "api.model_offerings", "api.software", "api.software_releases", "api.talks", "api.people", "api.organizations", "api.events", "api.concepts", "api.papers", "api.benchmark_scores", "api.works_authored", "api.guidance_items"],
+    relations: ["api.models", "api.model_offerings", "api.software", "api.software_releases", "api.talks", "api.people", "api.organizations", "api.events", "api.concepts", "api.papers", "api.benchmark_scores", "api.works_authored", "api.guidance_items", "api.verified_claims", "api.claim_verdicts", "api.probes", "api.source_registry"],
     functions: [],
   },
   {
     level: "L2 facts and time",
-    question: "true when, changed since, where a number was read",
+    question: "true when, changed since, what is due, where a number was read",
     relations: [],
-    functions: ["api.changes_since", "api.price_history", "api.fact_locators", "api.entity_at", "api.what_changed", "api.modules_affected_by_release"],
+    functions: ["api.changes_since", "api.price_history", "api.fact_locators", "api.entity_at", "api.what_changed", "api.modules_affected_by_release", "api.attention_due", "api.probe_revalidation_due", "api.releases_needing_review"],
   },
   {
     level: "L3 scoped semantic",

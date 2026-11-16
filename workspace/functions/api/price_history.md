@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.price_history(uuid,text)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [temporal.knowledge_batch, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, price_history, api.price_history]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.price_history
 
@@ -28,7 +28,7 @@ function, stable, security definer, language sql, config `search_path=""`. L2: e
 | `p_offering` | `uuid` | — | — |
 | `p_meter` | `text` | `'input_tokens'::text` | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`temporal.knowledge_batch`](../../relations/temporal/knowledge_batch.md), [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
 

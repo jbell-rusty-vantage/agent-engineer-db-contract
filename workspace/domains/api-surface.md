@@ -6,11 +6,11 @@ schemas: [api, util]
 aliases: [rpc, views, app_reader, L1, catalog views, models table]
 relations: [api.models, api.model_offerings, api.software, api.software_releases, api.talks, api.people, api.organizations, api.events, api.concepts, api.papers, api.benchmark_scores, api.works_authored, api.guidance_items, api.libraries, api.repositories, api.mcp_servers, api.agent_skills, api.entities, api.current_facts, api.current_relationships, api.events_current]
 functions: [api.changes_since, api.document_digest, api.document_units, api.entity_at, api.entity_card, api.entity_timeline, api.evidence_packet, api.fact_locators, api.knowledge_head, api.leaderboard, api.model_offerings_at, api.models_at, api.modules_affected_by_release, api.price_history, api.product_command, api.product_read, api.product_scope, api.product_worker, api.relationships, api.resolve_entity, api.search_knowledge, api.search_unified, api.summary_evidence, api.talk_segments, api.what_changed, util.current_tenant_id]
-tasks: [cheapest-qualified-model, check-knowledge-head, compare-models, modules-affected-by-release, modules-covering-concept, price-with-locator, release-history, talk-passage-at-timecode, talk-to-repo-to-paper, talks-on-topic, what-changed-since, what-do-we-know-about-entity]
+tasks: [cheapest-qualified-model, check-knowledge-head, compare-models, modules-affected-by-release, modules-covering-concept, price-with-locator, release-history, talk-passage-at-timecode, talk-to-repo-to-paper, talks-on-topic, what-a-release-affects, what-changed-since, what-do-we-know-about-entity]
 summary: The only surface apps and agents see; invoker views and definer RPCs organised as the L1–L3 knowledge continuum.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # API surface (L1 views, L2 and L3 functions)
 
@@ -92,6 +92,6 @@ The only surface apps and agents see; invoker views and definer RPCs organised a
 
 ## Tasks
 
-[`cheapest-qualified-model`](../tasks/cheapest-qualified-model.md), [`check-knowledge-head`](../tasks/check-knowledge-head.md), [`compare-models`](../tasks/compare-models.md), [`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md), [`price-with-locator`](../tasks/price-with-locator.md), [`release-history`](../tasks/release-history.md), [`talk-passage-at-timecode`](../tasks/talk-passage-at-timecode.md), [`talk-to-repo-to-paper`](../tasks/talk-to-repo-to-paper.md), [`talks-on-topic`](../tasks/talks-on-topic.md), [`what-changed-since`](../tasks/what-changed-since.md), [`what-do-we-know-about-entity`](../tasks/what-do-we-know-about-entity.md)
+[`cheapest-qualified-model`](../tasks/cheapest-qualified-model.md), [`check-knowledge-head`](../tasks/check-knowledge-head.md), [`compare-models`](../tasks/compare-models.md), [`modules-affected-by-release`](../tasks/modules-affected-by-release.md), [`modules-covering-concept`](../tasks/modules-covering-concept.md), [`price-with-locator`](../tasks/price-with-locator.md), [`release-history`](../tasks/release-history.md), [`talk-passage-at-timecode`](../tasks/talk-passage-at-timecode.md), [`talk-to-repo-to-paper`](../tasks/talk-to-repo-to-paper.md), [`talks-on-topic`](../tasks/talks-on-topic.md), [`what-a-release-affects`](../tasks/what-a-release-affects.md), [`what-changed-since`](../tasks/what-changed-since.md), [`what-do-we-know-about-entity`](../tasks/what-do-we-know-about-entity.md)
 
 Schemas: [`api`](../schemas/api/README.md), [`util`](../schemas/util/README.md).

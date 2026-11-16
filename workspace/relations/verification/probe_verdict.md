@@ -3,7 +3,7 @@ id: "rel:verification.probe_verdict"
 kind: table
 schema: verification
 name: probe_verdict
-domain: evidence
+domain: verified-knowledge
 lens: evidence
 aliases: []
 tokens: [verification, probe_verdict, verification.probe_verdict, id, tenant_id, claim_id, probe_id, verdict, cells, rationale, decided_by, review_state, decided_at, supersedes_id]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe_verdict\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # verification.probe_verdict
 
-table in domain `evidence`, lens `evidence` — Loop 4: what a probe's runs say about one claim. agent_proposed by default; a human confirmation is a separate state. An executed deterministic probe may move the claim to verified (supported) or disputed (contradicted); live arms and community claims never verify alone..
+table in domain `verified-knowledge`, lens `evidence` — Loop 4: what a probe's runs say about one claim. agent_proposed by default; a human confirmation is a separate state. An executed deterministic probe may move the claim to verified (supported) or disputed (contradicted); live arms and community claims never verify alone..
 
 ## Columns
 
@@ -65,6 +65,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim_triage`, `q:evidence.claim_verdicts`, `q:evidence.probes`, `q:evidence.source_track_record`, `q:ours.releases_needing_review`.
 - Exposed through: [`api.claim_triage`](../api/claim_triage.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.community_claims`](../api/community_claims.md), [`api.probes`](../api/probes.md), [`api.source_track_record`](../api/source_track_record.md), [`api.verified_claims`](../api/verified_claims.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

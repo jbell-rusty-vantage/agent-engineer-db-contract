@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.work, authoring.work_revision], writes: [] }
 tokens: [product, dataset_draft_no, product.dataset_draft_no]
 defined_in: ["20261105010300_product_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part3b_product.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # product.dataset_draft_no
 

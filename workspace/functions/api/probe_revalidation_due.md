@@ -3,21 +3,21 @@ id: "fn:api.probe_revalidation_due(timestamptz)"
 kind: function
 schema: api
 name: probe_revalidation_due
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 overloads: ["fn:api.probe_revalidation_due(timestamptz)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [api.software_releases, catalog.entity, verification.probe, verification.probe_run], writes: [] }
 tokens: [api, probe_revalidation_due, api.probe_revalidation_due]
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", "20261113160200_build08_loop5_fixup_revalidation_due.sql", "20261113160300_build08_loop5_fixup_latest_cell.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.probe_revalidation_due
 
-Domain `api-surface`, lens `corpus`.
+Domain `verified-knowledge`, lens `corpus`.
 
 ## probe_revalidation_due(timestamp with time zone) → TABLE(probe_id uuid, probe text, cell_label text, last_run_at timestamp with time zone, library text, resolved_version text, newest_version text, newest_released_at timestamp with time zone, reason text)
 
@@ -27,9 +27,11 @@ function, stable, security definer, language sql, config `search_path=""`. Loop 
 | --- | --- | --- | --- |
 | `p_as_of` | `timestamp with time zone` | `now()` | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`api.software_releases`](../../relations/api/software_releases.md), [`catalog.entity`](../../relations/catalog/entity.md), [`verification.probe`](../../relations/verification/probe.md), [`verification.probe_run`](../../relations/verification/probe_run.md); writes —; calls —.
+
+Named queries: `q:evidence.probe_revalidation_due`.
 
 TypeScript: `Database["api"]["Functions"]["probe_revalidation_due"]`.
 

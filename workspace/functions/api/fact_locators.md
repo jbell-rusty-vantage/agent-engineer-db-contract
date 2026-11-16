@@ -8,12 +8,12 @@ lens: corpus
 overloads: ["fn:api.fact_locators(uuid,text,text)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [content.document_node, evidence.claim, evidence.extraction_record, evidence.locator, evidence.segment_support, evidence.source, evidence.source_capture, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, fact_locators, api.fact_locators]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.fact_locators
 
@@ -29,7 +29,7 @@ function, stable, security definer, language sql, config `search_path=""`. L1->e
 | `p_stream_kind` | `text` | — | — |
 | `p_scope_key` | `text` | `NULL::text` | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`content.document_node`](../../relations/content/document_node.md), [`evidence.claim`](../../relations/evidence/claim.md), [`evidence.extraction_record`](../../relations/evidence/extraction_record.md), [`evidence.locator`](../../relations/evidence/locator.md), [`evidence.segment_support`](../../relations/evidence/segment_support.md), [`evidence.source`](../../relations/evidence/source.md), [`evidence.source_capture`](../../relations/evidence/source_capture.md), [`temporal.segment`](../../relations/temporal/segment.md), [`temporal.stream`](../../relations/temporal/stream.md); writes —; calls [`util.current_tenant_id`](../util/current_tenant_id.md).
 

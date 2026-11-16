@@ -4,7 +4,7 @@ kind: details
 schema: api
 name: works_authored
 of: "rel:api.works_authored"
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.works_authored — details
 
@@ -61,5 +61,5 @@ SELECT w.id AS work_id,
    FROM authoring.work w
      JOIN authoring.work_revision r ON r.id = w.head_revision_id
      JOIN authoring.workspace ws ON ws.id = w.workspace_id
-  WHERE w.tenant_id = util.default_tenant_id() AND (w.kind = ANY (ARRAY['course'::text, 'track'::text, 'module'::text, 'lesson'::text, 'activity'::text, 'report'::text, 'project_template'::text, 'challenge'::text, 'component'::text, 'experience'::text]));
+  WHERE w.tenant_id = util.default_tenant_id() AND (w.kind = ANY (ARRAY['course'::text, 'track'::text, 'module'::text, 'lesson'::text, 'activity'::text, 'report'::text, 'project_template'::text, 'challenge'::text, 'component'::text, 'experience'::text])) AND product.session_reads_revision(r.id);
 ```

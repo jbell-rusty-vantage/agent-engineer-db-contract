@@ -3,7 +3,7 @@ id: "rel:evidence.source_assessment"
 kind: table
 schema: evidence
 name: source_assessment
-domain: evidence
+domain: source-intelligence
 lens: evidence
 aliases: []
 tokens: [evidence, source_assessment, evidence.source_assessment, id, tenant_id, subject_entity_id, topic_entity_id, as_of, method, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, median_lead_days, noise_ratio, authority_score, recommended_watch_level, rationale, inputs, assessed_by, receipt_id, supersedes_id, created_at, self_checked]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_assessment\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # evidence.source_assessment
 
-table in domain `evidence`, lens `evidence` — Loop 4: what we know about a source (channel, actor, organization, person) on a topic at a time. Components, never a bare score: role prior, conflict of interest, method disclosure, track record from verdicts, lead time against first-party docs, sweep noise. Append-only; a new row supersedes. authority_score is derived: (4·prior + 100·(confirmed + 0.5·qualified)) / (4 + checked)..
+table in domain `source-intelligence`, lens `evidence` — Loop 4: what we know about a source (channel, actor, organization, person) on a topic at a time. Components, never a bare score: role prior, conflict of interest, method disclosure, track record from verdicts, lead time against first-party docs, sweep noise. Append-only; a new row supersedes. authority_score is derived: (4·prior + 100·(confirmed + 0.5·qualified)) / (4 + checked)..
 
 ## Columns
 
@@ -53,14 +53,7 @@ table in domain `evidence`, lens `evidence` — Loop 4: what we know about a sou
 ## Constraints
 
 - PK (id)
-- check `source_assessment_authority_score_check`: `((authority_score >= (0)::numeric) AND (authority_score <= (100)::numeric))`
-- check `source_assessment_check`: `(claims_checked = ((confirmed + qualified) + refuted))`
-- check `source_assessment_check1`: `(claims_checked <= claims_observed)`
-- check `source_assessment_conflict_of_interest_check`: `(conflict_of_interest = ANY (ARRAY['none'::text, 'vendor_self'::text, 'vendor_adjacent'::text, 'competitor'::text, 'unknown'::text]))`
-- check `source_assessment_method_check`: `(method = ANY (ARRAY['prior'::text, 'derived'::text, 'reviewed'::text]))`
-- check `source_assessment_method_disclosure_check`: `(method_disclosure = ANY (ARRAY['none'::text, 'partial'::text, 'full'::text, 'not_applicable'::text]))`
-- check `source_assessment_recommended_watch_level_check`: `(recommended_watch_level = ANY (ARRAY['W0'::text, 'W1'::text, 'W2'::text, 'W3'::text]))`
-- check `source_assessment_self_checked_check`: `(self_checked >= 0)`
+- 8 check constraints; see [details](source_assessment.details.md)
 
 ## Relationships
 
@@ -84,6 +77,7 @@ Enabled; 1 policies in [details](source_assessment.details.md).
 
 ## Read paths
 
+- Named queries: `q:evidence.source_registry`.
 - Exposed through: [`api.source_registry`](../api/source_registry.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

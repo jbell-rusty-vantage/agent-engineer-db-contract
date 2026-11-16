@@ -3,21 +3,21 @@ id: "fn:api.attention_due(timestamptz)"
 kind: function
 schema: api
 name: attention_due
-domain: api-surface
+domain: source-intelligence
 lens: corpus
 overloads: ["fn:api.attention_due(timestamptz)"]
 security: definer
 volatility: stable
-executors: [anon, app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+executors: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 raises: []
 touches: { reads: [acquisition.attention_policy, acquisition.attention_sweep, catalog.entity, catalog.relationship, orchestration.mission, temporal.event, temporal.event_occurrence], writes: [] }
 tokens: [api, attention_due, api.attention_due]
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120100_build08_loop4_fixup_attention_due.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.attention_due
 
-Domain `api-surface`, lens `corpus`.
+Domain `source-intelligence`, lens `corpus`.
 
 ## attention_due(timestamp with time zone) → TABLE(policy_id uuid, slug text, watch_level text, reason text, trigger_ref jsonb, last_sweep_at timestamp with time zone, budget_usd_per_run numeric, mission text)
 
@@ -27,9 +27,11 @@ function, stable, security definer, language sql, config `search_path=""`. The c
 | --- | --- | --- | --- |
 | `p_as_of` | `timestamp with time zone` | `now()` | — |
 
-Execute: `anon`, `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
+Execute: `app_reader`, `authenticated`, `control_plane`, `executor_service`, `pipeline_agent`, `service_role`, `verifier_agent`.
 
 Touches (best effort): reads [`acquisition.attention_policy`](../../relations/acquisition/attention_policy.md), [`acquisition.attention_sweep`](../../relations/acquisition/attention_sweep.md), [`catalog.entity`](../../relations/catalog/entity.md), [`catalog.relationship`](../../relations/catalog/relationship.md), [`orchestration.mission`](../../relations/orchestration/mission.md), [`temporal.event`](../../relations/temporal/event.md), [`temporal.event_occurrence`](../../relations/temporal/event_occurrence.md); writes —; calls —.
+
+Named queries: `q:acquisition.attention_due`.
 
 TypeScript: `Database["api"]["Functions"]["attention_due"]`.
 

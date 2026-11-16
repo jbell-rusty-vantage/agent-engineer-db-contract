@@ -75,6 +75,29 @@
     "reviewed": null,
     "term": "assurance"
   },
+  "attention-policy": {
+    "aliases": [
+      "watch policy",
+      "watch level",
+      "W0",
+      "W1",
+      "W2",
+      "W3",
+      "sweep",
+      "cadence",
+      "trigger"
+    ],
+    "definition": "What we watch, how often (cadence, triggers), how deep and on what budget. Watch levels are W0 ignore (registered, never swept), W1 reference, W2 sampled, W3 release-coupled. One execution is a sweep (window, items seen, selected and captured, spend). api.attention_policies shows each policy with its sweep history.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:acquisition.attention_policy",
+      "rel:acquisition.attention_sweep",
+      "rel:api.attention_policies",
+      "q:acquisition.attention_policies"
+    ],
+    "reviewed": null,
+    "term": "attention policy"
+  },
   "belief": {
     "aliases": [
       "accepted",
@@ -134,6 +157,60 @@
     "reviewed": null,
     "term": "claim"
   },
+  "claim-candidate": {
+    "aliases": [
+      "candidate",
+      "proposed claim",
+      "claim path",
+      "claim status"
+    ],
+    "definition": "Any statement read from a source, before or after it is judged. api.claim_candidates shows every claim with its path (how it entered, for example deterministic_first_party, L1_candidate, community_thread, restatement), its status (proposed, verified, disputed), subjects and the document it was read from. A candidate is never a fact.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:api.claim_candidates",
+      "rel:evidence.claim",
+      "q:evidence.claim",
+      "task:read-claim-with-evidence"
+    ],
+    "reviewed": null,
+    "term": "claim candidate"
+  },
+  "claim-conflict": {
+    "aliases": [
+      "conflict",
+      "disagreement",
+      "disputed",
+      "scope mismatch",
+      "reconciliation"
+    ],
+    "definition": "A kept disagreement between a first-party claim and another statement (value, scope or subject). It is never averaged away and is resolved only by an explicit reconciliation. A claim's status disputed is different, it means a probe contradicted it.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:evidence.claim_conflict",
+      "rel:api.claim_conflicts",
+      "q:evidence.claim_conflicts",
+      "task:why-claim-disputed-or-restated"
+    ],
+    "reviewed": null,
+    "term": "claim conflict"
+  },
+  "claim-triage": {
+    "aliases": [
+      "triage",
+      "disposition",
+      "checkability",
+      "not checkable"
+    ],
+    "definition": "The decision about a claim candidate before anyone checks it, which is to probe it, check the docs or a registry, or leave it as not checkable (advice, experience, opinion), duplicate or out of scope, with a checkability, a priority and the probe it became. Append-only; api.claim_triage shows the current row per claim.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:verification.claim_triage",
+      "rel:api.claim_triage",
+      "q:evidence.claim_triage"
+    ],
+    "reviewed": null,
+    "term": "claim triage"
+  },
   "cost-class": {
     "aliases": [
       "cheap",
@@ -174,6 +251,27 @@
     "refs": [],
     "reviewed": null,
     "term": "domain"
+  },
+  "due-list": {
+    "aliases": [
+      "due",
+      "attention due",
+      "revalidation due",
+      "releases needing review",
+      "what is due",
+      "overdue"
+    ],
+    "definition": "Three readers that say what needs doing now. api.attention_due lists the policies due by a trigger event inside its window or by an elapsed cadence; api.probe_revalidation_due lists probes whose latest unpinned cell ran on an older version than the newest catalogued release; api.releases_needing_review lists our frozen releases whose bound claims changed verdict after the release. An empty list is an answer only when the session sees the tenant's knowledge.",
+    "provenance": "model_assisted",
+    "refs": [
+      "fn:api.attention_due(timestamptz)",
+      "fn:api.probe_revalidation_due(timestamptz)",
+      "fn:api.releases_needing_review()",
+      "q:acquisition.attention_due",
+      "task:what-is-due"
+    ],
+    "reviewed": null,
+    "term": "due list"
   },
   "entity-kind": {
     "aliases": [
@@ -507,6 +605,26 @@
     "reviewed": null,
     "term": "operation"
   },
+  "probe": {
+    "aliases": [
+      "experiment",
+      "probe run",
+      "probe matrix",
+      "cell",
+      "pin"
+    ],
+    "definition": "An experiment that tests stated claims against a matrix of environments. A cell is a date (what an install resolved that day) or an explicit pin; one execution in one cell is a probe run, whose outcome is about the probe's own checks and not about the claim. api.probe_matrix returns the latest run per cell with the resolved versions and the observations; api.probes lists probes with their claims, runs and verdicts.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:verification.probe",
+      "rel:verification.probe_run",
+      "rel:api.probes",
+      "fn:api.probe_matrix(text)",
+      "q:evidence.probe_matrix"
+    ],
+    "reviewed": null,
+    "term": "probe"
+  },
   "projection": {
     "aliases": [
       "search projection",
@@ -594,6 +712,23 @@
     "reviewed": null,
     "term": "release"
   },
+  "restatement": {
+    "aliases": [
+      "restated claim",
+      "atomized claim",
+      "attribution-framed claim",
+      "original claim"
+    ],
+    "definition": "A claim atomized from an attribution-framed original (\"the post states that X\" becomes X) so that a probe can test X. The original stays proposed as the record of what the source said; the restatement carries qualified (it holds only with a condition) and dropped (what was left out). api.claim_restatements pairs the two.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:api.claim_restatements",
+      "q:evidence.claim_restatements",
+      "task:why-claim-disputed-or-restated"
+    ],
+    "reviewed": null,
+    "term": "restatement"
+  },
   "rls": {
     "aliases": [
       "row level security"
@@ -650,6 +785,27 @@
     ],
     "reviewed": null,
     "term": "segment"
+  },
+  "source-registry": {
+    "aliases": [
+      "source assessment",
+      "track record",
+      "authority score",
+      "source trust",
+      "conflict of interest",
+      "lead days"
+    ],
+    "definition": "What we know about a source (channel, actor, organization, person) on a topic at a time, kept as components (role prior, conflict of interest, method disclosure, checked claims confirmed, qualified or refuted, lead time against first-party docs, sweep noise) from which an authority score is derived. api.source_registry shows the latest assessment per source and topic; api.source_track_record lists the claims behind the counts. A watch level is recommended only from five checked claims, and claims a source checked about itself are shown and not scored.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:evidence.source_assessment",
+      "rel:api.source_registry",
+      "rel:api.source_track_record",
+      "q:evidence.source_registry",
+      "task:how-trusted-is-source"
+    ],
+    "reviewed": null,
+    "term": "source registry"
   },
   "source-tier": {
     "aliases": [
@@ -812,6 +968,25 @@
     "reviewed": null,
     "term": "vector space"
   },
+  "verdict": {
+    "aliases": [
+      "probe verdict",
+      "directly_supported",
+      "contradicted",
+      "supported_with_qualification",
+      "review state",
+      "human_confirmed"
+    ],
+    "definition": "What a probe's runs say about one claim (directly_supported, supported_with_qualification, contradicted, not_supported, unverifiable), with a rationale and a per-cell summary. A verdict is agent_proposed until a person confirms or rejects it. A contradicting verdict of a deterministic probe moves the claim to disputed; a supporting one makes it eligible for admission, which is what verifies it.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:verification.probe_verdict",
+      "rel:api.claim_verdicts",
+      "q:evidence.claim_verdicts"
+    ],
+    "reviewed": null,
+    "term": "verdict"
+  },
   "verification-run": {
     "aliases": [
       "sealed run"
@@ -824,6 +999,24 @@
     ],
     "reviewed": null,
     "term": "verification run"
+  },
+  "verified-claim": {
+    "aliases": [
+      "verified",
+      "verified knowledge",
+      "admitted claim",
+      "what is verified"
+    ],
+    "definition": "A claim whose status is verified, which it reaches only under a receipt bound to an admitted Knowledge Services use decision, written in the same transaction. api.verified_claims lists them with the use decision, the receipt, the bound payload and the current probe verdicts. A supportive probe verdict alone does not verify a claim, and a live-model probe or a community claim never verifies alone.",
+    "provenance": "model_assisted",
+    "refs": [
+      "rel:api.verified_claims",
+      "rel:verification.use_admission",
+      "q:evidence.verified_claims",
+      "task:what-is-verified-about-subject"
+    ],
+    "reviewed": null,
+    "term": "verified claim"
   },
   "vocabulary": {
     "aliases": [

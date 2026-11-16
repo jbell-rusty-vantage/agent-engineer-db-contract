@@ -18409,6 +18409,9 @@ export type Database = {
       }
       revision_digest: { Args: { rid: string }; Returns: string }
       role_in: { Args: { p: string; ws: string }; Returns: string }
+      session_reader: { Args: never; Returns: Record<string, unknown> }
+      session_reads_revision: { Args: { rid: string }; Returns: boolean }
+      session_reads_workspace: { Args: { ws: string }; Returns: boolean }
       sha256_text: { Args: { t: string }; Returns: string }
       support_counts: { Args: { aid: string; cid: string }; Returns: Json }
       support_detail: {

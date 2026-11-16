@@ -8,26 +8,26 @@
     "relation_main_bytes": 6144,
     "schema_readme_bytes": 16384,
     "search_index_bytes": 720896,
-    "start_here_bytes": 3072,
+    "start_here_bytes": 3584,
     "start_here_lines": 60,
     "task_bytes": 5120
   },
   "build": {
-    "catalog_version": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
-    "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:e34fe120eb8b1d16c195897e2a67255f66c053efe4147d736eb54f4730c04c02",
-    "fingerprint": "sha256:a6b0154786cd7633657b283b02ea67af4abed45f3da69f65bc39acc230cfc233",
-    "generated_types_sha256": "sha256:ce31d5908c9a845c1ccf5aa75dc5595588f45e6f6554f96f4f96593f5541b094",
-    "migration_head": "20261115130200",
+    "catalog_version": "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace",
+    "contract_version": "0.7.0",
+    "enrichment_sha256": "sha256:cb6affa02c52946cbd0019cc2b63fb3fc3855fb33ee4338c0039fcc878421a33",
+    "fingerprint": "sha256:b72ff7130a3107d5c20f6e0f24497fa8df6f3c72bca885e3bdac5940eb611a49",
+    "generated_types_sha256": "sha256:5858ae58ef064e6d3686492b0d1fefed037431b5c7ccf6f9a7253f6fe7a1615a",
+    "migration_head": "20261116120000",
     "renderer_version": "4.0.0",
     "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-16T04:48:08.401Z",
+      "introspected_at": "2026-11-16T16:00:46.943Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+    "workspace_fingerprint": "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
   },
   "entry_points": [
     "START_HERE.md",
@@ -39,25 +39,25 @@
   ],
   "format": "ai-engineer-schema-workspace/3",
   "layers": {
-    "domains": 23,
-    "functions": 276,
+    "domains": 25,
+    "functions": 279,
     "operations": 81,
-    "queries": 55,
+    "queries": 69,
     "relation_details": 85,
     "relation_stubs": 0,
     "relations": 350,
     "schemas": 27,
-    "tasks": 27,
+    "tasks": 33,
     "types": 10,
     "vocabularies": 13
   },
   "scope": null,
   "sizes": {
-    "files": 904,
+    "files": 915,
     "largest": {
-      "bytes": 5115999,
+      "bytes": 5195691,
       "path": "schema-ir.json"
     },
-    "total_bytes": 8657784
+    "total_bytes": 8856634
   }
 }

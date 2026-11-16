@@ -42,7 +42,7 @@ values ('00000000-0000-7000-8000-0000000004b1', pg_temp.t(), 'knowledge_ingestio
   'mission-ort', 'run-ort', null, 'op-ort', 1, 0, 'knowledge');
 insert into orchestration.operation_receipt (id, intent_id, executor_version, outcome, origin_digest)
 values ('00000000-0000-7000-8000-0000000004c1', '00000000-0000-7000-8000-0000000004b1', 'test', 'applied', pg_temp.d('origin-m'));
-insert into corpus.entity (id, tenant_id, kind, display_name, slug, created_by_receipt_id)
+insert into catalog.entity (id, tenant_id, kind, display_name, slug, created_by_receipt_id)
 values ('00000000-0000-7000-8000-0000000004d1', pg_temp.t(), 'organization', 'ORT Org', 'ort-org', '00000000-0000-7000-8000-0000000004c1');
 -- Another tenant's intent and receipt (for the tenant guard).
 insert into orchestration.operation_intent (id, tenant_id, intent_type, payload, idempotency_key, approval_state)

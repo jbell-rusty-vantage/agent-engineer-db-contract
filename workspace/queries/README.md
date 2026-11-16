@@ -1,16 +1,18 @@
 ---
 id: queries
 kind: entry
-queries: 55
-catalog_version: "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb"
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+queries: 69
+catalog_version: "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # Named queries
 
-Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, digest `sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb`): the executor opens a read-only transaction, sets `app.tenant_id`, `SET LOCAL ROLE <role>`, applies the statement timeout of the cost class, binds `paramOrder` positionally, and caps rows at `limit` (default 200, max 2000). Run one with `knowledge db query <name> --param k=v`, or batch several in a `knowledge-read-intent.v1` (`knowledge db read-intent intent.json`). The snapshot records the knowledge head so your ingestion intent can cite it.
+Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, digest `sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace`): the executor opens a read-only transaction, sets `app.tenant_id`, `SET LOCAL ROLE <role>`, applies the statement timeout of the cost class, binds `paramOrder` positionally, and caps rows at `limit` (default 200, max 2000). Run one with `knowledge db query <name> --param k=v`, or batch several in a `knowledge-read-intent.v1` (`knowledge db read-intent intent.json`). The snapshot records the knowledge head so your ingestion intent can cite it.
 
 | Query | Role | Cost | Params | Shape | Domain | Summary |
 | --- | --- | --- | --- | --- | --- | --- |
+| <a id="acquisitionattentiondue"></a>`acquisition.attention_due` | app_reader | cheap | `as_of` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Attention policies due at a time, by trigger event or elapsed cadence (the due list a watch mission calls) |
+| <a id="acquisitionattentionpolicies"></a>`acquisition.attention_policies` | app_reader | cheap | `watch_level`, `state`, `limit` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Attention policies (what we watch, watch level, cadence, triggers, budget) with their sweep history |
 | <a id="acquisitionfetchesforurl"></a>`acquisition.fetches_for_url` | pipeline_agent | cheap | `url`, `limit` | rows | [`acquisition`](../domains/acquisition.md) | Fetch ledger rows for a URL (who fetched, with what tool, outcome, hash, spend) |
 | <a id="artifactsbytype"></a>`artifacts.by_type` | pipeline_agent | cheap | `artifact_type`, `limit` | rows | [`orchestration-ledger`](../domains/orchestration-ledger.md) | Artifacts of one artifact_type for the current tenant |
 | <a id="catalogbenchmarkscores"></a>`catalog.benchmark_scores` | app_reader | medium | `subject_id`, `benchmark`, `limit` | rows | [`api-surface`](../domains/api-surface.md) | L1 benchmark results as facts (one home for numbers) by subject or benchmark |
@@ -41,9 +43,20 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 | <a id="entitywhatchanged"></a>`entity.what_changed` | app_reader | cheap | `entity_id`, `k_from`, `k_to` | rows | [`temporal-facts`](../domains/temporal-facts.md) | Opened and closed items for one entity between two knowledge heads |
 | <a id="eventscurrentforentity"></a>`events.current_for_entity` | app_reader | cheap | `entity_id` | rows | [`temporal-facts`](../domains/temporal-facts.md) | Current event occurrences for one subject entity |
 | <a id="evidencecapturesforsource"></a>`evidence.captures_for_source` | pipeline_agent | cheap | `source_id` | rows | [`evidence`](../domains/evidence.md) | Captures registered for one source, with the acquisition fetch that produced them |
+| <a id="evidenceclaim"></a>`evidence.claim` | app_reader | cheap | `claim_id` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | One claim, its status, path, subjects and the document it was read from |
+| <a id="evidenceclaimconflicts"></a>`evidence.claim_conflicts` | app_reader | cheap | `claim_id`, `limit` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | Kept disagreements between a first-party claim and another statement, for one claim or all |
+| <a id="evidenceclaimrestatements"></a>`evidence.claim_restatements` | app_reader | cheap | `claim_id`, `limit` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | Restated claims and the attribution-framed originals they were atomized from, for one claim or all |
 | <a id="evidenceclaimsupport"></a>`evidence.claim_support` | pipeline_agent | cheap | `claim_id` | rows | [`evidence`](../domains/evidence.md) | Segment and occurrence support rows for one claim |
+| <a id="evidenceclaimtriage"></a>`evidence.claim_triage` | app_reader | cheap | `claim_id`, `disposition`, `limit` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | What was decided about each claim candidate before checking it (probe, docs check, registry check, not checkable, duplicate) |
+| <a id="evidenceclaimverdicts"></a>`evidence.claim_verdicts` | app_reader | cheap | `claim_id`, `verdict`, `probe`, `limit` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | The latest probe verdict of each judged claim, with who stated it, the review state and the per-cell summary |
 | <a id="evidenceclaimsforentity"></a>`evidence.claims_for_entity` | pipeline_agent | cheap | `entity_id`, `limit` | rows | [`evidence`](../domains/evidence.md) | Claims that name one entity as subject, object, or context |
+| <a id="evidenceprobematrix"></a>`evidence.probe_matrix` | app_reader | cheap | `probe` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | The latest run of one probe in each cell (a date or an explicit pin), with outcome, resolved versions and observations |
+| <a id="evidenceproberevalidationdue"></a>`evidence.probe_revalidation_due` | app_reader | cheap | `as_of` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | Probes whose latest cell ran against an older version of a subject library than its newest catalogued release |
+| <a id="evidenceprobes"></a>`evidence.probes` | app_reader | cheap | `text`, `limit` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | Probes (experiments that test stated claims), their subjects, claim and run counts and verdicts |
+| <a id="evidencesourceregistry"></a>`evidence.source_registry` | app_reader | cheap | `source`, `topic`, `limit` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Latest assessment of each source on each topic (role, conflict of interest, checked claims, score, watch suggestion) |
+| <a id="evidencesourcetrackrecord"></a>`evidence.source_track_record` | app_reader | cheap | `source_entity_id`, `source`, `limit` | rows | [`source-intelligence`](../domains/source-intelligence.md) | Every claim a source stated, with its latest verdict (the rows behind the counts of an assessment) |
 | <a id="evidencesourcesbydomain"></a>`evidence.sources_by_domain` | pipeline_agent | cheap | `domain`, `limit` | rows | [`evidence`](../domains/evidence.md) | Sources filtered by registrable domain |
+| <a id="evidenceverifiedclaims"></a>`evidence.verified_claims` | app_reader | medium | `text`, `limit` | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | Claims verified through a Knowledge Services admission, by subject or wording, with the verdicts behind them |
 | <a id="factschangessince"></a>`facts.changes_since` | app_reader | medium | `since`, `stream_kinds`, `entity_kinds`, `document_types` | rows | [`temporal-facts`](../domains/temporal-facts.md) | What changed since a date, on both clocks (facts opened/replaced, events, unit-level document diffs) |
 | <a id="factscurrentbystream"></a>`facts.current_by_stream` | app_reader | cheap | `stream_kind`, `entity_id`, `limit` | rows | [`temporal-facts`](../domains/temporal-facts.md) | Current facts (k_to is null and valid_during contains now) by stream kind |
 | <a id="factshistoryforstream"></a>`facts.history_for_stream` | pipeline_agent | medium | `entity_id`, `stream_kind`, `scope_key`, `limit`, `offset` | rows | [`temporal-facts`](../domains/temporal-facts.md) | All segments on one entity stream slot, including closed history |
@@ -52,6 +65,7 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 | <a id="guidanceitems"></a>`guidance.items` | app_reader | medium | `kind`, `entity_id`, `text`, `limit` | rows | [`guidance`](../domains/guidance.md) | Expert guidance items (problems, solution patterns, failure modes, …) with their subject entities |
 | <a id="knowledgehead"></a>`knowledge.head` | app_reader | cheap | — | single_row | [`temporal-facts`](../domains/temporal-facts.md) | Current tenant knowledge sequence |
 | <a id="oursmodulesaffectedbyrelease"></a>`ours.modules_affected_by_release` | app_reader | cheap | `release_id` | rows | [`authoring`](../domains/authoring.md) | Our head revisions that bind or require the software a release belongs to and were authored before it |
+| <a id="oursreleasesneedingreview"></a>`ours.releases_needing_review` | app_reader | cheap | — | rows | [`verified-knowledge`](../domains/verified-knowledge.md) | Our releases whose bound claims got a different probe verdict after the release was frozen |
 | <a id="oursworksauthored"></a>`ours.works_authored` | app_reader | medium | `kind`, `released`, `text`, `limit` | rows | [`authoring`](../domains/authoring.md) | Our courses, modules, lessons, activities, reports and templates at head revision (lens ours, tier 1) |
 | <a id="rankingleaderboard"></a>`ranking.leaderboard` | app_reader | cheap | `slug`, `limit` | rows | [`ranking`](../domains/ranking.md) | Latest published edition of a named leaderboard (ranked entities with the fact segments behind each score) |
 | <a id="receiptsforintent"></a>`receipts.for_intent` | pipeline_agent | cheap | `intent_id` | rows | [`orchestration-ledger`](../domains/orchestration-ledger.md) | Intent row and sealed batch for one operation intent |
@@ -73,6 +87,8 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 
 ## Parameters
 
+- `acquisition.attention_due`: `as_of` string|null? — example `{"as_of":null}`
+- `acquisition.attention_policies`: `limit` integer?, `state` string|null?, `watch_level` string|null? — example `{"limit":50,"state":null,"watch_level":null}`
 - `acquisition.fetches_for_url`: `limit` integer?, `url` string|null? — example `{"limit":50,"url":null}`
 - `artifacts.by_type`: `artifact_type` string|null?, `limit` integer? — example `{"artifact_type":"knowledge_ingestion_receipt","limit":50}`
 - `catalog.benchmark_scores`: `benchmark` string|null?, `limit` integer?, `subject_id` string|null? — example `{"benchmark":null,"limit":100,"subject_id":null}`
@@ -103,9 +119,20 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 - `entity.what_changed`: `entity_id` string, `k_from` integer, `k_to` integer — example `{"entity_id":"0192b000-0000-7000-8000-000000000001","k_from":0,"k_to":0}`
 - `events.current_for_entity`: `entity_id` string — example `{"entity_id":"0192b000-0000-7000-8000-000000000001"}`
 - `evidence.captures_for_source`: `source_id` string — example `{"source_id":"0192e000-0000-7000-8000-000000000001"}`
+- `evidence.claim`: `claim_id` string — example `{"claim_id":"0192b000-0000-7000-8000-000000000001"}`
+- `evidence.claim_conflicts`: `claim_id` string|null?, `limit` integer? — example `{"claim_id":null,"limit":50}`
+- `evidence.claim_restatements`: `claim_id` string|null?, `limit` integer? — example `{"claim_id":null,"limit":50}`
 - `evidence.claim_support`: `claim_id` string — example `{"claim_id":"0192d000-0000-7000-8000-000000000001"}`
+- `evidence.claim_triage`: `claim_id` string|null?, `disposition` string|null?, `limit` integer? — example `{"claim_id":null,"disposition":"probe","limit":50}`
+- `evidence.claim_verdicts`: `claim_id` string|null?, `limit` integer?, `probe` string|null?, `verdict` string|null? — example `{"claim_id":null,"limit":50,"probe":null,"verdict":"contradicted"}`
 - `evidence.claims_for_entity`: `entity_id` string, `limit` integer? — example `{"entity_id":"0192b000-0000-7000-8000-000000000001","limit":100}`
+- `evidence.probe_matrix`: `probe` string — example `{"probe":"P1-crea-deprecation"}`
+- `evidence.probe_revalidation_due`: `as_of` string|null? — example `{"as_of":null}`
+- `evidence.probes`: `limit` integer?, `text` string|null? — example `{"limit":50,"text":"langgraph"}`
+- `evidence.source_registry`: `limit` integer?, `source` string|null?, `topic` string|null? — example `{"limit":50,"source":null,"topic":"LangChain"}`
+- `evidence.source_track_record`: `limit` integer?, `source` string|null?, `source_entity_id` string|null? — example `{"limit":50,"source":"langchain","source_entity_id":null}`
 - `evidence.sources_by_domain`: `domain` string|null?, `limit` integer? — example `{"domain":"openai.com","limit":50}`
+- `evidence.verified_claims`: `limit` integer?, `text` string|null? — example `{"limit":50,"text":"LangGraph"}`
 - `facts.changes_since`: `document_types` array|null?, `entity_kinds` array|null?, `since` string, `stream_kinds` array|null? — example `{"document_types":null,"entity_kinds":null,"since":"2026-10-01T00:00:00Z","stream_kinds":null}`
 - `facts.current_by_stream`: `entity_id` string|null?, `limit` integer?, `stream_kind` string|null? — example `{"entity_id":null,"limit":50,"stream_kind":"offering_price"}`
 - `facts.history_for_stream`: `entity_id` string, `limit` integer?, `offset` integer?, `scope_key` string|null?, `stream_kind` string — example `{"entity_id":"0192b000-0000-7000-8000-000000000001","limit":50,"offset":0,"scope_key":"input_tokens\|\|","stream_kind":"offering_price"}`
@@ -114,6 +141,7 @@ Every entry runs as data from `catalog.json` (`knowledge-query-catalog.v1`, dige
 - `guidance.items`: `entity_id` string|null?, `kind` string|null?, `limit` integer?, `text` string|null? — example `{"entity_id":null,"kind":null,"limit":50,"text":null}`
 - `knowledge.head`: none
 - `ours.modules_affected_by_release`: `release_id` string — example `{"release_id":"0192b000-0000-7000-8000-000000000001"}`
+- `ours.releases_needing_review`: none
 - `ours.works_authored`: `kind` string|null?, `limit` integer?, `released` boolean|null?, `text` string|null? — example `{"kind":null,"limit":50,"released":null,"text":null}`
 - `ranking.leaderboard`: `limit` integer?, `slug` string — example `{"limit":20,"slug":"cheapest-frontier-input"}`
 - `receipts.for_intent`: `intent_id` string — example `{"intent_id":"0192f000-0000-7000-8000-000000000001"}`

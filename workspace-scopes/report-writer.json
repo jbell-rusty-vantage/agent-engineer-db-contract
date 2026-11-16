@@ -11,7 +11,9 @@
       "api-surface",
       "content",
       "guidance",
-      "retrieval"
+      "retrieval",
+      "verified-knowledge",
+      "source-intelligence"
     ],
     "relations": [
       "authoring.work",
@@ -71,7 +73,11 @@
     "modules-affected-by-release",
     "what-do-we-know-about-entity",
     "build-evidence-packet",
-    "check-knowledge-head"
+    "check-knowledge-head",
+    "what-is-verified-about-subject",
+    "read-claim-with-evidence",
+    "why-claim-disputed-or-restated",
+    "how-trusted-is-source"
   ],
   "queries": [
     "catalog.*",

@@ -13,12 +13,12 @@ rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"works_authored\"][\"Row\"]"
-defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261116120000_build08_api_default_closed.sql", part4_views_seeds.sql]
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.works_authored
 
-view in domain `authoring`, lens `ours` — L1 (ours, tier 1): our courses, modules, lessons, activities, reports and templates at their head revision, whether released, which concepts they cover and which software/versions they use..
+view in domain `authoring`, lens `ours` — L1 (ours, tier 1): our courses, modules, lessons, activities, reports and templates at their head revision, whether released, which concepts they cover and which software/versions they use. A signed-in user sees the works whose head revision they may read (a member of the owning workspace, or a release that includes it is offered or distributed to them); database roles see every work..
 
 > curated (model_assisted, unreviewed) — L1 (lens ours, tier 1) — our courses, modules, lessons, activities, reports and templates at head revision, released flag, covered concepts and used software.
 
@@ -93,4 +93,4 @@ knowledge db query ours.works_authored --param kind=module --param limit=50 --pa
 ```
 Drafts included unless released is true.
 
-Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `part4_views_seeds.sql`.
+Defined in: `20261108120000_build08_r2_knowledge_continuum.sql`, `20261116120000_build08_api_default_closed.sql`, `part4_views_seeds.sql`.

@@ -11,10 +11,11 @@ Applications consume this repository as a pinned dependency. They do not maintai
 
 Repository: public [`jbell-rusty-vantage/agent-engineer-db-contract`](https://github.com/jbell-rusty-vantage/agent-engineer-db-contract), `main` only. History starts at the 2026-11-06 clean-slate baseline, so commit IDs cited below and in older documents do not resolve here ([repository history](docs/REPOSITORY-HISTORY.md)).
 
-## Versions and where they are installed (2026-11-01; `main` row added 2026-11-15)
+## Versions and where they are installed (2026-11-01; `main` row added 2026-11-15; 0.7.0 row added 2026-11-16)
 
 | Contract | Migration head | Committed | Installed |
 | --- | --- | --- | --- |
+| **0.7.0** (current; recorded in [`contract.version.json`](contract.version.json)) | `20261116120000_build08_api_default_closed` (200 migrations: the unversioned `main` chain of the next row plus `20261115130000_build08_d82_signed_in_knowledge_reads` and `20261116120000_build08_api_default_closed`) | cut 2026-11-16 on local `main`; not pushed when cut, and CI has not run on it | disposable lab `disposable-aieng-build04` (head `20261116120000`) and, on 2026-11-16, three fresh installs from empty on a throwaway disposable stack (root installer: component, 200 migrations; `pg_dump --schema-only` equal to the lab's apart from carriage returns in five function bodies that a CRLF working copy of a lab draft left on the lab), dropped afterwards. No remote installation of this version is recorded; read the target's `supabase_migrations.schema_migrations` before claiming one |
 | `main`, unversioned (package.json still says 0.6.0) | `20261115120000_build08_loop7_search_collapse_restatements` (198 migrations: the 0.6.0 chain plus four product migrations `20261105010000`–`20261105010300` and seven Build 08 migrations `20261108120000`–`20261115120000`) | yes; the product migrations are on `origin/main` (CI passed on 9dd8439, 2026-11-08); the Build 08 commits 75362e6–37f594b are local only, not pushed, and CI has not run on them | disposable lab `disposable-aieng-build04` (head `20261115120100`, drafts included) and replay `disposable-aieng-b08replay` (head `20261115120000`, populated upgrade). No remote installation of this chain is recorded; read the target's `supabase_migrations.schema_migrations` before claiming one. No contract version has been cut for this chain |
 | **0.6.0** (last versioned) | `20261031010000_operation_receipt_targets` (187 migrations) | yes (`44c980c`; version bump OVE-206) | local disposable `supabase_db_disposable-overnight-20261029` (2026-10-31), and the owner-declared **disposable** remote `wkythqbofmckbuoothhn` on 2026-11-01 (`20261025010200` → `20261031010000`, contract installer `--remote-reinstall --skip-mission-control`; [receipt summary](docs/knowledge-model/SCHEMA-SUMMARY.md#native-ledger-provenance-migration-20261031010000)) |
 | 0.5.0 | `20261025010200` (186 migrations) | yes (`25f82ed`, `306efd7`) | Sprint OC W0 (2026-10-28) on the owner-declared **disposable** remote `wkythqbofmckbuoothhn` (`supabase-blue-ocean`), after the WI-24 wipe (Mission Control `docs/specs/provider-consolidation-2026-10/sprint-oc/release/RELEASE-BUNDLE.md`, sections 1 and 4) |
@@ -31,6 +32,21 @@ normalized `orchestration.operation_receipt_target`, `evidence.claim.producer_or
 ([schema summary](docs/knowledge-model/SCHEMA-SUMMARY.md#native-ledger-provenance-migration-20261031010000)).
 For type consumers of 0.5.0 it is additive except that `evidence.claim.producer_attempt_id` is now nullable. Knowledge
 Services vendors the packed 0.6.0 tarball (`vendor/aiengineer-database-contract-0.6.0.tgz`, produced by `pnpm pack`).
+
+Contract **0.7.0** is the Build 08 knowledge continuum: the product schema (`20261105010000`–`20261105010300`), the R2 rewrite
+(`corpus` became `catalog`, `knowledge` became `guidance`, `research`, `provenance` and the `public` starter tables were retired),
+loops 2 to 7 (benchmarks, libraries, source intelligence, probes, verified claims, restatements), signed-in knowledge reads, and
+a closed `api` surface. It is a breaking type change for a consumer of 0.6.0 (schemas renamed and dropped). Knowledge Services
+still vendors the 0.6.0 tarball; `npm run pack:contract` builds `aiengineer-database-contract-0.7.0.tgz` into the git-ignored
+`.scratch/release/` and prints its sha256.
+
+**Cutting a version.** The version in `package.json` identifies one migration chain, recorded in `contract.version.json` (head,
+file count, digest). `npm run version:check` (also a CI step and part of `npm test`) fails when `supabase/migrations` is newer
+than the recorded head, when a file below the head changed, or when the committed schema workspace was generated under another
+version or head. To cut one: bump `package.json`, run `node scripts/check-contract-version.mjs --write`, rebuild the workspace,
+add a row to the table above. The schema workspace records one migration head and CI compares it with the fresh install, so
+the committed workspace is built from a database whose head equals the migration head: keep one lab draft per promotion (as
+0.7.0 did), or give the promoted migration the version of the last draft it folds.
 
 The historical knowledge model is documented in [Schema summary](docs/knowledge-model/SCHEMA-SUMMARY.md) and [Migration result](docs/knowledge-model/MIGRATION-RESULT.md). Contract 0.3.0 targeted the cloud database; the populated local shared database was left unchanged. Use an explicit project ID when regenerating the cloud contract.
 
@@ -59,7 +75,8 @@ node scripts/install-ai-engineer.mjs --workdir <disposable-workdir>   --componen
 ```
 
 It installs the pinned component (version + digest checked) with the KS CLI, applies this repository's
-migrations, verifies the binding pin, capability grants and custody RLS, installs the Mission Control common
+migrations, verifies the binding pin, capability grants, custody RLS and that the `api` surface is closed (no `api` routine
+executable and no `api` relation readable by PUBLIC or `anon`; `API_SURFACE_OPEN` otherwise), installs the Mission Control common
 release 1.9.0 with `mission-db`, the Sprint OC target lock (`sprint-oc/release/locks-190`; an installed 1.8.0 upgrades in place by applying 0066 and 0067 only) and an explicit release root (`--mc-release-root`, the same
 directory as the lock's `release_root`), and writes a JSON receipt. The KS component pin
 is the single `KS_COMPONENT_PIN` line (2.5.0: `0008_effect_dispatch_journal`; an installed 2.4.0 upgrades in place by
@@ -189,7 +206,7 @@ head `20260916020200` is verified on
 the guarded pre-Mission-Control disposable databases; this is not a deployment
 claim for the populated shared or cloud database.
 
-- `api` is the application-facing Data API surface (L1 catalog views such as `api.models`, L2 functions such as `api.changes_since`, L3 `api.search_unified`).
+- `api` is the application-facing Data API surface (L1 catalog views such as `api.models`, L2 functions such as `api.changes_since`, L3 `api.search_knowledge` for a signed-in session, `api.search_unified` for trusted callers). It is closed by default since `20261116120000`: each function is granted to named roles, `anon` holds nothing, and a migration that creates an `api` function revokes EXECUTE from PUBLIC itself (PostgreSQL grants it on creation). `supabase/tests/api_default_closed.sql` and the installer fail otherwise.
 - `catalog`, `content`, `temporal`, `evidence`, `verification`, `acquisition`, `guidance`, `retrieval`, `ranking`, `taxonomy`, `staging` and the product schemas (`authoring`, `learning`, `access`, `library`, `inquiry`, `conversation`, `dataset`, `product`) are internal database namespaces. `public` holds no retained families any more (the pre-research `public.research_*`, the factory tables, `research`, `provenance` and `research_private` were retired by the Build 08 R2 draft; lab only until promoted).
 
 The generated contract includes internal schemas for server-side consumers. This does not expose those schemas through PostgREST; Data API exposure remains controlled by `supabase/config.toml`, grants, and RLS.
@@ -214,7 +231,11 @@ Commit each migration and its regenerated `src/database.generated.ts` in the sam
 
 `db:migrate` incrementally applies pending migrations to the local database. The shared `aiengineer` project contains accumulated source captures, provider receipts and accounting evidence; resetting it destroys those registrations even when physical Storage files survive. `db:reset` therefore refuses the shared project and all caller-supplied target arguments. Fresh-chain proofs belong in a separate workspace with an explicit `vfy-` or `disposable-` project identity. Preserve populated data before migration work, and retain isolated proof receipts and volumes. Do not change the shared project identity to bypass this guard.
 
-CI can detect contract drift with:
+CI (`.github/workflows/contract.yml`) proves the head on a fresh install from empty: `npm run typecheck`, `npm test`,
+`npm run version:check`, the root installer twice (the repeat must change nothing), every SQL suite under `supabase/tests` that
+applies to the head (a suite fails on a psql error, a pgTAP `not ok` or a plan mismatch; the few left out are named in the
+workflow with their reason), the generated types, and `workspace:check` and `workspace:validate` against the installed database.
+Locally, contract drift is detected with:
 
 ```sh
 npm run types:check

@@ -3,22 +3,24 @@ id: "rel:api.probes"
 kind: view
 schema: api
 name: probes
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
-aliases: []
+aliases: [probes, experiments, probe list, probe verdicts]
 tokens: [api, probes, api.probes, probe_id, slug, title, kind, hypothesis, model_policy, matrix, script_path, designed_by, designed_in_thread_id, subjects, claims, runs, last_run_at, verdicts]
-summary: null
-summary_basis: none
+summary: "Probes (experiments that test stated claims) with their subjects, the number of claims and runs, the last run and the verdict each gave."
+summary_basis: curated
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"probes\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.probes
 
-view in domain `api-surface`, lens `corpus`.
+view in domain `verified-knowledge`, lens `corpus`.
+
+> curated (model_assisted, unreviewed) — Probes (experiments that test stated claims) with their subjects, the number of claims and runs, the last run and the verdict each gave.
 
 ## Columns
 
@@ -67,6 +69,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.probes`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
@@ -80,5 +83,14 @@ See [details](probes.details.md).
 ## TypeScript
 
 row: `Database["api"]["Views"]["probes"]["Row"]`
+
+## Examples
+
+Probes whose subject is LangGraph
+
+```bash
+knowledge db query evidence.probes --param limit=20 --param text=langgraph
+```
+One row per probe; the per-cell runs of one probe are `q:evidence.probe_matrix`.
 
 Defined in: `20261113120000_build08_loop4_source_intelligence_experiments.sql`.

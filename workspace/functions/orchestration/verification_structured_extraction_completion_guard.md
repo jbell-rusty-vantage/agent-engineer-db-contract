@@ -13,7 +13,7 @@ raises: [structured extraction operation success requires one exact receipt, str
 touches: { reads: [knowledge_service.lease, knowledge_service.operation, knowledge_service.operation_step, knowledge_service.receipt, orchestration.verification_structured_extraction], writes: [] }
 tokens: [orchestration, verification_structured_extraction_completion_guard, orchestration.verification_structured_extraction_completion_guard]
 defined_in: ["20260906031500_verification_structured_extraction_candidate_artifacts.sql", "20260906032100_verification_structured_extraction_terminal.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # orchestration.verification_structured_extraction_completion_guard
 

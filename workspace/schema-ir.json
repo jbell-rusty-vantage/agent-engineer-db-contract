@@ -1,9 +1,9 @@
 {
   "build": {
-    "contract_version": "0.6.0",
-    "enrichment_sha256": "sha256:e34fe120eb8b1d16c195897e2a67255f66c053efe4147d736eb54f4730c04c02",
-    "generated_types_sha256": "sha256:ce31d5908c9a845c1ccf5aa75dc5595588f45e6f6554f96f4f96593f5541b094",
-    "migration_head": "20261115130200",
+    "contract_version": "0.7.0",
+    "enrichment_sha256": "sha256:cb6affa02c52946cbd0019cc2b63fb3fc3855fb33ee4338c0039fcc878421a33",
+    "generated_types_sha256": "sha256:5858ae58ef064e6d3686492b0d1fefed037431b5c7ccf6f9a7253f6fe7a1615a",
+    "migration_head": "20261116120000",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -616,6 +616,15 @@
       ],
       "product.role_in": [
         "fn:product.role_in(uuid,uuid)"
+      ],
+      "product.session_reader": [
+        "fn:product.session_reader()"
+      ],
+      "product.session_reads_revision": [
+        "fn:product.session_reads_revision(uuid)"
+      ],
+      "product.session_reads_workspace": [
+        "fn:product.session_reads_workspace(uuid)"
       ],
       "product.sha256_text": [
         "fn:product.sha256_text(text)"
@@ -4049,6 +4058,7 @@
       ],
       "rel:api.works_authored": [
         "fn:api.names(uuid[])",
+        "fn:product.session_reads_revision(uuid)",
         "fn:util.default_tenant_id()",
         "rel:authoring.release_item",
         "rel:authoring.revision_binding",
@@ -7741,6 +7751,49 @@
       },
       {
         "aliases": [
+          "source registry",
+          "source assessment",
+          "track record",
+          "source trust",
+          "authority score",
+          "attention policy",
+          "watch level",
+          "sweep",
+          "due list",
+          "what to watch"
+        ],
+        "body": "**Source registry.** `evidence.source_assessment` records what we know about a source (a\nchannel, an actor, an organization, a person) on a topic at a time, as components and never\na bare score: the role prior (`source_role_code`), `conflict_of_interest`,\n`method_disclosure`, the track record from verdicts (`claims_observed`, `claims_checked`,\n`confirmed`, `qualified`, `refuted`), `median_lead_days` against the first-party docs and\nthe sweep `noise_ratio`. Rows are append-only; `api.source_registry` shows the latest per\nsource and topic with the derived `authority_score` and a recommended watch level, which is\nsuggested only from five checked claims. Claims a source checked about itself are counted\nin `self_checked` and not scored.\n\n**Track record.** `api.source_track_record` is every claim a source stated with its latest\nverdict: the rows behind an assessment's counts. A claim and its verdict are read in the\nverified-knowledge domain (`q:evidence.claim`, `q:evidence.claim_verdicts`).\n\n**Attention.** `acquisition.attention_policy` says what we watch, how often (`cadence`,\n`triggers`), how deep (`depth`, `selection`) and on what budget. Watch levels: W0 ignore\n(registered, never swept), W1 reference, W2 sampled, W3 release-coupled. One execution of a\npolicy is an `acquisition.attention_sweep` (window, items seen, selected and captured,\nspend); every fetch it makes carries the sweep. `api.attention_policies` shows each policy\nwith its last sweep and totals.\n\n**Due.** `api.attention_due` is the contract a watch mission calls: the policies due at a\ntime because a trigger event happened inside its window since the last sweep, or because\nthe cadence elapsed. W0 and paused policies are never due. The other due lists\n(`api.probe_revalidation_due`, `api.releases_needing_review`) are in the verified-knowledge\ndomain; `tasks/what-is-due.md` reads all three.\n\nStart with `q:evidence.source_registry` for trust and `q:acquisition.attention_due` for\nwork. Assessments and policies are written by the pipeline and by a design interview, not\nby a read role.\n",
+        "functions": [
+          "fn:api.attention_due(timestamptz)"
+        ],
+        "lens": "evidence",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.source_registry",
+          "evidence.source_track_record",
+          "acquisition.attention_policies",
+          "acquisition.attention_due"
+        ],
+        "relations": [
+          "rel:api.source_registry",
+          "rel:api.source_track_record",
+          "rel:api.attention_policies",
+          "rel:evidence.source_assessment",
+          "rel:acquisition.attention_policy",
+          "rel:acquisition.attention_sweep"
+        ],
+        "reviewed": null,
+        "schemas": [],
+        "slug": "source-intelligence",
+        "summary": "What we know about each source on each topic, from the claims it stated and how they checked out; and what we watch, how often, on what budget.",
+        "tasks": [
+          "how-trusted-is-source",
+          "what-is-due"
+        ],
+        "title": "Source intelligence and attention (registry, track record, watch policies)"
+      },
+      {
+        "aliases": [
           "candidates",
           "review",
           "identity match"
@@ -7850,6 +7903,72 @@
           "price-with-locator"
         ],
         "title": "Temporal facts (two clocks)"
+      },
+      {
+        "aliases": [
+          "verified claims",
+          "claim candidates",
+          "verdicts",
+          "probes",
+          "probe runs",
+          "probe matrix",
+          "conflicts",
+          "restatements",
+          "claim triage",
+          "disputed claims",
+          "what is verified"
+        ],
+        "body": "Read through the `api` views; the tables behind them are not readable by app_reader or a\nsigned-in session.\n\n**A claim's life.** Every statement read from a source is a row of `evidence.claim`, shown\nby `api.claim_candidates` with its `path` (how it entered), `status` (`proposed`,\n`verified`, `disputed`), subjects and the document it was read from. Candidates are never\nfacts. `verification.claim_triage` (`api.claim_triage`) records what to do with a candidate\nbefore anyone checks it: probe it, check the docs or a registry, or leave it (not\ncheckable, duplicate, out of scope).\n\n**Probes and verdicts.** A `verification.probe` is an experiment that tests stated claims\nagainst a matrix of cells; a cell is a date (what an install resolved that day) or an\nexplicit pin. Each execution is a `verification.probe_run`; `api.probe_matrix` returns the\nlatest run per cell with the versions it resolved and what it observed. What the runs say\nabout one claim is a `verification.probe_verdict`: `directly_supported`,\n`supported_with_qualification`, `contradicted`, `not_supported` or `unverifiable`, proposed\nby an agent and confirmed or rejected by a person (`review_state`). `api.claim_verdicts`\nhas the latest verdict per claim; `api.probes` lists probes with their verdicts.\n\n**Verified.** A supportive verdict does not verify a claim. `api.verified_claims` holds the\nclaims that reached `verified` under a receipt bound to an admitted Knowledge Services use\ndecision (`use_decision_id`, `receipt_id`, the bound `effect`), with their current verdicts.\nOnly these are verified knowledge (source tier 0 in search). A deterministic probe that\ncontradicts a claim moves it to `disputed`.\n\n**Kept beside the claim.** `evidence.claim_conflict` (`api.claim_conflicts`) keeps a\ndisagreement between a first-party claim and another statement until someone reconciles\nit. `api.claim_restatements` pairs a restated claim with the attribution-framed original\nit was atomized from; the original stays `proposed`. `api.claim_surfaces` (talk claims and\nthe docs they concern) and `api.community_claims` (issue trackers, forums, comparison\narticles) are candidate views by channel.\n\n**What goes stale.** `api.probe_revalidation_due` lists probes whose latest cell ran on an\nolder version than the newest catalogued release; `api.releases_needing_review` lists our\nfrozen releases whose bound claims changed verdict since (a signed-in user sees those of\ntheir workspaces). `api.library_dossier` assembles releases, claims, probes and ranked\nsources for one library in one call.\n\nStart with `q:evidence.verified_claims`; one claim in depth is `q:evidence.claim`,\n`q:evidence.claim_verdicts` and `q:evidence.probe_matrix`. Sources and watch policies are\nthe source-intelligence domain. Writing a verdict or an admission is the pipeline's work\n(verifier_agent, executor_service), not a read role's.\n",
+        "functions": [
+          "fn:api.probe_matrix(text)",
+          "fn:api.probe_revalidation_due(timestamptz)",
+          "fn:api.releases_needing_review()",
+          "fn:api.library_dossier(text)",
+          "fn:api.interview_outputs(uuid)"
+        ],
+        "lens": "evidence",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.verified_claims",
+          "evidence.claim",
+          "evidence.claim_verdicts",
+          "evidence.claim_conflicts",
+          "evidence.claim_restatements",
+          "evidence.claim_triage",
+          "evidence.probes",
+          "evidence.probe_matrix",
+          "evidence.probe_revalidation_due",
+          "ours.releases_needing_review"
+        ],
+        "relations": [
+          "rel:api.verified_claims",
+          "rel:api.claim_candidates",
+          "rel:api.claim_verdicts",
+          "rel:api.claim_conflicts",
+          "rel:api.claim_restatements",
+          "rel:api.claim_triage",
+          "rel:api.claim_surfaces",
+          "rel:api.community_claims",
+          "rel:api.probes",
+          "rel:verification.probe",
+          "rel:verification.probe_claim",
+          "rel:verification.probe_run",
+          "rel:verification.probe_verdict",
+          "rel:verification.claim_triage",
+          "rel:evidence.claim_conflict"
+        ],
+        "reviewed": null,
+        "schemas": [],
+        "slug": "verified-knowledge",
+        "summary": "A claim is a candidate until a probe judges it and a Knowledge Services admission verifies it; conflicts and restatements are kept beside it.",
+        "tasks": [
+          "what-is-verified-about-subject",
+          "read-claim-with-evidence",
+          "why-claim-disputed-or-restated",
+          "what-is-due",
+          "what-a-release-affects"
+        ],
+        "title": "Verified knowledge (claims, probes, verdicts)"
       }
     ],
     "files_present": [
@@ -8107,7 +8226,7 @@
       "version": "ingestion-rules.v1"
     },
     "queries": {
-      "catalog_version": "sha256:911b2d8651a2bfecd07037cb12fb5b7e4fd47bf50d5d70c7ecd2b4da7496f3eb",
+      "catalog_version": "sha256:22853bfb9b5f307db8f0f3df6e655b0067aafa166b27877d63dcf8a0988c4ace",
       "defaults": {
         "limit": 200,
         "maxLimit": 2000,
@@ -8119,6 +8238,174 @@
         }
       },
       "entries": [
+        {
+          "aliases": [
+            "attention due",
+            "due list",
+            "watch due",
+            "what to sweep now"
+          ],
+          "cost_class": "cheap",
+          "domain": "source-intelligence",
+          "embedding": null,
+          "example": {
+            "as_of": null
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:acquisition.attention_due",
+          "kind": "named_query",
+          "name": "acquisition.attention_due",
+          "pagination": null,
+          "paramOrder": [
+            "as_of"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "as_of": {
+                "default": null,
+                "format": "date-time",
+                "pgType": "timestamptz",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "policy_id",
+              "slug",
+              "watch_level",
+              "reason",
+              "trigger_ref",
+              "last_sweep_at",
+              "budget_usd_per_run",
+              "mission"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select * from api.attention_due(coalesce($1::timestamptz, now()))",
+          "summary": "Attention policies due at a time, by trigger event or elapsed cadence (the due list a watch mission calls)",
+          "tasks": [
+            "what-is-due"
+          ],
+          "temporal": {
+            "knowledge": "n/a",
+            "world_time": "as_of"
+          },
+          "title": "Attention policies due at a time, by trigger event or elapsed cadence (the due list a watch mission calls)",
+          "volatile": true
+        },
+        {
+          "aliases": [
+            "attention policy",
+            "watch policy",
+            "watch level",
+            "sweeps",
+            "what we watch"
+          ],
+          "cost_class": "cheap",
+          "domain": "source-intelligence",
+          "embedding": null,
+          "example": {
+            "limit": 50,
+            "state": null,
+            "watch_level": null
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:acquisition.attention_policies",
+          "kind": "named_query",
+          "name": "acquisition.attention_policies",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "watch_level",
+            "state",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "state": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "watch_level": {
+                "default": null,
+                "enum": [
+                  "W0",
+                  "W1",
+                  "W2",
+                  "W3",
+                  null
+                ],
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "policy_id",
+              "slug",
+              "title",
+              "scope_kind",
+              "watch_level",
+              "cadence",
+              "triggers",
+              "budget_usd_per_run",
+              "state",
+              "channels",
+              "subjects",
+              "mission",
+              "last_sweep_at",
+              "last_outcome",
+              "last_seen",
+              "last_selected",
+              "sweeps",
+              "spend_usd",
+              "rationale"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select policy_id, slug, title, scope_kind, watch_level, cadence, triggers, budget_usd_per_run, state, channels, subjects, mission,\n       last_sweep_at, last_outcome, last_seen, last_selected, sweeps, spend_usd, rationale\nfrom api.attention_policies\nwhere ($1::text is null or watch_level = $1)\n  and ($2::text is null or state = $2)\norder by watch_level desc, slug\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+          "summary": "Attention policies (what we watch, watch level, cadence, triggers, budget) with their sweep history",
+          "tasks": [
+            "what-is-due",
+            "how-trusted-is-source"
+          ],
+          "temporal": {
+            "knowledge": "n/a",
+            "world_time": "now()"
+          },
+          "title": "Attention policies (what we watch, watch level, cadence, triggers, budget) with their sweep history",
+          "volatile": true
+        },
         {
           "aliases": [
             "fetches",
@@ -10407,6 +10694,239 @@
         },
         {
           "aliases": [
+            "claim",
+            "claim candidate",
+            "claim status",
+            "one claim"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "claim_id": "0192b000-0000-7000-8000-000000000001"
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.claim",
+          "kind": "named_query",
+          "name": "evidence.claim",
+          "pagination": null,
+          "paramOrder": [
+            "claim_id"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "claim_id": {
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": "string"
+              }
+            },
+            "required": [
+              "claim_id"
+            ],
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "claim_id",
+              "claim_type",
+              "statement",
+              "status",
+              "path",
+              "source_role",
+              "subjects",
+              "speakers",
+              "attribution",
+              "learned_at",
+              "agrees_with_first_party_claim",
+              "document_node_id",
+              "document_title",
+              "created_at"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select claim_id, claim_type, statement, status, path, source_role, subjects, speakers, attribution, learned_at,\n       agrees_with_first_party_claim, document_node_id, document_title, created_at\nfrom api.claim_candidates\nwhere claim_id = $1::uuid\n",
+          "summary": "One claim, its status, path, subjects and the document it was read from",
+          "tasks": [
+            "read-claim-with-evidence",
+            "why-claim-disputed-or-restated"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "One claim, its status, path, subjects and the document it was read from",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "conflict",
+            "disagreement",
+            "disputed",
+            "contradiction between sources"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "claim_id": null,
+            "limit": 50
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.claim_conflicts",
+          "kind": "named_query",
+          "name": "evidence.claim_conflicts",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "claim_id",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "claim_id": {
+                "default": null,
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "conflict_id",
+              "conflict_kind",
+              "detected_by",
+              "detected_at",
+              "first_party_claim_id",
+              "first_party_statement",
+              "first_party_status",
+              "other_claim_id",
+              "other_statement",
+              "other_status",
+              "other_source_role",
+              "other_provenance",
+              "reconciliation"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select conflict_id, conflict_kind, detected_by, detected_at, first_party_claim_id, first_party_statement, first_party_status,\n       other_claim_id, other_statement, other_status, other_source_role, other_provenance, reconciliation\nfrom api.claim_conflicts\nwhere ($1::uuid is null or first_party_claim_id = $1 or other_claim_id = $1)\norder by detected_at desc, conflict_id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+          "summary": "Kept disagreements between a first-party claim and another statement, for one claim or all",
+          "tasks": [
+            "why-claim-disputed-or-restated",
+            "read-claim-with-evidence"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "Kept disagreements between a first-party claim and another statement, for one claim or all",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "restatement",
+            "restated claim",
+            "atomized claim",
+            "original claim",
+            "attribution"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "claim_id": null,
+            "limit": 50
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.claim_restatements",
+          "kind": "named_query",
+          "name": "evidence.claim_restatements",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "claim_id",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "claim_id": {
+                "default": null,
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "claim_id",
+              "statement",
+              "status",
+              "qualified",
+              "dropped",
+              "probe",
+              "original_claim_id",
+              "original_statement",
+              "original_status",
+              "created_at"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select claim_id, statement, status, qualified, dropped, probe, original_claim_id, original_statement, original_status, created_at\nfrom api.claim_restatements\nwhere ($1::uuid is null or claim_id = $1 or original_claim_id = $1)\norder by created_at desc, claim_id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+          "summary": "Restated claims and the attribution-framed originals they were atomized from, for one claim or all",
+          "tasks": [
+            "why-claim-disputed-or-restated",
+            "read-claim-with-evidence"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "Restated claims and the attribution-framed originals they were atomized from, for one claim or all",
+          "volatile": false
+        },
+        {
+          "aliases": [
             "support"
           ],
           "cost_class": "cheap",
@@ -10454,6 +10974,210 @@
             "world_time": "n/a"
           },
           "title": "Segment and occurrence support rows for one claim",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "triage",
+            "checkability",
+            "not checkable",
+            "which claims become probes"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "claim_id": null,
+            "disposition": "probe",
+            "limit": 50
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.claim_triage",
+          "kind": "named_query",
+          "name": "evidence.claim_triage",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "claim_id",
+            "disposition",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "claim_id": {
+                "default": null,
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disposition": {
+                "default": null,
+                "enum": [
+                  "probe",
+                  "docs_check",
+                  "registry_check",
+                  "not_checkable",
+                  "duplicate",
+                  "out_of_scope",
+                  null
+                ],
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "claim_id",
+              "statement",
+              "claim_type",
+              "status",
+              "disposition",
+              "checkability",
+              "priority",
+              "rationale",
+              "probe",
+              "duplicate_of_claim_id",
+              "decided_by",
+              "review_state",
+              "decided_at",
+              "verdict"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select claim_id, statement, claim_type, status, disposition, checkability, priority, rationale, probe, duplicate_of_claim_id,\n       decided_by, review_state, decided_at, verdict\nfrom api.claim_triage\nwhere ($1::uuid is null or claim_id = $1)\n  and ($2::text is null or disposition = $2)\norder by priority desc nulls last, decided_at desc, claim_id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+          "summary": "What was decided about each claim candidate before checking it (probe, docs check, registry check, not checkable, duplicate)",
+          "tasks": [
+            "why-claim-disputed-or-restated"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "What was decided about each claim candidate before checking it (probe, docs check, registry check, not checkable, duplicate)",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "verdict",
+            "probe verdict",
+            "judged claims",
+            "contradicted claims",
+            "supported claims"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "claim_id": null,
+            "limit": 50,
+            "probe": null,
+            "verdict": "contradicted"
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.claim_verdicts",
+          "kind": "named_query",
+          "name": "evidence.claim_verdicts",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "claim_id",
+            "verdict",
+            "probe",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "claim_id": {
+                "default": null,
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "probe": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "verdict": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "claim_id",
+              "statement",
+              "claim_type",
+              "status",
+              "verdict",
+              "probe",
+              "review_state",
+              "decided_by",
+              "decided_at",
+              "stated_by",
+              "channel",
+              "stated_at",
+              "quote",
+              "cells",
+              "rationale"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select claim_id, statement, claim_type, status, verdict, probe, review_state, decided_by, decided_at, stated_by, channel, stated_at, quote, cells, rationale\nfrom api.claim_verdicts\nwhere ($1::uuid is null or claim_id = $1)\n  and ($2::text is null or verdict = $2)\n  and ($3::text is null or probe = $3)\norder by decided_at desc, claim_id\nlimit least(greatest(coalesce($4, 50), 1), 200)\n",
+          "summary": "The latest probe verdict of each judged claim, with who stated it, the review state and the per-cell summary",
+          "tasks": [
+            "read-claim-with-evidence",
+            "what-is-verified-about-subject",
+            "why-claim-disputed-or-restated"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "The latest probe verdict of each judged claim, with who stated it, the review state and the per-cell summary",
           "volatile": false
         },
         {
@@ -10529,6 +11253,397 @@
         },
         {
           "aliases": [
+            "probe matrix",
+            "probe runs",
+            "cells",
+            "what the probe observed"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "probe": "P1-crea-deprecation"
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.probe_matrix",
+          "kind": "named_query",
+          "name": "evidence.probe_matrix",
+          "pagination": null,
+          "paramOrder": [
+            "probe"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "probe": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "probe"
+            ],
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "cell_label",
+              "cell",
+              "outcome",
+              "resolved",
+              "observations",
+              "started_at",
+              "run_id",
+              "locator_id"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select * from api.probe_matrix($1::text)",
+          "summary": "The latest run of one probe in each cell (a date or an explicit pin), with outcome, resolved versions and observations",
+          "tasks": [
+            "read-claim-with-evidence"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "The latest run of one probe in each cell (a date or an explicit pin), with outcome, resolved versions and observations",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "revalidation due",
+            "probes to rerun",
+            "stale probe",
+            "due list"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "as_of": null
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.probe_revalidation_due",
+          "kind": "named_query",
+          "name": "evidence.probe_revalidation_due",
+          "pagination": null,
+          "paramOrder": [
+            "as_of"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "as_of": {
+                "default": null,
+                "format": "date-time",
+                "pgType": "timestamptz",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "probe_id",
+              "probe",
+              "cell_label",
+              "last_run_at",
+              "library",
+              "resolved_version",
+              "newest_version",
+              "newest_released_at",
+              "reason"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select * from api.probe_revalidation_due(coalesce($1::timestamptz, now()))",
+          "summary": "Probes whose latest cell ran against an older version of a subject library than its newest catalogued release",
+          "tasks": [
+            "what-is-due",
+            "what-a-release-affects"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "as_of"
+          },
+          "title": "Probes whose latest cell ran against an older version of a subject library than its newest catalogued release",
+          "volatile": true
+        },
+        {
+          "aliases": [
+            "probes",
+            "experiments",
+            "tests of a claim"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "limit": 50,
+            "text": "langgraph"
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.probes",
+          "kind": "named_query",
+          "name": "evidence.probes",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "text",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "text": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "probe_id",
+              "slug",
+              "title",
+              "kind",
+              "hypothesis",
+              "model_policy",
+              "subjects",
+              "claims",
+              "runs",
+              "last_run_at",
+              "verdicts"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select probe_id, slug, title, kind, hypothesis, model_policy, subjects, claims, runs, last_run_at, verdicts\nfrom api.probes\nwhere ($1::text is null or slug ilike '%' || $1 || '%' or title ilike '%' || $1 || '%'\n       or exists (select 1 from unnest(subjects) s where s ilike '%' || $1 || '%'))\norder by last_run_at desc nulls last, slug\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+          "summary": "Probes (experiments that test stated claims), their subjects, claim and run counts and verdicts",
+          "tasks": [
+            "read-claim-with-evidence",
+            "what-is-verified-about-subject"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "Probes (experiments that test stated claims), their subjects, claim and run counts and verdicts",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "source registry",
+            "source assessment",
+            "trust",
+            "authority score",
+            "who is reliable on a topic"
+          ],
+          "cost_class": "cheap",
+          "domain": "source-intelligence",
+          "embedding": null,
+          "example": {
+            "limit": 50,
+            "source": null,
+            "topic": "LangChain"
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.source_registry",
+          "kind": "named_query",
+          "name": "evidence.source_registry",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "source",
+            "topic",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "source": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "topic": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "source_entity_id",
+              "source_kind",
+              "source",
+              "platform",
+              "url",
+              "topic",
+              "as_of",
+              "source_role_code",
+              "conflict_of_interest",
+              "method_disclosure",
+              "claims_observed",
+              "claims_checked",
+              "confirmed",
+              "qualified",
+              "refuted",
+              "self_checked",
+              "median_lead_days",
+              "noise_ratio",
+              "authority_score",
+              "recommended_watch_level",
+              "current_watch_level",
+              "rationale"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select source_entity_id, source_kind, source, platform, url, topic, as_of, source_role_code, conflict_of_interest, method_disclosure,\n       claims_observed, claims_checked, confirmed, qualified, refuted, self_checked, median_lead_days, noise_ratio, authority_score,\n       recommended_watch_level, current_watch_level, rationale\nfrom api.source_registry\nwhere ($1::text is null or source ilike '%' || $1 || '%')\n  and ($2::text is null or topic ilike '%' || $2 || '%')\norder by authority_score desc nulls last, claims_checked desc nulls last, source\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+          "summary": "Latest assessment of each source on each topic (role, conflict of interest, checked claims, score, watch suggestion)",
+          "tasks": [
+            "how-trusted-is-source"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "Latest assessment of each source on each topic (role, conflict of interest, checked claims, score, watch suggestion)",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "track record",
+            "claims by source",
+            "checked claims of a source"
+          ],
+          "cost_class": "cheap",
+          "domain": "source-intelligence",
+          "embedding": null,
+          "example": {
+            "limit": 50,
+            "source": "langchain",
+            "source_entity_id": null
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.source_track_record",
+          "kind": "named_query",
+          "name": "evidence.source_track_record",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "source_entity_id",
+            "source",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "source": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source_entity_id": {
+                "default": null,
+                "format": "uuid",
+                "pgType": "uuid",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "source_entity_id",
+              "source",
+              "source_kind",
+              "claim_id",
+              "statement",
+              "status",
+              "stated_at",
+              "first_party_at",
+              "verdict",
+              "probe"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select source_entity_id, source, source_kind, claim_id, statement, status, stated_at, first_party_at, verdict, probe\nfrom api.source_track_record\nwhere ($1::uuid is null or source_entity_id = $1)\n  and ($2::text is null or source ilike '%' || $2 || '%')\norder by stated_at desc nulls last, claim_id\nlimit least(greatest(coalesce($3, 50), 1), 200)\n",
+          "summary": "Every claim a source stated, with its latest verdict (the rows behind the counts of an assessment)",
+          "tasks": [
+            "how-trusted-is-source"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "Every claim a source stated, with its latest verdict (the rows behind the counts of an assessment)",
+          "volatile": false
+        },
+        {
+          "aliases": [
             "sources"
           ],
           "cost_class": "cheap",
@@ -10586,6 +11701,82 @@
             "world_time": "n/a"
           },
           "title": "Sources filtered by registrable domain",
+          "volatile": false
+        },
+        {
+          "aliases": [
+            "verified claims",
+            "what is verified",
+            "admitted claims",
+            "tier 0"
+          ],
+          "cost_class": "medium",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {
+            "limit": 50,
+            "text": "LangGraph"
+          },
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:evidence.verified_claims",
+          "kind": "named_query",
+          "name": "evidence.verified_claims",
+          "pagination": {
+            "kind": "limit",
+            "limitParam": "limit"
+          },
+          "paramOrder": [
+            "text",
+            "limit"
+          ],
+          "params": {
+            "additionalProperties": false,
+            "properties": {
+              "limit": {
+                "default": 50,
+                "maximum": 200,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "text": {
+                "default": null,
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "claim_id",
+              "statement",
+              "claim_type",
+              "subjects",
+              "verified_at",
+              "executor_version",
+              "use_decision_id",
+              "receipt_id",
+              "verdicts"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select v.claim_id, v.statement, v.claim_type, c.subjects, v.verified_at, v.executor_version, v.use_decision_id, v.receipt_id, v.verdicts\nfrom api.verified_claims v\nleft join api.claim_candidates c on c.claim_id = v.claim_id\nwhere ($1::text is null or v.statement ilike '%' || $1 || '%' or exists (select 1 from unnest(c.subjects) s where s ilike '%' || $1 || '%'))\norder by v.verified_at desc, v.claim_id\nlimit least(greatest(coalesce($2, 50), 1), 200)\n",
+          "summary": "Claims verified through a Knowledge Services admission, by subject or wording, with the verdicts behind them",
+          "tasks": [
+            "what-is-verified-about-subject",
+            "read-claim-with-evidence"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "n/a"
+          },
+          "title": "Claims verified through a Knowledge Services admission, by subject or wording, with the verdicts behind them",
           "volatile": false
         },
         {
@@ -11249,6 +12440,60 @@
           },
           "title": "Our head revisions that bind or require the software a release belongs to and were authored before it",
           "volatile": false
+        },
+        {
+          "aliases": [
+            "releases needing review",
+            "release review",
+            "verdict changed after release",
+            "due list"
+          ],
+          "cost_class": "cheap",
+          "domain": "verified-knowledge",
+          "embedding": null,
+          "example": {},
+          "execute": true,
+          "execute_skip_reason": null,
+          "id": "q:ours.releases_needing_review",
+          "kind": "named_query",
+          "name": "ours.releases_needing_review",
+          "pagination": null,
+          "paramOrder": [],
+          "params": {
+            "additionalProperties": false,
+            "properties": {},
+            "type": "object"
+          },
+          "provenance": "model_assisted",
+          "result": {
+            "columns": [
+              "release_id",
+              "release_no",
+              "root_work_id",
+              "released_at",
+              "claim_id",
+              "statement",
+              "verdict_at_release",
+              "verdict_now",
+              "status_now",
+              "decided_at"
+            ],
+            "shape": "rows"
+          },
+          "reviewed": null,
+          "role": "app_reader",
+          "sql": "select * from api.releases_needing_review()",
+          "summary": "Our releases whose bound claims got a different probe verdict after the release was frozen",
+          "tasks": [
+            "what-is-due",
+            "what-a-release-affects"
+          ],
+          "temporal": {
+            "knowledge": "head",
+            "world_time": "now()"
+          },
+          "title": "Our releases whose bound claims got a different probe verdict after the release was frozen",
+          "volatile": true
         },
         {
           "aliases": [
@@ -12341,6 +13586,33 @@
         "reviewed": null,
         "summary": "One attempt to obtain bytes from a URL — who, with what tool, outcome, hash, spend — recorded before any capture exists."
       },
+      "rel:api.attention_policies": {
+        "aliases": [
+          "attention policies",
+          "watch policies",
+          "watch levels",
+          "sweep history"
+        ],
+        "column_notes": {},
+        "domain": null,
+        "examples": [
+          {
+            "note": "Which of them are due now is `q:acquisition.attention_due`.",
+            "params": {
+              "limit": 50,
+              "state": null,
+              "watch_level": null
+            },
+            "query": "acquisition.attention_policies",
+            "title": "Every policy with its last sweep"
+          }
+        ],
+        "lens": null,
+        "notes": null,
+        "provenance": "model_assisted",
+        "reviewed": null,
+        "summary": "Attention policies (what we watch, watch level W0 to W3, cadence, triggers, budget) with their last sweep and sweep totals."
+      },
       "rel:api.current_facts": {
         "aliases": [
           "current facts view"
@@ -12532,6 +13804,32 @@
         "provenance": "model_assisted",
         "reviewed": null,
         "summary": "L1 — one row per model version with developer, release date, context, modalities, capability statuses, cutoff, availability and the minimum current price per 1M tokens."
+      },
+      "rel:api.probes": {
+        "aliases": [
+          "probes",
+          "experiments",
+          "probe list",
+          "probe verdicts"
+        ],
+        "column_notes": {},
+        "domain": null,
+        "examples": [
+          {
+            "note": "One row per probe; the per-cell runs of one probe are `q:evidence.probe_matrix`.",
+            "params": {
+              "limit": 20,
+              "text": "langgraph"
+            },
+            "query": "evidence.probes",
+            "title": "Probes whose subject is LangGraph"
+          }
+        ],
+        "lens": null,
+        "notes": null,
+        "provenance": "model_assisted",
+        "reviewed": null,
+        "summary": "Probes (experiments that test stated claims) with their subjects, the number of claims and runs, the last run and the verdict each gave."
       },
       "rel:api.software": {
         "aliases": [
@@ -14475,7 +15773,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:e34fe120eb8b1d16c195897e2a67255f66c053efe4147d736eb54f4730c04c02",
+    "sha256": "sha256:cb6affa02c52946cbd0019cc2b63fb3fc3855fb33ee4338c0039fcc878421a33",
     "tasks": [
       {
         "aliases": [
@@ -14714,6 +16012,36 @@
       },
       {
         "aliases": [
+          "source trust",
+          "trustworthy source",
+          "authority",
+          "reliability",
+          "track record",
+          "source registry",
+          "source assessment",
+          "who to believe about"
+        ],
+        "domains": [
+          "source-intelligence",
+          "evidence"
+        ],
+        "expected_shape": "`registry` rows, one per source and topic at its latest assessment (`as_of`): `source`, `source_kind`, `platform`, `url`, `topic`, `source_role_code`, `conflict_of_interest`, `method_disclosure`, `claims_observed`, `claims_checked`, `confirmed`, `qualified`, `refuted`, `self_checked`, `median_lead_days`, `noise_ratio`, `authority_score`, `recommended_watch_level`, `current_watch_level`, `rationale`. `record` rows: each claim the source stated with `status`, `stated_at`, `first_party_at`, `verdict`, `probe`.\n",
+        "id": "task:how-trusted-is-source",
+        "navigation": "`START_HERE.md` (L1) → `relations/api/source_registry.md` → `q:evidence.source_registry` → `q:evidence.source_track_record` for the claims behind the counts.\n",
+        "operation": "`api.source_registry` is the latest assessment per source and topic; `api.source_track_record` is the claims it rests on.\n\n```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"sources-on-langchain\",\n  \"operations\": [\n    { \"opId\": \"registry\", \"kind\": \"named_query\", \"query\": \"evidence.source_registry\", \"params\": { \"source\": null, \"topic\": \"LangChain\", \"limit\": 20 } },\n    { \"opId\": \"record\", \"kind\": \"named_query\", \"query\": \"evidence.source_track_record\", \"params\": { \"source_entity_id\": \"$registry.rows[0].source_entity_id\", \"source\": null, \"limit\": 50 } }\n  ]\n}\n```\n",
+        "pitfalls": "Read the components, not the score alone: `authority_score` is derived from the role prior and the checked claims, and with few `claims_checked` it is mostly the prior. A watch level is recommended only from five checked claims. `self_checked` counts claims the source checked about itself; they are shown and not scored. A null `topic` is the source overall; a topic row is trust on that topic only. `median_lead_days` is how long before the first-party docs the source said it. Trust is about what was checked: `q:evidence.source_track_record` shows which claims, and a refuted claim there is `tasks/why-claim-disputed-or-restated.md`.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.source_registry",
+          "evidence.source_track_record",
+          "acquisition.attention_policies"
+        ],
+        "reviewed": null,
+        "slug": "how-trusted-is-source",
+        "title": "How much is a source trusted on a topic?"
+      },
+      {
+        "aliases": [
           "flywheel",
           "release impact",
           "stale modules",
@@ -14797,6 +16125,37 @@
         "reviewed": null,
         "slug": "price-with-locator",
         "title": "What does X cost per 1M tokens, and where exactly was that read?"
+      },
+      {
+        "aliases": [
+          "one claim",
+          "claim detail",
+          "evidence for a claim",
+          "why is this claim verified",
+          "verdict of a claim",
+          "probe runs for a claim"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "evidence"
+        ],
+        "expected_shape": "`claim`: `status` (`proposed`, `verified`, `disputed`), `path` (how it entered: `deterministic_first_party`, `L1_candidate`, `community_thread`, `restatement`, `own_probe_finding`, …), `source_role`, `subjects`, `speakers`, `document_node_id` and `document_title` (where it was read). `verdict`: who stated it (`stated_by`, `channel`, `stated_at`, `quote`), the latest `verdict`, `probe`, `review_state`, `decided_by`, `cells` (per-cell summary) and `rationale`. `runs`: one row per cell with `outcome`, `resolved` (package versions that cell installed), `observations`, `started_at`, `locator_id`.\n",
+        "id": "task:read-claim-with-evidence",
+        "navigation": "`tasks/what-is-verified-about-subject.md` or a search hit (`target_kind` claim) gives the `claim_id` → `relations/api/claim_candidates.md` → `q:evidence.claim` → `q:evidence.claim_verdicts` → `q:evidence.probe_matrix`.\n",
+        "operation": "```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"claim-in-depth\",\n  \"operations\": [\n    { \"opId\": \"claim\", \"kind\": \"named_query\", \"query\": \"evidence.claim\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\" } },\n    { \"opId\": \"verdict\", \"kind\": \"named_query\", \"query\": \"evidence.claim_verdicts\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"verdict\": null, \"probe\": null, \"limit\": 5 } },\n    { \"opId\": \"runs\", \"kind\": \"named_query\", \"query\": \"evidence.probe_matrix\", \"params\": { \"probe\": \"$verdict.rows[0].probe\" } },\n    { \"opId\": \"restated\", \"kind\": \"named_query\", \"query\": \"evidence.claim_restatements\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"limit\": 20 } },\n    { \"opId\": \"conflicts\", \"kind\": \"named_query\", \"query\": \"evidence.claim_conflicts\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"limit\": 20 } }\n  ]\n}\n```\n\nThe claim is a row of `api.claim_candidates`, its latest verdict a row of `api.claim_verdicts`, the runs come from `api.probe_matrix`. The admission behind a verified status is the matching row of `q:evidence.verified_claims` (`use_decision_id`, `receipt_id`, `effect`).\n",
+        "pitfalls": "A probe run's `outcome` (pass or fail) is about the probe's own checks, not about the claim; the claim's answer is the `verdict`. A cell is a date (what a tutorial follower got that day) or an explicit pin: read `resolved` before saying which version a verdict covers. `api.claim_verdicts` holds the latest verdict only; a verified claim lists every current one in `api.verified_claims.verdicts`. A claim read from a document carries `document_node_id`; the exact locator of a fact is `q:facts.locators`, and claim-to-fact support is `q:evidence.claim_support` (pipeline_agent).\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.claim",
+          "evidence.verified_claims",
+          "evidence.claim_verdicts",
+          "evidence.probe_matrix",
+          "evidence.claim_restatements",
+          "evidence.claim_conflicts"
+        ],
+        "reviewed": null,
+        "slug": "read-claim-with-evidence",
+        "title": "Read one claim with its evidence and verdicts"
       },
       {
         "aliases": [
@@ -15114,6 +16473,38 @@
       },
       {
         "aliases": [
+          "release impact",
+          "affected by release",
+          "new version",
+          "what breaks",
+          "revalidate after release",
+          "flywheel",
+          "upgrade impact"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "authoring",
+          "api-surface"
+        ],
+        "expected_shape": "`modules`: `work_id`, `work_kind`, `work_slug`, `revision_id`, `revision_title`, `software`, `release`, `released_at`, `breaking`, `binding`, `version_spec`. `probes`: the probes whose latest cell resolved an older version of that library (`library`, `resolved_version`, `newest_version`, `reason`). `frozen`: our releases whose bound claims changed verdict since they were frozen.\n",
+        "id": "task:what-a-release-affects",
+        "navigation": "`relations/api/software_releases.md` → `q:catalog.software_releases` (get `release_id`) → `functions/api/modules_affected_by_release.md` → `q:ours.modules_affected_by_release` → `q:evidence.probe_revalidation_due`.\n",
+        "operation": "A release reaches three things: our head revisions that use the software (`api.modules_affected_by_release`), the probes that ran against an older version (`api.probe_revalidation_due`), and our frozen releases whose claims those probes judge (`api.releases_needing_review`).\n\n```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"release-impact-langgraph\",\n  \"operations\": [\n    { \"opId\": \"releases\", \"kind\": \"named_query\", \"query\": \"catalog.software_releases\", \"params\": { \"software_id\": null, \"text\": \"langgraph\", \"limit\": 5 } },\n    { \"opId\": \"modules\", \"kind\": \"named_query\", \"query\": \"ours.modules_affected_by_release\", \"params\": { \"release_id\": \"$releases.rows[0].release_id\" } },\n    { \"opId\": \"probes\", \"kind\": \"named_query\", \"query\": \"evidence.probe_revalidation_due\", \"params\": { \"as_of\": null } },\n    { \"opId\": \"frozen\", \"kind\": \"named_query\", \"query\": \"ours.releases_needing_review\", \"params\": {} }\n  ]\n}\n```\n",
+        "pitfalls": "The order is causal and takes time: a release makes probes due, a rerun may change a verdict, and only then does a frozen release need review, so `frozen` is empty right after a release. `modules` lists head revisions authored before the release; `breaking` rows first. Verified claims about the software were verified on the versions in `q:evidence.probe_matrix`; until the due probes rerun, say which version a claim was checked on. A signed-in user sees the modules they may read and the releases of their workspaces; database roles see all. Authoring the fix is `tasks/modules-affected-by-release.md`.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "catalog.software_releases",
+          "ours.modules_affected_by_release",
+          "evidence.probe_revalidation_due",
+          "ours.releases_needing_review",
+          "evidence.verified_claims"
+        ],
+        "reviewed": null,
+        "slug": "what-a-release-affects",
+        "title": "What does a software release affect (our modules, probes, releases)?"
+      },
+      {
+        "aliases": [
           "changes since",
           "what's new",
           "delta since date",
@@ -15196,6 +16587,100 @@
         "reviewed": null,
         "slug": "what-do-we-know-about-entity",
         "title": "What do we already know about <name>?"
+      },
+      {
+        "aliases": [
+          "due",
+          "due list",
+          "what needs attention",
+          "watch due",
+          "probes to rerun",
+          "revalidation",
+          "releases needing review",
+          "stale",
+          "overdue"
+        ],
+        "domains": [
+          "source-intelligence",
+          "verified-knowledge",
+          "authoring"
+        ],
+        "expected_shape": "`sweeps`: `policy_id`, `slug`, `watch_level`, `reason` (a trigger event inside its window, or the cadence elapsed), `trigger_ref`, `last_sweep_at`, `budget_usd_per_run`, `mission`. `probes`: `probe`, `cell_label`, `last_run_at`, `library`, `resolved_version`, `newest_version`, `newest_released_at`, `reason`. `releases`: `release_id`, `release_no`, `root_work_id`, `released_at`, `claim_id`, `statement`, `verdict_at_release`, `verdict_now`, `status_now`, `decided_at`.\n",
+        "id": "task:what-is-due",
+        "navigation": "`START_HERE.md` (L2) → `functions/api/attention_due.md`, `functions/api/probe_revalidation_due.md`, `functions/api/releases_needing_review.md` → the three queries below.\n",
+        "operation": "Three lists, one per kind of work: `api.attention_due` (sources to sweep), `api.probe_revalidation_due` (probes to rerun), `api.releases_needing_review` (our releases to review). An empty list is an answer.\n\n```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"due-now\",\n  \"operations\": [\n    { \"opId\": \"sweeps\", \"kind\": \"named_query\", \"query\": \"acquisition.attention_due\", \"params\": { \"as_of\": null } },\n    { \"opId\": \"probes\", \"kind\": \"named_query\", \"query\": \"evidence.probe_revalidation_due\", \"params\": { \"as_of\": null } },\n    { \"opId\": \"releases\", \"kind\": \"named_query\", \"query\": \"ours.releases_needing_review\", \"params\": {} }\n  ]\n}\n```\n\n`as_of` null means now. What was learned since a time is `q:facts.changes_since`; every policy with its last sweep is `q:acquisition.attention_policies`.\n",
+        "pitfalls": "These readers filter on the session tenant: a database session without `app.tenant_id` gets no rows, which reads as \"nothing due\"; check `q:knowledge.head` first. W0 and paused policies are never due. A probe is due only on its latest unpinned cell; a pinned cell never goes stale. A release needs review when a bound claim's verdict changed after the release was frozen; a human confirmation of the same verdict does not count. A signed-in user sees the releases of workspaces they are a member of; app_reader and the pipeline roles see all. The due lists say what to do, they do not do it: a watch mission runs the sweep under the policy budget.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "acquisition.attention_due",
+          "evidence.probe_revalidation_due",
+          "ours.releases_needing_review",
+          "acquisition.attention_policies",
+          "facts.changes_since"
+        ],
+        "reviewed": null,
+        "slug": "what-is-due",
+        "title": "What is due (sources to sweep, probes to rerun, releases to review)?"
+      },
+      {
+        "aliases": [
+          "verified",
+          "what is verified",
+          "verified claims about",
+          "checked statements",
+          "admitted claims",
+          "tier 0 about a library"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "evidence"
+        ],
+        "expected_shape": "`verified` rows: `claim_id`, `statement`, `claim_type`, `subjects` (entity names), `verified_at`, `use_decision_id` and `receipt_id` (the Knowledge Services admission), `executor_version`, `verdicts` (array of `probe`, `verdict`, `review_state`). `judged` rows carry the latest `verdict` (`directly_supported`, `supported_with_qualification`, `contradicted`, `not_supported`, `unverifiable`) and `review_state` (`agent_proposed`, `human_confirmed`, `human_rejected`). No row means nothing is verified about it, not that the subject is unknown: check `q:entity.resolve`.\n",
+        "id": "task:what-is-verified-about-subject",
+        "navigation": "`START_HERE.md` (L1) → `relations/api/verified_claims.md` → `q:evidence.verified_claims`; one claim in depth is `tasks/read-claim-with-evidence.md`.\n",
+        "operation": "One read: verified claims whose wording or subject matches. Add the judged-but-not-verified claims when the question is \"what do we know\", not \"what may I state as fact\".\n\n```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"verified-about-langgraph\",\n  \"operations\": [\n    { \"opId\": \"verified\", \"kind\": \"named_query\", \"query\": \"evidence.verified_claims\", \"params\": { \"text\": \"LangGraph\", \"limit\": 50 } },\n    { \"opId\": \"judged\", \"kind\": \"named_query\", \"query\": \"evidence.claim_verdicts\", \"params\": { \"claim_id\": null, \"verdict\": null, \"probe\": null, \"limit\": 50 } },\n    { \"opId\": \"probes\", \"kind\": \"named_query\", \"query\": \"evidence.probes\", \"params\": { \"text\": \"langgraph\", \"limit\": 20 } }\n  ]\n}\n```\n",
+        "pitfalls": "Only `api.verified_claims` is verified knowledge. A row of `api.claim_candidates` or `api.claim_verdicts` with a supportive verdict is still a candidate until an admission verifies it; a probe that used a live model, and a community claim, never verify alone. `supported_with_qualification` is verified with a condition: quote the qualification from `rationale`, not the bare statement. The match is on wording and subject names, so resolve an alias first. Verified is about the versions the probe ran: `q:evidence.probe_matrix` shows them, and `tasks/what-is-due.md` shows what a newer release has put in question.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.verified_claims",
+          "evidence.claim_verdicts",
+          "evidence.probes"
+        ],
+        "reviewed": null,
+        "slug": "what-is-verified-about-subject",
+        "title": "What is verified about <subject>?"
+      },
+      {
+        "aliases": [
+          "disputed",
+          "conflict",
+          "contradicted",
+          "restated",
+          "restatement",
+          "original claim",
+          "not checkable",
+          "why not verified"
+        ],
+        "domains": [
+          "verified-knowledge",
+          "evidence"
+        ],
+        "expected_shape": "`verdict`: `contradicted` or `not_supported` with `rationale` and `cells` is a probe result that moved the claim to `disputed`. `conflicts`: `conflict_kind` (value, scope or subject disagreement, for example `scope_mismatch`), both statements with their status, `other_source_role`, `detected_by`, and `reconciliation` (null until someone decides). `restated`: the restated claim (`statement`, `status`, `qualified`, `dropped`, `probe`) beside `original_claim_id`, `original_statement`, `original_status`. `triage`: `disposition` (`probe`, `docs_check`, `registry_check`, `not_checkable`, `duplicate`, `out_of_scope`), `checkability`, `rationale`, `duplicate_of_claim_id`.\n",
+        "id": "task:why-claim-disputed-or-restated",
+        "navigation": "`relations/api/claim_conflicts.md` or `relations/api/claim_restatements.md` → `q:evidence.claim_conflicts` / `q:evidence.claim_restatements` → `q:evidence.claim_verdicts` → `q:evidence.claim_triage`.\n",
+        "operation": "Four different reasons a claim is not simply verified: a contradicting verdict (`api.claim_verdicts`), a kept conflict (`api.claim_conflicts`), a restatement (`api.claim_restatements`) or a triage outcome (`api.claim_triage`). Read all four for one `claim_id`.\n\n```json\n{\n  \"schemaVersion\": \"knowledge-read-intent.v1\",\n  \"intentId\": \"why-not-verified\",\n  \"operations\": [\n    { \"opId\": \"claim\", \"kind\": \"named_query\", \"query\": \"evidence.claim\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\" } },\n    { \"opId\": \"verdict\", \"kind\": \"named_query\", \"query\": \"evidence.claim_verdicts\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"verdict\": null, \"probe\": null, \"limit\": 5 } },\n    { \"opId\": \"conflicts\", \"kind\": \"named_query\", \"query\": \"evidence.claim_conflicts\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"limit\": 20 } },\n    { \"opId\": \"restated\", \"kind\": \"named_query\", \"query\": \"evidence.claim_restatements\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"limit\": 20 } },\n    { \"opId\": \"triage\", \"kind\": \"named_query\", \"query\": \"evidence.claim_triage\", \"params\": { \"claim_id\": \"0192b000-0000-7000-8000-000000000001\", \"disposition\": null, \"limit\": 5 } }\n  ]\n}\n```\n",
+        "pitfalls": "Disputed is not false: it means a deterministic probe contradicted the statement as worded, in the cells it ran. A conflict is kept, never averaged away; with `reconciliation` null neither side wins. A restatement exists because the original was attribution-framed (\"the post states that X\"): the probe verifies X, and the original stays `proposed` as the record of what the source said, so do not count both. `qualified` true means the restated claim holds only with the condition in its statement; `dropped` says what was left out. `not_checkable` (advice, experience, opinion) is a triage outcome, not a verdict.\n",
+        "provenance": "model_assisted",
+        "queries": [
+          "evidence.claim",
+          "evidence.claim_conflicts",
+          "evidence.claim_restatements",
+          "evidence.claim_verdicts",
+          "evidence.claim_triage"
+        ],
+        "reviewed": null,
+        "slug": "why-claim-disputed-or-restated",
+        "title": "Why is a claim disputed, or why was it restated?"
       }
     ],
     "terminology": [
@@ -15287,6 +16772,31 @@
       },
       {
         "aliases": [
+          "watch policy",
+          "watch level",
+          "W0",
+          "W1",
+          "W2",
+          "W3",
+          "sweep",
+          "cadence",
+          "trigger"
+        ],
+        "definition": "What we watch, how often (cadence, triggers), how deep and on what budget. Watch levels are W0 ignore (registered, never swept), W1 reference, W2 sampled, W3 release-coupled. One execution is a sweep (window, items seen, selected and captured, spend). api.attention_policies shows each policy with its sweep history.",
+        "id": "term:attention-policy",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:acquisition.attention_policy",
+          "rel:acquisition.attention_sweep",
+          "rel:api.attention_policies",
+          "q:acquisition.attention_policies"
+        ],
+        "reviewed": null,
+        "slug": "attention-policy",
+        "term": "attention policy"
+      },
+      {
+        "aliases": [
           "accepted",
           "disputed"
         ],
@@ -15354,6 +16864,66 @@
       },
       {
         "aliases": [
+          "candidate",
+          "proposed claim",
+          "claim path",
+          "claim status"
+        ],
+        "definition": "Any statement read from a source, before or after it is judged. api.claim_candidates shows every claim with its path (how it entered, for example deterministic_first_party, L1_candidate, community_thread, restatement), its status (proposed, verified, disputed), subjects and the document it was read from. A candidate is never a fact.",
+        "id": "term:claim-candidate",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:api.claim_candidates",
+          "rel:evidence.claim",
+          "q:evidence.claim",
+          "task:read-claim-with-evidence"
+        ],
+        "reviewed": null,
+        "slug": "claim-candidate",
+        "term": "claim candidate"
+      },
+      {
+        "aliases": [
+          "conflict",
+          "disagreement",
+          "disputed",
+          "scope mismatch",
+          "reconciliation"
+        ],
+        "definition": "A kept disagreement between a first-party claim and another statement (value, scope or subject). It is never averaged away and is resolved only by an explicit reconciliation. A claim's status disputed is different, it means a probe contradicted it.",
+        "id": "term:claim-conflict",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:evidence.claim_conflict",
+          "rel:api.claim_conflicts",
+          "q:evidence.claim_conflicts",
+          "task:why-claim-disputed-or-restated"
+        ],
+        "reviewed": null,
+        "slug": "claim-conflict",
+        "term": "claim conflict"
+      },
+      {
+        "aliases": [
+          "triage",
+          "disposition",
+          "checkability",
+          "not checkable"
+        ],
+        "definition": "The decision about a claim candidate before anyone checks it, which is to probe it, check the docs or a registry, or leave it as not checkable (advice, experience, opinion), duplicate or out of scope, with a checkability, a priority and the probe it became. Append-only; api.claim_triage shows the current row per claim.",
+        "id": "term:claim-triage",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:verification.claim_triage",
+          "rel:api.claim_triage",
+          "q:evidence.claim_triage"
+        ],
+        "reviewed": null,
+        "slug": "claim-triage",
+        "term": "claim triage"
+      },
+      {
+        "aliases": [
           "cheap",
           "medium",
           "heavy"
@@ -15398,6 +16968,29 @@
         "reviewed": null,
         "slug": "domain",
         "term": "domain"
+      },
+      {
+        "aliases": [
+          "due",
+          "attention due",
+          "revalidation due",
+          "releases needing review",
+          "what is due",
+          "overdue"
+        ],
+        "definition": "Three readers that say what needs doing now. api.attention_due lists the policies due by a trigger event inside its window or by an elapsed cadence; api.probe_revalidation_due lists probes whose latest unpinned cell ran on an older version than the newest catalogued release; api.releases_needing_review lists our frozen releases whose bound claims changed verdict after the release. An empty list is an answer only when the session sees the tenant's knowledge.",
+        "id": "term:due-list",
+        "provenance": "model_assisted",
+        "refs": [
+          "fn:api.attention_due(timestamptz)",
+          "fn:api.probe_revalidation_due(timestamptz)",
+          "fn:api.releases_needing_review()",
+          "q:acquisition.attention_due",
+          "task:what-is-due"
+        ],
+        "reviewed": null,
+        "slug": "due-list",
+        "term": "due list"
       },
       {
         "aliases": [
@@ -15777,6 +17370,28 @@
       },
       {
         "aliases": [
+          "experiment",
+          "probe run",
+          "probe matrix",
+          "cell",
+          "pin"
+        ],
+        "definition": "An experiment that tests stated claims against a matrix of environments. A cell is a date (what an install resolved that day) or an explicit pin; one execution in one cell is a probe run, whose outcome is about the probe's own checks and not about the claim. api.probe_matrix returns the latest run per cell with the resolved versions and the observations; api.probes lists probes with their claims, runs and verdicts.",
+        "id": "term:probe",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:verification.probe",
+          "rel:verification.probe_run",
+          "rel:api.probes",
+          "fn:api.probe_matrix(text)",
+          "q:evidence.probe_matrix"
+        ],
+        "reviewed": null,
+        "slug": "probe",
+        "term": "probe"
+      },
+      {
+        "aliases": [
           "search projection",
           "index_text_item"
         ],
@@ -15876,6 +17491,25 @@
       },
       {
         "aliases": [
+          "restated claim",
+          "atomized claim",
+          "attribution-framed claim",
+          "original claim"
+        ],
+        "definition": "A claim atomized from an attribution-framed original (\"the post states that X\" becomes X) so that a probe can test X. The original stays proposed as the record of what the source said; the restatement carries qualified (it holds only with a condition) and dropped (what was left out). api.claim_restatements pairs the two.",
+        "id": "term:restatement",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:api.claim_restatements",
+          "q:evidence.claim_restatements",
+          "task:why-claim-disputed-or-restated"
+        ],
+        "reviewed": null,
+        "slug": "restatement",
+        "term": "restatement"
+      },
+      {
+        "aliases": [
           "row level security"
         ],
         "definition": "Enabled on tenant tables. Typical policy km_tenant_access uses tenant_id = util.current_tenant_id(). Private-lens rows (library.passage, conversation.*) are additionally isolated per workspace; api.search_unified returns them only for the workspaces passed in, so only trusted roles execute it (not anon, not authenticated); a signed-in session searches the shared lenses with api.search_knowledge and reads private passages through the product search operation.",
@@ -15938,6 +17572,29 @@
         "reviewed": null,
         "slug": "segment",
         "term": "segment"
+      },
+      {
+        "aliases": [
+          "source assessment",
+          "track record",
+          "authority score",
+          "source trust",
+          "conflict of interest",
+          "lead days"
+        ],
+        "definition": "What we know about a source (channel, actor, organization, person) on a topic at a time, kept as components (role prior, conflict of interest, method disclosure, checked claims confirmed, qualified or refuted, lead time against first-party docs, sweep noise) from which an authority score is derived. api.source_registry shows the latest assessment per source and topic; api.source_track_record lists the claims behind the counts. A watch level is recommended only from five checked claims, and claims a source checked about itself are shown and not scored.",
+        "id": "term:source-registry",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:evidence.source_assessment",
+          "rel:api.source_registry",
+          "rel:api.source_track_record",
+          "q:evidence.source_registry",
+          "task:how-trusted-is-source"
+        ],
+        "reviewed": null,
+        "slug": "source-registry",
+        "term": "source registry"
       },
       {
         "aliases": [
@@ -16124,6 +17781,27 @@
       },
       {
         "aliases": [
+          "probe verdict",
+          "directly_supported",
+          "contradicted",
+          "supported_with_qualification",
+          "review state",
+          "human_confirmed"
+        ],
+        "definition": "What a probe's runs say about one claim (directly_supported, supported_with_qualification, contradicted, not_supported, unverifiable), with a rationale and a per-cell summary. A verdict is agent_proposed until a person confirms or rejects it. A contradicting verdict of a deterministic probe moves the claim to disputed; a supporting one makes it eligible for admission, which is what verifies it.",
+        "id": "term:verdict",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:verification.probe_verdict",
+          "rel:api.claim_verdicts",
+          "q:evidence.claim_verdicts"
+        ],
+        "reviewed": null,
+        "slug": "verdict",
+        "term": "verdict"
+      },
+      {
+        "aliases": [
           "sealed run"
         ],
         "definition": "A knowledge_verification component run that must be sealed before cited claims may be materialized; the database records the admitted use in verification.use_admission and a verified claim names an admission-bound receipt.",
@@ -16136,6 +17814,26 @@
         "reviewed": null,
         "slug": "verification-run",
         "term": "verification run"
+      },
+      {
+        "aliases": [
+          "verified",
+          "verified knowledge",
+          "admitted claim",
+          "what is verified"
+        ],
+        "definition": "A claim whose status is verified, which it reaches only under a receipt bound to an admitted Knowledge Services use decision, written in the same transaction. api.verified_claims lists them with the use decision, the receipt, the bound payload and the current probe verdicts. A supportive probe verdict alone does not verify a claim, and a live-model probe or a community claim never verifies alone.",
+        "id": "term:verified-claim",
+        "provenance": "model_assisted",
+        "refs": [
+          "rel:api.verified_claims",
+          "rel:verification.use_admission",
+          "q:evidence.verified_claims",
+          "task:what-is-verified-about-subject"
+        ],
+        "reviewed": null,
+        "slug": "verified-claim",
+        "term": "verified claim"
       },
       {
         "aliases": [
@@ -16208,7 +17906,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:a6b0154786cd7633657b283b02ea67af4abed45f3da69f65bc39acc230cfc233",
+  "fingerprint": "sha256:b72ff7130a3107d5c20f6e0f24497fa8df6f3c72bca885e3bdac5940eb611a49",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -16235,7 +17933,6 @@
         "20261109130000_build08_loop2_numbers_compute_apis.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16245,9 +17942,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16311,7 +18005,6 @@
         "20261113120100_build08_loop4_fixup_attention_due.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16321,9 +18014,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16411,7 +18101,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16421,9 +18110,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16508,7 +18194,6 @@
         "20261109130000_build08_loop2_numbers_compute_apis.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16518,9 +18203,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16652,7 +18334,6 @@
         "part1_renames.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16662,9 +18343,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16797,7 +18475,6 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16807,9 +18484,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16881,7 +18555,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16891,9 +18564,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -16967,7 +18637,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -16977,9 +18646,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -17046,7 +18712,6 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -17056,9 +18721,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -17612,7 +19274,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -17622,9 +19283,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -17700,7 +19358,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -17710,9 +19367,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -17803,7 +19457,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -17813,9 +19466,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -17897,7 +19547,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -17907,9 +19556,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18047,7 +19693,7 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:5edd268f92390e0ef761122dda17fa1c6aa66980691018753d2bd8ab776fdb81",
+      "body_sha256": "sha256:852f80df346de9ab7daf8c7dbf0e63b68c88a08adcdce228499358107b62072e",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -18269,7 +19915,7 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:f482ac2e8ea14b95e443cdb738daacd4525cd4f5a7ae5b608b3744ad3b13164b",
+      "body_sha256": "sha256:3047cbd0ceb714b358f29a5422a0e8ef54d70e26a30012b27c68bf164896c188",
       "comment": "What a design interview (conversation.thread purpose interview) produced: probes and attention policies, and whether each has run.",
       "config": [
         "search_path=\"\""
@@ -18278,7 +19924,6 @@
         "20261113120000_build08_loop4_source_intelligence_experiments.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18288,9 +19933,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18339,7 +19981,7 @@
     },
     "fn:api.knowledge_head()": {
       "arguments": [],
-      "body_sha256": "sha256:f023047cafcd61e08ff9f0c87307166a382206da42f45746bebbf7e486d5947a",
+      "body_sha256": "sha256:e6eb68f82ad46c235385fbca12889621e1d465e4396cf3670c371bd12bc8a00f",
       "comment": "Current tenant knowledge sequence and its last update; 0 when no batch has been sealed.",
       "config": [
         "search_path=\"\""
@@ -18429,38 +20071,14 @@
         "part1_renames.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
-        "authenticated",
-        "control_plane",
-        "executor_service",
-        "pipeline_agent",
-        "service_role",
-        "verifier_agent"
+        "service_role"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
-        "authenticated": [
-          "EXECUTE"
-        ],
-        "control_plane": [
-          "EXECUTE"
-        ],
-        "executor_service": [
-          "EXECUTE"
-        ],
-        "pipeline_agent": [
-          "EXECUTE"
-        ],
         "service_role": [
-          "EXECUTE"
-        ],
-        "verifier_agent": [
           "EXECUTE"
         ]
       },
@@ -18520,7 +20138,6 @@
         "20261109130000_build08_loop2_numbers_compute_apis.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18530,9 +20147,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18589,7 +20203,7 @@
           "type": "text"
         }
       ],
-      "body_sha256": "sha256:1e6317f53c37ed8d87f93ff3423796e6d2cc14da89569c9cec38232c5a76b614",
+      "body_sha256": "sha256:ccda7d33dffb2cd95abc80e5a709254151bb95da0a16f12609ee1659e37effb0",
       "comment": "One call for the report a module embeds: releases (count, latest, recent), claims by status, open community claims, probes with their per-cell outcomes and verdicts, and the ranked sources on this library.",
       "config": [
         "search_path=\"\""
@@ -18598,7 +20212,6 @@
         "20261113120000_build08_loop4_source_intelligence_experiments.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18608,9 +20221,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18680,7 +20290,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18690,9 +20299,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18764,7 +20370,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18774,9 +20379,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18841,17 +20443,17 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:251183d6be36df6edf1776da385da8f31e80966d6b7925e0a1c868f2515ffee2",
-      "comment": "L2 flywheel: our head revisions (modules, activities, courses) that bind or require the software a release belongs to and were authored before that release; breaking tells which need review first.",
+      "body_sha256": "sha256:0b580c0fc08445b9274cebc8331eda3a591285ea8c5c0af7342e1f7ac061f411",
+      "comment": "L2 flywheel: our head revisions (modules, activities, courses) that bind or require the software a release belongs to and were authored before that release; breaking tells which need review first. A signed-in user sees the head revisions they may read (api.works_authored has the rule); database roles see all.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261116120000_build08_api_default_closed.sql",
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18861,9 +20463,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18898,7 +20497,9 @@
       "security": "definer",
       "touches": {
         "basis": "best_effort",
-        "calls": [],
+        "calls": [
+          "product.session_reads_revision"
+        ],
         "reads": [
           "api.software_releases",
           "authoring.revision_binding",
@@ -18920,17 +20521,17 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:b21d791d16e95af829bed5026d825dc64cee4cbb526a61614bab6d8127e7d379",
-      "comment": "L2 flywheel (time-independent): our head revisions that bind or require a software thing, with its latest known release and how many releases landed after the revision was authored.",
+      "body_sha256": "sha256:8e5d36e4e37e1d59b2df53ce9589909500a13010b299034252a6845be4458758",
+      "comment": "L2 flywheel (time-independent): our head revisions that bind or require a software thing, with its latest known release and how many releases landed after the revision was authored. A signed-in user sees the head revisions they may read (api.works_authored has the rule); database roles see all.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
-        "20261108120300_build08_r2_fixups3.sql"
+        "20261108120300_build08_r2_fixups3.sql",
+        "20261116120000_build08_api_default_closed.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -18940,9 +20541,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -18977,7 +20575,9 @@
       "security": "definer",
       "touches": {
         "basis": "best_effort",
-        "calls": [],
+        "calls": [
+          "product.session_reads_revision"
+        ],
         "reads": [
           "api.software_releases",
           "authoring.revision_binding",
@@ -19010,7 +20610,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19020,9 +20619,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19091,7 +20687,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19101,9 +20696,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19182,7 +20774,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19192,9 +20783,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19248,7 +20836,7 @@
           "type": "text"
         }
       ],
-      "body_sha256": "sha256:5e7ee652ade59d908ee3fc0c70493e4ae32438957dda3ac5a37363ae48034da0",
+      "body_sha256": "sha256:bee3f49900096355f1d884041b7e59a475389bebbdbf19d85d48a4a58010d1cb",
       "comment": "The latest run of a probe in each cell: outcome, the resolved package versions and what was observed. Cells are dates (what a tutorial-follower got that day) or explicit pins.",
       "config": [
         "search_path=\"\""
@@ -19257,7 +20845,6 @@
         "20261113120000_build08_loop4_source_intelligence_experiments.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19267,9 +20854,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19335,19 +20919,14 @@
         "20261113160300_build08_loop5_fixup_latest_cell.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
-        "executor_service",
         "pipeline_agent",
         "service_role",
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19355,9 +20934,6 @@
           "EXECUTE"
         ],
         "control_plane": [
-          "EXECUTE"
-        ],
-        "executor_service": [
           "EXECUTE"
         ],
         "pipeline_agent": [
@@ -19679,7 +21255,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19689,9 +21264,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19856,7 +21428,6 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19866,9 +21437,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19936,7 +21504,6 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -19946,9 +21513,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -19992,29 +21556,25 @@
     },
     "fn:api.releases_needing_review()": {
       "arguments": [],
-      "body_sha256": "sha256:332004cc1560ecfe72f7fc18483646ed2e73f1c07aac61525fe2d3e2bb353717",
-      "comment": "Loop 5: releases whose bound claims have a current probe verdict, decided after the release, that differs from the verdict current when the release was frozen; a human confirmation of the same verdict does not trigger.",
+      "body_sha256": "sha256:42acd19739a82ca5c1bda892e773b4e46b9058b04c5ca6da73ce1b8500479fea",
+      "comment": "Loop 5: releases whose bound claims have a current probe verdict, decided after the release, that differs from the verdict current when the release was frozen; a human confirmation of the same verdict does not trigger. A signed-in user sees the releases of the workspaces they are a member of; database roles see all.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261113160000_build08_loop5_followups.sql",
-        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"
+        "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql",
+        "20261116120000_build08_api_default_closed.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
-        "executor_service",
         "pipeline_agent",
         "service_role",
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -20022,9 +21582,6 @@
           "EXECUTE"
         ],
         "control_plane": [
-          "EXECUTE"
-        ],
-        "executor_service": [
           "EXECUTE"
         ],
         "pipeline_agent": [
@@ -20050,6 +21607,7 @@
       "touches": {
         "basis": "best_effort",
         "calls": [
+          "product.session_reads_workspace",
           "util.current_tenant_id"
         ],
         "reads": [
@@ -20475,7 +22033,7 @@
           "type": "boolean"
         }
       ],
-      "body_sha256": "sha256:3654f4a3cd8647b5e19bd223ab96b23e0556ecc2e1c65f429823baa7cef163e0",
+      "body_sha256": "sha256:6b2c304992559616ec07fd2f2fd76f27aa8124e2bb7e509c7baa9176b95a2c00",
       "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, an evidence factor 1 + weight x signal (loop 5, D-62, reported as channel_scores.evidence) and (loop 7, D-77) one hit per target: items of one claim, passage or unit in several spaces collapse to the best-ranked one, the others listed in channel_scores.collapsed (best first, the returned item at index 0 removed). p_collapse = false and p_evidence_weight = 0 reproduce the loop-4 order. Trusted callers only (D-82): it takes the private scope from p_workspace_ids, so it is not executable by anon or authenticated; signed-in sessions use api.search_knowledge, and private or released course material is read through api.product_read('search').",
       "config": [
         "search_path=\"\""
@@ -20750,7 +22308,6 @@
         "20261109130500_build08_loop2_fixups5.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -20760,9 +22317,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -20832,7 +22386,6 @@
         "20261110140200_build08_loop3_fixups2.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -20842,9 +22395,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -20929,7 +22479,6 @@
         "part4_views_seeds.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -20939,9 +22488,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -21011,7 +22557,6 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -21021,9 +22566,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -21102,7 +22644,6 @@
         "20261110140000_build08_loop3_libraries_talks_capabilities.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -21112,9 +22653,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -21175,7 +22713,6 @@
         "20261110140200_build08_loop3_fixups2.sql"
       ],
       "executors": [
-        "anon",
         "app_reader",
         "authenticated",
         "control_plane",
@@ -21185,9 +22722,6 @@
         "verifier_agent"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
         "app_reader": [
           "EXECUTE"
         ],
@@ -22626,7 +24160,7 @@
     },
     "fn:evaluation.guard_verification_freeze()": {
       "arguments": [],
-      "body_sha256": "sha256:255d0cbb19aa7170d36e0bd69fdb82c460f64b7cff1ef31e38892bf75764a636",
+      "body_sha256": "sha256:5d052ae0bc389b4d66fcac8a748a6bd7d1f9cdb1af3f73ff507e68e1b6c46d67",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -23835,7 +25369,7 @@
     },
     "fn:evidence.guard_source_provider_attempt()": {
       "arguments": [],
-      "body_sha256": "sha256:b7d50f96fad8cd4148e4772953ba0b3b5b37281df438b4dee7b0b67e1a658ec6",
+      "body_sha256": "sha256:0aa6539e5bff92d936b07e108d660fa72709f592088393cac194d37d0e977754",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -23906,7 +25440,7 @@
     },
     "fn:evidence.guard_source_result_selection()": {
       "arguments": [],
-      "body_sha256": "sha256:62cbf4a4ba761cba4dc469bda77409aa23cc03ba5c961bca6934591ac6ef0396",
+      "body_sha256": "sha256:1af924054b6525ab84976b92a37d3fa1a6ed5a7d30ee63c0fca03f60d88e5d0c",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -25092,7 +26626,7 @@
     },
     "fn:orchestration.apply_provider_reconciliation()": {
       "arguments": [],
-      "body_sha256": "sha256:9df5e4abbf2668203ee4aff1cc72fa9bd1f8d75454e9cf83e3736b41aa1797a8",
+      "body_sha256": "sha256:cda496941ca49ffed8cc7a6839a341b6a0c957cc830d2fad37b0113774d123a8",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -25204,7 +26738,7 @@
     },
     "fn:orchestration.guard_artifact_blob_alias()": {
       "arguments": [],
-      "body_sha256": "sha256:0bee78fff00b66c7146c04868b864229fba7cd696c2a21e7d102945307d776c1",
+      "body_sha256": "sha256:baa8792f0cca576b8a08e4b379279135d63e86853a556a60a64ec3fc07a212d0",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -25716,7 +27250,7 @@
     },
     "fn:orchestration.guard_structured_extraction_failure_receipt()": {
       "arguments": [],
-      "body_sha256": "sha256:b35547208abe96999116f1c58daf69f5d4ce81f85db074ba5d23ec86a6633e1a",
+      "body_sha256": "sha256:ce29853bb12709f118ec1929bb27ef6114543b4a6ff0be47fc653b5df670de09",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -25794,7 +27328,7 @@
     },
     "fn:orchestration.guard_structured_extraction_failure_terminal_commit()": {
       "arguments": [],
-      "body_sha256": "sha256:63a825882971c71265564591311b1dba71e9bb7520b955b010fe800fbd1ab168",
+      "body_sha256": "sha256:c082c1ba05a6b71796a5ab9ee79ead937ae3d8d6129b055ea9f97914fe868d84",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26151,7 +27685,7 @@
     },
     "fn:orchestration.guard_structured_extraction_success_receipt()": {
       "arguments": [],
-      "body_sha256": "sha256:1097f1b5c1ebe2626244a011921358bfd63ccfe72fc6a153c1f34cf2ad123096",
+      "body_sha256": "sha256:46067ee7e03bc21df3a0ee8020a1a6091b4b1e6cfcf1b25fc5bf65595d40b9bd",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26227,7 +27761,7 @@
     },
     "fn:orchestration.guard_structured_extraction_terminal_commit()": {
       "arguments": [],
-      "body_sha256": "sha256:d9893d86d957f8acdfe25847a04ec2e9205354c772ca0ba921543bd2088b0f76",
+      "body_sha256": "sha256:04ee10187b8b3c8de8bec15844fd37c728d8c6562b3d7bd18541a5ec9875f150",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26299,7 +27833,7 @@
     },
     "fn:orchestration.guard_verification_blob_policy()": {
       "arguments": [],
-      "body_sha256": "sha256:af6cdfdb7ae859297f9a73c31ef84e69611ced2d94cb7ad51ebc2d150177b455",
+      "body_sha256": "sha256:3c69fd27c25724e013c97a1ea356473b0e5bccad2fe4d4697a07a906be6ed143",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26453,7 +27987,7 @@
     },
     "fn:orchestration.guard_verification_structured_extraction_lifecycle()": {
       "arguments": [],
-      "body_sha256": "sha256:488822d898c652cd3a098cdaf2edf378a08daaca9a6dfddb6a5c9d99225e51c0",
+      "body_sha256": "sha256:3eb05b9552c2ecd8076c187ee4121c14727a35b0c4d48d0d579cbcc1a83039fc",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26680,7 +28214,7 @@
           "type": "jsonb"
         }
       ],
-      "body_sha256": "sha256:d820bf92c09f695bc6396fca9d189ea9c99c0856017bed2f7246e71a773e8bb1",
+      "body_sha256": "sha256:6705304f57067fd11b39d76a59084b0560f3e390a5f7a22bcd00b58f24dfae9b",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26780,7 +28314,7 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:3e3539cb3b5931fa5cf2a3fbbec40acdd96f69ce460517dc9c56cf9291463a77",
+      "body_sha256": "sha256:92a65b1f03e89eccdece117ff22cee70169f5c6549f5f32dce420ae3c380f3fd",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26842,7 +28376,7 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:1d7d4cd52f04638e307eee161b4432748a7ca1f07f5fcf9a0fde1e67fe7276c4",
+      "body_sha256": "sha256:55c3822741abc8238215f0d1c6d8a5ee2aea1ea4fe62bfd15a1765d3671deee4",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -26914,7 +28448,7 @@
     },
     "fn:orchestration.structured_extraction_failure_terminal_guard()": {
       "arguments": [],
-      "body_sha256": "sha256:3c2fb9ad3ac2b157a10c3020c07f08ff4234d9756f16229c1d675b4fcd1b131d",
+      "body_sha256": "sha256:9c4035a8429de9611fca6cae9710ba7b66ba67b15cbeb40c72c61d489f711ce5",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -27004,7 +28538,7 @@
           "type": "jsonb"
         }
       ],
-      "body_sha256": "sha256:e0aecba43ed0f07d03e64ce2664edc2808b874c67477db0c6efd234bf9784034",
+      "body_sha256": "sha256:06932f88985ff2a9d4549f5137524721d5df11540c65fcc84fdec0b6a0e2f366",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -27086,7 +28620,7 @@
           "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:4fe29a28e49493d38ce0f98a7e63551c5377b989b72db7dafd04da436aab68e4",
+      "body_sha256": "sha256:990a79d59d1dd8fe8b8fb6edaed6b2f6f324669a14ed6d7d65fac68f0cf04f92",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -28253,7 +29787,7 @@
     },
     "fn:orchestration.verification_structured_extraction_completion_guard()": {
       "arguments": [],
-      "body_sha256": "sha256:d282570c5b30a861d68ca9cf61e69c3de5dcc8aa036e804b178542fcae4dbce6",
+      "body_sha256": "sha256:7ff3ddc33cc4e9de6ce18da9aded31596f8e4889ccebab1ce5b18571bd5defdf",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -28359,7 +29893,7 @@
           "type": "uuid[]"
         }
       ],
-      "body_sha256": "sha256:0cfea57b8f6b85aec8f2c9d344ac9c4107eecceff7dd87f82478508df638c469",
+      "body_sha256": "sha256:e5ad9217f4678975efdc8ac6361d17a04a74c219fd6e4aca17f446e3e02c4b46",
       "comment": null,
       "config": [
         "search_path=\"\""
@@ -30692,6 +32226,164 @@
       "typescript": "Database[\"product\"][\"Functions\"][\"role_in\"]",
       "volatility": "stable"
     },
+    "fn:product.session_reader()": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "out",
+          "name": "trusted",
+          "type": "boolean"
+        },
+        {
+          "default": null,
+          "mode": "out",
+          "name": "principal",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:29a4c0dbb37235fcdd655c95d39e57091a3d186726318f9f0d540d53950f4098",
+      "comment": "Who reads an api knowledge reader directly: trusted for every role but authenticated and anon (database roles and service_role keep reading what their grants allow); for a PostgREST session of role authenticated the principal is the verified JWT subject, else null (entitled to nothing).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116120000_build08_api_default_closed.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:product.session_reader()",
+      "identity_arguments": "OUT trusted boolean, OUT principal uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "session_reader",
+      "raises": [],
+      "returns": "record",
+      "returns_set": false,
+      "schema": "product",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "product.claims"
+        ],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"product\"][\"Functions\"][\"session_reader\"]",
+      "volatility": "stable"
+    },
+    "fn:product.session_reads_revision(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "rid",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:baabae10cb2a0dad338ccd3bf79fed5624aa95d8693ec4c9bb9c9fe3b0348709",
+      "comment": "True when the reading session may see a work revision: a signed-in user under product.readable_revision (a member of the owning workspace, or a release that includes the revision is offered or distributed to them); a trusted role always. The row filter of api.works_authored, api.modules_using_software and api.modules_affected_by_release.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116120000_build08_api_default_closed.sql"
+      ],
+      "executors": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:product.session_reads_revision(uuid)",
+      "identity_arguments": "rid uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "session_reads_revision",
+      "raises": [],
+      "returns": "boolean",
+      "returns_set": false,
+      "schema": "product",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "product.readable_revision",
+          "product.session_reader"
+        ],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"product\"][\"Functions\"][\"session_reads_revision\"]",
+      "volatility": "stable"
+    },
+    "fn:product.session_reads_workspace(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "ws",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:7ee5e224a67e8f755cf1138d4b1f3fa53149d1bdfe26dc0ccdba3a2454f4c298",
+      "comment": "True when the reading session may see a workspace's own records: a signed-in user who is a member of it (product.role_in); a trusted role always. The row filter of api.releases_needing_review.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261116120000_build08_api_default_closed.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:product.session_reads_workspace(uuid)",
+      "identity_arguments": "ws uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "session_reads_workspace",
+      "raises": [],
+      "returns": "boolean",
+      "returns_set": false,
+      "schema": "product",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "product.role_in",
+          "product.session_reader"
+        ],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"product\"][\"Functions\"][\"session_reads_workspace\"]",
+      "volatility": "stable"
+    },
     "fn:product.sha256_text(text)": {
       "arguments": [
         {
@@ -32899,7 +34591,7 @@
     },
     "fn:retrieval.retire_deterministic_digest_items()": {
       "arguments": [],
-      "body_sha256": "sha256:184f24d0ecbdd90bee69e9f98ab52c394c8a04afa62c8465b9eb89445ac39fa4",
+      "body_sha256": "sha256:c9e6db618ec2897dede1eed5be3866f45c2fd55838b7d447337c5db5885a1e3f",
       "comment": "Loop 4 (candidate B): retires deterministic digest items from the digests space so that space holds model-written digests only; the items stay searchable in knowledge_text.",
       "config": [
         "search_path=\"\""
@@ -52483,9 +54175,10 @@
           "type": "smallint"
         }
       ],
-      "comment": "L1 (ours, tier 1): our courses, modules, lessons, activities, reports and templates at their head revision, whether released, which concepts they cover and which software/versions they use.",
+      "comment": "L1 (ours, tier 1): our courses, modules, lessons, activities, reports and templates at their head revision, whether released, which concepts they cover and which software/versions they use. A signed-in user sees the works whose head revision they may read (a member of the owning workspace, or a release that includes it is offered or distributed to them); database roles see every work.",
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261116120000_build08_api_default_closed.sql",
         "part4_views_seeds.sql"
       ],
       "exclusions": [],
@@ -52541,7 +54234,7 @@
         "row": "Database[\"api\"][\"Views\"][\"works_authored\"][\"Row\"]"
       },
       "unique": [],
-      "view_definition": " SELECT w.id AS work_id,\n    w.kind,\n    w.slug,\n    r.title,\n    r.id AS head_revision_id,\n    r.revision_no,\n    w.workspace_id,\n    ws.kind AS workspace_kind,\n    (EXISTS ( SELECT 1\n           FROM authoring.release_item i\n          WHERE i.revision_id = r.id AND (i.disposition = ANY (ARRAY['include'::text, 'snapshot'::text])))) AS released,\n    api.names(( SELECT array_agg(b.entity_id) AS array_agg\n           FROM authoring.revision_binding b\n          WHERE b.revision_id = r.id AND b.relation = 'covers'::text AND b.entity_id IS NOT NULL)) AS covers_concepts,\n    api.names(( SELECT array_agg(u.x) AS array_agg\n           FROM ( SELECT b.entity_id AS x\n                   FROM authoring.revision_binding b\n                  WHERE b.revision_id = r.id AND b.relation = 'uses'::text AND b.entity_id IS NOT NULL\n                UNION\n                 SELECT q.entity_id\n                   FROM authoring.runtime_requirement q\n                  WHERE q.revision_id = r.id AND q.entity_id IS NOT NULL) u)) AS uses_software,\n    ( SELECT array_agg((q.name || ' '::text) || COALESCE(q.version_spec, ''::text)) AS array_agg\n           FROM authoring.runtime_requirement q\n          WHERE q.revision_id = r.id) AS runtime_requirements,\n    r.knowledge_seq,\n    r.created_at,\n    1::smallint AS source_tier\n   FROM authoring.work w\n     JOIN authoring.work_revision r ON r.id = w.head_revision_id\n     JOIN authoring.workspace ws ON ws.id = w.workspace_id\n  WHERE w.tenant_id = util.default_tenant_id() AND (w.kind = ANY (ARRAY['course'::text, 'track'::text, 'module'::text, 'lesson'::text, 'activity'::text, 'report'::text, 'project_template'::text, 'challenge'::text, 'component'::text, 'experience'::text]));",
+      "view_definition": " SELECT w.id AS work_id,\n    w.kind,\n    w.slug,\n    r.title,\n    r.id AS head_revision_id,\n    r.revision_no,\n    w.workspace_id,\n    ws.kind AS workspace_kind,\n    (EXISTS ( SELECT 1\n           FROM authoring.release_item i\n          WHERE i.revision_id = r.id AND (i.disposition = ANY (ARRAY['include'::text, 'snapshot'::text])))) AS released,\n    api.names(( SELECT array_agg(b.entity_id) AS array_agg\n           FROM authoring.revision_binding b\n          WHERE b.revision_id = r.id AND b.relation = 'covers'::text AND b.entity_id IS NOT NULL)) AS covers_concepts,\n    api.names(( SELECT array_agg(u.x) AS array_agg\n           FROM ( SELECT b.entity_id AS x\n                   FROM authoring.revision_binding b\n                  WHERE b.revision_id = r.id AND b.relation = 'uses'::text AND b.entity_id IS NOT NULL\n                UNION\n                 SELECT q.entity_id\n                   FROM authoring.runtime_requirement q\n                  WHERE q.revision_id = r.id AND q.entity_id IS NOT NULL) u)) AS uses_software,\n    ( SELECT array_agg((q.name || ' '::text) || COALESCE(q.version_spec, ''::text)) AS array_agg\n           FROM authoring.runtime_requirement q\n          WHERE q.revision_id = r.id) AS runtime_requirements,\n    r.knowledge_seq,\n    r.created_at,\n    1::smallint AS source_tier\n   FROM authoring.work w\n     JOIN authoring.work_revision r ON r.id = w.head_revision_id\n     JOIN authoring.workspace ws ON ws.id = w.workspace_id\n  WHERE w.tenant_id = util.default_tenant_id() AND (w.kind = ANY (ARRAY['course'::text, 'track'::text, 'module'::text, 'lesson'::text, 'activity'::text, 'report'::text, 'project_template'::text, 'challenge'::text, 'component'::text, 'experience'::text])) AND product.session_reads_revision(r.id);",
       "writers": []
     },
     "rel:authoring.asset_scope": {
@@ -154879,6 +156572,9 @@
         "fn:product.restricted(uuid,uuid,text[])",
         "fn:product.revision_digest(uuid)",
         "fn:product.role_in(uuid,uuid)",
+        "fn:product.session_reader()",
+        "fn:product.session_reads_revision(uuid)",
+        "fn:product.session_reads_workspace(uuid)",
         "fn:product.sha256_text(text)",
         "fn:product.support_counts(uuid,uuid)",
         "fn:product.support_detail(support,uuid)",
@@ -166492,5 +168188,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+  "workspace_fingerprint": "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 }

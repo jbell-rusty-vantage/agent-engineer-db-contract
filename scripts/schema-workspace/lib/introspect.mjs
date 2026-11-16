@@ -90,7 +90,9 @@ const queries = {
       case p.prokind when 'f' then 'function' when 'p' then 'procedure' when 'a' then 'aggregate' when 'w' then 'window' end as kind,
       case p.provolatile when 'i' then 'immutable' when 's' then 'stable' else 'volatile' end as volatility,
       case when p.prosecdef then 'definer' else 'invoker' end as security,
-      p.proretset as returns_set, l.lanname as language, p.prosrc as body,
+      -- A body installed from a CRLF checkout carries carriage returns; the same migration bytes from an LF checkout do not.
+      -- Line endings are not structure, so the body is read without them (one fingerprint for both installs).
+      p.proretset as returns_set, l.lanname as language, replace(p.prosrc, chr(13), '') as body,
       p.proconfig as config, obj_description(p.oid, 'pg_proc') as comment,
       (select array_agg(t.typname order by k.ord) from unnest(p.proargtypes::oid[]) with ordinality k(oid, ord)
          join pg_type t on t.oid = k.oid) as argument_type_names
@@ -170,8 +172,10 @@ const queries = {
   roles: `
     select r.rolname as name, r.rolcanlogin as login, r.rolbypassrls as bypass_rls,
       shobj_description(r.oid, 'pg_authid') as comment,
-      coalesce((select array_agg(g.rolname order by g.rolname) from pg_auth_members m join pg_roles g on g.oid = m.roleid where m.member = r.oid), '{}') as member_of,
-      coalesce((select array_agg(g.rolname order by g.rolname) from pg_auth_members m join pg_roles g on g.oid = m.member where m.roleid = r.oid), '{}') as granted_to
+      -- Memberships of Supabase's own service roles (supabase_*) are set by the platform stack, not by this contract: a
+      -- database-only start grants anon, authenticated and service_role to supabase_realtime_admin, a full stack does not.
+      coalesce((select array_agg(g.rolname order by g.rolname) from pg_auth_members m join pg_roles g on g.oid = m.roleid where m.member = r.oid and g.rolname !~ '^supabase_'), '{}') as member_of,
+      coalesce((select array_agg(g.rolname order by g.rolname) from pg_auth_members m join pg_roles g on g.oid = m.member where m.roleid = r.oid and g.rolname !~ '^supabase_'), '{}') as granted_to
     from pg_roles r where r.rolname = any($1)
     order by r.rolname`,
 };

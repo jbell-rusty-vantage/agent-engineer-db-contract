@@ -9,7 +9,8 @@
       "identity",
       "guidance",
       "api-surface",
-      "access"
+      "access",
+      "verified-knowledge"
     ],
     "relations": [
       "content.document_node",
@@ -59,7 +60,11 @@
     "talks-on-topic",
     "talk-passage-at-timecode",
     "release-history",
-    "what-do-we-know-about-entity"
+    "what-do-we-know-about-entity",
+    "what-is-verified-about-subject",
+    "read-claim-with-evidence",
+    "what-is-due",
+    "what-a-release-affects"
   ],
   "queries": [
     "ours.*",
@@ -70,7 +75,18 @@
     "content.document_units",
     "entity.resolve",
     "entity.attributes",
-    "knowledge.head"
+    "knowledge.head",
+    "evidence.verified_claims",
+    "evidence.claim",
+    "evidence.claim_verdicts",
+    "evidence.probes",
+    "evidence.probe_matrix",
+    "evidence.claim_restatements",
+    "evidence.claim_conflicts",
+    "evidence.probe_revalidation_due",
+    "acquisition.attention_due",
+    "acquisition.attention_policies",
+    "facts.changes_since"
   ],
   "operations": [
     "ensure_personal_workspace",

@@ -14,7 +14,7 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"software_releases\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.software_releases
 
@@ -66,7 +66,7 @@ Disabled.
 
 ## Read paths
 
-- Named queries: `q:catalog.software_releases`, `q:ours.modules_affected_by_release`.
+- Named queries: `q:catalog.software_releases`, `q:evidence.probe_revalidation_due`, `q:ours.modules_affected_by_release`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

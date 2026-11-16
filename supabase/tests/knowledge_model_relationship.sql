@@ -7,8 +7,8 @@ do $$ declare i uuid;r uuid;a uuid;b uuid;
 begin
  insert into orchestration.operation_intent(intent_type,payload,idempotency_key) values('upsert_entity','{}','km-relation:'||util.uuidv7()) returning id into i;
  insert into orchestration.operation_receipt(intent_id,executor_version,outcome) values(i,'test','applied') returning id into r;
- insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('person','Person','test-person',r) returning id into a;
- insert into corpus.entity(kind,display_name,slug,created_by_receipt_id) values('paper','Paper','test-paper',r) returning id into b;
+ insert into catalog.entity(kind,display_name,slug,created_by_receipt_id) values('person','Person','test-person',r) returning id into a;
+ insert into catalog.entity(kind,display_name,slug,created_by_receipt_id) values('paper','Paper','test-paper',r) returning id into b;
  perform temporal.begin_batch();
  begin
   perform temporal.assert_relationship('employed_by',a,b,tstzrange(now(),null,'[)'));raise exception 'invalid endpoint pair accepted';

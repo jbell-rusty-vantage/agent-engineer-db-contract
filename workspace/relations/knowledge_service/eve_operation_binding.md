@@ -14,7 +14,7 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"eve_operation_binding\"][\"Row\"]"
 defined_in: ["20260908010000_eve_verification_binding.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # knowledge_service.eve_operation_binding
 

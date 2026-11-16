@@ -3,7 +3,7 @@ id: "rel:verification.probe_run"
 kind: table
 schema: verification
 name: probe_run
-domain: evidence
+domain: verified-knowledge
 lens: evidence
 aliases: []
 tokens: [verification, probe_run, verification.probe_run, id, tenant_id, probe_id, cell_label, cell, resolved, lock_sha256, python_version, platform, started_at, ended_at, exit_code, outcome, observations, output_capture_id, output_locator_id, tokens_in, tokens_out, cost_usd, latency_ms, sweep_id, mission_id, origin_kind, receipt_id, created_at]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe_run\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # verification.probe_run
 
-table in domain `evidence`, lens `evidence` — Loop 4: one execution of a probe in one cell. outcome pass/fail is about the probe's own checks, not about the claim; observations hold what was seen (warnings, exception types and messages, keys, counts). The output JSON is captured like any other source (capture method probe_execution) so verdicts cite a locator..
+table in domain `verified-knowledge`, lens `evidence` — Loop 4: one execution of a probe in one cell. outcome pass/fail is about the probe's own checks, not about the claim; observations hold what was seen (warnings, exception types and messages, keys, counts). The output JSON is captured like any other source (capture method probe_execution) so verdicts cite a locator..
 
 ## Columns
 
@@ -80,6 +80,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.probe_matrix`, `q:evidence.probe_revalidation_due`, `q:evidence.probes`.
 - Exposed through: [`api.probes`](../api/probes.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

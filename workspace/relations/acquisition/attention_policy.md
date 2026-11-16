@@ -3,7 +3,7 @@ id: "rel:acquisition.attention_policy"
 kind: table
 schema: acquisition
 name: attention_policy
-domain: acquisition
+domain: source-intelligence
 lens: corpus
 aliases: []
 tokens: [acquisition, attention_policy, acquisition.attention_policy, id, tenant_id, slug, title, scope_kind, channel_entity_ids, subject_entity_ids, watch_level, cadence, depth, selection, triggers, budget_usd_per_run, budget_credits_per_run, budget_total_usd, stop_condition, inquiry_watch_id, mission_id, designed_in_thread_id, state, rationale, decided_by, supersedes_id, created_at]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role]
 typescript: "Database[\"acquisition\"][\"Tables\"][\"attention_policy\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # acquisition.attention_policy
 
-table in domain `acquisition`, lens `corpus` — Loop 4: what we watch, how often (cadence, triggers), how deep (depth, selection) and on what budget. W0 ignore (registered, never swept; reason in rationale), W1 reference, W2 sampled, W3 release-coupled. A Mission Control watch mission (mission_id) executes it; a product watch (inquiry_watch_id) may have asked for it; a design interview (designed_in_thread_id) may have produced it..
+table in domain `source-intelligence`, lens `corpus` — Loop 4: what we watch, how often (cadence, triggers), how deep (depth, selection) and on what budget. W0 ignore (registered, never swept; reason in rationale), W1 reference, W2 sampled, W3 release-coupled. A Mission Control watch mission (mission_id) executes it; a product watch (inquiry_watch_id) may have asked for it; a design interview (designed_in_thread_id) may have produced it..
 
 ## Columns
 
@@ -86,6 +86,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:acquisition.attention_due`, `q:acquisition.attention_policies`, `q:evidence.source_registry`.
 - Exposed through: [`api.attention_policies`](../api/attention_policies.md), [`api.source_registry`](../api/source_registry.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

@@ -10,7 +10,7 @@ begin
  insert into content.document(document_type_code,canonical_title) values('official_docs_page','Summary fixture') returning id into doc;
  insert into content.document_version(document_id,version_label,manifest_sha256) values(doc,'1',repeat('1',64)) returning id into version;
  insert into content.document_representation(document_version_id,artifact_id,representation_kind,representation_class,media_type,content_sha256) values(version,artifact,'plain_text','faithful_normalization','text/plain',repeat('1',64)) returning id into faithful;
- insert into content.document_node(representation_id,ordinal,stable_local_key,node_kind,inline_text,normalized_content_sha256) values(faithful,0,'p1','paragraph','Source text',repeat('1',64)) returning id into node;
+ insert into content.document_node(representation_id,ordinal,stable_local_key,unit_kind,inline_text,normalized_content_sha256) values(faithful,0,'p1','paragraph','Source text',repeat('1',64)) returning id into node;
  insert into content.transformation_run(transformation_kind,contract_version,parameters_sha256,idempotency_key) values('summarize','1',repeat('1',64),'km-summary-'||util.uuidv7()) returning id into run;
  insert into content.transformation_input(transformation_run_id,ordinal,role,representation_id) values(run,0,'source',faithful);
  insert into content.document_representation(document_version_id,artifact_id,representation_kind,representation_class,media_type,content_sha256,transformation_run_id) values(version,artifact,'summary','semantic_projection','text/plain',repeat('1',64),run) returning id into projected;

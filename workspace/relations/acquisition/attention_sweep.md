@@ -3,7 +3,7 @@ id: "rel:acquisition.attention_sweep"
 kind: table
 schema: acquisition
 name: attention_sweep
-domain: acquisition
+domain: source-intelligence
 lens: corpus
 aliases: []
 tokens: [acquisition, attention_sweep, acquisition.attention_sweep, id, tenant_id, policy_id, trigger_kind, trigger_ref, mission_id, origin_kind, window_from, window_to, started_at, ended_at, items_seen, items_selected, items_captured, rejected, spend_usd, credits, outcome, receipt_id, note]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role]
 typescript: "Database[\"acquisition\"][\"Tables\"][\"attention_sweep\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # acquisition.attention_sweep
 
-table in domain `acquisition`, lens `corpus` — Loop 4: one execution of an attention policy: trigger, window, items seen / selected / captured, rejections by reason, spend. Every fetch it makes carries sweep_id. origin_kind=mission only when a Mission Control mission ran it..
+table in domain `source-intelligence`, lens `corpus` — Loop 4: one execution of an attention policy: trigger, window, items seen / selected / captured, rejections by reason, spend. Every fetch it makes carries sweep_id. origin_kind=mission only when a Mission Control mission ran it..
 
 ## Columns
 
@@ -78,6 +78,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:acquisition.attention_due`, `q:acquisition.attention_policies`.
 - Exposed through: [`api.attention_policies`](../api/attention_policies.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

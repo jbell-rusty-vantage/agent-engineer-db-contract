@@ -3,7 +3,7 @@ id: "rel:api.source_registry"
 kind: view
 schema: api
 name: source_registry
-domain: api-surface
+domain: source-intelligence
 lens: corpus
 aliases: []
 tokens: [api, source_registry, api.source_registry, source_entity_id, source_kind, source, platform, url, topic_entity_id, topic, as_of, method, source_role_code, conflict_of_interest, method_disclosure, claims_observed, claims_checked, confirmed, qualified, refuted, median_lead_days, noise_ratio, authority_score, recommended_watch_level, current_watch_level, urls, rationale, assessment_id, self_checked]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"source_registry\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql", "20261113120300_build08_loop4_fixup_registry_view.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.source_registry
 
-view in domain `api-surface`, lens `corpus` — Latest assessment per source and topic: role prior, conflict of interest, method disclosure, track record from independently checked claims, self_checked (shown, not scored, D-61), lead days, noise, derived score and a watch suggestion only from 5 checked claims (D-69)..
+view in domain `source-intelligence`, lens `corpus` — Latest assessment per source and topic: role prior, conflict of interest, method disclosure, track record from independently checked claims, self_checked (shown, not scored, D-61), lead days, noise, derived score and a watch suggestion only from 5 checked claims (D-69)..
 
 ## Columns
 
@@ -78,6 +78,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.source_registry`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path

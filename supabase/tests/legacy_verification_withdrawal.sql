@@ -40,7 +40,7 @@ begin
   if to_regclass('knowledge_verification.verification_run') is null or to_regclass('knowledge_verification.observation') is null
      or to_regclass('knowledge_verification.adjudication') is null or to_regclass('knowledge_verification.dispatch_outbox') is null
      or to_regclass('knowledge_verification.effect_receipt') is null or to_regclass('knowledge_verification.report_assessment') is null
-     or to_regclass('knowledge_verification.protocol_receipt') is null or to_regclass('research.report_v2_revision') is null then
+     or to_regclass('knowledge_verification.protocol_receipt') is null or to_regclass('verification.use_admission') is null then
     raise exception 'W1 a component/v2 replacement is missing';
   end if;
   -- Kept on purpose (provider accounting, extraction, benchmark and lineage guards still use it).
@@ -56,8 +56,7 @@ begin
               where (table_schema, table_name) in (('evidence','verification_run'),('research','report_package_seal'),('knowledge_service','recovery_case'))) then
     raise exception 'W2 a grant on a withdrawn relation survived';
   end if;
-  if has_function_privilege('anon', 'evidence.enforce_verified_claim_gate()', 'execute')
-     or has_function_privilege('anon', 'research.guard_report_projection()', 'execute') then
+  if has_function_privilege('anon', 'evidence.enforce_verified_claim_gate()', 'execute') then
     raise exception 'W2 a redefined guard is executable by anon';
   end if;
 end $$;
@@ -66,7 +65,7 @@ end $$;
 do $$
 begin
   if exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace
-              where n.nspname = 'research' and c.relname in ('use_admission', 'report_v2_revision', 'report_v2_assertion', 'report_v2_ingestion')
+              where n.nspname = 'verification' and c.relname = 'use_admission'
                 and not (c.relrowsecurity and c.relforcerowsecurity)) then
     raise exception 'W6 a research table does not force row level security';
   end if;
@@ -140,15 +139,5 @@ exception when sqlstate 'KSA06' then
   if sqlerrm <> 'ADMISSION_REQUIRED' then raise; end if;
 end $$;
 set constraints all deferred;
-
--- W5 the v1 report projection is closed for new rows.
-do $$
-begin
-  insert into research.report_package (tenant_id, report_id, report_version_id) values (current_setting('app.tenant_id')::uuid, util.uuidv7(), util.uuidv7());
-  raise exception 'W5 a v1 report package row was accepted';
-exception
-  when sqlstate '55000' then if sqlerrm <> 'REPORT_V1_WITHDRAWN' then raise; end if;
-  when not_null_violation or foreign_key_violation then raise exception 'W5 v1 insert reached constraints before the closed guard: %', sqlerrm;
-end $$;
 
 rollback;

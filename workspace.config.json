@@ -89,7 +89,7 @@
     "schema_readme_bytes": 16384,
     "task_bytes": 5120,
     "operation_bytes": 4096,
-    "start_here_bytes": 3072,
+    "start_here_bytes": 3584,
     "start_here_lines": 60,
     "map_bytes": 4096,
     "map_lines": 40,

@@ -1,19 +1,19 @@
 ---
 id: start
 kind: entry
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
-migration_head: "20261115130200"
-contract_version: "0.6.0"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
+migration_head: "20261116120000"
+contract_version: "0.7.0"
 scope: null
 ---
 # Start here
 
-AI Engineer database at head `20261115130200` (contract 0.6.0); generated from the catalog, `> curated` blocks are guidance.
+AI Engineer database at head `20261116120000` (contract 0.7.0); generated from the catalog, `> curated` blocks are guidance.
 
 ## Router: question shape → level → page
 
-- **L1 catalog** — filter, compare, rank a kind of thing (no embeddings): [models](relations/api/models.md), [model_offerings](relations/api/model_offerings.md), [software](relations/api/software.md), [software_releases](relations/api/software_releases.md), [talks](relations/api/talks.md), [people](relations/api/people.md), [organizations](relations/api/organizations.md), [events](relations/api/events.md), [concepts](relations/api/concepts.md), [papers](relations/api/papers.md), [benchmark_scores](relations/api/benchmark_scores.md), [works_authored](relations/api/works_authored.md), [guidance_items](relations/api/guidance_items.md).
-- **L2 facts and time** — true when, changed since, where a number was read: [changes_since](functions/api/changes_since.md), [price_history](functions/api/price_history.md), [fact_locators](functions/api/fact_locators.md), [entity_at](functions/api/entity_at.md), [what_changed](functions/api/what_changed.md), [modules_affected_by_release](functions/api/modules_affected_by_release.md).
+- **L1 catalog** — filter, compare, rank a kind of thing (no embeddings): [models](relations/api/models.md), [model_offerings](relations/api/model_offerings.md), [software](relations/api/software.md), [software_releases](relations/api/software_releases.md), [talks](relations/api/talks.md), [people](relations/api/people.md), [organizations](relations/api/organizations.md), [events](relations/api/events.md), [concepts](relations/api/concepts.md), [papers](relations/api/papers.md), [benchmark_scores](relations/api/benchmark_scores.md), [works_authored](relations/api/works_authored.md), [guidance_items](relations/api/guidance_items.md), [verified_claims](relations/api/verified_claims.md), [claim_verdicts](relations/api/claim_verdicts.md), [probes](relations/api/probes.md), [source_registry](relations/api/source_registry.md).
+- **L2 facts and time** — true when, changed since, what is due, where a number was read: [changes_since](functions/api/changes_since.md), [price_history](functions/api/price_history.md), [fact_locators](functions/api/fact_locators.md), [entity_at](functions/api/entity_at.md), [what_changed](functions/api/what_changed.md), [modules_affected_by_release](functions/api/modules_affected_by_release.md), [attention_due](functions/api/attention_due.md), [probe_revalidation_due](functions/api/probe_revalidation_due.md), [releases_needing_review](functions/api/releases_needing_review.md).
 - **L3 scoped semantic** — passages inside a scope (lens, tier, space, doc type, unit kind, entity, as-of, workspace): [search_unified](functions/api/search_unified.md), [talk_segments](functions/api/talk_segments.md), [document_units](functions/api/document_units.md), [document_digest](functions/api/document_digest.md).
 - **L4 agentic** — budgeted loop over L1–L3 (search → read → verify with fact_locators), filed as a report: [`create_work`](ops/create_work.md) with kind `report` via [product_command](functions/api/product_command.md).
 

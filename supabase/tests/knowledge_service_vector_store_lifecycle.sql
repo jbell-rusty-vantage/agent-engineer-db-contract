@@ -23,8 +23,8 @@ insert into retrieval.vector_store(id,tenant_id,owner_identity,store_class,slug,
  ('76000000-0000-7000-8000-000000000032','76000000-0000-7000-8000-000000000001','service:owner','exploratory','lifecycle-old','Old','supersession','tenant','{}','{}','{"mode":"tombstone_only","minimumRetentionDays":0}','76000000-0000-7000-8000-000000000014',null),
  ('76000000-0000-7000-8000-000000000033','76000000-0000-7000-8000-000000000001','service:owner','exploratory','lifecycle-successor','Successor','supersession','tenant','{}','{}','{"mode":"tombstone_only","minimumRetentionDays":0}','76000000-0000-7000-8000-000000000016','76000000-0000-7000-8000-000000000032'),
  ('76000000-0000-7000-8000-000000000034','76000000-0000-7000-8000-000000000001','service:owner','exploratory','lifecycle-delete','Delete','deletion','tenant','{}','{}','{"mode":"tombstone_only","minimumRetentionDays":0}','76000000-0000-7000-8000-000000000018',null);
-insert into content.document(id,tenant_id,document_kind,canonical_title)
- values('76000000-0000-7000-8000-000000000040','76000000-0000-7000-8000-000000000001','article','Lifecycle fixture');
+insert into content.document(id,tenant_id,document_type_code,canonical_title)
+ values('76000000-0000-7000-8000-000000000040','76000000-0000-7000-8000-000000000001','news_article','Lifecycle fixture');
 
 select set_config('app.tenant_id','76000000-0000-7000-8000-000000000001',true);
 create function pg_temp.control_transition(uuid,text,text,text,uuid) returns uuid

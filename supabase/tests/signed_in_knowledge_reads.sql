@@ -228,9 +228,9 @@ set local request.jwt.claims = '{"role":"anon"}';
 select pg_temp.d82_state('select * from api.verified_claims') as anon_verified,
        pg_temp.d82_state('select api.entity_card(''d0820000-0000-7000-8000-0000000000f3'')') as anon_card,
        pg_temp.d82_state('select api.knowledge_head()') as anon_head,
-       (select count(*) from api.changes_since(:'since')) as anon_changes,
-       (select count(*) from api.probe_revalidation_due(:'as_of')) as anon_due,
-       (select count(*) from api.releases_needing_review()) as anon_releases \gset
+       pg_temp.d82_state(format('select * from api.changes_since(%L)', :'since')) as anon_changes,
+       pg_temp.d82_state(format('select * from api.probe_revalidation_due(%L)', :'as_of')) as anon_due,
+       pg_temp.d82_state('select * from api.releases_needing_review()') as anon_releases \gset
 reset role;
 
 select extensions.is(:'other_own_entity'::bigint, 1::bigint, 'control: the other tenant reads its own entity with its app.tenant_id');
@@ -254,11 +254,14 @@ select extensions.is(:'signed_in_card_name'::text, 'Marrowgate Deployment Org', 
 select extensions.is(:'signed_in_own_claim'::bigint + :'signed_in_own_resolve'::bigint, 2::bigint, 'signed in: a claim and an entity of the deployment tenant are found');
 select extensions.is(:'signed_in_readers'::jsonb -> 'software_releases', :'trusted'::jsonb -> 'software_releases', 'signed in: software releases');
 select extensions.is(:'signed_in_readers'::jsonb -> 'probe_revalidation_due', :'trusted'::jsonb -> 'probe_revalidation_due', 'signed in: due list, probes to revalidate');
-select extensions.is(:'signed_in_readers'::jsonb -> 'releases_needing_review', :'trusted'::jsonb -> 'releases_needing_review', 'signed in: due list, releases needing review');
+-- since 20261116120000 the release review list is the queue of a workspace's members; this user is a member of none
+-- (supabase/tests/api_default_closed.sql covers the member)
+select extensions.is(:'signed_in_readers'::jsonb -> 'releases_needing_review', to_jsonb('0:' || md5('')), 'signed in, a member of no workspace: due list, no release needing review');
 select extensions.is(:'signed_in_readers'::jsonb -> 'attention_due', :'trusted'::jsonb -> 'attention_due', 'signed in: due list, attention policies');
 select extensions.is(:'signed_in_readers'::jsonb -> 'changes_since', :'trusted'::jsonb -> 'changes_since',
   format('signed in: changes since a date (%s rows)', :'trusted_changes'));
-select extensions.is(:'signed_in_with_variable'::jsonb, :'trusted'::jsonb, 'with app.tenant_id set, a signed-in session reads exactly what the session that sets it reads');
+select extensions.is(:'signed_in_with_variable'::jsonb - 'releases_needing_review', :'trusted'::jsonb - 'releases_needing_review',
+  'with app.tenant_id set, a signed-in session reads the shared knowledge exactly as the session that sets it does');
 
 select extensions.is(:'signed_in_other_entity'::bigint, 0::bigint, 'signed in: another tenant''s entity is not listed');
 select extensions.ok(:'signed_in_other_card_null', 'signed in: another tenant''s entity card is not readable');
@@ -267,7 +270,8 @@ select extensions.is(:'signed_in_other_resolve'::bigint, 0::bigint, 'signed in: 
 select extensions.is(:'signed_in_variable_other_entity'::bigint, 1::bigint, 'control: only app.tenant_id reaches the other tenant');
 
 select extensions.is(:'anon_verified' || ' ' || :'anon_card' || ' ' || :'anon_head', '42501 42501 42501', 'anon: the views and the granted functions stay denied');
-select extensions.is(:'anon_changes'::bigint + :'anon_due'::bigint + :'anon_releases'::bigint, 0::bigint, 'anon: the tenant-filtered functions it can execute still return nothing');
+select extensions.is(:'anon_changes' || ' ' || :'anon_due' || ' ' || :'anon_releases', '42501 42501 42501',
+  'anon: the tenant-filtered functions PUBLIC could execute before 20261116120000 are denied too');
 
 -- ------------------------------------------------------------------ 6. private passages and the search
 insert into auth.users(id, instance_id, aud, role, email) values

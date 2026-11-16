@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"event\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # temporal.event
 
@@ -65,7 +65,7 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:catalog.models`, `q:catalog.models_at`, `q:catalog.software_releases`, `q:entity.card`, `q:entity.timeline`, `q:entity.what_changed`, `q:events.current_for_entity`, `q:facts.changes_since`.
+- Named queries: `q:acquisition.attention_due`, `q:catalog.models`, `q:catalog.models_at`, `q:catalog.software_releases`, `q:entity.card`, `q:entity.timeline`, `q:entity.what_changed`, `q:events.current_for_entity`, `q:facts.changes_since`.
 - Exposed through: [`api.events_current`](../api/events_current.md), [`api.models`](../api/models.md), [`api.software_releases`](../api/software_releases.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 

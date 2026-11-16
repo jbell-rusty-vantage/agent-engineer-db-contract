@@ -3,7 +3,7 @@ id: "rel:verification.probe"
 kind: table
 schema: verification
 name: probe
-domain: evidence
+domain: verified-knowledge
 lens: evidence
 aliases: []
 tokens: [verification, probe, verification.probe, id, tenant_id, slug, title, hypothesis, kind, subject_entity_ids, script_path, script_sha256, environment, matrix, model_policy, budget_usd, designed_in_thread_id, designed_by, state, created_at]
@@ -14,11 +14,11 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # verification.probe
 
-table in domain `evidence`, lens `evidence` — Loop 4: an experiment that tests stated claims against a matrix of environments. Cells are dates (uv --exclude-newer) or explicit pins; the script is versioned by path and sha256. A design interview may have produced it..
+table in domain `verified-knowledge`, lens `evidence` — Loop 4: an experiment that tests stated claims against a matrix of environments. Cells are dates (uv --exclude-newer) or explicit pins; the script is versioned by path and sha256. A design interview may have produced it..
 
 ## Columns
 
@@ -76,6 +76,7 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim_triage`, `q:evidence.claim_verdicts`, `q:evidence.probe_matrix`, `q:evidence.probe_revalidation_due`, `q:evidence.probes`, `q:evidence.source_track_record`.
 - Exposed through: [`api.claim_triage`](../api/claim_triage.md), [`api.claim_verdicts`](../api/claim_verdicts.md), [`api.probes`](../api/probes.md), [`api.source_track_record`](../api/source_track_record.md), [`api.verified_claims`](../api/verified_claims.md).
 - Direct SELECT: `app_reader`, `control_plane`, `pipeline_agent`, `verifier_agent`.
 

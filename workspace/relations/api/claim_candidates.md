@@ -3,7 +3,7 @@ id: "rel:api.claim_candidates"
 kind: view
 schema: api
 name: claim_candidates
-domain: api-surface
+domain: verified-knowledge
 lens: corpus
 aliases: []
 tokens: [api, claim_candidates, api.claim_candidates, claim_id, claim_type, statement, status, path, source_role, subject_resolved, speakers, attribution, learned_at, agrees_with_first_party_claim, subjects, document_node_id, document_title, created_at]
@@ -14,11 +14,11 @@ readers: [app_reader, authenticated, control_plane, executor_service, pipeline_a
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"claim_candidates\"][\"Row\"]"
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120500_build08_r2_fixups5.sql"]
-workspace_fingerprint: "sha256:1632162dedd33f48177992e3e5ad79c363556a7b68ee650fc7e68b2bb3855da4"
+workspace_fingerprint: "sha256:94ffe6a458de74a3cfebdee4fb31f371d14c89d7eaa16cfe1ab1cae9dc94743b"
 ---
 # api.claim_candidates
 
-view in domain `api-surface`, lens `corpus` — L3/evidence: every claim with its path (deterministic_first_party = cheap path, L1_candidate = prose/media candidate awaiting verification), status, subjects and the document it was read from. Candidates are never facts..
+view in domain `verified-knowledge`, lens `corpus` — L3/evidence: every claim with its path (deterministic_first_party = cheap path, L1_candidate = prose/media candidate awaiting verification), status, subjects and the document it was read from. Candidates are never facts..
 
 ## Columns
 
@@ -67,6 +67,7 @@ Disabled.
 
 ## Read paths
 
+- Named queries: `q:evidence.claim`, `q:evidence.verified_claims`.
 - Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
