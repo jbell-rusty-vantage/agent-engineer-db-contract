@@ -6,7 +6,7 @@ lens: evidence
 domains: [evidence, verified-knowledge]
 relations: 6
 functions: 14
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # verification
 
@@ -15,9 +15,9 @@ Evidence acts 4-5: verification observations and use decisions admitted into thi
 | Relation | Kind | Rows | Summary | Key edges |
 | --- | --- | --- | --- | --- |
 | [`claim_triage`](../../relations/verification/claim_triage.md) | table | small | Loop 5: what to do with a claim candidate before anyone checks it: probe it, check the do… | → `evidence.claim`, → `verification.probe` |
-| [`probe`](../../relations/verification/probe.md) | table | unknown | Loop 4: an experiment that tests stated claims against a matrix of environments. Cells ar… | → `conversation.thread` |
+| [`probe`](../../relations/verification/probe.md) | table | small | Loop 4: an experiment that tests stated claims against a matrix of environments. Cells ar… | → `conversation.thread` |
 | [`probe_claim`](../../relations/verification/probe_claim.md) | table | small | — | → `evidence.claim`, → `verification.probe` |
-| [`probe_run`](../../relations/verification/probe_run.md) | table | unknown | Loop 4: one execution of a probe in one cell. outcome pass/fail is about the probe's own … | → `orchestration.mission`, → `evidence.source_capture`, → `evidence.locator`, → `verification.probe` |
+| [`probe_run`](../../relations/verification/probe_run.md) | table | small | Loop 4: one execution of a probe in one cell. outcome pass/fail is about the probe's own … | → `orchestration.mission`, → `evidence.source_capture`, → `evidence.locator`, → `verification.probe` |
 | [`probe_verdict`](../../relations/verification/probe_verdict.md) | table | small | Loop 4: what a probe's runs say about one claim. Append-only: a changed verdict is a new … | → `evidence.claim`, → `verification.probe` |
 | [`use_admission`](../../relations/verification/use_admission.md) | table | unknown | Append-only record that knowledge_verification admitted a use decision inside the writing… | — |
 

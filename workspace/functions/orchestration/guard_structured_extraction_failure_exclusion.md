@@ -13,7 +13,7 @@ raises: [structured extraction failure forbids candidate retention]
 touches: { reads: [orchestration.verification_structured_extraction_failure], writes: [] }
 tokens: [orchestration, guard_structured_extraction_failure_exclusion, orchestration.guard_structured_extraction_failure_exclusion]
 defined_in: ["20260906032500_verification_structured_extraction_failure.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # orchestration.guard_structured_extraction_failure_exclusion
 

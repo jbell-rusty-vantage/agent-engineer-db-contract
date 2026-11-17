@@ -6,7 +6,7 @@ name: search_provider
 rows: 8
 rows_sha256: "sha256:6cc9a3ad13539bdc514499f4b87476cb1b079d76a572ab8ef6a4e7a85d75ec89"
 codes: [brave, exa, firecrawl, google, manual, other, tavily, youtube]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # evidence.search_provider
 

@@ -14,7 +14,7 @@ readers: [app_reader, authenticated, control_plane, pipeline_agent, service_role
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"claim_triage\"][\"Row\"]"
 defined_in: ["20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # api.claim_triage
 

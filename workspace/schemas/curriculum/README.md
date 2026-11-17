@@ -6,7 +6,7 @@ lens: machinery
 domains: [curriculum]
 relations: 8
 functions: 0
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # curriculum
 
@@ -20,7 +20,7 @@ Learning paths, modules, lessons, challenges, knowledge mappings. Lens `machiner
 | [`prerequisite`](../../relations/curriculum/prerequisite.md) | table | unknown | — | → `authoring.work_revision` |
 | [`release_transition`](../../relations/curriculum/release_transition.md) | table | unknown | — | → `authoring.release`, → `authoring.event` |
 | [`requirement`](../../relations/curriculum/requirement.md) | table | unknown | — | → `curriculum.part`, → `authoring.work_revision`, → `curriculum.outcome` |
-| [`requirement_option`](../../relations/curriculum/requirement_option.md) | table | unknown | — | → `auth.users`, → `authoring.work_revision`, → `curriculum.requirement` |
+| [`requirement_option`](../../relations/curriculum/requirement_option.md) | table | small | — | → `auth.users`, → `authoring.work_revision`, → `curriculum.requirement` |
 | [`requirement_transition`](../../relations/curriculum/requirement_transition.md) | table | unknown | — | → `curriculum.requirement`, → `curriculum.release_transition` |
 
 Functions: none.

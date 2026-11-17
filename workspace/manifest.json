@@ -14,20 +14,20 @@
   },
   "build": {
     "catalog_version": "sha256:be7a07f7738a7b614678bf037d2f585e7b659e3dfdfd26f10f939ad86b499df1",
-    "contract_version": "0.9.0",
+    "contract_version": "0.10.0",
     "enrichment_sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
-    "fingerprint": "sha256:399f954e4289b40362558269e1b4296c678fdb46b9ef6962cc551e91e3279ef1",
+    "fingerprint": "sha256:9ed72006477002282ce1132595857d68fa7dd913687c13b475796b197bbb187c",
     "generated_types_sha256": "sha256:374a85ba3ec324eb3c5f2857482b912b390b9592a978864268b4473bd8062052",
-    "migration_head": "20261116140000",
+    "migration_head": "20261116150000",
     "renderer_version": "4.0.0",
     "rules_version": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
     "volatile": {
-      "introspected_at": "2026-11-16T22:57:44.650Z",
+      "introspected_at": "2026-11-16T23:55:19.137Z",
       "source": {
         "kind": "local_disposable"
       }
     },
-    "workspace_fingerprint": "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+    "workspace_fingerprint": "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
   },
   "entry_points": [
     "START_HERE.md",
@@ -55,9 +55,9 @@
   "sizes": {
     "files": 947,
     "largest": {
-      "bytes": 5308616,
+      "bytes": 5309840,
       "path": "schema-ir.json"
     },
-    "total_bytes": 9112148
+    "total_bytes": 9114612
   }
 }

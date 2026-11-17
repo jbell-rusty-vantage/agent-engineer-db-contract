@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [taxonomy.assignment, taxonomy.facet, taxonomy.facet_version, taxonomy.term], writes: [] }
 tokens: [taxonomy, enforce_facet_cardinality, taxonomy.enforce_facet_cardinality]
 defined_in: ["20260826001400_deferred_fks.sql", "20260829012824_case_study_entity_contract.sql", "20260829192855_optimize_ai_entity_taxonomy_and_relationships.sql", "20261105010200_product_curriculum_cutover.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # taxonomy.enforce_facet_cardinality
 

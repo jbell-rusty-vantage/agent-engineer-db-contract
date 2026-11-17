@@ -6,7 +6,7 @@ lens: ours
 domains: [learning]
 relations: 14
 functions: 0
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # learning
 
@@ -16,7 +16,7 @@ Lens `ours`. Domains: [`learning`](../../domains/learning.md).
 | --- | --- | --- | --- | --- |
 | [`appeal`](../../relations/learning/appeal.md) | table | unknown | — | → `auth.users`, → `learning.submission`, → `learning.assessment_result` |
 | [`assessment_result`](../../relations/learning/assessment_result.md) | table | unknown | — | → `orchestration.artifact`, → `authoring.work_revision`, → `learning.submission` |
-| [`attempt`](../../relations/learning/attempt.md) | table | unknown | — | → `auth.users`, → `curriculum.requirement_option`, → `authoring.release_item`, → `learning.release_adoption` |
+| [`attempt`](../../relations/learning/attempt.md) | table | small | — | → `auth.users`, → `curriculum.requirement_option`, → `authoring.release_item`, → `learning.release_adoption` |
 | [`credit`](../../relations/learning/credit.md) | table | unknown | — | → `auth.users`, → `curriculum.requirement`, → `curriculum.release_transition`, → `learning.release_adoption` |
 | [`criterion_result`](../../relations/learning/criterion_result.md) | table | unknown | — | → `auth.users`, → `learning.grading_run` |
 | [`enrollment`](../../relations/learning/enrollment.md) | table | unknown | — | → `auth.users`, → `authoring.distribution`, → `authoring.workspace` |

@@ -6,7 +6,7 @@ lens: corpus
 domains: [retrieval]
 relations: 37
 functions: 35
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # retrieval
 
@@ -45,7 +45,7 @@ Vector spaces, vector catalog, retrieval plans/runs, evidence packets. Lens `cor
 | [`vector_item_embedding_1536`](../../relations/retrieval/vector_item_embedding_1536.md) | partitioned table | unknown | Canonical fixed-dimension pgvector storage; legacy vector_item.embedding is compatibility… | → `retrieval.vector_item`, → `retrieval.vector_space_version` |
 | [`vector_space`](../../relations/retrieval/vector_space.md) | table | unknown | Named embedding space (units, digests, entity_cards, assertions, own_content, learner_not… | — |
 | [`vector_space_version`](../../relations/retrieval/vector_space_version.md) | table | unknown | Immutable version of a vector space, including dims and publication lifecycle. | → `retrieval.projection_procedure`, → `evaluation.eval_run`, → `retrieval.vector_space` |
-| [`vector_store`](../../relations/retrieval/vector_store.md) | table | unknown | — | → `knowledge_service.operation`, → `orchestration.attempt` |
+| [`vector_store`](../../relations/retrieval/vector_store.md) | table | none | — | → `knowledge_service.operation`, → `orchestration.attempt` |
 | [`vector_store_document`](../../relations/retrieval/vector_store_document.md) | table | unknown | — | → `knowledge_service.operation`, → `content.document`, → `content.document_version`, → `content.document_representation` |
 | [`vector_store_ingestion_checkpoint`](../../relations/retrieval/vector_store_ingestion_checkpoint.md) | table | unknown | — | → `retrieval.vector_store_ingestion_run` |
 | [`vector_store_ingestion_run`](../../relations/retrieval/vector_store_ingestion_run.md) | table | unknown | — | → `knowledge_service.operation`, → `retrieval.vector_store` |

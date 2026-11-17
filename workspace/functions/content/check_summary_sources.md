@@ -13,7 +13,7 @@ raises: [summary coverage ratio mismatch, summary hash/transformation mismatch, 
 touches: { reads: [content.document_node, content.document_representation, content.document_summary, content.document_summary_source, content.transformation_input], writes: [] }
 tokens: [content, check_summary_sources, content.check_summary_sources]
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # content.check_summary_sources
 

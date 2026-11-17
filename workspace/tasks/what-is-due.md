@@ -7,7 +7,7 @@ queries: [acquisition.attention_due, evidence.probe_revalidation_due, ours.relea
 aliases: [due, due list, what needs attention, watch due, probes to rerun, revalidation, releases needing review, stale, overdue]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # What is due (sources to sweep, probes to rerun, releases to review)?
 

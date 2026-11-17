@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [access.client_grant], writes: [] }
 tokens: [api, product_scope, api.product_scope]
 defined_in: ["20261115130000_build08_d82_signed_in_knowledge_reads.sql", "20261115130200_build08_d82_product_scope.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # api.product_scope
 

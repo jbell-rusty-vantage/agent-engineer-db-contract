@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [api.software_releases, authoring.revision_binding, authoring.runtime_requirement, authoring.work, authoring.work_revision, catalog.entity], writes: [] }
 tokens: [api, modules_using_software, api.modules_using_software]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120300_build08_r2_fixups3.sql", "20261116120000_build08_api_default_closed.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # api.modules_using_software
 

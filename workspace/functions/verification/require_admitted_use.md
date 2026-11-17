@@ -13,7 +13,7 @@ raises: [EFFECT_CONFLICT, REVIEW_REQUIRED, STALE_DECISION, UNRESOLVED_EFFECT]
 touches: { reads: [], writes: [] }
 tokens: [verification, require_admitted_use, verification.require_admitted_use]
 defined_in: ["20261113150000_build08_ks_admission_verified_claims.sql", "20261113150100_build08_loop6_fixup_require_admitted_use.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # verification.require_admitted_use
 

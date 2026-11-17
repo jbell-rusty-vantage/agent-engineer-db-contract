@@ -6,7 +6,7 @@ lens: corpus
 domains: [staging]
 relations: 4
 functions: 0
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # staging
 
@@ -16,7 +16,7 @@ Typed candidates, discovery results, mentions, identity resolution. Lens `corpus
 | --- | --- | --- | --- | --- |
 | [`candidate`](../../relations/staging/candidate.md) | table | none | Proposed identity awaiting resolution; not a draft fact. | → `taxonomy.entity_kind`, → `catalog.entity`, → `evidence.source` |
 | [`identity_match`](../../relations/staging/identity_match.md) | table | unknown | Scored match between a candidate and an existing entity. | → `staging.candidate`, → `catalog.entity` |
-| [`resolution_decision`](../../relations/staging/resolution_decision.md) | table | unknown | create, match, reject, or defer decision with a receipt. | → `staging.candidate`, → `catalog.entity`, → `orchestration.operation_receipt` |
+| [`resolution_decision`](../../relations/staging/resolution_decision.md) | table | none | create, match, reject, or defer decision with a receipt. | → `staging.candidate`, → `catalog.entity`, → `orchestration.operation_receipt` |
 | [`vetting_decision`](../../relations/staging/vetting_decision.md) | table | unknown | admit, reject, or defer vetting decision with a receipt. | → `staging.candidate`, → `orchestration.operation_receipt` |
 
 Functions: none.

@@ -13,7 +13,7 @@ raises: [relationship properties violate JSON schema]
 touches: { reads: [taxonomy.relationship_kind], writes: [] }
 tokens: [catalog, check_relationship_properties, catalog.check_relationship_properties]
 defined_in: []
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # catalog.check_relationship_properties
 

@@ -13,7 +13,7 @@ raises: [typed entity associations may be added only while claim is proposed]
 touches: { reads: [evidence.claim], writes: [] }
 tokens: [evidence, enforce_claim_association_proposed, evidence.enforce_claim_association_proposed]
 defined_in: ["20260829195623_lock_typed_claim_associations.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # evidence.enforce_claim_association_proposed
 

@@ -3,18 +3,19 @@ id: "voc:orchestration.intent_type"
 kind: vocabulary
 schema: orchestration
 name: intent_type
-rows: 16
-rows_sha256: "sha256:f5783103b6978c5c22219d6e1f213274f92b7a012e2f7aac9ccd6fc04a0d8aed"
-codes: [assign_taxonomy_term, claim_verification, content_link, governed_chain_write, ingest_research_bundle, knowledge_ingestion, link_entities, merge_entities, promote_candidate, publish_report, record_claim, record_metric_observations, retract_record, upsert_entity, upsert_knowledge, verify_claim]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+rows: 17
+rows_sha256: "sha256:51985056f0aa2a3d6cb6d13d773a707a00953e0a6ea70bbe7f0c97a3bd3ecafe"
+codes: [assign_taxonomy_term, capture_registration, claim_verification, content_link, governed_chain_write, ingest_research_bundle, knowledge_ingestion, link_entities, merge_entities, promote_candidate, publish_report, record_claim, record_metric_observations, retract_record, upsert_entity, upsert_knowledge, verify_claim]
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # orchestration.intent_type
 
-Reference data snapshot (16 rows, digest `sha256:f5783103b6978c5c22219d6e1f213274f92b7a012e2f7aac9ccd6fc04a0d8aed`). Codes are enforced wherever a column has a foreign key to [`orchestration.intent_type`](../relations/orchestration/intent_type.md).
+Reference data snapshot (17 rows, digest `sha256:51985056f0aa2a3d6cb6d13d773a707a00953e0a6ea70bbe7f0c97a3bd3ecafe`). Codes are enforced wherever a column has a foreign key to [`orchestration.intent_type`](../relations/orchestration/intent_type.md).
 
 | code | description | schema_version |
 | --- | --- | --- |
 | `assign_taxonomy_term` | Assign a taxonomy term to a target | 1 |
+| `capture_registration` | Knowledge Services registered one of its executor's own captures so that it can be quoted (source_prepare_captured): th… | 1 |
 | `claim_verification` | Verify an existing claim under a Knowledge Services admitted exact-use decision (verification.record_admitted_claim_ver… | 1 |
 | `content_link` | content-link-intent.v1: evidence-backed canonical document, chunk, summary and projection links | 1 |
 | `governed_chain_write` | A write of the research verification chain made through a governed api function (api.record_claim, api.restate_claim, a… | 1 |

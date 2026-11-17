@@ -10,11 +10,11 @@ tokens: [content, document_about_entity, content.document_about_entity, tenant_i
 summary: null
 summary_basis: none
 rls: enabled
-readers: [app_reader, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
+readers: [control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_about_entity\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # content.document_about_entity
 
@@ -57,13 +57,13 @@ Enabled.
 
 ## Grants
 
-`app_reader`: SELECT; `control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `authenticated`.
+`control_plane`: SELECT; `executor_service`: INSERT, SELECT, UPDATE; `pipeline_agent`: INSERT, SELECT, UPDATE; `service_role`: INSERT, SELECT, UPDATE; `verifier_agent`: SELECT. None: `anon`, `app_reader`, `authenticated`.
 
 ## Read paths
 
 - Named queries: `q:catalog.papers`, `q:catalog.talks`, `q:content.talk_segments`.
 - Exposed through: [`api.capabilities`](../api/capabilities.md), [`api.digest_items`](../api/digest_items.md), [`api.papers`](../api/papers.md), [`api.talks`](../api/talks.md).
-- Direct SELECT: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
+- Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 

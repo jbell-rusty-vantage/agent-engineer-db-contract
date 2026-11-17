@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [content.document_node, content.document_summary_source, retrieval.chunk_span], writes: [] }
 tokens: [api, summary_evidence, api.summary_evidence]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # api.summary_evidence
 

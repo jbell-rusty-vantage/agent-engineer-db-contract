@@ -9,11 +9,11 @@
   },
   "files": 947,
   "largest": {
-    "bytes": 5308616,
+    "bytes": 5309840,
     "path": "schema-ir.json"
   },
   "ok": true,
-  "total_bytes": 9112148,
+  "total_bytes": 9114612,
   "warning_count": 0,
   "warnings": []
 }

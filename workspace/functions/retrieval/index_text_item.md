@@ -13,7 +13,7 @@ raises: [empty text cannot be indexed, private items need a workspace, "unknown 
 touches: { reads: [catalog.entity, retrieval.projection_procedure, retrieval.vector_space, retrieval.vector_space_version], writes: [retrieval.projection_target, retrieval.search_projection, retrieval.vector_item] }
 tokens: [retrieval, index_text_item, retrieval.index_text_item]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # retrieval.index_text_item
 

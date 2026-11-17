@@ -1,13 +1,14 @@
 -- Build 08 (AIDB-2): the governed writes of the research verification chain, run as the bounded roles and never as the
 -- database owner, the lines an agent does not cross, and the product owner's row policies
--- (migration 20261116130000_build08_governed_chain_writes.sql).
+-- (migration 20261116130000_build08_governed_chain_writes.sql), and since 20261116150000_build08_capture_receipt_unit_text.sql:
+-- no anchor on a unit without text, the capture registration's ledger rows, and the policy rule for every bounded role.
 -- Fixtures are created here and rolled back; the suite passes on an empty installation and on a populated one.
 -- A call made as another role is taken with \gset and asserted after `reset role`, because pgTAP's own tables belong to the
 -- role that opened the plan. pg_temp.gcw_try returns 'ok' or '<SQLSTATE> <message>': the message of a governed function is
 -- its stable error code.
 begin;
 create extension if not exists pgtap with schema extensions;
-select extensions.plan(66);
+select extensions.plan(72);
 
 \set tenant        '00000000-0000-7000-8000-000000000001'
 \set other_tenant  '9c000000-0000-7000-8000-0000000000ff'
@@ -34,6 +35,11 @@ select extensions.plan(66);
 \set repr_b        '9c000000-0000-7000-8000-000000000035'
 \set node_a        '9c000000-0000-7000-8000-000000000036'
 \set node_b        '9c000000-0000-7000-8000-000000000037'
+\set node_null_a   '9c000000-0000-7000-8000-000000000038'
+\set node_null_b   '9c000000-0000-7000-8000-000000000039'
+\set node_blank_b  '9c000000-0000-7000-8000-00000000003a'
+\set reg_intent    '9c000000-0000-7000-8000-000000000070'
+\set reg_receipt   '9c000000-0000-7000-8000-000000000071'
 \set policy_watch  '9c000000-0000-7000-8000-000000000040'
 \set policy_w0     '9c000000-0000-7000-8000-000000000041'
 \set mission_1     '9c000000-0000-7000-8000-000000000050'
@@ -157,7 +163,11 @@ insert into content.document_version_source_capture(tenant_id, document_version_
  (:'tenant', :'version_a', :'capture_a', 'primary', 1), (:'tenant', :'version_b', :'capture_b', 'primary', 1);
 insert into content.document_node(id, tenant_id, representation_id, ordinal, stable_local_key, unit_kind, inline_text, normalized_content_sha256) values
  (:'node_a', :'tenant', :'repr_a', 0, 'post-1', 'paragraph', 'gcw-poster wrote: ' || :'quote_a' || '  It also' || chr(8217) || 's documented nowhere.', repeat('a', 64)),
- (:'node_b', :'tenant', :'repr_b', 0, 'run-D1', 'paragraph', 'Probe GCW in cell D1: quillfeather 2.0.0. Checks: {"retries_once": true}. Outcome pass.', repeat('b', 64));
+ (:'node_b', :'tenant', :'repr_b', 0, 'run-D1', 'paragraph', 'Probe GCW in cell D1: quillfeather 2.0.0. Checks: {"retries_once": true}. Outcome pass.', repeat('b', 64)),
+ -- units with no text (20261116150000): NULL in each capture, and only whitespace in the JSON one
+ (:'node_null_a', :'tenant', :'repr_a', 1, 'figure-1', 'paragraph', null, repeat('a', 64)),
+ (:'node_null_b', :'tenant', :'repr_b', 1, 'run-D2', 'paragraph', null, repeat('b', 64)),
+ (:'node_blank_b', :'tenant', :'repr_b', 2, 'run-D3', 'paragraph', E' \t\n' || chr(160) || ' ', repeat('b', 64));
 insert into orchestration.mission(id, tenant_id, slug, goal, budget_cost_usd) values
  (:'mission_1', :'tenant', 'gcw-watch', 'governed chain suite: a watch with a budget', 1.00),
  (:'mission_0', :'tenant', 'gcw-watch-no-budget', 'governed chain suite: a watch whose budget is spent', 0);
@@ -595,12 +605,59 @@ select extensions.is(:'v_quote' || ' | ' || :'v_unit' || ' | ' || :'v_evidence' 
   '23514 QUOTE_NOT_IN_UNIT | P0002 EVIDENCE_UNIT_NOT_IN_CAPTURE | 22023 EVIDENCE_REQUIRED | 22023 CLAIM_TYPE_UNKNOWN | 22023 STRUCTURED_RESERVED | P0002 SUBJECT_NOT_FOUND | P0002 MISSION_NOT_FOUND | 22023 IDEMPOTENCY_KEY_REQUIRED | ok',
   'a claim is stored only with a quote that is verbatim in a unit of its capture (whitespace and typographic quotes aside), a known type, known subjects and a key');
 
+-- 4.6 a unit with no text holds no quote (20261116150000), on every path that makes a new anchor
+set local role pipeline_agent;
+select pg_temp.gcw_try(format('select api.record_claim(%L, %L, %L, %L::jsonb)', 'gcw-n1', 'assertion', 'a quote against a unit with NULL text',
+         jsonb_build_array(jsonb_build_object('capture_id', :'capture_a', 'node_id', :'node_null_a', 'quote', :'quote_a')))) as n_text_null,
+       pg_temp.gcw_try(format('select api.record_claim(%L, %L, %L, %L::jsonb)', 'gcw-n2', 'assertion', 'a whitespace quote against a unit with NULL text',
+         jsonb_build_array(jsonb_build_object('capture_id', :'capture_a', 'node_id', :'node_null_a', 'quote', E'\t\n')))) as n_text_blank_quote,
+       pg_temp.gcw_try(format('select api.record_claim(%L, %L, %L, %L::jsonb)', 'gcw-n3', 'assertion', 'a whitespace quote against a unit with text',
+         jsonb_build_array(jsonb_build_object('capture_id', :'capture_a', 'node_id', :'node_a', 'quote', E'\n' || chr(160))))) as n_text_blank_any,
+       pg_temp.gcw_try(format('select api.record_claim(%L, %L, %L, %L::jsonb)', 'gcw-n4', 'assertion', 'a json_pointer quote against a unit with NULL text',
+         jsonb_build_array(jsonb_build_object('capture_id', :'capture_b', 'node_id', :'node_null_b', 'selector_kind', 'json_pointer', 'pointer', '/runs/1', 'quote', 'Probe GCW')))) as n_pointer_null_quote,
+       pg_temp.gcw_try(format('select api.record_claim(%L, %L, %L, %L::jsonb)', 'gcw-n5', 'assertion', 'a json_pointer anchor on a unit with NULL text',
+         jsonb_build_array(jsonb_build_object('capture_id', :'capture_b', 'node_id', :'node_null_b', 'selector_kind', 'json_pointer', 'pointer', '/runs/1')))) as n_pointer_null \gset
+reset role;
+set local role verifier_agent;
+select pg_temp.gcw_try(format('select api.record_probe_run(%L, %L, %L, %L, %L, p_output => %L::jsonb)', 'gcw-n6', :'probe', 'N1', 'pass', now() - interval '30 minutes',
+         jsonb_build_object('capture_id', :'capture_a', 'node_id', :'node_null_a', 'quote', :'quote_a'))) as n_run_text_null,
+       pg_temp.gcw_try(format('select api.record_probe_run(%L, %L, %L, %L, %L, p_output => %L::jsonb)', 'gcw-n7', :'probe', 'N2', 'pass', now() - interval '30 minutes',
+         jsonb_build_object('capture_id', :'capture_b', 'node_id', :'node_null_b', 'selector_kind', 'json_pointer', 'pointer', '/runs/1'))) as n_run_pointer_null,
+       pg_temp.gcw_try(format('select api.record_probe_run(%L, %L, %L, %L, %L, p_output => %L::jsonb)', 'gcw-n8', :'probe', 'N3', 'pass', now() - interval '30 minutes',
+         jsonb_build_object('capture_id', :'capture_b', 'node_id', :'node_blank_b', 'selector_kind', 'json_pointer', 'pointer', '/runs/2'))) as n_run_pointer_blank,
+       pg_temp.gcw_try(format('select api.record_probe_run(%L, %L, %L, %L, %L, p_output => %L::jsonb)', 'gcw-n9', :'probe', 'N4', 'pass', now() - interval '30 minutes',
+         jsonb_build_object('capture_id', :'capture_b', 'node_id', :'node_b', 'selector_kind', 'json_pointer', 'pointer', '/runs/0', 'quote', E'\t'))) as n_run_pointer_blank_quote \gset
+reset role;
+select extensions.is(:'n_text_null' || ' | ' || :'n_text_blank_quote' || ' | ' || :'n_text_blank_any' || ' | ' || :'n_pointer_null_quote' || ' | ' || :'n_pointer_null',
+  '23514 QUOTE_NOT_IN_UNIT | 22023 QUOTE_REQUIRED | 22023 QUOTE_REQUIRED | 23514 QUOTE_NOT_IN_UNIT | 23514 QUOTE_NOT_IN_UNIT',
+  'record_claim: a unit with NULL text refuses a quote (text_quote and json_pointer) and anchors nothing; a quote of only whitespace is no quote, for any unit');
+select extensions.is(:'n_run_text_null' || ' | ' || :'n_run_pointer_null' || ' | ' || :'n_run_pointer_blank' || ' | ' || :'n_run_pointer_blank_quote',
+  '23514 QUOTE_NOT_IN_UNIT | 23514 QUOTE_NOT_IN_UNIT | 23514 QUOTE_NOT_IN_UNIT | 22023 QUOTE_REQUIRED',
+  'record_probe_run: an output on a unit with NULL or only-whitespace text is refused, as is a json_pointer output with a whitespace quote');
+select extensions.is((select count(*) from evidence.locator l where l.selector ->> 'node_id' in (:'node_null_a', :'node_null_b', :'node_blank_b'))
+    + (select count(*) from evidence.claim c where c.statement like 'a %quote against a unit%' or c.statement like 'a json_pointer anchor on a unit%')
+    + (select count(*) from verification.probe_run r where r.probe_id = :'probe' and r.cell_label in ('N1', 'N2', 'N3', 'N4')),
+  0::bigint, 'nothing was written for the refused anchors: no locator on a unit without text, no claim, no run');
+
 -- ------------------------------------------------------------------ 5. the product owner reads what its functions read
-select extensions.is((select coalesce(string_agg(c.oid::regclass::text, ', ' order by c.oid::regclass::text), '') from pg_class c
+-- The rule holds for every bounded role of the contract (20261116150000 revoked app_reader's SELECT on
+-- content.document_about_entity, the one it then found). Supabase's own roles (anon, authenticated, service_role) are not
+-- held to it here: their grants on the storage schema are the platform's, and service_role bypasses row security.
+select extensions.is((select coalesce(string_agg(r.rolname || ' ' || c.oid::regclass::text, ', ' order by r.rolname, c.oid::regclass::text), '') from pg_class c cross join pg_roles r
    where c.relkind in ('r','p') and c.relrowsecurity
-     and exists (select 1 from aclexplode(c.relacl) a where a.grantee = 'product_api_owner'::regrole)
-     and not exists (select 1 from pg_policy p where p.polrelid = c.oid and (p.polroles = '{0}' or 'product_api_owner'::regrole = any(p.polroles)))), '',
-  'no row-secured table grants product_api_owner a privilege that no policy lets it use');
+     and r.rolname in ('app_reader','pipeline_agent','verifier_agent','executor_service','control_plane','product_api_owner')
+     and exists (select 1 from aclexplode(c.relacl) a where a.grantee = r.oid)
+     and not exists (select 1 from pg_policy p where p.polrelid = c.oid and (p.polroles = '{0}' or r.oid = any(p.polroles)))), '',
+  'no row-secured table grants a bounded role (app_reader, the agent roles, product_api_owner) a privilege that no policy lets it use');
+set local role app_reader;
+select pg_temp.gcw_try('select count(*) from api.talks') as reader_talks, pg_temp.gcw_try('select count(*) from api.papers') as reader_papers,
+       left(pg_temp.gcw_try('select count(*) from content.document_about_entity'), 5) as reader_direct \gset
+reset role;
+select extensions.is((select has_table_privilege('app_reader', 'content.document_about_entity', 'select')::text || ' / '
+    || string_agg(t || ':' || has_table_privilege('app_reader', t, 'select')::text, ' ' order by t)
+    from unnest(array['api.talks', 'api.papers', 'api.capabilities']) t) || ' / ' || :'reader_talks' || ' ' || :'reader_papers' || ' ' || :'reader_direct',
+  'false / api.capabilities:true api.papers:true api.talks:true / ok ok 42501',
+  'app_reader no longer holds the unusable grant; the views that read a document''s entities for it (run as their owner) are still granted');
 select extensions.is((select string_agg(p.polrelid::regclass::text || ':' || p.polcmd::text || ':' || pg_get_expr(p.polqual, p.polrelid), ' ' order by p.polrelid::regclass::text) from pg_policy p
    where p.polname = 'product_api_owner_read' and p.polroles = array['product_api_owner'::regrole::oid]),
   'evidence.claim:r:(tenant_id = product.tenant()) evidence.source_capture:r:(tenant_id = product.tenant())',
@@ -643,6 +700,29 @@ set local app.tenant_id = :'tenant';
 select extensions.is(:'cite_shared' || ' | ' || :'cite_foreign' || ' | ' || :'cite_missing', 'ok | P0001 NOT_FOUND | P0001 NOT_FOUND',
   'a statement that cites a shared claim is accepted; one that cites a claim of another tenant, or no claim, is refused');
 select extensions.is((select count(*) from inquiry.assertion a where a.uses_claim_id = :'claim'), 1::bigint, 'the accepted statement is stored with the shared claim it cites');
+
+-- ------------------------------------------------------------------ 6. a capture registration is filed on the ledger (20261116150000)
+-- Knowledge Services' source_prepare_captured writes these rows as executor_service, in the shape below, once the intent type exists.
+select extensions.is((select jsonb_build_object('version', t.schema_version, 'names', t.description ~ 'source_prepare_captured' and t.description ~ 'executor_service')
+    from orchestration.intent_type t where t.code = 'capture_registration'),
+  '{"version":1,"names":true}', 'the contract declares the intent type of a capture registration (orchestration.intent_type capture_registration)');
+set local role executor_service;
+select pg_temp.gcw_try(format('insert into orchestration.operation_intent(id, tenant_id, intent_type, payload, idempotency_key, approval_state, origin_kind, origin_digest) values (%L, %L, %L, %L::jsonb, %L, %L, %L, %L)',
+         :'reg_intent', :'tenant', 'capture_registration', '{"operation":"source_prepare_captured","executor_capture_id":"gcw-capture","actor":{"session_role":"executor_service"}}',
+         'ks-capture:gcw', 'approved', 'standalone', 'sha256:' || repeat('7', 64))) as reg_intent_row,
+       pg_temp.gcw_try(format('insert into orchestration.operation_receipt(id, intent_id, executor_version, outcome, changes_summary, affected_refs, origin_digest) values (%L, %L, %L, %L, %L::jsonb, %L::jsonb, %L)',
+         :'reg_receipt', :'reg_intent', 'gcw-executor', 'applied', jsonb_build_object('capture_id', :'capture_a'), '[]', 'sha256:' || repeat('7', 64))) as reg_receipt_row,
+       pg_temp.gcw_try(format('insert into orchestration.operation_receipt_target(tenant_id, receipt_id, ordinal, target_schema, target_table, target_id, role, action) values (%L, %L, 0, %L, %L, %L, %L, %L), (%L, %L, 1, %L, %L, %L, %L, %L), (%L, %L, 2, %L, %L, %L, %L, %L)',
+         :'tenant', :'reg_receipt', 'evidence', 'source_capture', :'capture_a', 'subject', 'created',
+         :'tenant', :'reg_receipt', 'evidence', 'source', :'source_a', 'provenance', 'reused',
+         :'tenant', :'reg_receipt', 'acquisition', 'fetch', :'fetch_a', 'provenance', 'created')) as reg_target_rows \gset
+select (select string_agg(t.target_schema || '.' || t.target_table || ':' || t.role || ':' || t.action, ' ' order by t.ordinal)
+          from orchestration.operation_receipt_target t join orchestration.operation_receipt r on r.id = t.receipt_id join orchestration.operation_intent i on i.id = r.intent_id
+         where i.intent_type = 'capture_registration' and i.id = :'reg_intent') as reg_targets \gset
+reset role;
+select extensions.is(:'reg_intent_row' || ' | ' || :'reg_receipt_row' || ' | ' || :'reg_target_rows' || ' | ' || :'reg_targets',
+  'ok | ok | ok | evidence.source_capture:subject:created evidence.source:provenance:reused acquisition.fetch:provenance:created',
+  'executor_service files a capture registration: its intent, its receipt and the targets the registration names, read back in its tenant');
 
 select * from extensions.finish();
 rollback;

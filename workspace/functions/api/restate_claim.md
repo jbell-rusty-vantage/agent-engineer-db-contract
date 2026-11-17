@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [verification.probe, verification.probe_verdict], writes: [evidence.attribution, evidence.claim, evidence.claim_evidence_link, evidence.claim_subject] }
 tokens: [api, restate_claim, api.restate_claim]
 defined_in: ["20261116130000_build08_governed_chain_writes.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # api.restate_claim
 

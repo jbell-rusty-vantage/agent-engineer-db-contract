@@ -13,7 +13,7 @@ raises: [provider reconciliation canonical hash mismatch, provider reconciliatio
 touches: { reads: [knowledge_service.operation, knowledge_service.operation_step, orchestration.artifact, orchestration.verification_artifact_metadata, orchestration.verification_provider_attempt, orchestration.verification_provider_budget, orchestration.verification_provider_response_capture, orchestration.verification_semantic_response_observation, orchestration.verification_structured_extraction_execution], writes: [] }
 tokens: [orchestration, guard_provider_reconciliation, orchestration.guard_provider_reconciliation]
 defined_in: ["20260906032800_verification_provider_reconciliation_ledger.sql", "20260906033000_verification_provider_reconciliation_success.sql", "20260907013000_verification_semantic_provider_observation.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # orchestration.guard_provider_reconciliation
 

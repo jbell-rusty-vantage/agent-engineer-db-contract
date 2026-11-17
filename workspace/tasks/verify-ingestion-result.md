@@ -7,7 +7,7 @@ queries: [receipts.for_intent, knowledge.head, entity.what_changed, facts.price_
 aliases: [receipt, verify write, post-ingest check]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # Verify what an ingestion actually changed
 

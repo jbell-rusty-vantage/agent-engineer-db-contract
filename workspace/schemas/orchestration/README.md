@@ -6,7 +6,7 @@ lens: machinery
 domains: [orchestration-ledger]
 relations: 37
 functions: 48
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # orchestration
 
@@ -28,7 +28,7 @@ Missions, work graph, sessions, capability catalog, intents, receipts, artifacts
 | [`capability_version`](../../relations/orchestration/capability_version.md) | table | unknown | — | → `orchestration.capability`, → `evaluation.eval_dataset` |
 | [`continuation_checkpoint`](../../relations/orchestration/continuation_checkpoint.md) | table | unknown | — | → `orchestration.agent_session`, → `orchestration.mission`, → `orchestration.artifact` |
 | [`intent_type`](../../relations/orchestration/intent_type.md) | table | unknown | — | — |
-| [`mission`](../../relations/orchestration/mission.md) | table | unknown | — | → `orchestration.capability_profile` |
+| [`mission`](../../relations/orchestration/mission.md) | table | small | — | → `orchestration.capability_profile` |
 | [`mission_event`](../../relations/orchestration/mission_event.md) | table | unknown | — | → `orchestration.mission` |
 | [`mission_run_effects`](../../relations/orchestration/mission_run_effects.md) | view | unknown | Native effects by Mission Control run: intent (with its mc_* coordinates and origin diges… | — |
 | [`operation_intent`](../../relations/orchestration/operation_intent.md) | table | small | Durable proposed operation with unique idempotency_key. | → `orchestration.intent_type`, → `orchestration.mission`, → `orchestration.attempt` |

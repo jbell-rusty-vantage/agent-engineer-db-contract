@@ -13,7 +13,7 @@ raises: [retrieval.vector_item is append-only, vector successor must be newer an
 touches: { reads: [retrieval.vector_item], writes: [] }
 tokens: [retrieval, vector_item_guard, retrieval.vector_item_guard]
 defined_in: ["20260826001000_retrieval.sql", "20260903010200_knowledge_runtime_security.sql", "20261108120000_build08_r2_knowledge_continuum.sql", "20261108120200_build08_r2_fixups2.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # retrieval.vector_item_guard
 

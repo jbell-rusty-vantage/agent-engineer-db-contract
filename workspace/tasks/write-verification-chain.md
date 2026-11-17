@@ -7,7 +7,7 @@ queries: [chain.governed_writes, evidence.claim, evidence.claim_verdicts, acquis
 aliases: [governed write, write a claim, agent write, mission write, idempotency key, p_actor, chain write, who may write, write functions]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # How do I write the verification chain (claim, probe, verdict, triage, assessment, sweep)?
 

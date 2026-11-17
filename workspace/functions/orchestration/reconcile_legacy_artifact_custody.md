@@ -13,7 +13,7 @@ raises: [artifact reconciliation identity mismatch, artifact reconciliation stat
 touches: { reads: [], writes: [orchestration.artifact] }
 tokens: [orchestration, reconcile_legacy_artifact_custody, orchestration.reconcile_legacy_artifact_custody]
 defined_in: ["20260914010300_receipt_custody_reconciliation.sql"]
-workspace_fingerprint: "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 ---
 # orchestration.reconcile_legacy_artifact_custody
 

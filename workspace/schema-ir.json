@@ -1,9 +1,9 @@
 {
   "build": {
-    "contract_version": "0.9.0",
+    "contract_version": "0.10.0",
     "enrichment_sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
     "generated_types_sha256": "sha256:374a85ba3ec324eb3c5f2857482b912b390b9592a978864268b4473bd8062052",
-    "migration_head": "20261116140000",
+    "migration_head": "20261116150000",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -18672,7 +18672,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:399f954e4289b40362558269e1b4296c678fdb46b9ef6962cc551e91e3279ef1",
+  "fingerprint": "sha256:9ed72006477002282ce1132595857d68fa7dd913687c13b475796b197bbb187c",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -39341,13 +39341,14 @@
           "type": "boolean"
         }
       ],
-      "body_sha256": "sha256:4bf66f4c05638ecf646da2b3025719e6a60378efb2d5a341b2d97eeeb0f4495c",
-      "comment": null,
+      "body_sha256": "sha256:00de4fed2d051f4e47457a00d9b6c8f8f9b786ce55aa36f4f32504ce1c3796d7",
+      "comment": "One evidence anchor of a governed write (api.record_claim evidence, api.record_probe_run output): an existing locator of the tenant, or a new one on a capture naming a content unit of it. A new anchor needs a unit with text: a unit whose text is NULL, empty or only whitespace is QUOTE_NOT_IN_UNIT. A text_quote anchor needs a quote with text (QUOTE_REQUIRED) that is verbatim in the unit after verification.chain_norm (QUOTE_NOT_IN_UNIT); a json_pointer anchor may carry such a quote or anchor the unit's own text.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
-        "20261116130000_build08_governed_chain_writes.sql"
+        "20261116130000_build08_governed_chain_writes.sql",
+        "20261116150000_build08_capture_receipt_unit_text.sql"
       ],
       "executors": [],
       "grants": {},
@@ -69722,9 +69723,7 @@
       ],
       "grants": {
         "anon": [],
-        "app_reader": [
-          "SELECT"
-        ],
+        "app_reader": [],
         "authenticated": [],
         "control_plane": [
           "SELECT"
@@ -69760,7 +69759,6 @@
         "entity_id"
       ],
       "readers": [
-        "app_reader",
         "control_plane",
         "executor_service",
         "pipeline_agent",
@@ -164950,6 +164948,11 @@
           "schema_version": 1
         },
         {
+          "code": "capture_registration",
+          "description": "Knowledge Services registered one of its executor's own captures so that it can be quoted (source_prepare_captured): the acquisition.fetch, orchestration.artifact, evidence.source, evidence.source_capture, content.document, document_version, document_representation and document_node rows, written in one transaction as executor_service; payload.operation names the operation, payload.executor_capture_id the executor's capture, payload.content_sha256 and payload.representation_sha256 the bytes, payload.actor who acted. Receipt targets: the capture (subject), its source and its fetch (provenance)",
+          "schema_version": 1
+        },
+        {
           "code": "claim_verification",
           "description": "Verify an existing claim under a Knowledge Services admitted exact-use decision (verification.record_admitted_claim_verification)",
           "schema_version": 1
@@ -165025,7 +165028,7 @@
           "schema_version": 1
         }
       ],
-      "rows_sha256": "sha256:f5783103b6978c5c22219d6e1f213274f92b7a012e2f7aac9ccd6fc04a0d8aed",
+      "rows_sha256": "sha256:51985056f0aa2a3d6cb6d13d773a707a00953e0a6ea70bbe7f0c97a3bd3ecafe",
       "schema": "orchestration",
       "table": "intent_type"
     },
@@ -170516,7 +170519,7 @@
       "rel:authoring.workspace_member": "small",
       "rel:catalog.distribution_kind": "unknown",
       "rel:catalog.entity": "medium",
-      "rel:catalog.entity_alias": "unknown",
+      "rel:catalog.entity_alias": "none",
       "rel:catalog.entity_identifier": "small",
       "rel:catalog.entity_merge": "unknown",
       "rel:catalog.license": "unknown",
@@ -170563,7 +170566,7 @@
       "rel:curriculum.prerequisite": "unknown",
       "rel:curriculum.release_transition": "unknown",
       "rel:curriculum.requirement": "unknown",
-      "rel:curriculum.requirement_option": "unknown",
+      "rel:curriculum.requirement_option": "small",
       "rel:curriculum.requirement_transition": "unknown",
       "rel:dataset.cell": "small",
       "rel:dataset.field": "small",
@@ -170631,8 +170634,8 @@
       "rel:guidance.item_kind": "unknown",
       "rel:guidance.item_subject": "unknown",
       "rel:inquiry.acceptance": "small",
-      "rel:inquiry.assertion": "unknown",
-      "rel:inquiry.delivery": "unknown",
+      "rel:inquiry.assertion": "small",
+      "rel:inquiry.delivery": "small",
       "rel:inquiry.obligation": "small",
       "rel:inquiry.support": "small",
       "rel:inquiry.watch": "unknown",
@@ -170653,7 +170656,7 @@
       "rel:knowledge_service.verification_component_binding": "unknown",
       "rel:learning.appeal": "unknown",
       "rel:learning.assessment_result": "unknown",
-      "rel:learning.attempt": "unknown",
+      "rel:learning.attempt": "small",
       "rel:learning.credit": "unknown",
       "rel:learning.criterion_result": "unknown",
       "rel:learning.enrollment": "unknown",
@@ -170668,7 +170671,7 @@
       "rel:library.connected_item": "unknown",
       "rel:library.connection": "unknown",
       "rel:library.passage": "small",
-      "rel:library.preparation": "unknown",
+      "rel:library.preparation": "small",
       "rel:library.removal": "unknown",
       "rel:library.resource_control": "unknown",
       "rel:observability.coordinator_handoff": "unknown",
@@ -170692,7 +170695,7 @@
       "rel:orchestration.capability_version": "unknown",
       "rel:orchestration.continuation_checkpoint": "unknown",
       "rel:orchestration.intent_type": "unknown",
-      "rel:orchestration.mission": "unknown",
+      "rel:orchestration.mission": "small",
       "rel:orchestration.mission_event": "unknown",
       "rel:orchestration.mission_run_effects": "unknown",
       "rel:orchestration.operation_intent": "small",
@@ -170749,7 +170752,7 @@
       "rel:retrieval.vector_item_embedding_1536": "unknown",
       "rel:retrieval.vector_space": "unknown",
       "rel:retrieval.vector_space_version": "unknown",
-      "rel:retrieval.vector_store": "unknown",
+      "rel:retrieval.vector_store": "none",
       "rel:retrieval.vector_store_document": "unknown",
       "rel:retrieval.vector_store_ingestion_checkpoint": "unknown",
       "rel:retrieval.vector_store_ingestion_run": "unknown",
@@ -170757,7 +170760,7 @@
       "rel:retrieval.vector_store_space": "unknown",
       "rel:staging.candidate": "none",
       "rel:staging.identity_match": "unknown",
-      "rel:staging.resolution_decision": "unknown",
+      "rel:staging.resolution_decision": "none",
       "rel:staging.vetting_decision": "unknown",
       "rel:taxonomy.assignment": "unknown",
       "rel:taxonomy.assignment_review_requirement": "unknown",
@@ -170778,12 +170781,12 @@
       "rel:temporal.stream": "medium",
       "rel:temporal.stream_kind": "small",
       "rel:verification.claim_triage": "small",
-      "rel:verification.probe": "unknown",
+      "rel:verification.probe": "small",
       "rel:verification.probe_claim": "small",
-      "rel:verification.probe_run": "unknown",
+      "rel:verification.probe_run": "small",
       "rel:verification.probe_verdict": "small",
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:216c4ae7230478c8e60934da25c852e10680d6caed71a662962ea3c0ac1676d3"
+  "workspace_fingerprint": "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
 }
