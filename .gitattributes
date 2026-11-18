@@ -6,3 +6,6 @@
 *.toml text eol=lf
 *.ts text eol=lf
 *.yml text eol=lf
+/dev text eol=lf
+scripts/dev/hooks/* text eol=lf
+*.py text eol=lf
