@@ -18,4 +18,4 @@ The fast gate for any change is `./dev check` (typecheck, `npm test`, `version:c
 provenance check). The slow commands need a disposable Supabase stack; `./dev slow` prints them with CI's exact command
 lines and never runs them.
 
-Not here: database access by plane (`./dev db`), which arrives from Mission Control's `config/planes.toml` work.
+Database access by plane: `./dev planes list|show P|check` and `./dev db status|schema|query --plane P`, read-only by default, `--plane` always required, DDL always refused and pointed at `scripts/install-ai-engineer.mjs`; the registry is `config/planes.toml` (identities only), copied from Mission Control.

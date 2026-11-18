@@ -17,7 +17,9 @@ data, typed exit codes, and an error names the fix. Standard library only, so ``
   ./dev trace show|build|check|linear pull   the provenance chain (docs/tools/trace.py)
   ./dev hooks install|status    the warn-only commit-msg hook (scripts/dev/hooks/commit-msg)
   ./dev slow                    the slow commands CI runs on a disposable stack: printed, never run
-  ./dev db                      not yet: arrives from Mission Control's config/planes.toml work
+  ./dev planes list|show P|check            the data-plane registry config/planes.toml (no network)
+  ./dev db status|schema|query --plane P    read-only database sessions (scripts/dev/planes.py,
+                                            copied from Mission Control); --plane is always required
 
 Exit codes: 0 ok, 1 a check or test failed, 2 usage error, 3 the environment is not ready.
 """
@@ -66,6 +68,7 @@ CHECK_STEPS = [
     ("test", ["npm", "test"]),
     ("version", ["npm", "run", "version:check"]),
     ("agent-docs", ["node", ".agent-docs/cli.mjs", "check", "--repo", "."]),
+    ("planes", [sys.executable, "-X", "utf8", "scripts/dev/planes.py", "planes", "check"]),
 ]
 TEST_LAYERS = {
     "unit": ["npm", "test"],
@@ -473,15 +476,26 @@ def slow() -> int:
     return 0
 
 
-def db(_args: list[str]) -> int:
-    return fail(
-        "`./dev db` is not built yet: it arrives from Mission Control's config/planes.toml work "
-        "(SPEC-03 K3), which names each plane and its posture; no second registry is kept here",
-        "until then: workspace commands read the local database by default (--db-url, or a "
-        "loopback AIENG_DB_LOCAL_DSN; the remote only with --target remote); installs go through "
-        "scripts/install-ai-engineer.mjs and its gates (features/install-a-target.md)",
-        3,
-    )
+PLANES = ROOT / "scripts" / "dev" / "planes.py"
+
+
+def planes(group: str, args: list[str]) -> int:
+    """`planes` runs here (standard library); `db` needs psycopg, so it runs through
+    `uv run --with psycopg[binary]` unless this interpreter has it. Credentials resolve inside
+    planes.py, never here."""
+
+    command = [sys.executable, "-X", "utf8", str(PLANES), group, *args]
+    if group == "db":
+        try:
+            import psycopg  # noqa: F401
+        except ImportError:
+            if not shutil.which("uv"):
+                return fail("`./dev db` needs psycopg", "install uv (it supplies psycopg per run)", 3)
+            command = [
+                "uv", "run", "--no-project", "--quiet", "--with", "psycopg[binary]",
+                "python", "-X", "utf8", str(PLANES), group, *args,
+            ]  # fmt: skip
+    return subprocess.run(command, cwd=ROOT, check=False).returncode
 
 
 # --------------------------------------------------------------------------------------- main
@@ -514,12 +528,13 @@ def main() -> int:
     p_hooks = sub.add_parser("hooks", help="install or inspect the warn-only commit-msg hook")
     p_hooks.add_argument("action", choices=("install", "status"))
     sub.add_parser("slow", help="print (never run) the slow commands CI runs on a disposable stack")
-    sub.add_parser("db", help="not built yet (Mission Control config/planes.toml)", add_help=False)
+    sub.add_parser("planes", help="the data-plane registry: list | show PLANE | check", add_help=False)
+    sub.add_parser("db", help="read-only database sessions: status | schema | query --plane P", add_help=False)
     argv = sys.argv[1:]
     if argv and argv[0] == "trace":
         return trace(argv[1:])
-    if argv and argv[0] == "db":
-        return db(argv[1:])
+    if argv and argv[0] in {"planes", "db"}:
+        return planes(argv[0], argv[1:] or ["--help"])
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()

@@ -1,0 +1,103 @@
+# Data-plane registry: identities only, never credentials (SPEC-03 K3; design DATA-ACCESS §5).
+#
+# Copied from Mission Control's config/planes.toml (commit 31970844, via the AI Engineer service's
+# copy), keeping only the planes this repository reaches: the AI Engineer Supabase project, its
+# storage, the Build 08 lab, and the retired graph so every command refuses it. Mission Control's
+# file stays the full registry; a fact changed there is changed here too.
+#
+# Read by scripts/dev/planes.py (`./dev planes list|show|check`, `./dev db status|schema|query`).
+# Every fact here is public: project refs, hosts, ports, container names and the NAMES of the
+# variables that hold credentials. `./dev planes check` fails when a value-shaped string appears.
+#
+# This repository changes a plane's schema only through scripts/install-ai-engineer.mjs and its
+# gates; `./dev db` is the read-only Postgres view for reading heads, grants and rows.
+
+[registry]
+format_version = 1
+# The BellLabs workspace root, relative to the repository root (the folder holding `.secrets/`).
+workspace = "../.."
+# One line per remote call; never values or result rows.
+audit_log = ".scratch/planes/audit.jsonl"
+# Where schema changes go; `./dev db` refuses DDL everywhere and names this.
+installer = "scripts/install-ai-engineer.mjs (this repository; remote only through --remote-reinstall and its gates)"
+statement_timeout_ms = 10000
+connect_timeout_s = 10
+row_limit = 200
+
+[[registry.heads]]
+name = "supabase migrations"
+table = "supabase_migrations.schema_migrations"
+column = "version"
+order_by = "version"
+
+[[registry.heads]]
+name = "knowledge-services verification component"
+table = "knowledge_verification.component_release"
+column = "component_version"
+order_by = "applied_at"
+
+# ------------------------------------------------------------------------------ remote planes
+
+[plane.aieng-db]
+kind = "postgres"
+domain = "aieng"
+location = "remote"
+posture = "disposable"  # Sprint OC disposable target; has no product schema yet (DATA-ACCESS §2.1)
+project_label = "supabase-blue-ocean"
+project_ref = "wkythqbofmckbuoothhn"
+url = "https://wkythqbofmckbuoothhn.supabase.co"
+database = "postgres"
+mcp = "supabase-aieng"
+service_reaches_with = "AIENG_DB_URL + AIENG_DB_PUBLISHABLE_KEY + AIENG_DB_SECRET_KEY, only with AIENG_DB_REMOTE_CONFIRM (docs/ENVIRONMENT.md)"
+sources = ["platform/mission-control/config/planes.toml", "docs/navigation/DATA-PLANES-AND-CREDENTIALS.md"]
+repo_names = { ai-engineer-service = "AIENG_DB_" }
+
+[plane.aieng-db.endpoints]
+session_pooler = { host = "aws-1-us-east-1.pooler.supabase.com", port = 5432, user = "postgres.wkythqbofmckbuoothhn" }
+direct = { host = "db.wkythqbofmckbuoothhn.supabase.co", port = 5432, verified = false }
+
+[plane.aieng-db.roles]
+reader = { secrets = "aieng-db.env", name = "AIENG_DB_READER_DSN", missing = "J4 (DATA-ACCESS §6): create one read-only login per Supabase project and put its DSN in .secrets/aieng-db.env as AIENG_DB_READER_DSN" }
+admin = { secrets = "aieng-db.env", name = "AIENG_DB_ADMIN_DSN" }
+
+[plane.aieng-storage]
+kind = "storage"
+domain = "aieng"
+location = "remote"
+posture = "protected"  # paid transcripts and the GLM pre-research record survive only here
+parent = "aieng-db"
+project_ref = "wkythqbofmckbuoothhn"
+url = "https://wkythqbofmckbuoothhn.supabase.co"
+protected_buckets = ["ai-engineer-transcripts", "matthew-berman-transcripts", "research-ingestion-intents", "ai-engineer-cloud-bucket"]
+disposable_buckets = ["capability-bundles"]
+other_buckets = ["aieng-workspaces", "source-captures"]
+sources = ["platform/mission-control/config/planes.toml"]
+
+[plane.aieng-storage.roles]
+admin = { secrets = "aieng-db.env", name = "AIENG_DB_SECRET_KEY" }
+
+[plane.aieng-graph]
+kind = "neo4j"
+domain = "aieng"
+location = "remote"
+posture = "retired"  # retired 2026-11-07: never read, write or wipe; every access command refuses it
+aura_instance_id = "4773dc72"
+sources = ["docs/navigation/DATA-PLANES-AND-CREDENTIALS.md"]
+
+# ------------------------------------------------------------------------------- local planes
+
+[plane.lab-aieng-build04]
+kind = "postgres"
+domain = "aieng"
+location = "local"
+posture = "protected-local"  # the Build 08 knowledge lab: verified claims and checkpoints
+container = "supabase_db_disposable-aieng-build04"
+port = 55622
+api_port = 55621  # the service's default target: .env.lab AIENG_DB_URL
+database = "postgres"
+workdir = "platform/ai-engineer-research-2026-11-02/11-build04-lab"
+up = "supabase start --workdir <workdir>"
+sources = ["platform/mission-control/config/planes.toml", "docs/state/2026-11-17/plan/inputs/DATA-ACCESS.md"]
+
+[plane.lab-aieng-build04.roles]
+admin = { container = "supabase_db_disposable-aieng-build04", verified = false }
