@@ -35,3 +35,6 @@ internal_hidden_docs/
 
 # Python bytecode from the lab scripts
 __pycache__/
+
+# Provenance trace output and the Linear snapshot (issue text; this repository is public)
+.sdlc/

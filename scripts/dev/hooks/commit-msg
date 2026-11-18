@@ -1,0 +1,16 @@
+#!/bin/sh
+# Provenance check of one commit message (SPEC-03 K1; Mission Control SPEC-02 §3 and §5).
+# Warn-only: docs/tools/trace.py reports gaps and exits 0 unless SDLC_TRACE=block.
+# Installed by `./dev hooks install`, which writes a small dispatcher into the git hooks directory
+# that calls this tracked file, so a change here needs no reinstall.
+root=$(git rev-parse --show-toplevel 2>/dev/null) || exit 0
+trace="$root/docs/tools/trace.py"
+[ -f "$trace" ] || exit 0
+for candidate in python3 python py; do
+  if command -v "$candidate" >/dev/null 2>&1 \
+    && "$candidate" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 11) else 1)' >/dev/null 2>&1; then
+    exec "$candidate" -X utf8 "$trace" check --message-file "$1"
+  fi
+done
+echo "trace [warn]: no Python 3.11+ on PATH; provenance not checked (./dev doctor)" >&2
+exit 0

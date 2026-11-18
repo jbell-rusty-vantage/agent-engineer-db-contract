@@ -24,6 +24,27 @@ permissions:
 # exist there). KS_COMPONENT_REF (repository variable) pins the commit that carries the pinned release and defaults to main.
 # If the ref lacks the pinned bytes the installer refuses and the job fails; it never skips the gate.
 jobs:
+  # Provenance (SPEC-03 K1; Mission Control SPEC-02 §5): every commit since the 2026-11-18 cutover ends with
+  # `Refs:` naming an id. Warn-only until the owner switches SDLC_TRACE to block: gaps are printed, the job passes.
+  # Ids held outside this repository (B08-S<n>, D-<n>, AS-S<n>, AS-D<n>) are noted, not checked: those checkouts
+  # are absent on CI. OVE ids are checked for shape only (no Linear snapshot on CI).
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0
+      - name: Provenance trailers (warn-only)
+        env:
+          SDLC_TRACE: warn
+          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "$BASE" ]; then range="$BASE..HEAD"
+          elif [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then range="$BEFORE..HEAD"
+          else range="HEAD~1..HEAD"; fi
+          echo "range: $range"
+          python3 -X utf8 docs/tools/trace.py check --range "$range"
   verify:
     runs-on: ubuntu-latest
     env:
