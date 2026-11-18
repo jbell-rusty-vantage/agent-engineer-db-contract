@@ -1,0 +1,21 @@
+# Feature map
+
+What a user of this repository (an agent, John, a consumer service) can reach, one file per capability. Each file says
+what it does, where its code and tests are, how to drive it, the command that proves it, and its gotchas. Code is the
+authority; these files are navigation (SPEC-03 K5, OVE-243). Start every session with `./dev status`.
+
+| Feature | Reach it with | Proven by |
+| --- | --- | --- |
+| [Install a target](install-a-target.md) | `scripts/install-ai-engineer.mjs` (local disposable, remote reinstall, wipe) | `npm run test:installer`; CI fresh install + repeat |
+| [Schema workspace](schema-workspace.md) | `npm run workspace:build\|check\|validate\|materialize` | `npm test` (offline); CI `workspace:check` / `workspace:validate` |
+| [SQL suites](sql-suites.md) | `supabase/tests/*.sql` through `psql` on a disposable stack | CI step "SQL suites" |
+| [Type generation](type-generation.md) | `npm run types:generate\|types:check` | `npm run typecheck`; CI `generate-types.mjs --check` |
+| [Version and release](version-and-release.md) | `contract.version.json`, `npm run version:check`, `npm run pack:contract` | `npm run version:check` |
+| [Provenance](provenance.md) | `./dev trace show\|check\|build`, the commit-msg hook | `./dev trace check` |
+| [Schema change](schema-change.md) | the procedure from draft to remote readback, as practised today | input for John's schema session, not a rule |
+
+The fast gate for any change is `./dev check` (typecheck, `npm test`, `version:check`, the agent-docs check, the
+provenance check). The slow commands need a disposable Supabase stack; `./dev slow` prints them with CI's exact command
+lines and never runs them.
+
+Not here: database access by plane (`./dev db`), which arrives from Mission Control's `config/planes.toml` work.
