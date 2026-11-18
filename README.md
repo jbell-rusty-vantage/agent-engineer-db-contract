@@ -295,7 +295,7 @@ remain available for their configured environments.
 
 ## Environment
 
-Database variables are `AIENG_DB_ADMIN_DSN` (installers, schema-workspace), `AIENG_DB_LOCAL_DSN` (loopback typegen and disposable installs) and the declared-but-unread `AIENG_DB_PROJECT_REF`. Package scripts load a git-ignored `.env` through `node --env-file-if-exists=.env`; copy `.env.example`. Every name, reader and failure mode: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) and `config/env.registry.yaml`. Older names (`POSTGRES_URL*`, `MC_INSTALL_DISPOSABLE_DSN`) are no longer read.
+Database variables are `AIENG_DB_ADMIN_DSN` (installers; schema-workspace only with `--target remote`), `AIENG_DB_LOCAL_DSN` (loopback typegen and disposable installs) and the declared-but-unread `AIENG_DB_PROJECT_REF`. Package scripts load a git-ignored `.env` through `node --env-file-if-exists=.env`; copy `.env.example`. Every name, reader and failure mode: [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) and `config/env.registry.yaml`. Older names (`POSTGRES_URL*`, `MC_INSTALL_DISPOSABLE_DSN`) are no longer read.
 
 ## Consuming the contract
 

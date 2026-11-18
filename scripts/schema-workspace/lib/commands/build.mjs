@@ -26,7 +26,7 @@ function summarize(validation, manifest) {
 
 export async function runIntrospect(values) {
   const config = loadConfig();
-  const databaseUrl = resolveDatabaseUrl(values["db-url"]);
+  const databaseUrl = resolveDatabaseUrl({ url: values["db-url"], target: values.target });
   const pool = await openPool(databaseUrl);
   try {
     const { ir } = await introspectToIr(pool, config, databaseUrl);
@@ -41,7 +41,7 @@ export async function runIntrospect(values) {
 
 export async function runBuild(values) {
   const config = loadConfig({ enrichment: values.enrichment, workspace: values.out });
-  const { files, validation, manifest } = await buildFromDatabase(config, { databaseUrl: values["db-url"] });
+  const { files, validation, manifest } = await buildFromDatabase(config, { database: { url: values["db-url"], target: values.target } });
   const summary = summarize(validation, manifest);
   if (!validation.ok) {
     const failedDir = path.join(config.repositoryRoot, ".schema-workspace-failed");
@@ -59,7 +59,7 @@ export async function runBuild(values) {
 export async function runValidate(values) {
   const config = loadConfig({ workspace: values.workspace });
   const { ir, enrichment } = loadCommittedWorkspace(config);
-  const databaseUrl = optionalDatabaseUrl(values["db-url"]);
+  const databaseUrl = optionalDatabaseUrl({ url: values["db-url"], target: values.target });
   const pool = databaseUrl ? await openPool(databaseUrl) : null;
   try {
     const committed = readTree(config.paths.workspace);

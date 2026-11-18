@@ -9,17 +9,19 @@ import { ErrorCode, ExitCode, WorkspaceError } from "./lib/errors.mjs";
 const USAGE = `schema-workspace <command> [options]
 
 Commands
-  introspect   --db-url <url> [--out <file>]                 derived schema-ir.v1 (JSON)
-  build        [--db-url <url>] [--out <dir>] [--enrichment <dir>] [--dry-run]
-  check        [--db-url <url>] [--workspace <dir>]          drift report vs committed fingerprint
-  validate     [--workspace <dir>] [--db-url <url>]          re-validate the committed tree
+  introspect   [--db-url <url> | --target local|remote] [--out <file>]   derived schema-ir.v1 (JSON)
+  build        [--db-url <url> | --target local|remote] [--out <dir>] [--enrichment <dir>] [--dry-run]
+  check        [--db-url <url> | --target local|remote] [--workspace <dir>]   drift report vs committed fingerprint
+  validate     [--workspace <dir>] [--db-url <url> | --target local|remote]   re-validate the committed tree
   materialize  --scope <id|file> [--out <dir>] [--format tree|json-bundle] [--workspace <dir>]
   enrich       --draft <schema.relation | domain:slug>       YAML stub with ids pre-filled
 
-Connection: --db-url, else AIENG_DB_ADMIN_DSN, else a loopback AIENG_DB_LOCAL_DSN. Errors are JSON on stderr. Exit: 0 ok, 1 domain outcome, 2 infrastructure.`;
+Connection, local by default: --db-url, else --target remote (AIENG_DB_ADMIN_DSN, read only then), else a loopback
+AIENG_DB_LOCAL_DSN; with none of them a database command refuses DB_UNREACHABLE. Errors are JSON on stderr. Exit: 0 ok, 1 domain outcome, 2 infrastructure.`;
 
 const OPTIONS = {
   "db-url": { type: "string" },
+  target: { type: "string" },
   out: { type: "string" },
   enrichment: { type: "string" },
   workspace: { type: "string" },

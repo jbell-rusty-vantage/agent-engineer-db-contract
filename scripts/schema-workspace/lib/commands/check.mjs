@@ -51,7 +51,7 @@ export function diffIr(committed, fresh) {
 export async function runCheck(values) {
   const config = loadConfig({ workspace: values.workspace });
   const { ir: committed, fingerprint } = loadCommittedWorkspace(config);
-  const databaseUrl = resolveDatabaseUrl(values["db-url"]);
+  const databaseUrl = resolveDatabaseUrl({ url: values["db-url"], target: values.target });
   const pool = await openPool(databaseUrl);
   try {
     const { ir: fresh } = await introspectToIr(pool, config, databaseUrl);

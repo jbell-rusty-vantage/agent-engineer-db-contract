@@ -20,7 +20,9 @@ materialize  --scope <id|file> [--out <dir>] [--format tree|json-bundle]
 enrich       --draft <schema.relation|domain:slug> YAML stub for a new enrichment entry
 ```
 
-`--db-url` defaults to `AIENG_DB_ADMIN_DSN`, then `AIENG_DB_LOCAL_DSN` (loopback only; a remote value is refused). Exit codes: `0` ok,
+Local by default: `--db-url` wins; otherwise a loopback `AIENG_DB_LOCAL_DSN` (a remote value is refused); `AIENG_DB_ADMIN_DSN`
+(the remote schema owner) is read only with `--target remote`. With none of them `build`, `check` and `introspect` refuse
+`DB_UNREACHABLE` and `validate` runs without a database. Exit codes: `0` ok,
 `1` domain failure (drift, validation, budget, broken link, example failure), `2` infrastructure
 (unreachable DB, IO, usage). Errors are one JSON object on stderr.
 

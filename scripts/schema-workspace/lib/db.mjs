@@ -12,13 +12,27 @@ export function isLoopbackUrl(value) {
   try { return LOOPBACK_HOSTS.has(new URL(value).hostname); } catch { return false; }
 }
 
+export const TARGETS = Object.freeze(["local", "remote"]);
+
 /**
- * Connection precedence: --db-url, then AIENG_DB_ADMIN_DSN (the schema owner login), then AIENG_DB_LOCAL_DSN, which must be
- * loopback (a remote value there is refused, never used). Returns null when none is set.
+ * Which database a schema-workspace command reads. Local by default (SPEC-03 K3):
+ * - `--db-url <url>` wins; it is an explicit request for that database, whatever its host;
+ * - else `--target remote` reads `AIENG_DB_ADMIN_DSN` (the schema owner login), and only then;
+ * - else (no target, or `--target local`) a loopback `AIENG_DB_LOCAL_DSN`; a remote value there is refused, never used.
+ * `AIENG_DB_ADMIN_DSN` is never read without `--target remote`, so a command run with no target never reaches the remote.
+ * Returns null when the chosen source is unset (validate then runs without a database).
  */
-export function optionalDatabaseUrl(explicitUrl, env = process.env) {
-  if (explicitUrl) return explicitUrl;
-  if (env.AIENG_DB_ADMIN_DSN) return env.AIENG_DB_ADMIN_DSN;
+export function optionalDatabaseUrl({ url, target } = {}, env = process.env) {
+  if (target !== undefined && !TARGETS.includes(target)) {
+    throw new WorkspaceError(ErrorCode.USAGE, `--target must be local or remote, not "${target}".`);
+  }
+  if (url) return url;
+  if (target === "remote") {
+    if (!env.AIENG_DB_ADMIN_DSN) {
+      throw new WorkspaceError(ErrorCode.DB_UNREACHABLE, "--target remote needs AIENG_DB_ADMIN_DSN (the remote schema owner login); it is unset.");
+    }
+    return env.AIENG_DB_ADMIN_DSN;
+  }
   const local = env.AIENG_DB_LOCAL_DSN;
   if (!local) return null;
   if (!isLoopbackUrl(local)) {
@@ -27,10 +41,14 @@ export function optionalDatabaseUrl(explicitUrl, env = process.env) {
   return local;
 }
 
-export function resolveDatabaseUrl(explicitUrl, env = process.env) {
-  const url = optionalDatabaseUrl(explicitUrl, env);
+export function resolveDatabaseUrl(selection = {}, env = process.env) {
+  const url = optionalDatabaseUrl(selection, env);
   if (!url) {
-    throw new WorkspaceError(ErrorCode.DB_UNREACHABLE, "No database URL: pass --db-url or set AIENG_DB_ADMIN_DSN (or a loopback AIENG_DB_LOCAL_DSN).");
+    const hint = env.AIENG_DB_ADMIN_DSN ? " AIENG_DB_ADMIN_DSN is set but is read only with --target remote." : "";
+    throw new WorkspaceError(
+      ErrorCode.DB_UNREACHABLE,
+      `No local database URL: pass --db-url, or set a loopback AIENG_DB_LOCAL_DSN; the remote needs --target remote.${hint}`,
+    );
   }
   return url;
 }

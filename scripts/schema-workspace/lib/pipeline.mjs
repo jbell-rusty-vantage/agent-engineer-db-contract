@@ -106,7 +106,7 @@ export async function assembleWorkspace({ ir, enrichment, selection, config, poo
 
 /** Full build from a live database: introspect → IR → enrichment → render → validate. */
 export async function buildFromDatabase(config, options = {}) {
-  const databaseUrl = resolveDatabaseUrl(options.databaseUrl);
+  const databaseUrl = resolveDatabaseUrl(options.database);
   const pool = await openPool(databaseUrl);
   try {
     const introspectedAt = new Date().toISOString();
