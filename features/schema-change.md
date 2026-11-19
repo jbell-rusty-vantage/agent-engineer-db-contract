@@ -3,10 +3,10 @@
 > **As practised today; the owner's schema session decides the rules.** This page describes how a schema change has
 > actually moved through this repository up to contract 0.10.0 (2026-11-18), assembled from the
 > [README](../README.md), the review workspace's
-> [FINAL-SCHEMA-PROCESS](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/FINAL-SCHEMA-PROCESS.md)
-> and [AGENT-SESSION-PROTOCOL](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/AGENT-SESSION-PROTOCOL.md),
+> [FINAL-SCHEMA-PROCESS](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/process/FINAL-SCHEMA-PROCESS.md)
+> and [AGENT-SESSION-PROTOCOL](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/process/AGENT-SESSION-PROTOCOL.md),
 > and the CI workflow. It is input for step S4 of the
-> [schema brief](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/NEXT-SESSION-OFFICIAL-SCHEMA.md#s2)
+> [schema brief](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/process/OFFICIAL-SCHEMA-SEQUENCE.md#s2)
 > ("Encode how to mutate the schema", AS-D68), not a new rule. Where practice and the written process disagree, both are
 > stated.
 
