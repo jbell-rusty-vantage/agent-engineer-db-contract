@@ -10,6 +10,7 @@ authority; these files are navigation (SPEC-03 K5, OVE-243). Start every session
 | [Schema workspace](schema-workspace.md) | `npm run workspace:build\|check\|validate\|materialize` | `npm test` (offline); CI `workspace:check` / `workspace:validate` |
 | [SQL suites](sql-suites.md) | `supabase/tests/*.sql` through `psql` on a disposable stack | CI step "SQL suites" |
 | [Type generation](type-generation.md) | `npm run types:generate\|types:check` | `npm run typecheck`; CI `generate-types.mjs --check` |
+| [Lab schema](lab-schema.md) | `npm run lab:schema` (the lab's current schema as readable pages and TypeScript types, written beside the lab) | `npm test` (rendering, offline) |
 | [Version and release](version-and-release.md) | `contract.version.json`, `npm run version:check`, `npm run pack:contract` | `npm run version:check` |
 | [Provenance](provenance.md) | `./dev trace show\|check\|build`, the commit-msg hook | `./dev trace check` |
 | [Schema change](schema-change.md) | the procedure from draft to remote readback, as practised today | input for John's schema session, not a rule |
