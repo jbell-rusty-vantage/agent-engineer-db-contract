@@ -12,8 +12,8 @@ executors: [executor_service, service_role]
 raises: [history cannot be deleted, only closure in an open tenant batch is allowed]
 touches: { reads: [], writes: [] }
 tokens: [temporal, guard_k, temporal.guard_k]
-defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+defined_in: ["20260912010400_km_04_temporal.sql", "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"]
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # temporal.guard_k
 
@@ -31,4 +31,4 @@ Raises (mechanically extracted): `history cannot be deleted`; `only closure in a
 
 Touches (best effort): reads —; writes —; calls [`temporal.current_k`](current_k.md), [`util.current_tenant_id`](../util/current_tenant_id.md).
 
-Defined in: `20260912010400_km_04_temporal.sql`.
+Defined in: `20260912010400_km_04_temporal.sql`, `20261119120000_build09_rv01_change_reasons_identity_proposals.sql`.

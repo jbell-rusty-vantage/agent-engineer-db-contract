@@ -4,40 +4,11 @@ kind: details
 schema: content
 name: document_node
 of: "rel:content.document_node"
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # content.document_node — details
 
 Spill-over from [the main page](document_node.md).
-
-## Columns
-| # | Column | Type | Null | Default | Notes |
-| ---: | --- | --- | --- | --- | --- |
-| 1 | `id` | `uuid` | no | `util.uuidv7()` | PK; unique (tenant_id, id); unique (tenant_id, representation_id, id) |
-| 2 | `tenant_id` | `uuid` | no | `util.default_tenant_id()` | unique (tenant_id, id); unique (tenant_id, representation_id, parent_id, ordinal); unique (tenant_id, representation_id, stable_local_key); unique (tenant_id, representation_id, id) |
-| 3 | `representation_id` | `uuid` | no | — | unique (tenant_id, representation_id, parent_id, ordinal); unique (tenant_id, representation_id, stable_local_key); unique (tenant_id, representation_id, id) |
-| 4 | `parent_id` | `uuid` | yes | — | unique (tenant_id, representation_id, parent_id, ordinal) |
-| 5 | `ordinal` | `integer` | no | — | unique (tenant_id, representation_id, parent_id, ordinal) |
-| 6 | `stable_local_key` | `text` | no | — | unique (tenant_id, representation_id, stable_local_key); _curated:_ Stable within this representation. |
-| 7 | `unit_kind` | `text` | no | — | _curated:_ content.unit_kind code (+ unit_kind_version). |
-| 8 | `role` | `text` | yes | — | — |
-| 9 | `inline_text` | `text` | yes | — | — |
-| 10 | `artifact_id` | `uuid` | yes | — | — |
-| 11 | `selector` | `jsonb` | no | `'{}'::jsonb` | — |
-| 12 | `page_number` | `integer` | yes | — | — |
-| 13 | `start_offset` | `integer` | yes | — | — |
-| 14 | `end_offset` | `integer` | yes | — | — |
-| 15 | `bbox` | `jsonb` | yes | — | — |
-| 16 | `language` | `text` | yes | — | — |
-| 17 | `normalized_content_sha256` | `text` | no | — | — |
-| 18 | `created_at` | `timestamp with time zone` | no | `now()` | — |
-| 19 | `start_ms` | `integer` | yes | — | _curated:_ Timecode units (transcript_segment, media_segment): window start. |
-| 20 | `end_ms` | `integer` | yes | — | — |
-| 21 | `speaker_entity_id` | `uuid` | yes | — | FK → [`catalog.entity`](../catalog/entity.md).id |
-| 22 | `unit_kind_version` | `integer` | no | `1` | — |
-| 23 | `attributes` | `jsonb` | no | `'{}'::jsonb` | _curated:_ Validated by the unit kind's attributes_schema (content.validate_unit_attributes). |
-| 24 | `logical_key` | `text` | yes | — | Grammar logical key: unit_kind + the logical_key_attributes values, so the same unit can be matched across versions for diffs (price_row:gpt-6.1\|input_tokens\|standard\|global).; _curated:_ unit_kind + logical_key_attributes values, e.g. price_row:gpt-6.1\|input_tokens\|standard\|global; stable across versions for diffs. |
-| 25 | `grammar_version` | `text` | yes | — | _curated:_ Grammar (unit kind set + parser) that produced the unit; a later grammar never reinterprets old units silently. |
 
 ## Constraints
 - PK (id)

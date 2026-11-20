@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_provider_attempt\"][\"Row\"]"
 defined_in: ["20260906010000_verification_provider_budget_accounting.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.verification_provider_attempt
 
@@ -55,7 +55,21 @@ table in domain `orchestration-ledger`, lens `machinery`.
 
 - PK (id)
 - unique (tenant_id, id)
-- 15 check constraints; see [details](verification_provider_attempt.details.md)
+- check `semantic_dispatch_context_complete`: `(((semantic_dispatch_lease_token IS NULL) AND (semantic_dispatch_holder_identity IS NULL) AND ((semantic_request_sha256 IS NULL) OR (state …`
+- check `verification_provider_attempt_actual_cost_micros_check`: `(actual_cost_micros >= 0)`
+- check `verification_provider_attempt_attempt_ordinal_check`: `((attempt_ordinal >= 0) AND (attempt_ordinal <= 8))`
+- check `verification_provider_attempt_check`: `(((state = 'reserved'::text) AND (dispatched_at IS NULL) AND (reconciled_at IS NULL) AND (actual_cost_micros IS NULL)) OR ((state = 'dispat…`
+- check `verification_provider_attempt_check1`: `((semantic_request_sha256 IS NULL) OR ((operation_id IS NOT NULL) AND (semantic_request_sha256 = request_sha256)))`
+- check `verification_provider_attempt_dispatch_fencing_token_check`: `((dispatch_fencing_token IS NULL) OR (dispatch_fencing_token > 0))`
+- check `verification_provider_attempt_estimated_cost_micros_check`: `(estimated_cost_micros >= 0)`
+- check `verification_provider_attempt_model_check`: `((length(model) >= 1) AND (length(model) <= 160))`
+- check `verification_provider_attempt_operation_scope_ck`: `(((operation_id IS NULL) AND (operation_step_id IS NULL) AND (profile_artifact_id IS NULL) AND (profile_sha256 IS NULL) AND (reserved_fenci…`
+- check `verification_provider_attempt_profile_sha256_check`: `((profile_sha256 IS NULL) OR (profile_sha256 ~ '^[0-9a-f]{64}$'::text))`
+- check `verification_provider_attempt_provider_id_check`: `(provider_id ~ '^[a-z0-9][a-z0-9._-]{0,119}$'::text)`
+- check `verification_provider_attempt_request_sha256_check`: `(request_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_provider_attempt_reservation_cost_micros_check`: `(reservation_cost_micros > 0)`
+- check `verification_provider_attempt_reserved_fencing_token_check`: `((reserved_fencing_token IS NULL) OR (reserved_fencing_token > 0))`
+- check `verification_provider_attempt_state_check`: `(state = ANY (ARRAY['reserved'::text, 'dispatched'::text, 'settled'::text, 'uncertain'::text, 'cancelled'::text]))`
 
 ## Relationships
 

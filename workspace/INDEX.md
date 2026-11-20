@@ -1,8 +1,8 @@
 ---
 id: index
 kind: entry
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
-migration_head: "20261116150000"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+migration_head: "20261119122000"
 ---
 # Index
 
@@ -14,14 +14,14 @@ Lenses: `ours`, `private`, `corpus`, `evidence`, `machinery`, `legacy`. [MAP.md]
 | --- | --- | --- | ---: | ---: | --- |
 | [access](domains/access.md) | ours | access | 7 | 6 | [`domains/access.md`](domains/access.md), [`tasks/search-my-notes.md`](tasks/search-my-notes.md) |
 | [acquisition](domains/acquisition.md) | corpus | acquisition | 1 | 0 | [`domains/acquisition.md`](domains/acquisition.md), [`tasks/what-changed-since.md`](tasks/what-changed-since.md) |
-| [api-surface](domains/api-surface.md) | corpus | api | 37 | 51 | [`domains/api-surface.md`](domains/api-surface.md), [`tasks/cheapest-qualified-model.md`](tasks/cheapest-qualified-model.md), [`tasks/compare-models.md`](tasks/compare-models.md) |
+| [api-surface](domains/api-surface.md) | corpus | api | 37 | 54 | [`domains/api-surface.md`](domains/api-surface.md), [`tasks/cheapest-qualified-model.md`](tasks/cheapest-qualified-model.md), [`tasks/compare-models.md`](tasks/compare-models.md) |
 | [authoring](domains/authoring.md) | ours | api, authoring | 21 | 4 | [`domains/authoring.md`](domains/authoring.md), [`tasks/hand-over-for-review.md`](tasks/hand-over-for-review.md), [`tasks/modules-affected-by-release.md`](tasks/modules-affected-by-release.md) |
 | [content](domains/content.md) | corpus | content | 30 | 13 | [`domains/content.md`](domains/content.md), [`tasks/build-evidence-packet.md`](tasks/build-evidence-packet.md), [`tasks/find-stale-facts.md`](tasks/find-stale-facts.md) |
 | [curriculum](domains/curriculum.md) | machinery | curriculum | 8 | 0 | [`domains/curriculum.md`](domains/curriculum.md), [`tasks/read-back-saved-revision.md`](tasks/read-back-saved-revision.md) |
 | [evaluation](domains/evaluation.md) | machinery | evaluation | 30 | 20 | [`domains/evaluation.md`](domains/evaluation.md) |
 | [evidence](domains/evidence.md) | evidence | evidence, verification | 26 | 27 | [`domains/evidence.md`](domains/evidence.md), [`tasks/admit-support-for-claim.md`](tasks/admit-support-for-claim.md), [`tasks/build-evidence-packet.md`](tasks/build-evidence-packet.md) |
 | [guidance](domains/guidance.md) | corpus | api, guidance | 5 | 0 | [`domains/guidance.md`](domains/guidance.md), [`tasks/modules-covering-concept.md`](tasks/modules-covering-concept.md), [`tasks/what-do-we-know-about-entity.md`](tasks/what-do-we-know-about-entity.md) |
-| [identity](domains/identity.md) | corpus | catalog, taxonomy | 9 | 4 | [`domains/identity.md`](domains/identity.md), [`tasks/compose-ingestion-intent.md`](tasks/compose-ingestion-intent.md), [`tasks/find-entity-by-identifier.md`](tasks/find-entity-by-identifier.md) |
+| [identity](domains/identity.md) | corpus | catalog, taxonomy | 14 | 23 | [`domains/identity.md`](domains/identity.md), [`tasks/compose-ingestion-intent.md`](tasks/compose-ingestion-intent.md), [`tasks/find-entity-by-identifier.md`](tasks/find-entity-by-identifier.md) |
 | [inquiry](domains/inquiry.md) | ours | dataset, inquiry | 10 | 7 | [`domains/inquiry.md`](domains/inquiry.md) |
 | [knowledge-service-runtime](domains/knowledge-service-runtime.md) | machinery | knowledge_service | 15 | 11 | [`domains/knowledge-service-runtime.md`](domains/knowledge-service-runtime.md) |
 | [learning](domains/learning.md) | ours | learning | 14 | 4 | [`domains/learning.md`](domains/learning.md) |
@@ -35,7 +35,7 @@ Lenses: `ours`, `private`, `corpus`, `evidence`, `machinery`, `legacy`. [MAP.md]
 | [retrieval](domains/retrieval.md) | corpus | retrieval | 37 | 34 | [`domains/retrieval.md`](domains/retrieval.md), [`tasks/build-evidence-packet.md`](tasks/build-evidence-packet.md), [`tasks/modules-covering-concept.md`](tasks/modules-covering-concept.md) |
 | [source-intelligence](domains/source-intelligence.md) | evidence | acquisition, api, evidence | 6 | 4 | [`domains/source-intelligence.md`](domains/source-intelligence.md), [`tasks/how-trusted-is-source.md`](tasks/how-trusted-is-source.md), [`tasks/run-attention-sweep.md`](tasks/run-attention-sweep.md) |
 | [staging](domains/staging.md) | corpus | staging | 4 | 0 | [`domains/staging.md`](domains/staging.md), [`tasks/compose-ingestion-intent.md`](tasks/compose-ingestion-intent.md), [`tasks/resolve-or-create-entity.md`](tasks/resolve-or-create-entity.md) |
-| [temporal-facts](domains/temporal-facts.md) | corpus | temporal | 9 | 13 | [`domains/temporal-facts.md`](domains/temporal-facts.md), [`tasks/admit-support-for-claim.md`](tasks/admit-support-for-claim.md), [`tasks/check-knowledge-head.md`](tasks/check-knowledge-head.md) |
+| [temporal-facts](domains/temporal-facts.md) | corpus | temporal | 10 | 14 | [`domains/temporal-facts.md`](domains/temporal-facts.md), [`tasks/admit-support-for-claim.md`](tasks/admit-support-for-claim.md), [`tasks/check-knowledge-head.md`](tasks/check-knowledge-head.md) |
 | [verified-knowledge](domains/verified-knowledge.md) | evidence | api, evidence, verification | 15 | 11 | [`domains/verified-knowledge.md`](domains/verified-knowledge.md), [`tasks/propose-verdict-from-probe.md`](tasks/propose-verdict-from-probe.md), [`tasks/read-claim-with-evidence.md`](tasks/read-claim-with-evidence.md) |
 
 ## Schemas
@@ -44,9 +44,9 @@ Lenses: `ours`, `private`, `corpus`, `evidence`, `machinery`, `legacy`. [MAP.md]
 | --- | --- | ---: | ---: | --- |
 | [`access`](schemas/access/README.md) | ours | 7 | 0 | access |
 | [`acquisition`](schemas/acquisition/README.md) | corpus | 3 | 0 | acquisition |
-| [`api`](schemas/api/README.md) | corpus | 51 | 68 | api-surface |
+| [`api`](schemas/api/README.md) | corpus | 51 | 74 | api-surface |
 | [`authoring`](schemas/authoring/README.md) | ours | 20 | 0 | authoring |
-| [`catalog`](schemas/catalog/README.md) | corpus | 9 | 6 | identity |
+| [`catalog`](schemas/catalog/README.md) | corpus | 14 | 22 | identity |
 | [`content`](schemas/content/README.md) | corpus | 30 | 8 | content |
 | [`conversation`](schemas/conversation/README.md) | private | 4 | 0 | library |
 | [`curriculum`](schemas/curriculum/README.md) | machinery | 8 | 0 | curriculum |
@@ -66,7 +66,7 @@ Lenses: `ours`, `private`, `corpus`, `evidence`, `machinery`, `legacy`. [MAP.md]
 | [`retrieval`](schemas/retrieval/README.md) | corpus | 37 | 35 | retrieval |
 | [`staging`](schemas/staging/README.md) | corpus | 4 | 0 | staging |
 | [`taxonomy`](schemas/taxonomy/README.md) | corpus | 9 | 2 | relationships |
-| [`temporal`](schemas/temporal/README.md) | corpus | 9 | 17 | temporal-facts |
+| [`temporal`](schemas/temporal/README.md) | corpus | 10 | 18 | temporal-facts |
 | [`util`](schemas/util/README.md) | machinery | 0 | 7 | api-surface |
 | [`verification`](schemas/verification/README.md) | evidence | 6 | 14 | evidence |
 
@@ -162,4 +162,4 @@ Product operations dispatched by `product.dispatch_*`; call them through `api.pr
 | [`trace_reverse`](ops/trace_reverse.md) | research | `api.product_read` | `authoring.revision_binding`, `authoring.work`, `authoring.work_revision`, `dataset.cell`, `dataset.row`, `inquiry.assertion`, `inquiry.delivery`, `inquiry.obligation`, `inquiry.support` |
 | [`withdraw_acceptance`](ops/withdraw_acceptance.md) | research | `api.product_command` | `inquiry.acceptance` |
 
-Counts at head `20261116150000`: 350 relations (child partitions folded into their parents), 299 function overloads, 85 operations, 41 tasks, 71 named queries. Vocabularies: [`content.document_type`](vocabularies/content.document_type.md), [`content.format`](vocabularies/content.format.md), [`content.source_role`](vocabularies/content.source_role.md), [`content.unit_kind`](vocabularies/content.unit_kind.md), [`evidence.capture_method`](vocabularies/evidence.capture_method.md), [`evidence.search_provider`](vocabularies/evidence.search_provider.md), [`guidance.item_kind`](vocabularies/guidance.item_kind.md), [`orchestration.artifact_type`](vocabularies/orchestration.artifact_type.md), [`orchestration.intent_type`](vocabularies/orchestration.intent_type.md), [`taxonomy.entity_kind`](vocabularies/taxonomy.entity_kind.md), [`taxonomy.relationship_kind`](vocabularies/taxonomy.relationship_kind.md), [`temporal.event_kind`](vocabularies/temporal.event_kind.md), [`temporal.stream_kind`](vocabularies/temporal.stream_kind.md).
+Counts at head `20261119122000`: 356 relations (child partitions folded into their parents), 322 function overloads, 85 operations, 41 tasks, 71 named queries. Vocabularies: [`content.document_type`](vocabularies/content.document_type.md), [`content.format`](vocabularies/content.format.md), [`content.source_role`](vocabularies/content.source_role.md), [`content.unit_kind`](vocabularies/content.unit_kind.md), [`evidence.capture_method`](vocabularies/evidence.capture_method.md), [`evidence.search_provider`](vocabularies/evidence.search_provider.md), [`guidance.item_kind`](vocabularies/guidance.item_kind.md), [`orchestration.artifact_type`](vocabularies/orchestration.artifact_type.md), [`orchestration.intent_type`](vocabularies/orchestration.intent_type.md), [`taxonomy.entity_kind`](vocabularies/taxonomy.entity_kind.md), [`taxonomy.relationship_kind`](vocabularies/taxonomy.relationship_kind.md), [`temporal.correction_reason`](vocabularies/temporal.correction_reason.md), [`temporal.event_kind`](vocabularies/temporal.event_kind.md), [`temporal.stream_kind`](vocabularies/temporal.stream_kind.md).

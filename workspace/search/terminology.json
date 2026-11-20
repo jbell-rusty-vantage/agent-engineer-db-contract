@@ -8,7 +8,7 @@
     "definition": "Executor decision that a proposal becomes a canonical fact through the temporal helpers. A verified claim's receipt must name an admitted use decision, recorded in verification.use_admission by verification.assert_admitted_use in the same transaction. Distinct from receipt outcome applied and from plan outcomes such as review_required or held.",
     "provenance": "model_assisted",
     "refs": [
-      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
       "fn:temporal.commit_batch(uuid,text,text,jsonb)",
       "rel:verification.use_admission",
       "fn:verification.assert_admitted_use(uuid,text,text,int8,text)"
@@ -864,7 +864,7 @@
     "provenance": "model_assisted",
     "refs": [
       "rel:api.entities",
-      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
       "fn:api.product_command(uuid,text,text,uuid,jsonb)"
     ],
     "reviewed": null,
@@ -879,7 +879,7 @@
     "provenance": "model_assisted",
     "refs": [
       "rel:temporal.stream",
-      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)"
     ],
     "reviewed": null,
     "term": "scope key"
@@ -894,7 +894,7 @@
     "provenance": "model_assisted",
     "refs": [
       "rel:temporal.segment",
-      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+      "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
       "q:facts.current_by_stream"
     ],
     "reviewed": null,

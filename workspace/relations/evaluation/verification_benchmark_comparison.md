@@ -14,7 +14,7 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"verification_benchmark_comparison\"][\"Row\"]"
 defined_in: ["20260906030500_verification_benchmark_comparison_lifecycle.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evaluation.verification_benchmark_comparison
 
@@ -56,7 +56,24 @@ table in domain `evaluation`, lens `machinery`.
 - PK (id)
 - unique (tenant_id, id)
 - unique (tenant_id, operation_id)
-- 18 check constraints; see [details](verification_benchmark_comparison.details.md)
+- check `verification_benchmark_compa_candidate_publication_sha256_check`: `(candidate_publication_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_compar_baseline_publication_sha256_check`: `(baseline_publication_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_compari_publication_payload_sha256_check`: `(publication_payload_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_compariso_candidate_payload_sha256_check`: `(candidate_payload_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_compariso_engineering_gate_outcome_check`: `(engineering_gate_outcome = ANY (ARRAY['not_requested'::text, 'pass'::text, 'fail'::text]))`
+- check `verification_benchmark_comparison_baseline_payload_sha256_check`: `(baseline_payload_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_comparison_check`: `(candidate_run_id <> baseline_run_id)`
+- check `verification_benchmark_comparison_check1`: `(candidate_publication_artifact_id <> baseline_publication_artifact_id)`
+- check `verification_benchmark_comparison_check2`: `(((status = 'running'::text) AND (completed_at IS NULL) AND (result_artifact_id IS NULL) AND (result_sha256 IS NULL) AND (result_digest_sha…`
+- check `verification_benchmark_comparison_completion_required`: `((status = 'running'::text) OR (completed_at IS NOT NULL))`
+- check `verification_benchmark_comparison_profile_id_check`: `(profile_id = ANY (ARRAY['paired_default'::text, 'regression_gate'::text]))`
+- check `verification_benchmark_comparison_profile_sha256_check`: `(profile_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_comparison_publication_sha256_check`: `(publication_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_comparison_result_digest_sha256_check`: `(result_digest_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_comparison_result_sha256_check`: `(result_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_comparison_runtime_check`: `((jsonb_typeof(runtime) = 'object'::text) AND (octet_length((runtime)::text) <= 131072))`
+- check `verification_benchmark_comparison_runtime_sha256_check`: `(runtime_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `verification_benchmark_comparison_status_check`: `(status = ANY (ARRAY['running'::text, 'completed'::text, 'sealed'::text]))`
 
 ## Relationships
 

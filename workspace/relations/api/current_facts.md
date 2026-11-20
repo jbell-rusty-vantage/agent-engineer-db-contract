@@ -6,15 +6,15 @@ name: current_facts
 domain: api-surface
 lens: corpus
 aliases: [current facts view]
-tokens: [api, current_facts, api.current_facts, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, stream_kind, subject_entity_id, subject_relationship_id, scope_key]
+tokens: [api, current_facts, api.current_facts, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, stream_kind, subject_entity_id, subject_relationship_id, scope_key, revision_kind, correction_reason]
 summary: Current segments whose valid_during contains now().
 summary_basis: curated
 rls: disabled
 readers: [app_reader, authenticated, control_plane, executor_service, pipeline_agent, service_role, verifier_agent]
 writers: []
 typescript: "Database[\"api\"][\"Views\"][\"current_facts\"][\"Row\"]"
-defined_in: ["20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+defined_in: ["20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", "20261119121000_build09_rv01_current_fact_rows.sql", part1_renames.sql]
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.current_facts
 
@@ -49,6 +49,8 @@ view in domain `api-surface`, lens `corpus`.
 | 21 | `subject_entity_id` | `uuid` | yes | — | — |
 | 22 | `subject_relationship_id` | `uuid` | yes | — | — |
 | 23 | `scope_key` | `text` | yes | — | — |
+| 24 | `revision_kind` | `text` | yes | — | — |
+| 25 | `correction_reason` | `text` | yes | — | — |
 
 ## Constraints
 
@@ -101,4 +103,4 @@ knowledge db query facts.current_by_stream --param entity_id=null --param limit=
 ```
 Historical prices need entity.at or facts.price_history.
 
-Defined in: `20260912011000_km_10_api.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `part1_renames.sql`.
+Defined in: `20260912011000_km_10_api.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `20261119121000_build09_rv01_current_fact_rows.sql`, `part1_renames.sql`.

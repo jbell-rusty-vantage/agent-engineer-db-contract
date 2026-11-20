@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"learning\"][\"Tables\"][\"attempt\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # learning.attempt
 
@@ -65,7 +65,7 @@ Inbound: [`learning.attempt`](attempt.md).workspace_id,previous_attempt_id, [`le
 
 ## Indexes
 
-11 indexes; see [details](attempt.details.md).
+`attempt_learner_ix`; `attempt_tenant_id_option_id_fkey_ix`; `attempt_tenant_id_task_release_item_id_fkey_ix`; `attempt_tenant_id_workspace_id_enrollment_id_adoption_i_ix`; `attempt_tenant_id_workspace_id_enrollment_id_fkey_ix`; `attempt_tenant_id_workspace_id_environment_session_id_f_ix`; `attempt_tenant_id_workspace_id_equivalence_request_id_f_ix`; `attempt_tenant_id_workspace_id_id_key` unique; `attempt_tenant_id_workspace_id_mastery_decision_id_fkey_ix`; `attempt_tenant_id_workspace_id_previous_attempt_id_fkey_ix`; `attempt_tenant_id_workspace_id_task_revision_id_fkey_ix`
 
 ## Triggers
 

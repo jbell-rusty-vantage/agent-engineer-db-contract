@@ -6,7 +6,7 @@ name: unit_kind
 rows: 47
 rows_sha256: "sha256:57e528f50a00dbbd83f61aa80d0a27d095daed7ae188aad354c103bde2196fc8"
 codes: [advisory, api_symbol, bundle_file, change_item, code_block, code_example, docs_section, document_root, endpoint, eval_row, figure, hook_entry, leaderboard_row, link, list, list_item, mcp_prompt, mcp_resource, mcp_tool, media_segment, metadata_field, metric_definition, model_card_section, module_block, paper_section, paragraph, parameter, plan_section, post_paragraph, price_row, probe_observation, quote, readme_section, reference, registry_listing, release_entry, schema_component, section, slide, spec_field, table, table_row, talk_header, talk_resource, talk_writeup, thread_post, transcript_segment]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # content.unit_kind
 

@@ -1,9 +1,9 @@
 {
   "build": {
-    "contract_version": "0.10.0",
-    "enrichment_sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
-    "generated_types_sha256": "sha256:374a85ba3ec324eb3c5f2857482b912b390b9592a978864268b4473bd8062052",
-    "migration_head": "20261116150000",
+    "contract_version": "0.11.0",
+    "enrichment_sha256": "sha256:f14e97e0086052221548a153a0adc07d7195d376b0d6d4f1267f79d06aad082b",
+    "generated_types_sha256": "sha256:c92e7827009432c2c59a1a6d831e118201f70d107db12acd00eaecbbb8dd2d74",
+    "migration_head": "20261119122000",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -16,6 +16,9 @@
       ],
       "api.attention_due": [
         "fn:api.attention_due(timestamptz)"
+      ],
+      "api.change_explanation": [
+        "fn:api.change_explanation(uuid,uuid,uuid,bool)"
       ],
       "api.changes_since": [
         "fn:api.changes_since(timestamptz,text[],text[],text[])"
@@ -31,6 +34,9 @@
       ],
       "api.current_relationship_rows": [
         "fn:api.current_relationship_rows()"
+      ],
+      "api.decide_proposal": [
+        "fn:api.decide_proposal(uuid,text,text,uuid,text)"
       ],
       "api.digest_item_passages": [
         "fn:api.digest_item_passages(uuid)"
@@ -52,6 +58,9 @@
       ],
       "api.entity_card": [
         "fn:api.entity_card(uuid)"
+      ],
+      "api.entity_history": [
+        "fn:api.entity_history(uuid)"
       ],
       "api.entity_rows": [
         "fn:api.entity_rows()"
@@ -134,8 +143,17 @@
       "api.product_worker": [
         "fn:api.product_worker(text,jsonb)"
       ],
+      "api.proposals": [
+        "fn:api.proposals(uuid,uuid,uuid,uuid,text[])"
+      ],
+      "api.propose": [
+        "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)"
+      ],
       "api.propose_verdict": [
         "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)"
+      ],
+      "api.publish_proposal": [
+        "fn:api.publish_proposal(uuid,bool,text)"
       ],
       "api.raise_attention_sweep": [
         "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)"
@@ -215,6 +233,39 @@
       "api.what_changed": [
         "fn:api.what_changed(uuid,int8,int8)"
       ],
+      "catalog._carry_relationship_streams": [
+        "fn:catalog._carry_relationship_streams(uuid,uuid,text)"
+      ],
+      "catalog._ensure_stream": [
+        "fn:catalog._ensure_stream(text,uuid,uuid,text)"
+      ],
+      "catalog._log_move": [
+        "fn:catalog._log_move(uuid,uuid,text,text,jsonb,text,jsonb)"
+      ],
+      "catalog._move_relationship": [
+        "fn:catalog._move_relationship(uuid,uuid,uuid,text)"
+      ],
+      "catalog._move_segment": [
+        "fn:catalog._move_segment(uuid,uuid,uuid,text)"
+      ],
+      "catalog._reopen_segment": [
+        "fn:catalog._reopen_segment(uuid,text)"
+      ],
+      "catalog._repoint_references": [
+        "fn:catalog._repoint_references(uuid,uuid,uuid,uuid)"
+      ],
+      "catalog._row_key": [
+        "fn:catalog._row_key(regclass,jsonb)"
+      ],
+      "catalog.caller_is_person": [
+        "fn:catalog.caller_is_person()"
+      ],
+      "catalog.caller_role": [
+        "fn:catalog.caller_role()"
+      ],
+      "catalog.canonical_entity": [
+        "fn:catalog.canonical_entity(uuid)"
+      ],
       "catalog.check_receipt_tenant": [
         "fn:catalog.check_receipt_tenant()"
       ],
@@ -224,14 +275,29 @@
       "catalog.check_relationship_properties": [
         "fn:catalog.check_relationship_properties()"
       ],
+      "catalog.entity_references": [
+        "fn:catalog.entity_references(uuid)"
+      ],
       "catalog.import_research_starter_catalog": [
         "fn:catalog.import_research_starter_catalog(uuid)"
+      ],
+      "catalog.merge_entities": [
+        "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)"
       ],
       "catalog.rebuild_entity_projections": [
         "fn:catalog.rebuild_entity_projections(int8)"
       ],
+      "catalog.split_entity": [
+        "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)"
+      ],
+      "catalog.undo_merge": [
+        "fn:catalog.undo_merge(uuid,uuid,text)"
+      ],
       "catalog.validate_entity_attributes": [
         "fn:catalog.validate_entity_attributes()"
+      ],
+      "catalog.with_merged": [
+        "fn:catalog.with_merged(uuid[])"
       ],
       "content.check_document_work": [
         "fn:content.check_document_work()"
@@ -804,10 +870,13 @@
         "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)"
       ],
       "temporal.assert_state": [
-        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)"
       ],
       "temporal.begin_batch": [
         "fn:temporal.begin_batch(int8)"
+      ],
+      "temporal.close_relationship": [
+        "fn:temporal.close_relationship(uuid,text,text,uuid,timestamptz,uuid,uuid)"
       ],
       "temporal.close_segment": [
         "fn:temporal.close_segment(uuid)"
@@ -2723,6 +2792,54 @@
         "vocabulary": "voc:taxonomy.entity_kind"
       },
       {
+        "basis": "check constraint identity_move_one_parent",
+        "columns": [
+          "merge_id",
+          "split_id"
+        ],
+        "discriminator": "(num_nonnulls(merge_id, split_id) = 1)",
+        "id": "poly:catalog.identity_move.identity_move_one_parent",
+        "relation": "rel:catalog.identity_move",
+        "targets": [
+          "rel:catalog.entity_merge",
+          "rel:catalog.entity_split"
+        ]
+      },
+      {
+        "basis": "check constraint proposal_cause_shape",
+        "columns": [
+          "target_segment_id",
+          "target_event_id",
+          "target_relationship_id"
+        ],
+        "discriminator": "((proposal_kind <> 'cause'::text) OR (num_nonnulls(target_segment_id, target_event_id, target_relationship_id) = 1))",
+        "id": "poly:catalog.proposal.proposal_cause_shape",
+        "relation": "rel:catalog.proposal",
+        "targets": [
+          "rel:catalog.relationship",
+          "rel:temporal.event",
+          "rel:temporal.segment"
+        ]
+      },
+      {
+        "basis": "check constraint proposal_basis_one_target",
+        "columns": [
+          "claim_id",
+          "segment_id",
+          "event_id",
+          "relationship_id"
+        ],
+        "discriminator": "(num_nonnulls(claim_id, segment_id, event_id, relationship_id) = 1)",
+        "id": "poly:catalog.proposal_basis.proposal_basis_one_target",
+        "relation": "rel:catalog.proposal_basis",
+        "targets": [
+          "rel:catalog.relationship",
+          "rel:evidence.claim",
+          "rel:temporal.event",
+          "rel:temporal.segment"
+        ]
+      },
+      {
         "basis": "vocabulary taxonomy.entity_kind.canonical_table + FK document_type_work_entity_kind_fkey",
         "discriminator": "col:content.document_type.work_entity_kind",
         "id": "poly:content.document_type.work_entity_kind",
@@ -3179,6 +3296,9 @@
         "fn:catalog.check_receipt_tenant()",
         "fn:catalog.validate_entity_attributes()",
         "fn:verification.require_receipt_admission()"
+      ],
+      "rel:catalog.proposal": [
+        "fn:verification.guard_human_judgment()"
       ],
       "rel:catalog.relationship": [
         "fn:catalog.check_relationship_kinds()",
@@ -4734,7 +4854,10 @@
         ],
         "via_functions": [
           "fn:catalog.import_research_starter_catalog(uuid)",
-          "fn:catalog.rebuild_entity_projections(int8)"
+          "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+          "fn:catalog.rebuild_entity_projections(int8)",
+          "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)",
+          "fn:catalog.undo_merge(uuid,uuid,text)"
         ]
       },
       "rel:catalog.entity_alias": {
@@ -4743,7 +4866,10 @@
           "executor_service",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+          "fn:catalog.undo_merge(uuid,uuid,text)"
+        ]
       },
       "rel:catalog.entity_identifier": {
         "basis": "grants + best_effort body scan",
@@ -4752,7 +4878,9 @@
           "service_role"
         ],
         "via_functions": [
-          "fn:catalog.import_research_starter_catalog(uuid)"
+          "fn:catalog.import_research_starter_catalog(uuid)",
+          "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+          "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)"
         ]
       },
       "rel:catalog.entity_merge": {
@@ -4761,7 +4889,32 @@
           "executor_service",
           "service_role"
         ],
-        "via_functions": []
+        "via_functions": [
+          "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+          "fn:catalog.undo_merge(uuid,uuid,text)"
+        ]
+      },
+      "rel:catalog.entity_split": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": [
+          "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)"
+        ]
+      },
+      "rel:catalog.entity_split_part": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": [
+          "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)"
+        ]
+      },
+      "rel:catalog.identity_move": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": [
+          "fn:catalog._log_move(uuid,uuid,text,text,jsonb,text,jsonb)",
+          "fn:catalog.undo_merge(uuid,uuid,text)"
+        ]
       },
       "rel:catalog.license": {
         "basis": "grants + best_effort body scan",
@@ -4779,11 +4932,31 @@
         ],
         "via_functions": []
       },
+      "rel:catalog.proposal": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": [
+          "fn:api.decide_proposal(uuid,text,text,uuid,text)",
+          "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)",
+          "fn:api.publish_proposal(uuid,bool,text)"
+        ]
+      },
+      "rel:catalog.proposal_basis": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": [
+          "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)"
+        ]
+      },
       "rel:catalog.relationship": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": [
-          "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)"
+          "fn:catalog._move_relationship(uuid,uuid,uuid,text)",
+          "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)",
+          "fn:catalog.undo_merge(uuid,uuid,text)",
+          "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)",
+          "fn:temporal.close_relationship(uuid,text,text,uuid,timestamptz,uuid,uuid)"
         ]
       },
       "rel:catalog.work": {
@@ -5543,6 +5716,8 @@
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": [
+          "fn:catalog._move_segment(uuid,uuid,uuid,text)",
+          "fn:catalog._reopen_segment(uuid,text)",
           "fn:temporal.admit_support(uuid,uuid,uuid,uuid,text)",
           "fn:temporal.withdraw_support(uuid)"
         ]
@@ -6798,10 +6973,17 @@
         ],
         "via_functions": []
       },
+      "rel:temporal.correction_reason": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": []
+      },
       "rel:temporal.event": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": [
+          "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+          "fn:catalog.undo_merge(uuid,uuid,text)",
           "fn:temporal.assert_event(text,uuid,tstzrange,text,uuid,uuid,text,uuid,uuid,jsonb,text)"
         ]
       },
@@ -6844,7 +7026,9 @@
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": [
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+          "fn:catalog._move_segment(uuid,uuid,uuid,text)",
+          "fn:catalog._reopen_segment(uuid,text)",
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
           "fn:temporal.close_segment(uuid)"
         ]
       },
@@ -6852,7 +7036,8 @@
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [],
         "via_functions": [
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
+          "fn:catalog._ensure_stream(text,uuid,uuid,text)",
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)"
         ]
       },
       "rel:temporal.stream_kind": {
@@ -7437,10 +7622,18 @@
           "catalog",
           "works"
         ],
-        "body": "`catalog.entity` is the identity. `kind` is a foreign key to `taxonomy.entity_kind`\n(36 kinds: organization, person, ai_model, ai_model_version, model_offering, library,\nrepository, mcp_server, agent_skill, paper, talk, concept, technique, …). Since Build 08\nthe thirty-six thin typed tables are gone: kind-specific attributes live in\n`catalog.entity.attributes` and trigger `catalog.validate_entity_attributes` checks them\nagainst `taxonomy.entity_kind.attributes_schema` (pg_jsonschema). Numbers that change over\ntime (prices, context windows, headcount, stars) are fact streams in `temporal`, never\nattributes. `parent_kind` says which kind a kind versions (model version → model); the link\nitself is a `catalog.relationship`. Work kinds (`is_work`: paper, talk, media_work, story,\ncase_study) also have a bibliographic row in `catalog.work`; their content is\n`content.document` rows with `work_entity_id`.\n\nResolve before creating. `q:entity.resolve` (`api.resolve_entity`) matches display name,\nalias and identifier value and returns at most 25 active rows. Prefer\n`q:entity.by_identifier` when the source prints a schemed id: `(scheme, value)` is unique\nper tenant. `q:entity.attributes` returns the row with its attributes and the kind's schema.\n`q:entity.card` is the current overview for agents on `app_reader`. For a table of a kind\n(all models, all organizations) go to the L1 views in `dom:api-surface` instead.\n\nAliases are typed (synonym, acronym, former_name, handle, ticker, slug, misspelling,\ntranslation, model_alias) and unique per entity, not globally. Identifiers use a closed\n`scheme` check; unknown namespaces belong in `other`. Merges are `catalog.entity_merge`\nrows: the loser becomes `lifecycle='merged'` with `merged_into_id`; resolve excludes them.\n\nWriters are `executor_service` only, and every entity needs `created_by_receipt_id`.\nAgents author entity.create / entity.alias / entity.identifier proposals with an\n`attributes` object; if resolve is ambiguous use candidate.stage. Traps: treating\ndisplay_name as a unique key; inventing identifier schemes; putting a price or a date\nthat moves into attributes; creating a `model_offering` without its parent\n`ai_model_version` (the `offered_as` relationship and `parent_kind`).\n",
+        "body": "`catalog.entity` is the identity. `kind` is a foreign key to `taxonomy.entity_kind`\n(36 kinds: organization, person, ai_model, ai_model_version, model_offering, library,\nrepository, mcp_server, agent_skill, paper, talk, concept, technique, …). Since Build 08\nthe thirty-six thin typed tables are gone: kind-specific attributes live in\n`catalog.entity.attributes` and trigger `catalog.validate_entity_attributes` checks them\nagainst `taxonomy.entity_kind.attributes_schema` (pg_jsonschema). Numbers that change over\ntime (prices, context windows, headcount, stars) are fact streams in `temporal`, never\nattributes. `parent_kind` says which kind a kind versions (model version → model); the link\nitself is a `catalog.relationship`. Work kinds (`is_work`: paper, talk, media_work, story,\ncase_study) also have a bibliographic row in `catalog.work`; their content is\n`content.document` rows with `work_entity_id`.\n\nResolve before creating. `q:entity.resolve` (`api.resolve_entity`) matches display name,\nalias and identifier value and returns at most 25 active rows. Prefer\n`q:entity.by_identifier` when the source prints a schemed id: `(scheme, value)` is unique\nper tenant. `q:entity.attributes` returns the row with its attributes and the kind's schema.\n`q:entity.card` is the current overview for agents on `app_reader`. For a table of a kind\n(all models, all organizations) go to the L1 views in `dom:api-surface` instead.\n\nAliases are typed (synonym, acronym, former_name, handle, ticker, slug, misspelling,\ntranslation, model_alias) and unique per entity, not globally. Identifiers use a closed\n`scheme` check; unknown namespaces belong in `other`.\n\nOur mistake and a world event are two different things (Build 09, RV01). A duplicate\nrecord is merged with `catalog.merge_entities` (same kind only, inside a knowledge batch):\nthe loser's facts and edges close and reopen on the winner as corrections with reason\n`duplicate_record`, identifiers and names move, the loser becomes `lifecycle='merged'`\nwith `merged_into_id`, and every row touched is logged in `catalog.identity_move`\n(`moved`, `closed_as_duplicate`, `kept_on_source`, `adopted`, `added`).\n`catalog.undo_merge` reverses it from that log. A record that mixed several things is\nsplit with `catalog.split_entity` (`catalog.entity_split`, `catalog.entity_split_part`).\n`api.resolve_entity` leads a merged record's name to its winner and\n`catalog.canonical_entity` maps its id. A rename, an acquisition, a spin-off or a package\nsplit out of another is not a merge: the records stay, linked by `supersedes` or\n`split_from` with a dated event (`renamed`, `split_out`, `stewardship_transferred`); a\nrename is one entity whose `entity_name` stream changes. `api.entity_history` shows all of\nit for one identity.\n\n`catalog.proposal` is our own view and never a fact: what a person or an agent proposes\nabout a relationship, the cause of a recorded change, or an identity, with its rationale,\nconfidence and basis (`catalog.proposal_basis`). Agents write through `api.propose`\n(always `agent_proposed`, `private`); only a person decides or publishes\n(`api.decide_proposal`, `api.publish_proposal`, not granted to agent roles). No read\nshows a proposal except `api.proposals` and `api.change_explanation` when asked. Trap:\nwriting an inferred relationship or motive as a claim or an edge.\n\nWriters are `executor_service` only, and every entity needs `created_by_receipt_id`.\nAgents author entity.create / entity.alias / entity.identifier proposals with an\n`attributes` object; if resolve is ambiguous use candidate.stage. Traps: treating\ndisplay_name as a unique key; inventing identifier schemes; putting a price or a date\nthat moves into attributes; creating a `model_offering` without its parent\n`ai_model_version` (the `offered_as` relationship and `parent_kind`).\n",
         "functions": [
           "fn:api.resolve_entity(text)",
           "fn:api.entity_card(uuid)",
+          "fn:api.entity_history(uuid)",
+          "fn:api.proposals(uuid,uuid,uuid,uuid,text[])",
+          "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)",
+          "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+          "fn:catalog.undo_merge(uuid,uuid,text)",
+          "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)",
+          "fn:catalog.canonical_entity(uuid)",
+          "fn:catalog.entity_references(uuid)",
           "fn:catalog.validate_entity_attributes()",
           "fn:catalog.rebuild_entity_projections(int8)"
         ],
@@ -7457,6 +7650,11 @@
           "rel:catalog.entity_alias",
           "rel:catalog.entity_identifier",
           "rel:catalog.entity_merge",
+          "rel:catalog.entity_split",
+          "rel:catalog.entity_split_part",
+          "rel:catalog.identity_move",
+          "rel:catalog.proposal",
+          "rel:catalog.proposal_basis",
           "rel:catalog.work",
           "rel:taxonomy.entity_kind",
           "rel:catalog.license",
@@ -8045,12 +8243,12 @@
           "batch",
           "changes since"
         ],
-        "body": "A fact is a `temporal.segment` on a `temporal.stream`. The stream is\n`(kind, subject_entity_id | subject_relationship_id, scope_key)`. The segment carries\nworld interval `valid_during` and knowledge interval `[k_from, k_to)`. Current means\n`k_to is null`. \"As the world was at T, as we knew at K\" is `q:entity.at`; the L1 tables\nreplayed at T are `q:catalog.models_at` and `q:catalog.model_offerings_at`.\n\nBuild 08 makes `temporal` the one home for numbers: `offering_price` (payload meter|tier|region,\namount+currency+unit), `benchmark_score`, `model_context_window`, `repository_stars`,\n`organization_headcount`, `package_downloads` and so on are streams; `ranking` and the\nL1 views only read them. `q:facts.price_history` shows every price belief of an offering\nand meter with both clocks; `q:facts.changes_since` lists what changed since a date as\nfacts opened/replaced (with the old value), events and unit-level document diffs, with\n`learned_at` (knowledge clock) beside `world_from` (world clock).\n\n`temporal.knowledge_head` is one row per tenant. `q:knowledge.head` reads it as\n`app_reader`. Writes open a batch with `temporal.begin_batch(p_expected_head)`; a mismatch\nraises `rebase_required` (40001). `temporal.commit_batch` seals the batch against a receipt,\nunique idempotency key and SHA-256 input digest, then validates stream slot rules (status,\namount, unit, currency, payload JSON Schema).\n\n`temporal.assert_state` is a no-op when an identical current segment exists. Overlap closes\nthe old segment and re-inserts unaffected fragments with `replaces_segment_id`. Two\noverlapping assertions in one batch are an error. `temporal_basis` explicit or\ncarry_forward requires a `temporal.extent`. Events are `temporal.event` plus a current\n`temporal.event_occurrence`.\n\nTraps: `api.current_facts` hides intervals that do not contain now() — use `q:entity.at`\nfor history and `q:entity.timeline` for unknown gaps. A new price series defaults its\nscope_key to meter|tier|region; an existing series keeps its own scope_key, so read\n`q:facts.price_history` before asserting a correction. Agents never DML temporal tables;\nthey submit fact.assert_state / event.assert intents.\n",
+        "body": "A fact is a `temporal.segment` on a `temporal.stream`. The stream is\n`(kind, subject_entity_id | subject_relationship_id, scope_key)`. The segment carries\nworld interval `valid_during` and knowledge interval `[k_from, k_to)`. Current means\n`k_to is null`. \"As the world was at T, as we knew at K\" is `q:entity.at`; the L1 tables\nreplayed at T are `q:catalog.models_at` and `q:catalog.model_offerings_at`.\n\nBuild 08 makes `temporal` the one home for numbers: `offering_price` (payload meter|tier|region,\namount+currency+unit), `benchmark_score`, `model_context_window`, `repository_stars`,\n`organization_headcount`, `package_downloads` and so on are streams; `ranking` and the\nL1 views only read them. `q:facts.price_history` shows every price belief of an offering\nand meter with both clocks; `q:facts.changes_since` lists what changed since a date as\nfacts opened/replaced (with the old value), events and unit-level document diffs, with\n`learned_at` (knowledge clock) beside `world_from` (world clock).\n\n`temporal.knowledge_head` is one row per tenant. `q:knowledge.head` reads it as\n`app_reader`. Writes open a batch with `temporal.begin_batch(p_expected_head)`; a mismatch\nraises `rebase_required` (40001). `temporal.commit_batch` seals the batch against a receipt,\nunique idempotency key and SHA-256 input digest, then validates stream slot rules (status,\namount, unit, currency, payload JSON Schema).\n\n`temporal.assert_state` is a no-op when an identical current segment exists. Overlap closes\nthe old segment and re-inserts unaffected fragments with `replaces_segment_id`. Two\noverlapping assertions in one batch are an error. `temporal_basis` explicit or\ncarry_forward requires a `temporal.extent`. Events are `temporal.event` plus a current\n`temporal.event_occurrence`.\n\nTraps: `api.current_facts` hides intervals that do not contain now() — use `q:entity.at`\nfor history and `q:entity.timeline` for unknown gaps. A new price series defaults its\nscope_key to meter|tier|region; an existing series keeps its own scope_key, so read\n`q:facts.price_history` before asserting a correction. Agents never DML temporal tables;\nthey submit fact.assert_state / event.assert intents.\n\nWhy a fact changed (Build 09, RV01). A fact that replaces another carries\n`revision_kind`: `world_change` (it starts later than the fact it replaces; it may name\n`caused_by_event_id`), `correction` (it rewrites the past and must carry a\n`correction_reason` from `temporal.correction_reason`, or `temporal.assert_state` raises\n`correction requires a reason`) or `carried` (the unchanged part, cut again). It is empty for a\nfirst fact and for replacements made before 2026-11-20. An edge is ended with\n`temporal.close_relationship`: a correction closes it in knowledge with a reason; a world\nending keeps the row and ends its `relationship_active` fact with the cause event. A claim\nattached with role `explains` is a stated motive. `api.changes_since` reports all of this and\n`api.change_explanation` answers why. Trap: a second parse of the same page asserted with a\nlater start reads as a world change; say `correction` and `misread`.\n",
         "functions": [
           "fn:temporal.begin_batch(int8)",
           "fn:temporal.commit_batch(uuid,text,text,jsonb)",
           "fn:temporal.make_extent(text,text,uuid,timestamptz,timestamptz,text)",
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
           "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)",
           "fn:temporal.assert_event(text,uuid,tstzrange,text,uuid,uuid,text,uuid,uuid,jsonb,text)",
           "fn:temporal.close_segment(uuid)",
@@ -8263,7 +8461,7 @@
           "refs": [
             "rel:temporal.segment",
             "rel:temporal.event_occurrence",
-            "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
+            "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)"
           ],
           "reviewed": null,
           "title": "World-time required on facts"
@@ -8329,7 +8527,7 @@
           "id": "proposal.idempotent_repeat",
           "provenance": "model_assisted",
           "refs": [
-            "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+            "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
             "rel:temporal.knowledge_batch",
             "rel:orchestration.operation_intent"
           ],
@@ -16166,7 +16364,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:39db700cbfeaf552953f644bdce7919bd4af85557a0b495cbbf82f8f4d8d7470",
+    "sha256": "sha256:f14e97e0086052221548a153a0adc07d7195d376b0d6d4f1267f79d06aad082b",
     "tasks": [
       {
         "aliases": [
@@ -17336,7 +17534,7 @@
         "id": "term:admission",
         "provenance": "model_assisted",
         "refs": [
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
           "fn:temporal.commit_batch(uuid,text,text,jsonb)",
           "rel:verification.use_admission",
           "fn:verification.assert_admitted_use(uuid,text,text,int8,text)"
@@ -18298,7 +18496,7 @@
         "provenance": "model_assisted",
         "refs": [
           "rel:api.entities",
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
           "fn:api.product_command(uuid,text,text,uuid,jsonb)"
         ],
         "reviewed": null,
@@ -18315,7 +18513,7 @@
         "provenance": "model_assisted",
         "refs": [
           "rel:temporal.stream",
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)"
         ],
         "reviewed": null,
         "slug": "scope-key",
@@ -18332,7 +18530,7 @@
         "provenance": "model_assisted",
         "refs": [
           "rel:temporal.segment",
-          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+          "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
           "q:facts.current_by_stream"
         ],
         "reviewed": null,
@@ -18672,7 +18870,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:9ed72006477002282ce1132595857d68fa7dd913687c13b475796b197bbb187c",
+  "fingerprint": "sha256:a4480bd9fe02607c32e4da7c41ae66bc73093a7228833d691d9c1c030bca8814",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -18829,6 +19027,113 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"attention_due\"]",
       "volatility": "stable"
     },
+    "fn:api.change_explanation(uuid,uuid,uuid,bool)": {
+      "arguments": [
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_segment",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_event",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_relationship",
+          "type": "uuid"
+        },
+        {
+          "default": "false",
+          "mode": "in",
+          "name": "p_include_proposals",
+          "type": "boolean"
+        }
+      ],
+      "body_sha256": "sha256:5ca12724e9fa9a0919734d23b7951d0e7009e411dc58c7cfbefc9fb754a28b2f",
+      "comment": "Why a fact, an event or a relationship changed, in three separate parts: the cause event; what a source said the reason was (claims with role explains, attributed); and, only when asked, our own proposals, marked ours.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.change_explanation(uuid,uuid,uuid,bool)",
+      "identity_arguments": "p_segment uuid, p_event uuid, p_relationship uuid, p_include_proposals boolean",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "change_explanation",
+      "raises": [
+        "name one fact, one event or one relationship",
+        "no such fact",
+        "no such relationship"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "api.proposals",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.entity",
+          "catalog.relationship",
+          "evidence.attribution",
+          "evidence.claim",
+          "evidence.locator",
+          "evidence.segment_support",
+          "evidence.source",
+          "evidence.source_capture",
+          "temporal.correction_reason",
+          "temporal.event",
+          "temporal.event_occurrence",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"change_explanation\"]",
+      "volatility": "stable"
+    },
     "fn:api.changes_since(timestamptz,text[],text[],text[])": {
       "arguments": [
         {
@@ -18856,14 +19161,15 @@
           "type": "text[]"
         }
       ],
-      "body_sha256": "sha256:a1625ab09373dd348eaf67f6d18f52ca9557ad1b88e3301261c73d249d6b61c6",
-      "comment": "L2 both clocks: facts opened/replaced, events and unit changes learned after p_since; format-only unit changes (same content, different representation format) are excluded (§14.7 fix a).",
+      "body_sha256": "sha256:491e8f85507ae457c0af8ea185399c9253779561da890dc8a6923d94b6ed32d6",
+      "comment": "What we learned after p_since: facts (each a world_change or a correction with its reason and cause event; cut pieces are not listed), events, unit changes, edges opened and closed (scope_key carries the relationship kind), and merges and splits of records.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20261108120000_build08_r2_knowledge_continuum.sql",
         "20261109130000_build08_loop2_numbers_compute_apis.sql",
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql",
         "part4_views_seeds.sql"
       ],
       "executors": [
@@ -18904,7 +19210,7 @@
       "language": "sql",
       "name": "changes_since",
       "raises": [],
-      "returns": "TABLE(change_source text, change_kind text, learned_at timestamp with time zone, knowledge_seq bigint, world_from timestamp with time zone, subject_entity_id uuid, subject text, stream_kind text, scope_key text, old_value jsonb, new_value jsonb, document_id uuid, document_title text, logical_key text, unit_kind text, changed_attributes jsonb, claim_id uuid)",
+      "returns": "TABLE(change_source text, change_kind text, learned_at timestamp with time zone, knowledge_seq bigint, world_from timestamp with time zone, subject_entity_id uuid, subject text, stream_kind text, scope_key text, old_value jsonb, new_value jsonb, document_id uuid, document_title text, logical_key text, unit_kind text, changed_attributes jsonb, claim_id uuid, revision_kind text, correction_reason text, cause_event_id uuid, cause_event_kind text)",
       "returns_set": true,
       "schema": "api",
       "security": "definer",
@@ -18915,6 +19221,11 @@
         ],
         "reads": [
           "catalog.entity",
+          "catalog.entity_merge",
+          "catalog.entity_split",
+          "catalog.entity_split_part",
+          "catalog.identity_move",
+          "catalog.relationship",
           "content.document",
           "content.document_node",
           "content.document_version",
@@ -19089,14 +19400,15 @@
     },
     "fn:api.current_fact_rows()": {
       "arguments": [],
-      "body_sha256": "sha256:8d78f176f6f5ece879df3967f5e388024f91083b02f4e67638665962af583651",
-      "comment": null,
+      "body_sha256": "sha256:25b4b422759d2ff794e43a0520c90c8069627ca7ce2695b2bcecf09c9cc3c72e",
+      "comment": "Facts that hold now, as currently known, with their stream. revision_kind and correction_reason say how each fact relates to the one it replaced.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20260912011000_km_10_api.sql",
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261119121000_build09_rv01_current_fact_rows.sql",
         "part1_renames.sql"
       ],
       "executors": [
@@ -19137,7 +19449,7 @@
       "language": "sql",
       "name": "current_fact_rows",
       "raises": [],
-      "returns": "TABLE(id uuid, tenant_id uuid, stream_id uuid, valid_during tstzrange, belief text, temporal_basis text, status text, amount numeric, currency character, unit text, ref_entity_id uuid, payload jsonb, extent_id uuid, caused_by_event_id uuid, replaces_segment_id uuid, primary_claim_id uuid, k_from bigint, k_to bigint, created_at timestamp with time zone, stream_kind text, subject_entity_id uuid, subject_relationship_id uuid, scope_key text)",
+      "returns": "TABLE(id uuid, tenant_id uuid, stream_id uuid, valid_during tstzrange, belief text, temporal_basis text, status text, amount numeric, currency character, unit text, ref_entity_id uuid, payload jsonb, extent_id uuid, caused_by_event_id uuid, replaces_segment_id uuid, primary_claim_id uuid, k_from bigint, k_to bigint, created_at timestamp with time zone, stream_kind text, subject_entity_id uuid, subject_relationship_id uuid, scope_key text, revision_kind text, correction_reason text)",
       "returns_set": true,
       "schema": "api",
       "security": "definer",
@@ -19222,6 +19534,79 @@
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"current_relationship_rows\"]",
       "volatility": "stable"
+    },
+    "fn:api.decide_proposal(uuid,text,text,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_proposal",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_decision",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_note",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_outcome_claim",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_decided_by",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:3b902d9e8341e5ec5f797428cde7273e7e2ce33ec8333123e517ac19158b1922",
+      "comment": "A person endorses, rejects or withdraws a proposal, or marks it confirmed or refuted by a sourced claim. Not granted to any agent role.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:api.decide_proposal(uuid,text,text,uuid,text)",
+      "identity_arguments": "p_proposal uuid, p_decision text, p_note text, p_outcome_claim uuid, p_decided_by text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "decide_proposal",
+      "raises": [
+        "DECISION_INVALID",
+        "HUMAN_REVIEW_NOT_AGENT_WRITABLE",
+        "OUTCOME_CLAIM_REQUIRED",
+        "PROPOSAL_NOT_FOUND"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.caller_is_person",
+          "catalog.caller_role",
+          "util.current_tenant_id"
+        ],
+        "reads": [],
+        "writes": [
+          "catalog.proposal"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"decide_proposal\"]",
+      "volatility": "volatile"
     },
     "fn:api.digest_item_passages(uuid)": {
       "arguments": [
@@ -19767,6 +20152,90 @@
         "writes": []
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"entity_card\"]",
+      "volatility": "stable"
+    },
+    "fn:api.entity_history(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_entity",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:0744d006839cb10ca04265b70f5b06cec0dca0a9060fc6a1d96520b11ecfd346",
+      "comment": "What happened to one identity: names through time, aliases, identifiers, renames and other identity events, successors and stewards with their world intervals, and merges and splits of its record.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.entity_history(uuid)",
+      "identity_arguments": "p_entity uuid",
+      "kind": "function",
+      "language": "sql",
+      "name": "entity_history",
+      "raises": [],
+      "returns": "TABLE(item_kind text, world_from timestamp with time zone, world_to timestamp with time zone, learned_at timestamp with time zone, details jsonb)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.canonical_entity",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.entity",
+          "catalog.entity_alias",
+          "catalog.entity_identifier",
+          "catalog.entity_merge",
+          "catalog.entity_split",
+          "catalog.entity_split_part",
+          "catalog.relationship",
+          "temporal.event",
+          "temporal.event_occurrence",
+          "temporal.knowledge_batch",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"entity_history\"]",
       "volatility": "stable"
     },
     "fn:api.entity_rows()": {
@@ -21988,6 +22457,247 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"product_worker\"]",
       "volatility": "volatile"
     },
+    "fn:api.proposals(uuid,uuid,uuid,uuid,text[])": {
+      "arguments": [
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_entity",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_segment",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_event",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_relationship",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::text[]",
+          "mode": "in",
+          "name": "p_review_states",
+          "type": "text[]"
+        }
+      ],
+      "body_sha256": "sha256:a7037167810117a96ecdd12692ec4539c98772b82a50b9585a9e4824a75aa9e6",
+      "comment": "Proposals about an entity or a change. The service's reader roles see published ones only; agent and control roles see private ones too.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.proposals(uuid,uuid,uuid,uuid,text[])",
+      "identity_arguments": "p_entity uuid, p_segment uuid, p_event uuid, p_relationship uuid, p_review_states text[]",
+      "kind": "function",
+      "language": "sql",
+      "name": "proposals",
+      "raises": [],
+      "returns": "TABLE(proposal_id uuid, proposal_kind text, statement text, rationale text, confidence text, authored_by_kind text, authored_by text, review_state text, publication text, subject_entity_id uuid, subject text, object_entity_id uuid, object text, relationship_kind text, label text, target jsonb, cause_event_id uuid, basis jsonb, outcome_claim_id uuid, created_at timestamp with time zone)",
+      "returns_set": true,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.caller_is_person",
+          "catalog.caller_role",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.entity",
+          "catalog.proposal",
+          "catalog.proposal_basis"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"proposals\"]",
+      "volatility": "stable"
+    },
+    "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_idempotency_key",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_kind",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_statement",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_rationale",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_confidence",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_subject",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_object",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_relationship_kind",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_label",
+          "type": "text"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_target",
+          "type": "jsonb"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_cause_event",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::tstzrange",
+          "mode": "in",
+          "name": "p_world_during",
+          "type": "tstzrange"
+        },
+        {
+          "default": "'[]'::jsonb",
+          "mode": "in",
+          "name": "p_basis",
+          "type": "jsonb"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_actor",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:aa0d081d80a4f08023a185a53dd6780b7db3a3879df76b8da5c9cce1d1c5b056",
+      "comment": "Record a proposal: our own view of a relationship, of the cause of a recorded change, or of an identity. An agent role writes agent_proposed and private; nothing here is a fact.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "pipeline_agent",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)",
+      "identity_arguments": "p_idempotency_key text, p_kind text, p_statement text, p_rationale text, p_confidence text, p_subject uuid, p_object uuid, p_relationship_kind text, p_label text, p_target jsonb, p_cause_event uuid, p_world_during tstzrange, p_basis jsonb, p_actor jsonb",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "propose",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.caller_is_person",
+          "catalog.caller_role",
+          "util.uuidv7",
+          "verification.chain_begin",
+          "verification.chain_fail",
+          "verification.chain_record",
+          "verification.chain_target"
+        ],
+        "reads": [],
+        "writes": [
+          "catalog.proposal",
+          "catalog.proposal_basis"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"propose\"]",
+      "volatility": "volatile"
+    },
     "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)": {
       "arguments": [
         {
@@ -22092,6 +22802,66 @@
         ]
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"propose_verdict\"]",
+      "volatility": "volatile"
+    },
+    "fn:api.publish_proposal(uuid,bool,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_proposal",
+          "type": "uuid"
+        },
+        {
+          "default": "true",
+          "mode": "in",
+          "name": "p_publish",
+          "type": "boolean"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_published_by",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:7cc61d05661114ba90efd72dced1e99028d1c14e4ab9d6ae7e355fd9ab368aa3",
+      "comment": "A person publishes (or unpublishes) a proposal. Not granted to any agent role.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:api.publish_proposal(uuid,bool,text)",
+      "identity_arguments": "p_proposal uuid, p_publish boolean, p_published_by text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "publish_proposal",
+      "raises": [
+        "HUMAN_REVIEW_NOT_AGENT_WRITABLE",
+        "PROPOSAL_NOT_FOUND",
+        "PROPOSAL_NOT_REVIEWED"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.caller_is_person",
+          "catalog.caller_role",
+          "util.current_tenant_id"
+        ],
+        "reads": [],
+        "writes": [
+          "catalog.proposal"
+        ]
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"publish_proposal\"]",
       "volatility": "volatile"
     },
     "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)": {
@@ -23237,13 +24007,14 @@
           "type": "text"
         }
       ],
-      "body_sha256": "sha256:24153c72cae93bf2ed451d0b9289434e5bbc619add8cf27bc0dee8522fb32b79",
-      "comment": null,
+      "body_sha256": "sha256:314b85e937e6ecfd86216aa9c83f436e7d66a8b8a5d98a447ea46e5333adfc56",
+      "comment": "Find a record by name, alias (former names included) or identifier. A merged record's name leads to its winner.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
-        "20260912011000_km_10_api.sql"
+        "20260912011000_km_10_api.sql",
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
       ],
       "executors": [
         "app_reader",
@@ -23290,6 +24061,7 @@
       "touches": {
         "basis": "best_effort",
         "calls": [
+          "catalog.canonical_entity",
           "util.current_tenant_id"
         ],
         "reads": [
@@ -23742,7 +24514,7 @@
           "type": "boolean"
         }
       ],
-      "body_sha256": "sha256:6b2c304992559616ec07fd2f2fd76f27aa8124e2bb7e509c7baa9176b95a2c00",
+      "body_sha256": "sha256:58b80798a8aba3949c4a04692b1cae04f23ab9c915b7d8ea65f89427f6544cd3",
       "comment": "One search stack: RRF over FTS + trigram + ANN within lens/tier/space/facet filters, a small source-tier boost, an evidence factor 1 + weight x signal (loop 5, D-62, reported as channel_scores.evidence) and (loop 7, D-77) one hit per target: items of one claim, passage or unit in several spaces collapse to the best-ranked one, the others listed in channel_scores.collapsed (best first, the returned item at index 0 removed). p_collapse = false and p_evidence_weight = 0 reproduce the loop-4 order. Trusted callers only (D-82): it takes the private scope from p_workspace_ids, so it is not executable by anon or authenticated; signed-in sessions use api.search_knowledge, and private or released course material is read through api.product_read('search').",
       "config": [
         "search_path=\"\""
@@ -23802,6 +24574,8 @@
       "touches": {
         "basis": "best_effort",
         "calls": [
+          "catalog.canonical_entity",
+          "catalog.with_merged",
           "retrieval.evidence_signal",
           "util.default_tenant_id"
         ],
@@ -24680,6 +25454,697 @@
       "typescript": "Database[\"api\"][\"Functions\"][\"what_changed\"]",
       "volatility": "stable"
     },
+    "fn:catalog._carry_relationship_streams(uuid,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_from_rel",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_to_rel",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:18ec277079ad595f197af342263fb284ebdb2386e28e55685d7ddf08944f466a",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._carry_relationship_streams(uuid,uuid,text)",
+      "identity_arguments": "p_from_rel uuid, p_to_rel uuid, p_reason text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "_carry_relationship_streams",
+      "raises": [],
+      "returns": "void",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog._ensure_stream",
+          "catalog._move_segment",
+          "temporal.current_k",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_carry_relationship_streams\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._ensure_stream(text,uuid,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_kind",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_entity",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_relationship",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_scope_key",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:8dda62c3022df28fd9a32680a0898034436bf2d98bd94c2e626a11cd5dbd5ad0",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._ensure_stream(text,uuid,uuid,text)",
+      "identity_arguments": "p_kind text, p_entity uuid, p_relationship uuid, p_scope_key text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "_ensure_stream",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id"
+        ],
+        "reads": [],
+        "writes": [
+          "temporal.stream"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_ensure_stream\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._log_move(uuid,uuid,text,text,jsonb,text,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_merge",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_split",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_table",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_column",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_row_key",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_action",
+          "type": "text"
+        },
+        {
+          "default": "'{}'::jsonb",
+          "mode": "in",
+          "name": "p_detail",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:2756b1219af50e9cae739804532c52bc5ce0e6b2b18a378043369ae399d58804",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._log_move(uuid,uuid,text,text,jsonb,text,jsonb)",
+      "identity_arguments": "p_merge uuid, p_split uuid, p_table text, p_column text, p_row_key jsonb, p_action text, p_detail jsonb",
+      "kind": "function",
+      "language": "sql",
+      "name": "_log_move",
+      "raises": [],
+      "returns": "void",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": [
+          "catalog.identity_move"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_log_move\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._move_relationship(uuid,uuid,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_relationship",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_from",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_to",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:00f2e8be9bca43eb70f704246e5ad5b955ea08151037ed359efb32942bff898f",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._move_relationship(uuid,uuid,uuid,text)",
+      "identity_arguments": "p_relationship uuid, p_from uuid, p_to uuid, p_reason text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "_move_relationship",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog._carry_relationship_streams",
+          "temporal.current_k",
+          "util.current_tenant_id"
+        ],
+        "reads": [],
+        "writes": [
+          "catalog.relationship"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_move_relationship\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._move_segment(uuid,uuid,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_segment",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_stream",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_ref",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:d518b263285ebb9627db8be723ba5673769709385bd0d8f6b949ec5cf19bc7bb",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._move_segment(uuid,uuid,uuid,text)",
+      "identity_arguments": "p_segment uuid, p_stream uuid, p_ref uuid, p_reason text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "_move_segment",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "temporal.close_segment",
+          "util.current_tenant_id"
+        ],
+        "reads": [],
+        "writes": [
+          "evidence.segment_support",
+          "temporal.segment"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_move_segment\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._reopen_segment(uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_segment",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:aa76e11ca97ec2f05220d326f30b5ef361949a8912777e7c64d65885f39ff9c4",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._reopen_segment(uuid,text)",
+      "identity_arguments": "p_segment uuid, p_reason text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "_reopen_segment",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "util.current_tenant_id"
+        ],
+        "reads": [],
+        "writes": [
+          "evidence.segment_support",
+          "temporal.segment"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_reopen_segment\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._repoint_references(uuid,uuid,uuid,uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_from",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_to",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_merge",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_split",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:e55470458d90f07f0234aacf3f8c23974853f7ec80ae0555331e1a49ab54f765",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._repoint_references(uuid,uuid,uuid,uuid)",
+      "identity_arguments": "p_from uuid, p_to uuid, p_merge uuid, p_split uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "_repoint_references",
+      "raises": [],
+      "returns": "integer",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog._log_move",
+          "catalog._row_key"
+        ],
+        "reads": [
+          "catalog.entity",
+          "catalog.entity_alias",
+          "catalog.entity_identifier",
+          "catalog.entity_merge",
+          "catalog.entity_split",
+          "catalog.entity_split_part",
+          "catalog.relationship",
+          "catalog.work",
+          "orchestration.operation_receipt_target",
+          "temporal.event",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_repoint_references\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog._row_key(regclass,jsonb)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_table",
+          "type": "regclass"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_row",
+          "type": "jsonb"
+        }
+      ],
+      "body_sha256": "sha256:5a0897bfb57087644f88e26ca8fbac8948abdcd34d73a9d95080e4f53440c4de",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:catalog._row_key(regclass,jsonb)",
+      "identity_arguments": "p_table regclass, p_row jsonb",
+      "kind": "function",
+      "language": "sql",
+      "name": "_row_key",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"_row_key\"]",
+      "volatility": "stable"
+    },
+    "fn:catalog.caller_is_person()": {
+      "arguments": [],
+      "body_sha256": "sha256:362d03b8f598971522ffae3ddc6d4cd80bc7dd69a3c742120ffe9876dae3874a",
+      "comment": "True when the session role is the owner of catalog.proposal or a superuser: the same test verification.guard_human_judgment applies. Agent roles are never a person. The person's own path is unit RV10.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.caller_is_person()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "sql",
+      "name": "caller_is_person",
+      "raises": [],
+      "returns": "boolean",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.caller_role"
+        ],
+        "reads": [
+          "catalog.proposal"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"caller_is_person\"]",
+      "volatility": "stable"
+    },
+    "fn:catalog.caller_role()": {
+      "arguments": [],
+      "body_sha256": "sha256:01365f70b82cda64f70b5103632bfda7512bbb392dc9dfa33dd57e0e96f4b1cd",
+      "comment": null,
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.caller_role()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "sql",
+      "name": "caller_role",
+      "raises": [],
+      "returns": "text",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "invoker",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"caller_role\"]",
+      "volatility": "stable"
+    },
+    "fn:catalog.canonical_entity(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_entity",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:6bcdf59c53d799b997ac41e4cb1224d8a95f8d5c88010b778373ce78f661c48d",
+      "comment": "The record a merged record now stands for (itself when it was never merged). Use it where a read returns an entity id from rows a merge could not move.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.canonical_entity(uuid)",
+      "identity_arguments": "p_entity uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "canonical_entity",
+      "raises": [],
+      "returns": "uuid",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "catalog.entity"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"canonical_entity\"]",
+      "volatility": "stable"
+    },
     "fn:catalog.check_receipt_tenant()": {
       "arguments": [],
       "body_sha256": "sha256:e15eb1710af3fc7e29bf238fb31491d244ef427c82a553896ad679a7d9771105",
@@ -24787,6 +26252,68 @@
       "typescript": null,
       "volatility": "volatile"
     },
+    "fn:catalog.entity_references(uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_entity",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:b56f2aca7e67bbec8a4f937c5f9b25fb491c4ba0acb57b848a3fd38607265c95",
+      "comment": "Every table and column that points at this record, with a row count. What a merge has to move.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.entity_references(uuid)",
+      "identity_arguments": "p_entity uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "entity_references",
+      "raises": [],
+      "returns": "TABLE(table_name text, column_name text, row_count bigint)",
+      "returns_set": true,
+      "schema": "catalog",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "catalog.entity"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"entity_references\"]",
+      "volatility": "stable"
+    },
     "fn:catalog.import_research_starter_catalog(uuid)": {
       "arguments": [
         {
@@ -24849,6 +26376,113 @@
       "typescript": "Database[\"catalog\"][\"Functions\"][\"import_research_starter_catalog\"]",
       "volatility": "volatile"
     },
+    "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_loser",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_winner",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_receipt",
+          "type": "uuid"
+        },
+        {
+          "default": "'duplicate_record'::text",
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_note",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_proposal",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:29fbeb9886e2bbd9f02e1cafc303c2a1b20fabe3e92d80166efc1c615f78b20f",
+      "comment": "Merge a duplicate record into its twin, inside an open knowledge batch. Facts and edges close on the loser and reopen on the winner as corrections (duplicate_record); where both hold a fact for the same time the winner's stays. Identifiers, names and other references move; rows a table refuses to change stay and are logged. Same kind only. Undo with catalog.undo_merge.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
+      "identity_arguments": "p_loser uuid, p_winner uuid, p_receipt uuid, p_reason text, p_note text, p_proposal uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "merge_entities",
+      "raises": [
+        "merge: % is not a reason for a merge",
+        "merge: a record cannot be merged into itself",
+        "merge: both records must be of the same kind (% and %)",
+        "merge: no record %",
+        "merge: record % is % and cannot be merged again",
+        "merge: the winner % is %, not active",
+        "no open knowledge batch"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog._ensure_stream",
+          "catalog._log_move",
+          "catalog._move_relationship",
+          "catalog._move_segment",
+          "catalog._repoint_references",
+          "temporal.current_k",
+          "util.current_tenant_id",
+          "util.uuidv7"
+        ],
+        "reads": [
+          "catalog.identity_move",
+          "catalog.relationship",
+          "temporal.correction_reason",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": [
+          "catalog.entity",
+          "catalog.entity_alias",
+          "catalog.entity_identifier",
+          "catalog.entity_merge",
+          "temporal.event"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"merge_entities\"]",
+      "volatility": "volatile"
+    },
     "fn:catalog.rebuild_entity_projections(int8)": {
       "arguments": [
         {
@@ -24906,6 +26540,206 @@
         ]
       },
       "typescript": "Database[\"catalog\"][\"Functions\"][\"rebuild_entity_projections\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_source",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_parts",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_receipt",
+          "type": "uuid"
+        },
+        {
+          "default": "'mixed_record'::text",
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_note",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_proposal",
+          "type": "uuid"
+        },
+        {
+          "default": "false",
+          "mode": "in",
+          "name": "p_retire_source",
+          "type": "boolean"
+        }
+      ],
+      "body_sha256": "sha256:e6500f668840eb1908698433fafef6a1a1fd4321bde5be7953ac4b9a26117b8e",
+      "comment": "Split a record that mixed several things, inside an open knowledge batch. Each part names the edges, fact streams and identifiers that move to it (as corrections, wrong_entity); \"adopt\" records moves made earlier by hand; \"references\":\"all\" repoints every other table to that part. p_retire_source retires a record that was nothing but the mix.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)",
+      "identity_arguments": "p_source uuid, p_parts jsonb, p_receipt uuid, p_reason text, p_note text, p_proposal uuid, p_retire_source boolean",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "split_entity",
+      "raises": [
+        "no open knowledge batch",
+        "split: % is not a closed edge of the mixed record",
+        "split: % is not a current edge of the mixed record",
+        "split: % is not a fact stream of the mixed record",
+        "split: % is not a reason for a split",
+        "split: % is not an identifier of the mixed record",
+        "split: % is not the edge that replaced it on the part",
+        "split: a part cannot be the mixed record itself",
+        "split: no part record %",
+        "split: no record %",
+        "split: p_parts is an array of at least one part",
+        "split: part % must be an active record of kind %",
+        "split: record % is %, not active"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog._ensure_stream",
+          "catalog._log_move",
+          "catalog._move_relationship",
+          "catalog._move_segment",
+          "catalog._repoint_references",
+          "temporal.current_k",
+          "util.current_tenant_id",
+          "util.uuidv7"
+        ],
+        "reads": [
+          "catalog.identity_move",
+          "temporal.correction_reason",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": [
+          "catalog.entity",
+          "catalog.entity_identifier",
+          "catalog.entity_split",
+          "catalog.entity_split_part",
+          "catalog.relationship"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"split_entity\"]",
+      "volatility": "volatile"
+    },
+    "fn:catalog.undo_merge(uuid,uuid,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_merge",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_receipt",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_note",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:389365d69bc6713b096602d38ac68e5e6f83657d9690a8e5db81fbad076ba9e3",
+      "comment": "Reverse a merge from its move log, inside an open knowledge batch. History keeps both the merge and its undoing.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.undo_merge(uuid,uuid,text)",
+      "identity_arguments": "p_merge uuid, p_receipt uuid, p_note text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "undo_merge",
+      "raises": [
+        "no open knowledge batch",
+        "the moved fact was replaced since the merge",
+        "undo: no merge %",
+        "undo: the record is no longer merged into that winner"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog._carry_relationship_streams",
+          "catalog._move_relationship",
+          "catalog._move_segment",
+          "catalog._reopen_segment",
+          "temporal.current_k",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "catalog.entity_identifier",
+          "temporal.segment"
+        ],
+        "writes": [
+          "catalog.entity",
+          "catalog.entity_alias",
+          "catalog.entity_merge",
+          "catalog.identity_move",
+          "catalog.relationship",
+          "temporal.event"
+        ]
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"undo_merge\"]",
       "volatility": "volatile"
     },
     "fn:catalog.validate_entity_attributes()": {
@@ -24977,6 +26811,82 @@
       },
       "typescript": null,
       "volatility": "volatile"
+    },
+    "fn:catalog.with_merged(uuid[])": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_ids",
+          "type": "uuid[]"
+        }
+      ],
+      "body_sha256": "sha256:01759dc57eb677faaa412e0935d0fe0688ecef4372ee719b263af8867111cd36",
+      "comment": "The given records plus every record merged into them.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "anon",
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "anon": [
+          "EXECUTE"
+        ],
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:catalog.with_merged(uuid[])",
+      "identity_arguments": "p_ids uuid[]",
+      "kind": "function",
+      "language": "sql",
+      "name": "with_merged",
+      "raises": [],
+      "returns": "uuid[]",
+      "returns_set": false,
+      "schema": "catalog",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "catalog.canonical_entity"
+        ],
+        "reads": [
+          "catalog.entity"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"catalog\"][\"Functions\"][\"with_merged\"]",
+      "volatility": "stable"
     },
     "fn:content.check_document_work()": {
       "arguments": [],
@@ -37842,7 +39752,7 @@
       "typescript": "Database[\"temporal\"][\"Functions\"][\"assert_relationship\"]",
       "volatility": "volatile"
     },
-    "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)": {
+    "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)": {
       "arguments": [
         {
           "default": null,
@@ -37933,63 +39843,62 @@
           "mode": "in",
           "name": "p_belief",
           "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_revision_kind",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_correction_reason",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_caused_by_event",
+          "type": "uuid"
         }
       ],
-      "body_sha256": "sha256:e96e4abf8887bf18892f2a1e6a462b0d100515f875855a159079f735b6b878d2",
-      "comment": null,
+      "body_sha256": "sha256:90ea73f82fae43445780a6558b1ff410a82a0d95e38d24c5e2f8630925eb6821",
+      "comment": "Assert a fact. A replacement is a world_change (the new fact starts later than the one it replaces; may name p_caused_by_event) or a correction (it rewrites the past; p_correction_reason required). Saying nothing is allowed only for a world change.",
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
         "20260912010400_km_04_temporal.sql",
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql",
         "part1_renames.sql"
       ],
       "executors": [
-        "anon",
-        "app_reader",
-        "authenticated",
-        "control_plane",
         "executor_service",
-        "pipeline_agent",
-        "service_role",
-        "verifier_agent"
+        "service_role"
       ],
       "grants": {
-        "anon": [
-          "EXECUTE"
-        ],
-        "app_reader": [
-          "EXECUTE"
-        ],
-        "authenticated": [
-          "EXECUTE"
-        ],
-        "control_plane": [
-          "EXECUTE"
-        ],
         "executor_service": [
-          "EXECUTE"
-        ],
-        "pipeline_agent": [
           "EXECUTE"
         ],
         "service_role": [
           "EXECUTE"
-        ],
-        "verifier_agent": [
-          "EXECUTE"
         ]
       },
-      "id": "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
-      "identity_arguments": "p_entity uuid, p_stream_kind text, p_valid_during tstzrange, p_scope_key text, p_status text, p_amount numeric, p_currency text, p_unit text, p_ref_entity uuid, p_payload jsonb, p_extent uuid, p_claim uuid, p_temporal_basis text, p_relationship uuid, p_belief text",
+      "id": "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
+      "identity_arguments": "p_entity uuid, p_stream_kind text, p_valid_during tstzrange, p_scope_key text, p_status text, p_amount numeric, p_currency text, p_unit text, p_ref_entity uuid, p_payload jsonb, p_extent uuid, p_claim uuid, p_temporal_basis text, p_relationship uuid, p_belief text, p_revision_kind text, p_correction_reason text, p_caused_by_event uuid",
       "kind": "function",
       "language": "plpgsql",
       "name": "assert_state",
       "raises": [
+        "a correction reason belongs to a correction",
+        "a world change cannot rewrite the start of the fact it replaces",
+        "correction requires a reason",
         "entity stream cannot target relationship",
         "no open knowledge batch",
         "relationship stream cannot target entity",
+        "revision kind is world_change or correction",
         "stream does not admit entity kind",
         "stream does not admit relationship kind"
       ],
@@ -38008,6 +39917,7 @@
           "catalog.entity",
           "catalog.relationship",
           "taxonomy.relationship_kind",
+          "temporal.correction_reason",
           "temporal.stream_kind"
         ],
         "writes": [
@@ -38071,6 +39981,109 @@
         ]
       },
       "typescript": "Database[\"temporal\"][\"Functions\"][\"begin_batch\"]",
+      "volatility": "volatile"
+    },
+    "fn:temporal.close_relationship(uuid,text,text,uuid,timestamptz,uuid,uuid)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_relationship",
+          "type": "uuid"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_closed_kind",
+          "type": "text"
+        },
+        {
+          "default": "NULL::text",
+          "mode": "in",
+          "name": "p_reason",
+          "type": "text"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_event",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::timestamp with time zone",
+          "mode": "in",
+          "name": "p_world_end",
+          "type": "timestamp with time zone"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_extent",
+          "type": "uuid"
+        },
+        {
+          "default": "NULL::uuid",
+          "mode": "in",
+          "name": "p_claim",
+          "type": "uuid"
+        }
+      ],
+      "body_sha256": "sha256:4a62fba8c0263b37bb12aa00e4e4f126230576e155210709563042bb7b34970c",
+      "comment": "End an edge. correction: the edge was wrong; it leaves current knowledge with a coded reason. world_change: the edge was true and ended; an edge that carries world time keeps its row and its relationship_active fact ends at p_world_end with the cause event.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "executors": [
+        "executor_service",
+        "service_role"
+      ],
+      "grants": {
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:temporal.close_relationship(uuid,text,text,uuid,timestamptz,uuid,uuid)",
+      "identity_arguments": "p_relationship uuid, p_closed_kind text, p_reason text, p_event uuid, p_world_end timestamp with time zone, p_extent uuid, p_claim uuid",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "close_relationship",
+      "raises": [
+        "a correction reason belongs to a correction",
+        "a world ending of a temporal relationship needs p_world_end",
+        "closed kind is world_change or correction",
+        "correction requires a reason",
+        "current relationship not found",
+        "no open knowledge batch"
+      ],
+      "returns": "void",
+      "returns_set": false,
+      "schema": "temporal",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [
+          "temporal.assert_state",
+          "temporal.close_segment",
+          "temporal.current_k",
+          "util.current_tenant_id"
+        ],
+        "reads": [
+          "taxonomy.relationship_kind",
+          "temporal.correction_reason",
+          "temporal.segment",
+          "temporal.stream"
+        ],
+        "writes": [
+          "catalog.relationship"
+        ]
+      },
+      "typescript": "Database[\"temporal\"][\"Functions\"][\"close_relationship\"]",
       "volatility": "volatile"
     },
     "fn:temporal.close_segment(uuid)": {
@@ -38319,13 +40332,14 @@
     },
     "fn:temporal.guard_k()": {
       "arguments": [],
-      "body_sha256": "sha256:7c02ca4936b32d84d3aa6777c1f650f2b8282980caae3c9772e362524fad2b25",
+      "body_sha256": "sha256:c275ac5c366fae997ac714cfc6a84bf61e92a260a446c67f213cbbd2cbfb84c4",
       "comment": null,
       "config": [
         "search_path=\"\""
       ],
       "defined_in": [
-        "20260912010400_km_04_temporal.sql"
+        "20260912010400_km_04_temporal.sql",
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
       ],
       "executors": [
         "executor_service",
@@ -48622,12 +50636,37 @@
           "nullable": true,
           "position": 23,
           "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.current_facts.revision_kind",
+          "identity": null,
+          "name": "revision_kind",
+          "nullable": true,
+          "position": 24,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:api.current_facts.correction_reason",
+          "identity": null,
+          "name": "correction_reason",
+          "nullable": true,
+          "position": 25,
+          "type": "text"
         }
       ],
       "comment": null,
       "defined_in": [
         "20260912011000_km_10_api.sql",
         "20261108120000_build08_r2_knowledge_continuum.sql",
+        "20261119121000_build09_rv01_current_fact_rows.sql",
         "part1_renames.sql"
       ],
       "exclusions": [],
@@ -48683,7 +50722,7 @@
         "row": "Database[\"api\"][\"Views\"][\"current_facts\"][\"Row\"]"
       },
       "unique": [],
-      "view_definition": " SELECT id,\n    tenant_id,\n    stream_id,\n    valid_during,\n    belief,\n    temporal_basis,\n    status,\n    amount,\n    currency,\n    unit,\n    ref_entity_id,\n    payload,\n    extent_id,\n    caused_by_event_id,\n    replaces_segment_id,\n    primary_claim_id,\n    k_from,\n    k_to,\n    created_at,\n    stream_kind,\n    subject_entity_id,\n    subject_relationship_id,\n    scope_key\n   FROM api.current_fact_rows() current_fact_rows(id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, stream_kind, subject_entity_id, subject_relationship_id, scope_key);",
+      "view_definition": " SELECT id,\n    tenant_id,\n    stream_id,\n    valid_during,\n    belief,\n    temporal_basis,\n    status,\n    amount,\n    currency,\n    unit,\n    ref_entity_id,\n    payload,\n    extent_id,\n    caused_by_event_id,\n    replaces_segment_id,\n    primary_claim_id,\n    k_from,\n    k_to,\n    created_at,\n    stream_kind,\n    subject_entity_id,\n    subject_relationship_id,\n    scope_key,\n    revision_kind,\n    correction_reason\n   FROM api.current_fact_rows() current_fact_rows(id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, stream_kind, subject_entity_id, subject_relationship_id, scope_key, revision_kind, correction_reason);",
       "writers": []
     },
     "rel:api.current_relationships": {
@@ -65531,10 +67570,50 @@
         },
         {
           "columns": [
+            "from_entity_id"
+          ],
+          "constraint": "entity_split_from_entity_id_fkey",
+          "from": "rel:catalog.entity_split",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "to_entity_id"
+          ],
+          "constraint": "entity_split_part_to_entity_id_fkey",
+          "from": "rel:catalog.entity_split_part",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
             "product_entity_id"
           ],
           "constraint": "media_platform_product_entity_id_fkey",
           "from": "rel:catalog.media_platform",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "object_entity_id"
+          ],
+          "constraint": "proposal_object_entity_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "subject_entity_id"
+          ],
+          "constraint": "proposal_subject_entity_id_fkey",
+          "from": "rel:catalog.proposal",
           "to_columns": [
             "id"
           ]
@@ -66837,9 +68916,99 @@
           "nullable": false,
           "position": 7,
           "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "code"
+            ],
+            "constraint": "entity_merge_reason_code_fkey",
+            "to": "rel:temporal.correction_reason"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_merge.reason_code",
+          "identity": null,
+          "name": "reason_code",
+          "nullable": true,
+          "position": 8,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_merge.note",
+          "identity": null,
+          "name": "note",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_merge_proposal_id_fkey",
+            "to": "rel:catalog.proposal"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_merge.proposal_id",
+          "identity": null,
+          "name": "proposal_id",
+          "nullable": true,
+          "position": 10,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_merge.knowledge_seq",
+          "identity": null,
+          "name": "knowledge_seq",
+          "nullable": true,
+          "position": 11,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_merge.undone_at",
+          "identity": null,
+          "name": "undone_at",
+          "nullable": true,
+          "position": 12,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_merge_undone_receipt_id_fkey",
+            "to": "rel:orchestration.operation_receipt"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_merge.undone_receipt_id",
+          "identity": null,
+          "name": "undone_receipt_id",
+          "nullable": true,
+          "position": 13,
+          "type": "uuid"
         }
       ],
-      "comment": null,
+      "comment": "A merge of two records that were one thing (our mistake, never a merger in the world). Written by catalog.merge_entities; what moved is in catalog.identity_move; undone_at marks a merge that was reversed.",
       "defined_in": [],
       "exclusions": [],
       "foreign_keys": [
@@ -66854,6 +69023,32 @@
           "to": "rel:catalog.entity",
           "to_columns": [
             "id"
+          ]
+        },
+        {
+          "columns": [
+            "proposal_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_merge_proposal_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "reason_code"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_merge_reason_code_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.correction_reason",
+          "to_columns": [
+            "code"
           ]
         },
         {
@@ -66911,6 +69106,19 @@
           "to_columns": [
             "id"
           ]
+        },
+        {
+          "columns": [
+            "undone_receipt_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_merge_undone_receipt_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:orchestration.operation_receipt",
+          "to_columns": [
+            "id"
+          ]
         }
       ],
       "grants": {
@@ -66939,6 +69147,16 @@
       },
       "id": "rel:catalog.entity_merge",
       "inbound_foreign_keys": [
+        {
+          "columns": [
+            "merge_id"
+          ],
+          "constraint": "identity_move_merge_id_fkey",
+          "from": "rel:catalog.identity_move",
+          "to_columns": [
+            "id"
+          ]
+        },
         {
           "columns": [
             "entity_merge_id"
@@ -67011,6 +69229,766 @@
         "executor_service",
         "service_role"
       ]
+    },
+    "rel:catalog.entity_split": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.uuidv7()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.id",
+          "identity": null,
+          "name": "id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": "util.current_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_split_from_entity_id_fkey",
+            "to": "rel:catalog.entity"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_split.from_entity_id",
+          "identity": null,
+          "name": "from_entity_id",
+          "nullable": false,
+          "position": 3,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "code"
+            ],
+            "constraint": "entity_split_reason_code_fkey",
+            "to": "rel:temporal.correction_reason"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_split.reason_code",
+          "identity": null,
+          "name": "reason_code",
+          "nullable": false,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.note",
+          "identity": null,
+          "name": "note",
+          "nullable": true,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_split_proposal_id_fkey",
+            "to": "rel:catalog.proposal"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_split.proposal_id",
+          "identity": null,
+          "name": "proposal_id",
+          "nullable": true,
+          "position": 6,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_split_receipt_id_fkey",
+            "to": "rel:orchestration.operation_receipt"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_split.receipt_id",
+          "identity": null,
+          "name": "receipt_id",
+          "nullable": false,
+          "position": 7,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.knowledge_seq",
+          "identity": null,
+          "name": "knowledge_seq",
+          "nullable": true,
+          "position": 8,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": "false",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.source_retired",
+          "identity": null,
+          "name": "source_retired",
+          "nullable": false,
+          "position": 9,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.undone_at",
+          "identity": null,
+          "name": "undone_at",
+          "nullable": true,
+          "position": 10,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split.created_at",
+          "identity": null,
+          "name": "created_at",
+          "nullable": false,
+          "position": 11,
+          "type": "timestamp with time zone"
+        }
+      ],
+      "comment": "A split of one record that mixed several things (our mistake, never a split in the world). The parts are in catalog.entity_split_part; what moved is in catalog.identity_move.",
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "from_entity_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_split_from_entity_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "proposal_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_split_proposal_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "reason_code"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_split_reason_code_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.correction_reason",
+          "to_columns": [
+            "code"
+          ]
+        },
+        {
+          "columns": [
+            "receipt_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_split_receipt_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:orchestration.operation_receipt",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:catalog.entity_split",
+      "inbound_foreign_keys": [
+        {
+          "columns": [
+            "split_id"
+          ],
+          "constraint": "entity_split_part_split_id_fkey",
+          "from": "rel:catalog.entity_split_part",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "split_id"
+          ],
+          "constraint": "identity_move_split_id_fkey",
+          "from": "rel:catalog.identity_move",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": [
+        {
+          "definition": "CREATE UNIQUE INDEX entity_split_tenant_id_id_key ON catalog.entity_split USING btree (tenant_id, id)",
+          "id": "idx:catalog.entity_split_tenant_id_id_key",
+          "method": "btree",
+          "name": "entity_split_tenant_id_id_key",
+          "predicate": null,
+          "unique": true
+        }
+      ],
+      "kind": "table",
+      "name": "entity_split",
+      "partitions": null,
+      "primary_key": [
+        "id"
+      ],
+      "readers": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:catalog.entity_split.km_tenant_access",
+            "name": "km_tenant_access",
+            "permissive": true,
+            "roles": [
+              "control_plane",
+              "executor_service",
+              "pipeline_agent",
+              "verifier_agent"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": "(tenant_id = util.current_tenant_id())"
+          }
+        ]
+      },
+      "schema": "catalog",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"catalog\"][\"Tables\"][\"entity_split\"][\"Insert\"]",
+        "row": "Database[\"catalog\"][\"Tables\"][\"entity_split\"][\"Row\"]",
+        "update": "Database[\"catalog\"][\"Tables\"][\"entity_split\"][\"Update\"]"
+      },
+      "unique": [
+        [
+          "tenant_id",
+          "id"
+        ]
+      ],
+      "view_definition": null,
+      "writers": []
+    },
+    "rel:catalog.entity_split_part": {
+      "checks": [],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.current_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.entity_split_part.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_split_part_split_id_fkey",
+            "to": "rel:catalog.entity_split"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_split_part.split_id",
+          "identity": null,
+          "name": "split_id",
+          "nullable": false,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "entity_split_part_to_entity_id_fkey",
+            "to": "rel:catalog.entity"
+          },
+          "generated": null,
+          "id": "col:catalog.entity_split_part.to_entity_id",
+          "identity": null,
+          "name": "to_entity_id",
+          "nullable": false,
+          "position": 3,
+          "type": "uuid"
+        }
+      ],
+      "comment": "One record that a mixed record was split into.",
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "split_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_split_part_split_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity_split",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "to_entity_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "entity_split_part_to_entity_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:catalog.entity_split_part",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "table",
+      "name": "entity_split_part",
+      "partitions": null,
+      "primary_key": [
+        "split_id",
+        "to_entity_id"
+      ],
+      "readers": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:catalog.entity_split_part.km_tenant_access",
+            "name": "km_tenant_access",
+            "permissive": true,
+            "roles": [
+              "control_plane",
+              "executor_service",
+              "pipeline_agent",
+              "verifier_agent"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": "(tenant_id = util.current_tenant_id())"
+          }
+        ]
+      },
+      "schema": "catalog",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"catalog\"][\"Tables\"][\"entity_split_part\"][\"Insert\"]",
+        "row": "Database[\"catalog\"][\"Tables\"][\"entity_split_part\"][\"Row\"]",
+        "update": "Database[\"catalog\"][\"Tables\"][\"entity_split_part\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": []
+    },
+    "rel:catalog.identity_move": {
+      "checks": [
+        {
+          "expression": "(action = ANY (ARRAY['moved'::text, 'closed_as_duplicate'::text, 'kept_on_source'::text, 'adopted'::text, 'added'::text]))",
+          "name": "identity_move_action_check"
+        },
+        {
+          "expression": "(num_nonnulls(merge_id, split_id) = 1)",
+          "name": "identity_move_one_parent"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.uuidv7()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.id",
+          "identity": null,
+          "name": "id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.seq",
+          "identity": "always",
+          "name": "seq",
+          "nullable": false,
+          "position": 2,
+          "type": "bigint"
+        },
+        {
+          "comment": null,
+          "default": "util.current_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 3,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "identity_move_merge_id_fkey",
+            "to": "rel:catalog.entity_merge"
+          },
+          "generated": null,
+          "id": "col:catalog.identity_move.merge_id",
+          "identity": null,
+          "name": "merge_id",
+          "nullable": true,
+          "position": 4,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "identity_move_split_id_fkey",
+            "to": "rel:catalog.entity_split"
+          },
+          "generated": null,
+          "id": "col:catalog.identity_move.split_id",
+          "identity": null,
+          "name": "split_id",
+          "nullable": true,
+          "position": 5,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.table_name",
+          "identity": null,
+          "name": "table_name",
+          "nullable": false,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.column_name",
+          "identity": null,
+          "name": "column_name",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.row_key",
+          "identity": null,
+          "name": "row_key",
+          "nullable": false,
+          "position": 8,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.action",
+          "identity": null,
+          "name": "action",
+          "nullable": false,
+          "position": 9,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": "'{}'::jsonb",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.detail",
+          "identity": null,
+          "name": "detail",
+          "nullable": false,
+          "position": 10,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": "false",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.undone",
+          "identity": null,
+          "name": "undone",
+          "nullable": false,
+          "position": 11,
+          "type": "boolean"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.identity_move.created_at",
+          "identity": null,
+          "name": "created_at",
+          "nullable": false,
+          "position": 12,
+          "type": "timestamp with time zone"
+        }
+      ],
+      "comment": "One row per row touched by a merge or a split: moved, closed_as_duplicate (the winner already had it), kept_on_source (the table refused the change), adopted (a move made earlier by hand, now recorded) or added (an alias). The log an undo reads.",
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "merge_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "identity_move_merge_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity_merge",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "split_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "identity_move_split_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity_split",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:catalog.identity_move",
+      "inbound_foreign_keys": [],
+      "indexes": [
+        {
+          "definition": "CREATE INDEX identity_move_merge_idx ON catalog.identity_move USING btree (merge_id)",
+          "id": "idx:catalog.identity_move_merge_idx",
+          "method": "btree",
+          "name": "identity_move_merge_idx",
+          "predicate": null,
+          "unique": false
+        },
+        {
+          "definition": "CREATE INDEX identity_move_split_idx ON catalog.identity_move USING btree (split_id)",
+          "id": "idx:catalog.identity_move_split_idx",
+          "method": "btree",
+          "name": "identity_move_split_idx",
+          "predicate": null,
+          "unique": false
+        }
+      ],
+      "kind": "table",
+      "name": "identity_move",
+      "partitions": null,
+      "primary_key": [
+        "id"
+      ],
+      "readers": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:catalog.identity_move.km_tenant_access",
+            "name": "km_tenant_access",
+            "permissive": true,
+            "roles": [
+              "control_plane",
+              "executor_service",
+              "pipeline_agent",
+              "verifier_agent"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": "(tenant_id = util.current_tenant_id())"
+          }
+        ]
+      },
+      "schema": "catalog",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"catalog\"][\"Tables\"][\"identity_move\"][\"Insert\"]",
+        "row": "Database[\"catalog\"][\"Tables\"][\"identity_move\"][\"Row\"]",
+        "update": "Database[\"catalog\"][\"Tables\"][\"identity_move\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": []
     },
     "rel:catalog.license": {
       "checks": [],
@@ -67291,6 +70269,1017 @@
         "service_role"
       ]
     },
+    "rel:catalog.proposal": {
+      "checks": [
+        {
+          "expression": "((authored_by_kind <> 'agent'::text) OR (review_state <> 'person_proposed'::text))",
+          "name": "proposal_agent_state"
+        },
+        {
+          "expression": "(btrim(authored_by) <> ''::text)",
+          "name": "proposal_authored_by_check"
+        },
+        {
+          "expression": "(authored_by_kind = ANY (ARRAY['person'::text, 'agent'::text]))",
+          "name": "proposal_authored_by_kind_check"
+        },
+        {
+          "expression": "((proposal_kind <> 'cause'::text) OR (num_nonnulls(target_segment_id, target_event_id, target_relationship_id) = 1))",
+          "name": "proposal_cause_shape"
+        },
+        {
+          "expression": "(confidence = ANY (ARRAY['low'::text, 'medium'::text, 'high'::text]))",
+          "name": "proposal_confidence_check"
+        },
+        {
+          "expression": "((proposal_kind <> 'identity'::text) OR ((subject_entity_id IS NOT NULL) AND (object_entity_id IS DISTINCT FROM subject_entity_id)))",
+          "name": "proposal_identity_shape"
+        },
+        {
+          "expression": "((review_state <> ALL (ARRAY['confirmed_by_source'::text, 'refuted_by_source'::text])) OR (outcome_claim_id IS NOT NULL))",
+          "name": "proposal_outcome_has_claim"
+        },
+        {
+          "expression": "(proposal_kind = ANY (ARRAY['relationship'::text, 'cause'::text, 'identity'::text]))",
+          "name": "proposal_proposal_kind_check"
+        },
+        {
+          "expression": "(publication = ANY (ARRAY['private'::text, 'published'::text]))",
+          "name": "proposal_publication_check"
+        },
+        {
+          "expression": "((publication = 'private'::text) OR (review_state = ANY (ARRAY['person_proposed'::text, 'endorsed'::text, 'confirmed_by_source'::text])))",
+          "name": "proposal_published_is_reviewed"
+        },
+        {
+          "expression": "((length(btrim(rationale)) >= 1) AND (length(btrim(rationale)) <= 8000))",
+          "name": "proposal_rationale_check"
+        },
+        {
+          "expression": "((proposal_kind <> 'relationship'::text) OR ((subject_entity_id IS NOT NULL) AND (object_entity_id IS NOT NULL) AND (subject_entity_id <> object_entity_id) AND (num_nonnulls(relationship_kind, NULLIF(btrim(label), ''::text)) >= 1)))",
+          "name": "proposal_relationship_shape"
+        },
+        {
+          "expression": "(review_state = ANY (ARRAY['agent_proposed'::text, 'person_proposed'::text, 'endorsed'::text, 'rejected'::text, 'withdrawn'::text, 'confirmed_by_source'::text, 'refuted_by_source'::text]))",
+          "name": "proposal_review_state_check"
+        },
+        {
+          "expression": "((length(btrim(statement)) >= 1) AND (length(btrim(statement)) <= 2000))",
+          "name": "proposal_statement_check"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.uuidv7()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.id",
+          "identity": null,
+          "name": "id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": "util.current_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.proposal_kind",
+          "identity": null,
+          "name": "proposal_kind",
+          "nullable": false,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_subject_entity_id_fkey",
+            "to": "rel:catalog.entity"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.subject_entity_id",
+          "identity": null,
+          "name": "subject_entity_id",
+          "nullable": true,
+          "position": 4,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_object_entity_id_fkey",
+            "to": "rel:catalog.entity"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.object_entity_id",
+          "identity": null,
+          "name": "object_entity_id",
+          "nullable": true,
+          "position": 5,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "code"
+            ],
+            "constraint": "proposal_relationship_kind_fkey",
+            "to": "rel:taxonomy.relationship_kind"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.relationship_kind",
+          "identity": null,
+          "name": "relationship_kind",
+          "nullable": true,
+          "position": 6,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.label",
+          "identity": null,
+          "name": "label",
+          "nullable": true,
+          "position": 7,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_target_segment_id_fkey",
+            "to": "rel:temporal.segment"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.target_segment_id",
+          "identity": null,
+          "name": "target_segment_id",
+          "nullable": true,
+          "position": 8,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_target_event_id_fkey",
+            "to": "rel:temporal.event"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.target_event_id",
+          "identity": null,
+          "name": "target_event_id",
+          "nullable": true,
+          "position": 9,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_target_relationship_id_fkey",
+            "to": "rel:catalog.relationship"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.target_relationship_id",
+          "identity": null,
+          "name": "target_relationship_id",
+          "nullable": true,
+          "position": 10,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_cause_event_id_fkey",
+            "to": "rel:temporal.event"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.cause_event_id",
+          "identity": null,
+          "name": "cause_event_id",
+          "nullable": true,
+          "position": 11,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.statement",
+          "identity": null,
+          "name": "statement",
+          "nullable": false,
+          "position": 12,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.rationale",
+          "identity": null,
+          "name": "rationale",
+          "nullable": false,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.world_during",
+          "identity": null,
+          "name": "world_during",
+          "nullable": true,
+          "position": 14,
+          "type": "tstzrange"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.confidence",
+          "identity": null,
+          "name": "confidence",
+          "nullable": false,
+          "position": 15,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.authored_by_kind",
+          "identity": null,
+          "name": "authored_by_kind",
+          "nullable": false,
+          "position": 16,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.authored_by",
+          "identity": null,
+          "name": "authored_by",
+          "nullable": false,
+          "position": 17,
+          "type": "text"
+        },
+        {
+          "comment": "agent_proposed, person_proposed, endorsed, rejected, withdrawn, confirmed_by_source or refuted_by_source. Anything but agent_proposed is a person's judgment.",
+          "default": "'agent_proposed'::text",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.review_state",
+          "identity": null,
+          "name": "review_state",
+          "nullable": false,
+          "position": 18,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.decided_by",
+          "identity": null,
+          "name": "decided_by",
+          "nullable": true,
+          "position": 19,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.decided_at",
+          "identity": null,
+          "name": "decided_at",
+          "nullable": true,
+          "position": 20,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.decision_note",
+          "identity": null,
+          "name": "decision_note",
+          "nullable": true,
+          "position": 21,
+          "type": "text"
+        },
+        {
+          "comment": "The sourced claim that later confirmed or refuted the proposal.",
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_outcome_claim_id_fkey",
+            "to": "rel:evidence.claim"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.outcome_claim_id",
+          "identity": null,
+          "name": "outcome_claim_id",
+          "nullable": true,
+          "position": 22,
+          "type": "uuid"
+        },
+        {
+          "comment": "private (default) or published. Only a person publishes.",
+          "default": "'private'::text",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.publication",
+          "identity": null,
+          "name": "publication",
+          "nullable": false,
+          "position": 23,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.published_at",
+          "identity": null,
+          "name": "published_at",
+          "nullable": true,
+          "position": 24,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.published_by",
+          "identity": null,
+          "name": "published_by",
+          "nullable": true,
+          "position": 25,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_created_by_receipt_id_fkey",
+            "to": "rel:orchestration.operation_receipt"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal.created_by_receipt_id",
+          "identity": null,
+          "name": "created_by_receipt_id",
+          "nullable": true,
+          "position": 26,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.created_at",
+          "identity": null,
+          "name": "created_at",
+          "nullable": false,
+          "position": 27,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal.updated_at",
+          "identity": null,
+          "name": "updated_at",
+          "nullable": false,
+          "position": 28,
+          "type": "timestamp with time zone"
+        }
+      ],
+      "comment": "Our own view, never a fact: what a person or an agent proposes about how two things relate (relationship), why a recorded change happened (cause), or whether records are the same thing or a mix (identity). Private unless a person publishes it. No other read shows these rows.",
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "cause_event_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_cause_event_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.event",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "created_by_receipt_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_created_by_receipt_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:orchestration.operation_receipt",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "object_entity_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_object_entity_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "outcome_claim_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_outcome_claim_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:evidence.claim",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "relationship_kind"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_relationship_kind_fkey",
+          "on_delete": "no action",
+          "to": "rel:taxonomy.relationship_kind",
+          "to_columns": [
+            "code"
+          ]
+        },
+        {
+          "columns": [
+            "subject_entity_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_subject_entity_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.entity",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "target_event_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_target_event_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.event",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "target_relationship_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_target_relationship_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.relationship",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "target_segment_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_target_segment_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.segment",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:catalog.proposal",
+      "inbound_foreign_keys": [
+        {
+          "columns": [
+            "proposal_id"
+          ],
+          "constraint": "entity_merge_proposal_id_fkey",
+          "from": "rel:catalog.entity_merge",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "proposal_id"
+          ],
+          "constraint": "entity_split_proposal_id_fkey",
+          "from": "rel:catalog.entity_split",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "proposal_id"
+          ],
+          "constraint": "proposal_basis_proposal_id_fkey",
+          "from": "rel:catalog.proposal_basis",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "indexes": [
+        {
+          "definition": "CREATE INDEX proposal_object_idx ON catalog.proposal USING btree (tenant_id, object_entity_id)",
+          "id": "idx:catalog.proposal_object_idx",
+          "method": "btree",
+          "name": "proposal_object_idx",
+          "predicate": null,
+          "unique": false
+        },
+        {
+          "definition": "CREATE INDEX proposal_subject_idx ON catalog.proposal USING btree (tenant_id, subject_entity_id)",
+          "id": "idx:catalog.proposal_subject_idx",
+          "method": "btree",
+          "name": "proposal_subject_idx",
+          "predicate": null,
+          "unique": false
+        },
+        {
+          "definition": "CREATE UNIQUE INDEX proposal_tenant_id_id_key ON catalog.proposal USING btree (tenant_id, id)",
+          "id": "idx:catalog.proposal_tenant_id_id_key",
+          "method": "btree",
+          "name": "proposal_tenant_id_id_key",
+          "predicate": null,
+          "unique": true
+        }
+      ],
+      "kind": "table",
+      "name": "proposal",
+      "partitions": null,
+      "primary_key": [
+        "id"
+      ],
+      "readers": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:catalog.proposal.km_tenant_access",
+            "name": "km_tenant_access",
+            "permissive": true,
+            "roles": [
+              "control_plane",
+              "executor_service",
+              "pipeline_agent",
+              "verifier_agent"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": "(tenant_id = util.current_tenant_id())"
+          }
+        ]
+      },
+      "schema": "catalog",
+      "triggers": [
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER proposal_human_judgment BEFORE INSERT OR UPDATE ON catalog.proposal FOR EACH ROW EXECUTE FUNCTION verification.guard_human_judgment()",
+          "function": "verification.guard_human_judgment",
+          "id": "trg:catalog.proposal.proposal_human_judgment",
+          "initially_deferred": false,
+          "name": "proposal_human_judgment"
+        }
+      ],
+      "typescript": {
+        "insert": "Database[\"catalog\"][\"Tables\"][\"proposal\"][\"Insert\"]",
+        "row": "Database[\"catalog\"][\"Tables\"][\"proposal\"][\"Row\"]",
+        "update": "Database[\"catalog\"][\"Tables\"][\"proposal\"][\"Update\"]"
+      },
+      "unique": [
+        [
+          "tenant_id",
+          "id"
+        ]
+      ],
+      "view_definition": null,
+      "writers": []
+    },
+    "rel:catalog.proposal_basis": {
+      "checks": [
+        {
+          "expression": "(num_nonnulls(claim_id, segment_id, event_id, relationship_id) = 1)",
+          "name": "proposal_basis_one_target"
+        },
+        {
+          "expression": "(role = ANY (ARRAY['basis'::text, 'counter'::text]))",
+          "name": "proposal_basis_role_check"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": "util.uuidv7()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal_basis.id",
+          "identity": null,
+          "name": "id",
+          "nullable": false,
+          "position": 1,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": "util.current_tenant_id()",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal_basis.tenant_id",
+          "identity": null,
+          "name": "tenant_id",
+          "nullable": false,
+          "position": 2,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_basis_proposal_id_fkey",
+            "to": "rel:catalog.proposal"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal_basis.proposal_id",
+          "identity": null,
+          "name": "proposal_id",
+          "nullable": false,
+          "position": 3,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": "'basis'::text",
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal_basis.role",
+          "identity": null,
+          "name": "role",
+          "nullable": false,
+          "position": 4,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_basis_claim_id_fkey",
+            "to": "rel:evidence.claim"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal_basis.claim_id",
+          "identity": null,
+          "name": "claim_id",
+          "nullable": true,
+          "position": 5,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_basis_segment_id_fkey",
+            "to": "rel:temporal.segment"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal_basis.segment_id",
+          "identity": null,
+          "name": "segment_id",
+          "nullable": true,
+          "position": 6,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_basis_event_id_fkey",
+            "to": "rel:temporal.event"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal_basis.event_id",
+          "identity": null,
+          "name": "event_id",
+          "nullable": true,
+          "position": 7,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "proposal_basis_relationship_id_fkey",
+            "to": "rel:catalog.relationship"
+          },
+          "generated": null,
+          "id": "col:catalog.proposal_basis.relationship_id",
+          "identity": null,
+          "name": "relationship_id",
+          "nullable": true,
+          "position": 8,
+          "type": "uuid"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.proposal_basis.note",
+          "identity": null,
+          "name": "note",
+          "nullable": true,
+          "position": 9,
+          "type": "text"
+        }
+      ],
+      "comment": "What a proposal reasons from (basis) or must answer (counter): a claim, a fact, an event or a relationship.",
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [
+        {
+          "columns": [
+            "claim_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_basis_claim_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:evidence.claim",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "event_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_basis_event_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.event",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "proposal_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_basis_proposal_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "relationship_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_basis_relationship_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:catalog.relationship",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "segment_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "proposal_basis_segment_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.segment",
+          "to_columns": [
+            "id"
+          ]
+        }
+      ],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:catalog.proposal_basis",
+      "inbound_foreign_keys": [],
+      "indexes": [
+        {
+          "definition": "CREATE INDEX proposal_basis_proposal_idx ON catalog.proposal_basis USING btree (proposal_id)",
+          "id": "idx:catalog.proposal_basis_proposal_idx",
+          "method": "btree",
+          "name": "proposal_basis_proposal_idx",
+          "predicate": null,
+          "unique": false
+        }
+      ],
+      "kind": "table",
+      "name": "proposal_basis",
+      "partitions": null,
+      "primary_key": [
+        "id"
+      ],
+      "readers": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": true,
+        "forced": false,
+        "policies": [
+          {
+            "command": "ALL",
+            "id": "pol:catalog.proposal_basis.km_tenant_access",
+            "name": "km_tenant_access",
+            "permissive": true,
+            "roles": [
+              "control_plane",
+              "executor_service",
+              "pipeline_agent",
+              "verifier_agent"
+            ],
+            "using": "(tenant_id = util.current_tenant_id())",
+            "with_check": "(tenant_id = util.current_tenant_id())"
+          }
+        ]
+      },
+      "schema": "catalog",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"catalog\"][\"Tables\"][\"proposal_basis\"][\"Insert\"]",
+        "row": "Database[\"catalog\"][\"Tables\"][\"proposal_basis\"][\"Row\"]",
+        "update": "Database[\"catalog\"][\"Tables\"][\"proposal_basis\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": []
+    },
     "rel:catalog.relationship": {
       "checks": [
         {
@@ -67302,8 +71291,24 @@
           "name": "relationship_check1"
         },
         {
+          "expression": "(closed_kind = ANY (ARRAY['world_change'::text, 'correction'::text]))",
+          "name": "relationship_closed_kind_check"
+        },
+        {
+          "expression": "((closed_kind IS NULL) OR (k_to IS NOT NULL))",
+          "name": "relationship_closed_kind_needs_closure"
+        },
+        {
+          "expression": "((closed_kind IS DISTINCT FROM 'correction'::text) OR (closed_reason IS NOT NULL))",
+          "name": "relationship_correction_has_reason"
+        },
+        {
           "expression": "(episode >= 1)",
           "name": "relationship_episode_check"
+        },
+        {
+          "expression": "((closed_reason IS NULL) OR (closed_kind = 'correction'::text))",
+          "name": "relationship_reason_only_on_correction"
         }
       ],
       "columns": [
@@ -67474,12 +71479,86 @@
           "nullable": false,
           "position": 12,
           "type": "timestamp with time zone"
+        },
+        {
+          "comment": "Why the edge stopped being current knowledge: world_change or correction. Set by temporal.close_relationship and by merge and split.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:catalog.relationship.closed_kind",
+          "identity": null,
+          "name": "closed_kind",
+          "nullable": true,
+          "position": 13,
+          "type": "text"
+        },
+        {
+          "comment": "Coded reason when closed_kind is correction.",
+          "default": null,
+          "fk": {
+            "columns": [
+              "code"
+            ],
+            "constraint": "relationship_closed_reason_fkey",
+            "to": "rel:temporal.correction_reason"
+          },
+          "generated": null,
+          "id": "col:catalog.relationship.closed_reason",
+          "identity": null,
+          "name": "closed_reason",
+          "nullable": true,
+          "position": 14,
+          "type": "text"
+        },
+        {
+          "comment": "The event that ended the edge, when a source names one.",
+          "default": null,
+          "fk": {
+            "columns": [
+              "id"
+            ],
+            "constraint": "relationship_closed_by_event_id_fkey",
+            "to": "rel:temporal.event"
+          },
+          "generated": null,
+          "id": "col:catalog.relationship.closed_by_event_id",
+          "identity": null,
+          "name": "closed_by_event_id",
+          "nullable": true,
+          "position": 15,
+          "type": "uuid"
         }
       ],
       "comment": "The only link between two entities: kind -> taxonomy.relationship_kind (endpoint kinds enforced); temporal kinds carry a relationship_active stream.",
       "defined_in": [],
       "exclusions": [],
       "foreign_keys": [
+        {
+          "columns": [
+            "closed_by_event_id"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "relationship_closed_by_event_id_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.event",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "closed_reason"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "relationship_closed_reason_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.correction_reason",
+          "to_columns": [
+            "code"
+          ]
+        },
         {
           "columns": [
             "from_entity_id"
@@ -67600,6 +71679,26 @@
       },
       "id": "rel:catalog.relationship",
       "inbound_foreign_keys": [
+        {
+          "columns": [
+            "target_relationship_id"
+          ],
+          "constraint": "proposal_target_relationship_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "relationship_id"
+          ],
+          "constraint": "proposal_basis_relationship_id_fkey",
+          "from": "rel:catalog.proposal_basis",
+          "to_columns": [
+            "id"
+          ]
+        },
         {
           "columns": [
             "relationship_id"
@@ -94097,6 +98196,26 @@
         },
         {
           "columns": [
+            "outcome_claim_id"
+          ],
+          "constraint": "proposal_outcome_claim_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "claim_id"
+          ],
+          "constraint": "proposal_basis_claim_id_fkey",
+          "from": "rel:catalog.proposal_basis",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
             "primary_claim_id"
           ],
           "constraint": "relationship_primary_claim_id_fkey",
@@ -99018,7 +103137,7 @@
           "name": "segment_support_check1"
         },
         {
-          "expression": "(role = ANY (ARRAY['supports'::text, 'challenges'::text, 'context'::text]))",
+          "expression": "(role = ANY (ARRAY['supports'::text, 'challenges'::text, 'context'::text, 'explains'::text]))",
           "name": "segment_support_role_check"
         }
       ],
@@ -99120,7 +103239,7 @@
           "type": "uuid"
         },
         {
-          "comment": null,
+          "comment": "supports, challenges, context, or explains (this claim states why the fact or event happened: a stated motive, attributed to its source).",
           "default": null,
           "fk": null,
           "generated": null,
@@ -129304,6 +133423,36 @@
         },
         {
           "columns": [
+            "undone_receipt_id"
+          ],
+          "constraint": "entity_merge_undone_receipt_id_fkey",
+          "from": "rel:catalog.entity_merge",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "receipt_id"
+          ],
+          "constraint": "entity_split_receipt_id_fkey",
+          "from": "rel:catalog.entity_split",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "created_by_receipt_id"
+          ],
+          "constraint": "proposal_created_by_receipt_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
             "created_by_receipt_id"
           ],
           "constraint": "claim_created_by_receipt_id_fkey",
@@ -152837,6 +156986,16 @@
       "inbound_foreign_keys": [
         {
           "columns": [
+            "relationship_kind"
+          ],
+          "constraint": "proposal_relationship_kind_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "code"
+          ]
+        },
+        {
+          "columns": [
             "kind"
           ],
           "constraint": "relationship_kind_fkey",
@@ -153505,6 +157664,150 @@
         "service_role"
       ]
     },
+    "rel:temporal.correction_reason": {
+      "checks": [
+        {
+          "expression": "((applies_to <@ ARRAY['fact'::text, 'relationship'::text, 'merge'::text, 'split'::text]) AND (cardinality(applies_to) >= 1))",
+          "name": "correction_reason_applies_to_check"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:temporal.correction_reason.code",
+          "identity": null,
+          "name": "code",
+          "nullable": false,
+          "position": 1,
+          "type": "text"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:temporal.correction_reason.applies_to",
+          "identity": null,
+          "name": "applies_to",
+          "nullable": false,
+          "position": 2,
+          "type": "text[]"
+        },
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:temporal.correction_reason.description",
+          "identity": null,
+          "name": "description",
+          "nullable": false,
+          "position": 3,
+          "type": "text"
+        }
+      ],
+      "comment": "Coded reasons for a correction of our own belief (never for a change in the world). applies_to says where a code may be used. not_recorded is set by backfill only.",
+      "defined_in": [
+        "20261119120000_build09_rv01_change_reasons_identity_proposals.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [
+          "SELECT"
+        ],
+        "executor_service": [
+          "SELECT"
+        ],
+        "pipeline_agent": [
+          "SELECT"
+        ],
+        "service_role": [
+          "SELECT"
+        ],
+        "verifier_agent": [
+          "SELECT"
+        ]
+      },
+      "id": "rel:temporal.correction_reason",
+      "inbound_foreign_keys": [
+        {
+          "columns": [
+            "reason_code"
+          ],
+          "constraint": "entity_merge_reason_code_fkey",
+          "from": "rel:catalog.entity_merge",
+          "to_columns": [
+            "code"
+          ]
+        },
+        {
+          "columns": [
+            "reason_code"
+          ],
+          "constraint": "entity_split_reason_code_fkey",
+          "from": "rel:catalog.entity_split",
+          "to_columns": [
+            "code"
+          ]
+        },
+        {
+          "columns": [
+            "closed_reason"
+          ],
+          "constraint": "relationship_closed_reason_fkey",
+          "from": "rel:catalog.relationship",
+          "to_columns": [
+            "code"
+          ]
+        },
+        {
+          "columns": [
+            "correction_reason"
+          ],
+          "constraint": "segment_correction_reason_fkey",
+          "from": "rel:temporal.segment",
+          "to_columns": [
+            "code"
+          ]
+        }
+      ],
+      "indexes": [],
+      "kind": "table",
+      "name": "correction_reason",
+      "partitions": null,
+      "primary_key": [
+        "code"
+      ],
+      "readers": [
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "temporal",
+      "triggers": [],
+      "typescript": {
+        "insert": "Database[\"temporal\"][\"Tables\"][\"correction_reason\"][\"Insert\"]",
+        "row": "Database[\"temporal\"][\"Tables\"][\"correction_reason\"][\"Row\"]",
+        "update": "Database[\"temporal\"][\"Tables\"][\"correction_reason\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": []
+    },
     "rel:temporal.event": {
       "checks": [],
       "columns": [
@@ -153755,6 +158058,46 @@
       },
       "id": "rel:temporal.event",
       "inbound_foreign_keys": [
+        {
+          "columns": [
+            "cause_event_id"
+          ],
+          "constraint": "proposal_cause_event_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "target_event_id"
+          ],
+          "constraint": "proposal_target_event_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "event_id"
+          ],
+          "constraint": "proposal_basis_event_id_fkey",
+          "from": "rel:catalog.proposal_basis",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "closed_by_event_id"
+          ],
+          "constraint": "relationship_closed_by_event_id_fkey",
+          "from": "rel:catalog.relationship",
+          "to_columns": [
+            "id"
+          ]
+        },
         {
           "columns": [
             "event_id"
@@ -155185,6 +159528,18 @@
           "name": "segment_check2"
         },
         {
+          "expression": "((revision_kind IS DISTINCT FROM 'correction'::text) OR (correction_reason IS NOT NULL))",
+          "name": "segment_correction_has_reason"
+        },
+        {
+          "expression": "((correction_reason IS NULL) OR (revision_kind = 'correction'::text))",
+          "name": "segment_reason_only_on_correction"
+        },
+        {
+          "expression": "(revision_kind = ANY (ARRAY['world_change'::text, 'correction'::text, 'carried'::text]))",
+          "name": "segment_revision_kind_check"
+        },
+        {
           "expression": "(temporal_basis = ANY (ARRAY['explicit'::text, 'carry_forward'::text, 'observation_bounded'::text, 'unresolved'::text]))",
           "name": "segment_temporal_basis_check"
         },
@@ -155457,6 +159812,36 @@
           "nullable": false,
           "position": 19,
           "type": "timestamp with time zone"
+        },
+        {
+          "comment": "How this fact relates to the one it replaces: world_change (the world changed), correction (our belief was wrong; needs correction_reason) or carried (the unchanged part of an older fact, cut again). Empty for a first fact, and for a replacement made before 2026-11-20 whose kind was never recorded.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:temporal.segment.revision_kind",
+          "identity": null,
+          "name": "revision_kind",
+          "nullable": true,
+          "position": 21,
+          "type": "text"
+        },
+        {
+          "comment": "Why our earlier belief was wrong; required exactly when revision_kind is correction.",
+          "default": null,
+          "fk": {
+            "columns": [
+              "code"
+            ],
+            "constraint": "segment_correction_reason_fkey",
+            "to": "rel:temporal.correction_reason"
+          },
+          "generated": null,
+          "id": "col:temporal.segment.correction_reason",
+          "identity": null,
+          "name": "correction_reason",
+          "nullable": true,
+          "position": 22,
+          "type": "text"
         }
       ],
       "comment": null,
@@ -155481,6 +159866,19 @@
           "to": "rel:temporal.event",
           "to_columns": [
             "id"
+          ]
+        },
+        {
+          "columns": [
+            "correction_reason"
+          ],
+          "deferrable": false,
+          "initially_deferred": false,
+          "name": "segment_correction_reason_fkey",
+          "on_delete": "no action",
+          "to": "rel:temporal.correction_reason",
+          "to_columns": [
+            "code"
           ]
         },
         {
@@ -155661,6 +160059,26 @@
       },
       "id": "rel:temporal.segment",
       "inbound_foreign_keys": [
+        {
+          "columns": [
+            "target_segment_id"
+          ],
+          "constraint": "proposal_target_segment_id_fkey",
+          "from": "rel:catalog.proposal",
+          "to_columns": [
+            "id"
+          ]
+        },
+        {
+          "columns": [
+            "segment_id"
+          ],
+          "constraint": "proposal_basis_segment_id_fkey",
+          "from": "rel:catalog.proposal_basis",
+          "to_columns": [
+            "id"
+          ]
+        },
         {
           "columns": [
             "segment_id"
@@ -158486,11 +162904,13 @@
       "function_ids": [
         "fn:api.advisories_for(text,text)",
         "fn:api.attention_due(timestamptz)",
+        "fn:api.change_explanation(uuid,uuid,uuid,bool)",
         "fn:api.changes_since(timestamptz,text[],text[],text[])",
         "fn:api.cheapest_compute(text,text,timestamptz)",
         "fn:api.current_event_rows()",
         "fn:api.current_fact_rows()",
         "fn:api.current_relationship_rows()",
+        "fn:api.decide_proposal(uuid,text,text,uuid,text)",
         "fn:api.digest_item_passages(uuid)",
         "fn:api.document_digest(uuid)",
         "fn:api.document_units(uuid,text[])",
@@ -158498,6 +162918,7 @@
         "fn:api.entity_aliases(uuid)",
         "fn:api.entity_at(uuid,timestamptz,int8)",
         "fn:api.entity_card(uuid)",
+        "fn:api.entity_history(uuid)",
         "fn:api.entity_rows()",
         "fn:api.entity_timeline(uuid,timestamptz,timestamptz,int8)",
         "fn:api.evidence_packet(uuid)",
@@ -158525,7 +162946,10 @@
         "fn:api.product_read(uuid,text,jsonb)",
         "fn:api.product_scope(text)",
         "fn:api.product_worker(text,jsonb)",
+        "fn:api.proposals(uuid,uuid,uuid,uuid,text[])",
+        "fn:api.propose(text,text,text,text,text,uuid,uuid,text,text,jsonb,uuid,tstzrange,jsonb,jsonb)",
         "fn:api.propose_verdict(text,uuid,uuid,text,jsonb,text,jsonb)",
+        "fn:api.publish_proposal(uuid,bool,text)",
         "fn:api.raise_attention_sweep(text,text,text,jsonb,text,timestamptz,timestamptz,jsonb)",
         "fn:api.record_claim(text,text,text,jsonb,jsonb,jsonb,jsonb,jsonb)",
         "fn:api.record_probe_run(text,uuid,text,text,timestamptz,jsonb,jsonb,jsonb,jsonb,jsonb,uuid,jsonb)",
@@ -158644,12 +163068,28 @@
       "comment": "Industry identities: one entity row per thing (kind + validated attributes), aliases, identifiers, merges, one relationship table, works (paper/talk/media/story/case study).",
       "domain_ids": [],
       "function_ids": [
+        "fn:catalog._carry_relationship_streams(uuid,uuid,text)",
+        "fn:catalog._ensure_stream(text,uuid,uuid,text)",
+        "fn:catalog._log_move(uuid,uuid,text,text,jsonb,text,jsonb)",
+        "fn:catalog._move_relationship(uuid,uuid,uuid,text)",
+        "fn:catalog._move_segment(uuid,uuid,uuid,text)",
+        "fn:catalog._reopen_segment(uuid,text)",
+        "fn:catalog._repoint_references(uuid,uuid,uuid,uuid)",
+        "fn:catalog._row_key(regclass,jsonb)",
+        "fn:catalog.caller_is_person()",
+        "fn:catalog.caller_role()",
+        "fn:catalog.canonical_entity(uuid)",
         "fn:catalog.check_receipt_tenant()",
         "fn:catalog.check_relationship_kinds()",
         "fn:catalog.check_relationship_properties()",
+        "fn:catalog.entity_references(uuid)",
         "fn:catalog.import_research_starter_catalog(uuid)",
+        "fn:catalog.merge_entities(uuid,uuid,uuid,text,text,uuid)",
         "fn:catalog.rebuild_entity_projections(int8)",
-        "fn:catalog.validate_entity_attributes()"
+        "fn:catalog.split_entity(uuid,jsonb,uuid,text,text,uuid,bool)",
+        "fn:catalog.undo_merge(uuid,uuid,text)",
+        "fn:catalog.validate_entity_attributes()",
+        "fn:catalog.with_merged(uuid[])"
       ],
       "id": "sch:catalog",
       "name": "catalog",
@@ -158659,8 +163099,13 @@
         "rel:catalog.entity_alias",
         "rel:catalog.entity_identifier",
         "rel:catalog.entity_merge",
+        "rel:catalog.entity_split",
+        "rel:catalog.entity_split_part",
+        "rel:catalog.identity_move",
         "rel:catalog.license",
         "rel:catalog.media_platform",
+        "rel:catalog.proposal",
+        "rel:catalog.proposal_basis",
         "rel:catalog.relationship",
         "rel:catalog.work"
       ],
@@ -159348,8 +163793,9 @@
         "fn:temporal.admit_support(uuid,uuid,uuid,uuid,text)",
         "fn:temporal.assert_event(text,uuid,tstzrange,text,uuid,uuid,text,uuid,uuid,jsonb,text)",
         "fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)",
-        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
         "fn:temporal.begin_batch(int8)",
+        "fn:temporal.close_relationship(uuid,text,text,uuid,timestamptz,uuid,uuid)",
         "fn:temporal.close_segment(uuid)",
         "fn:temporal.commit_batch(uuid,text,text,jsonb)",
         "fn:temporal.current_k()",
@@ -159366,6 +163812,7 @@
       "id": "sch:temporal",
       "name": "temporal",
       "relation_ids": [
+        "rel:temporal.correction_reason",
         "rel:temporal.event",
         "rel:temporal.event_kind",
         "rel:temporal.event_occurrence",
@@ -167130,7 +171577,8 @@
             "library",
             "repository",
             "mcp_server",
-            "agent_skill"
+            "agent_skill",
+            "ai_protocol"
           ]
         },
         {
@@ -167465,6 +171913,28 @@
           ]
         },
         {
+          "code": "split_from",
+          "description": "The first thing was carved out of the second in the world (a package split out of another, a spin-off). Both records stay.",
+          "from_kinds": [
+            "library",
+            "product",
+            "repository",
+            "organization",
+            "ai_protocol"
+          ],
+          "inverse_label": "split into",
+          "property_schema": {},
+          "symmetric": false,
+          "temporal": false,
+          "to_kinds": [
+            "library",
+            "product",
+            "repository",
+            "organization",
+            "ai_protocol"
+          ]
+        },
+        {
           "code": "sponsors",
           "description": "sponsors",
           "from_kinds": [
@@ -167494,10 +171964,16 @@
         },
         {
           "code": "supersedes",
-          "description": "supersedes",
+          "description": "The first thing succeeds the second in the world (successor to predecessor). Both records stay.",
           "from_kinds": [
             "product",
-            "ai_model"
+            "ai_model",
+            "library",
+            "repository",
+            "organization",
+            "ai_protocol",
+            "mcp_server",
+            "agent_skill"
           ],
           "inverse_label": null,
           "property_schema": {},
@@ -167505,7 +171981,13 @@
           "temporal": false,
           "to_kinds": [
             "product",
-            "ai_model"
+            "ai_model",
+            "library",
+            "repository",
+            "organization",
+            "ai_protocol",
+            "mcp_server",
+            "agent_skill"
           ]
         },
         {
@@ -167625,9 +172107,96 @@
           ]
         }
       ],
-      "rows_sha256": "sha256:a6f58980a24bd4c8cafb15bab45076cc1ab295f52850a7261cfa928140caac1f",
+      "rows_sha256": "sha256:cf08da68bc6c88919952a0f528a0bd9536b212184bebca8c55a8fc8bda81983b",
       "schema": "taxonomy",
       "table": "relationship_kind"
+    },
+    "voc:temporal.correction_reason": {
+      "columns": [
+        "applies_to",
+        "code",
+        "description"
+      ],
+      "id": "voc:temporal.correction_reason",
+      "key": "code",
+      "rows": [
+        {
+          "applies_to": [
+            "fact",
+            "relationship"
+          ],
+          "code": "better_source",
+          "description": "A more authoritative source disagrees"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship",
+            "merge"
+          ],
+          "code": "duplicate_record",
+          "description": "Closed or moved because its record was merged into another"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship"
+          ],
+          "code": "late_evidence",
+          "description": "The right value or date was learned later"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship"
+          ],
+          "code": "merge_undone",
+          "description": "Moved back because a merge was undone"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship"
+          ],
+          "code": "misread",
+          "description": "We extracted or parsed it wrongly"
+        },
+        {
+          "applies_to": [
+            "split"
+          ],
+          "code": "mixed_record",
+          "description": "One record described several things"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship"
+          ],
+          "code": "not_recorded",
+          "description": "A replacement made before reasons existed; set by backfill, refused on new writes"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship"
+          ],
+          "code": "source_corrected",
+          "description": "The source corrected itself"
+        },
+        {
+          "applies_to": [
+            "fact",
+            "relationship",
+            "split"
+          ],
+          "code": "wrong_entity",
+          "description": "It belonged to another entity"
+        }
+      ],
+      "rows_sha256": "sha256:361f3c84b1869477e96a2aa4a8c6d9f7f5c271f591032d65a5bbd5ff7d6445f7",
+      "schema": "temporal",
+      "table": "correction_reason"
     },
     "voc:temporal.event_kind": {
       "columns": [
@@ -169141,6 +173710,44 @@
           ]
         },
         {
+          "code": "split_out",
+          "description": "A part of the subject was carved out into a new thing (the object)",
+          "ends_stream_kind": null,
+          "object_kinds": [
+            "library",
+            "product",
+            "repository",
+            "organization",
+            "ai_protocol"
+          ],
+          "starts_stream_kind": null,
+          "subject_kinds": [
+            "library",
+            "product",
+            "repository",
+            "organization",
+            "ai_protocol"
+          ]
+        },
+        {
+          "code": "stewardship_transferred",
+          "description": "Stewardship of the subject passed to the object",
+          "ends_stream_kind": null,
+          "object_kinds": [
+            "organization",
+            "person"
+          ],
+          "starts_stream_kind": null,
+          "subject_kinds": [
+            "ai_protocol",
+            "library",
+            "repository",
+            "product",
+            "mcp_server",
+            "agent_skill"
+          ]
+        },
+        {
           "code": "story_corrected",
           "description": "story corrected",
           "ends_stream_kind": null,
@@ -169470,7 +174077,7 @@
           ]
         }
       ],
-      "rows_sha256": "sha256:0c90f8548e130b1ab4f147dc34cb87d5b5d897b1dd977f8fe60ab5ce322f3aef",
+      "rows_sha256": "sha256:70eedf990206b61633ce9799f1749c3dc32e25a87c6f725562fa1d31b9af045a",
       "schema": "temporal",
       "table": "event_kind"
     },
@@ -170522,8 +175129,13 @@
       "rel:catalog.entity_alias": "none",
       "rel:catalog.entity_identifier": "small",
       "rel:catalog.entity_merge": "unknown",
+      "rel:catalog.entity_split": "unknown",
+      "rel:catalog.entity_split_part": "unknown",
+      "rel:catalog.identity_move": "small",
       "rel:catalog.license": "unknown",
       "rel:catalog.media_platform": "unknown",
+      "rel:catalog.proposal": "unknown",
+      "rel:catalog.proposal_basis": "unknown",
       "rel:catalog.relationship": "medium",
       "rel:catalog.work": "small",
       "rel:content.conversion_evaluation": "unknown",
@@ -170683,7 +175295,7 @@
       "rel:observability.usage_rollup": "unknown",
       "rel:orchestration.agent_session": "unknown",
       "rel:orchestration.artifact": "small",
-      "rel:orchestration.artifact_lineage": "none",
+      "rel:orchestration.artifact_lineage": "small",
       "rel:orchestration.artifact_manifest": "unknown",
       "rel:orchestration.artifact_tombstone": "unknown",
       "rel:orchestration.artifact_type": "unknown",
@@ -170771,6 +175383,7 @@
       "rel:taxonomy.term": "unknown",
       "rel:taxonomy.term_relation": "unknown",
       "rel:taxonomy.term_target_kind": "unknown",
+      "rel:temporal.correction_reason": "unknown",
       "rel:temporal.event": "small",
       "rel:temporal.event_kind": "unknown",
       "rel:temporal.event_occurrence": "small",
@@ -170788,5 +175401,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+  "workspace_fingerprint": "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 }

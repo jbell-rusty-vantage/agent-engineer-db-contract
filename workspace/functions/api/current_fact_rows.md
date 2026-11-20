@@ -12,16 +12,16 @@ executors: [app_reader, authenticated, control_plane, executor_service, pipeline
 raises: []
 touches: { reads: [temporal.segment, temporal.stream], writes: [] }
 tokens: [api, current_fact_rows, api.current_fact_rows]
-defined_in: ["20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+defined_in: ["20260912011000_km_10_api.sql", "20261108120000_build08_r2_knowledge_continuum.sql", "20261119121000_build09_rv01_current_fact_rows.sql", part1_renames.sql]
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.current_fact_rows
 
 Domain `api-surface`, lens `corpus`. Used by views: [`api.current_facts`](../../relations/api/current_facts.md).
 
-## current_fact_rows() → TABLE(id uuid, tenant_id uuid, stream_id uuid, valid_during tstzrange, belief text, temporal_basis text, status text, amount numeric, currency character, unit text, ref_entity_id uuid, payload jsonb, extent_id uuid, caused_by_event_id uuid, replaces_segment_id uuid, primary_claim_id uuid, k_from bigint, k_to bigint, created_at timestamp with time zone, stream_kind text, subject_entity_id uuid, subject_relationship_id uuid, scope_key text)
+## current_fact_rows() → TABLE(id uuid, tenant_id uuid, stream_id uuid, valid_during tstzrange, belief text, temporal_basis text, status text, amount numeric, currency character, unit text, ref_entity_id uuid, payload jsonb, extent_id uuid, caused_by_event_id uuid, replaces_segment_id uuid, primary_claim_id uuid, k_from bigint, k_to bigint, created_at timestamp with time zone, stream_kind text, subject_entity_id uuid, subject_relationship_id uuid, scope_key text, revision_kind text, correction_reason text)
 
-function, stable, security definer, language sql, config `search_path=""`.
+function, stable, security definer, language sql, config `search_path=""`. Facts that hold now, as currently known, with their stream. revision_kind and correction_reason say how each fact relates to the one it replaced.
 
 No arguments.
 
@@ -31,4 +31,4 @@ Touches (best effort): reads [`temporal.segment`](../../relations/temporal/segme
 
 TypeScript: `Database["api"]["Functions"]["current_fact_rows"]`.
 
-Defined in: `20260912011000_km_10_api.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `part1_renames.sql`.
+Defined in: `20260912011000_km_10_api.sql`, `20261108120000_build08_r2_knowledge_continuum.sql`, `20261119121000_build09_rv01_current_fact_rows.sql`, `part1_renames.sql`.

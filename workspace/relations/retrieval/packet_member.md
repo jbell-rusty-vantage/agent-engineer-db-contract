@@ -14,7 +14,7 @@ readers: [executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"packet_member\"][\"Row\"]"
 defined_in: ["20260826001000_retrieval.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # retrieval.packet_member
 
@@ -65,7 +65,8 @@ table in domain `retrieval`, lens `corpus` — One member of an evidence packet:
 
 ## Relationships
 
-8 outbound and 0 inbound foreign keys; full list in [details](packet_member.details.md).
+Outbound: `tenant_id,claim_id` → [`evidence.claim`](../evidence/claim.md)`.tenant_id,id` on delete restrict; `guidance_item_id` → [`guidance.item`](../guidance/item.md)`.id`; `tenant_id,packet_id` → [`retrieval.evidence_packet`](evidence_packet.md)`.tenant_id,id` on delete restrict; `tenant_id,search_projection_id` → [`retrieval.search_projection`](search_projection.md)`.tenant_id,id` on delete restrict; `tenant_id,source_representation_id,source_document_node_id` → [`content.document_node`](../content/document_node.md)`.tenant_id,representation_id,id` on delete restrict; `tenant_id,source_representation_id` → [`content.document_representation`](../content/document_representation.md)`.tenant_id,id` on delete restrict; `tenant_id,packet_id` → [`retrieval.evidence_packet`](evidence_packet.md)`.tenant_id,id` on delete restrict; `tenant_id,vector_item_id` → [`retrieval.vector_item`](vector_item.md)`.tenant_id,id` on delete restrict.
+Inbound: none.
 
 ## Indexes
 

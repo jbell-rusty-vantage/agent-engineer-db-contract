@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"authoring\"][\"Tables\"][\"revision_binding\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # authoring.revision_binding
 
@@ -52,7 +52,23 @@ table in domain `authoring`, lens `ours`.
 - PK (id)
 - unique (tenant_id, workspace_id, id)
 - unique (tenant_id, workspace_id, revision_id, local_key)
-- 17 check constraints; see [details](revision_binding.details.md)
+- check `revision_binding_check`: `(num_nonnulls(target_revision_id, target_work_id, artifact_id, capture_id, locator_id, claim_id, entity_id, record_id, release_item_id, fil…`
+- check `revision_binding_check1`: `((target_work_id IS NOT NULL) <= (relation = ANY (ARRAY['links_to'::text, 'contains'::text])))`
+- check `revision_binding_check10`: `((relation <> 'source'::text) OR (capture_id IS NOT NULL) OR (locator_id IS NOT NULL))`
+- check `revision_binding_check11`: `((relation <> 'has_component'::text) OR (target_revision_id IS NOT NULL))`
+- check `revision_binding_check2`: `((release_item_id IS NOT NULL) <= (relation = ANY (ARRAY['adapted_from'::text, 'generated_under'::text, 'anchored_to'::text, 'scenario_of':…`
+- check `revision_binding_check3`: `((relation <> 'scenario_of'::text) OR (release_item_id IS NOT NULL) OR (target_revision_id IS NOT NULL))`
+- check `revision_binding_check4`: `((assertion_id IS NOT NULL) <= (relation = ANY (ARRAY['uses'::text, 'supports'::text, 'contradicts'::text, 'links_to'::text])))`
+- check `revision_binding_check5`: `((relation <> ALL (ARRAY['adapted_from'::text, 'generated_under'::text])) OR (release_item_id IS NOT NULL))`
+- check `revision_binding_check6`: `((relation <> 'anchored_to'::text) OR (release_item_id IS NOT NULL) OR (target_revision_id IS NOT NULL))`
+- check `revision_binding_check7`: `((file_set_id IS NOT NULL) <= (relation = ANY (ARRAY['representation'::text, 'uses'::text, 'evaluates_with'::text])))`
+- check `revision_binding_check8`: `((relation <> ALL (ARRAY['links_to'::text, 'contains'::text])) OR (target_work_id IS NOT NULL) OR (target_revision_id IS NOT NULL) OR (asse…`
+- check `revision_binding_check9`: `((relation <> 'representation'::text) OR (artifact_id IS NOT NULL) OR (file_set_id IS NOT NULL))`
+- check `revision_binding_local_key_check`: `(local_key ~ '^[a-z0-9][a-z0-9_.-]{0,62}$'::text)`
+- check `revision_binding_relation_check`: `(relation = ANY (ARRAY['derived_from'::text, 'uses'::text, 'representation'::text, 'source'::text, 'supports'::text, 'contradicts'::text, '…`
+- check `revision_binding_rights_basis_check`: `product.nonblank(rights_basis)`
+- check `revision_binding_role_check`: `(role = ANY (ARRAY['original'::text, 'transcript'::text, 'captions'::text, 'thumbnail'::text, 'poster'::text, 'accessible_fallback'::text, …`
+- check `revision_binding_usage_check`: `(usage = ANY (ARRAY['reference_only'::text, 'private_copy'::text, 'redistributable'::text, 'unknown'::text]))`
 
 ## Relationships
 

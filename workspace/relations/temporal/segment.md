@@ -6,7 +6,7 @@ name: segment
 domain: temporal-facts
 lens: corpus
 aliases: [fact, temporal fact, state segment]
-tokens: [temporal, segment, temporal.segment, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at]
+tokens: [temporal, segment, temporal.segment, id, tenant_id, stream_id, valid_during, belief, temporal_basis, status, amount, currency, unit, ref_entity_id, payload, extent_id, caused_by_event_id, replaces_segment_id, primary_claim_id, k_from, k_to, created_at, revision_kind, correction_reason]
 summary: "A fact on a stream: world interval valid_during, knowledge interval [k_from,k_to). One home for every number."
 summary_basis: curated
 rls: enabled
@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"segment\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # temporal.segment
 
@@ -45,17 +45,19 @@ table in domain `temporal-facts`, lens `corpus`.
 | 17 | `k_from` | `bigint` | no | — | — |
 | 18 | `k_to` | `bigint` | yes | — | _curated:_ Null means current knowledge; closure only via helpers. |
 | 19 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 21 | `revision_kind` | `text` | yes | — | How this fact relates to the one it replaces: world_change (the world changed), correction (our belief was wrong; needs correction_reason) or carried (the unchanged part of an older fact, cut again). Empty for a first fact, and for a replacement made before 2026-11-20 whose kind was never recorded. |
+| 22 | `correction_reason` | `text` | yes | — | FK → [`temporal.correction_reason`](correction_reason.md).code; Why our earlier belief was wrong; required exactly when revision_kind is correction. |
 
 ## Constraints
 
 - PK (id)
 - unique (tenant_id, id)
 - **exclusion** `segment_stream_id_valid_during_excl`: `EXCLUDE USING gist (stream_id WITH =, valid_during WITH &&) WHERE (k_to IS NULL)`
-- 6 check constraints; see [details](segment.details.md)
+- 9 check constraints; see [details](segment.details.md)
 
 ## Relationships
 
-12 outbound and 4 inbound foreign keys; full list in [details](segment.details.md).
+13 outbound and 6 inbound foreign keys; full list in [details](segment.details.md).
 
 ## Indexes
 
@@ -82,7 +84,7 @@ Enabled; 1 policies in [details](segment.details.md).
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`temporal.assert_state`](../../functions/temporal/assert_state.md), [`temporal.close_segment`](../../functions/temporal/close_segment.md).
+- Via functions (best effort): [`catalog._move_segment`](../../functions/catalog/_move_segment.md), [`catalog._reopen_segment`](../../functions/catalog/_reopen_segment.md), [`temporal.assert_state`](../../functions/temporal/assert_state.md), [`temporal.close_segment`](../../functions/temporal/close_segment.md).
 
 ## TypeScript
 

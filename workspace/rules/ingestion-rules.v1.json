@@ -1,5 +1,5 @@
 {
-  "migrationHead": "20261116150000",
+  "migrationHead": "20261119122000",
   "rules": [
     {
       "action": "reject",
@@ -65,7 +65,7 @@
       "refs": [
         "rel:temporal.segment",
         "rel:temporal.event_occurrence",
-        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)"
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)"
       ],
       "reviewed": null,
       "title": "World-time required on facts"
@@ -131,7 +131,7 @@
       "id": "proposal.idempotent_repeat",
       "provenance": "model_assisted",
       "refs": [
-        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)",
+        "fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)",
         "rel:temporal.knowledge_batch",
         "rel:orchestration.operation_intent"
       ],
@@ -243,6 +243,6 @@
       "title": "expected_head required for writes"
     }
   ],
-  "rulesVersion": "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687",
+  "rulesVersion": "ingestion-rules.v1@fb66765c367f5fa632271a05eca5e861588b5f89933020dadb4f403d6f996fe2",
   "schemaVersion": "ingestion-rules.v1"
 }

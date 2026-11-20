@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evidence.source
 
@@ -68,7 +68,8 @@ table in domain `evidence`, lens `evidence`.
 
 ## Relationships
 
-3 outbound and 12 inbound foreign keys; full list in [details](source.details.md).
+Outbound: `channel_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`; `last_capture_id` → [`evidence.source_capture`](source_capture.md)`.id`; `publisher_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
+Inbound: [`content.document`](../content/document.md).canonical_source_id, [`evidence.attribution`](attribution.md).source_id, [`evidence.degraded_assurance`](degraded_assurance.md).source_id, [`evidence.provider_result`](provider_result.md).source_id, [`evidence.source_capture`](source_capture.md).source_id, [`evidence.source_encounter`](source_encounter.md).source_id, [`staging.candidate`](../staging/candidate.md).source_id.
 
 ## Indexes
 

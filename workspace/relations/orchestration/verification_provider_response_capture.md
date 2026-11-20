@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_provider_response_capture\"][\"Row\"]"
 defined_in: ["20260906031400_verification_provider_response_capture.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.verification_provider_response_capture
 

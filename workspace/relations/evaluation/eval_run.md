@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"eval_run\"][\"Row\"]"
 defined_in: ["20260826001100_evaluation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evaluation.eval_run
 
@@ -58,7 +58,9 @@ table in domain `evaluation`, lens `machinery`.
 
 ## Relationships
 
-11 outbound and 11 inbound foreign keys; full list in [details](eval_run.details.md).
+Outbound: `tenant_id,attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.tenant_id,id` on delete restrict; `capability_version_id` → [`orchestration.capability_version`](../orchestration/capability_version.md)`.id`; `dataset_id` → [`evaluation.eval_dataset`](eval_dataset.md)`.id`; `tenant_id,dataset_version_id` → [`evaluation.eval_dataset_version`](eval_dataset_version.md)`.tenant_id,id` on delete restrict; `tenant_id,experiment_arm_id` → [`evaluation.experiment_arm`](experiment_arm.md)`.tenant_id,id` on delete restrict; `grader_version_id` → [`evaluation.grader_version`](grader_version.md)`.id`; `tenant_id,run_manifest_artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict; `tenant_id,mission_id` → [`orchestration.mission`](../orchestration/mission.md)`.tenant_id,id` on delete restrict; `tenant_id,policy_artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.tenant_id,id` on delete restrict; `space_version_id` → [`retrieval.vector_space_version`](../retrieval/vector_space_version.md)`.id`; `tenant_id,work_item_id` → [`orchestration.work_item`](../orchestration/work_item.md)`.tenant_id,id` on delete restrict.
+Inbound: [`evaluation.eval_run_case_output`](eval_run_case_output.md).eval_run_id, [`evaluation.eval_score`](eval_score.md).run_id, [`evaluation.gate_result`](gate_result.md).eval_run_id, [`evaluation.metric_observation`](metric_observation.md).eval_run_id, [`evaluation.promotion_gate_result`](promotion_gate_result.md).eval_run_id, [`evaluation.regression`](regression.md).baseline_run_id|current_run_id, [`evaluation.verification_benchmark_arm_publication`](verification_benchmark_arm_publication.md).eval_run_id, [`retrieval.vector_item`](../retrieval/vector_item.md).generation_run_id, [`retrieval.vector_space_version`](../retrieval/vector_space_version.md).promotion_gate_eval_id.
+Polymorphic: exactly one of `capability_version_id`, `space_version_id`, `target_code_ref` → [`orchestration.capability_version`](../orchestration/capability_version.md) | [`retrieval.vector_space_version`](../retrieval/vector_space_version.md) — basis: check constraint eval_run_exactly_one_target.
 
 ## Indexes
 

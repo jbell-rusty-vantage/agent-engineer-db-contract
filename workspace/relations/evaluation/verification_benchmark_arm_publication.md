@@ -14,7 +14,7 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"verification_benchmark_arm_publication\"][\"Row\"]"
 defined_in: ["20260906030000_verification_benchmark_arm_publication.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evaluation.verification_benchmark_arm_publication
 
@@ -62,15 +62,20 @@ Inbound: none.
 
 ## Indexes
 
-4 indexes; see [details](verification_benchmark_arm_publication.details.md).
+`verification_benchmark_arm_pu_tenant_id_benchmark_run_id_be_key` unique; `verification_benchmark_arm_pu_tenant_id_benchmark_run_id_ex_key` unique; `verification_benchmark_arm_publicatio_tenant_id_eval_run_id_key` unique; `verification_benchmark_arm_publication_tenant_id_id_key` unique
 
 ## Triggers
 
-5 triggers; see [details](verification_benchmark_arm_publication.details.md).
+- `artifact_retirement_21d6250956bc8b3d3886db90` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `artifact_retirement_7256ab444770f6cd417e4104` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `artifact_retirement_975f49b3ab6f197833466ea9` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `verification_benchmark_arm_publication_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+- `verification_benchmark_arm_publication_validate` → [`evaluation.validate_verification_benchmark_arm_publication`](../../functions/evaluation/validate_verification_benchmark_arm_publication.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](verification_benchmark_arm_publication.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `control_plane`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

@@ -165,3 +165,30 @@ export type ApiGovernedWriteErrorCode =
   | "VERDICT_CELL_NOT_RUN" | "VERDICT_REJECTED_BY_PERSON" | "TRIAGE_REVIEWED_BY_PERSON" | "ASSESSMENT_BASE_REQUIRED" | "ASSESSMENT_REVIEWED_BY_PERSON"
   | "ATTENTION_POLICY_NOT_SWEEPABLE" | "SWEEP_NOT_OPEN" | "SWEEP_ALREADY_SETTLED" | "SWEEP_MISSION_MISMATCH"
   | "IDEMPOTENCY_KEY_REUSED" | "IDEMPOTENCY_KEY_FOREIGN_TENANT" | "RESTATEMENT_EXISTS" | "PROBE_SLUG_TAKEN" | "PROBE_RUN_DUPLICATE";
+
+// Build 09, unit RV01 (2026-11-19, contract 0.11.0): why a fact changed, merges and splits of records, proposals.
+// api.changes_since gains revision_kind, correction_reason, cause_event_id and cause_event_kind, lists edges opened and closed
+// (change_source "relationship", scope_key carries the relationship kind) and merges and splits (change_source "identity"), and
+// no longer lists the cut pieces of a replaced fact. api.current_facts gains revision_kind and correction_reason.
+/** How a fact relates to the one it replaces. Empty for a first fact and for a replacement made before 2026-11-20. */
+export type ApiRevisionKind = "world_change" | "correction" | "carried";
+/** temporal.correction_reason: why our earlier belief was wrong. not_recorded is set by backfill only. */
+export type ApiCorrectionReason =
+  | "source_corrected" | "misread" | "better_source" | "late_evidence" | "wrong_entity" | "duplicate_record" | "mixed_record" | "merge_undone" | "not_recorded";
+export type ApiEntityHistoryItem = ApiFunctionRows<"entity_history">[number];
+/** Our own view, never a fact. The service's reader roles receive published proposals only. */
+export type ApiProposal = ApiFunctionRows<"proposals">[number];
+export type ApiProposalKind = "relationship" | "cause" | "identity";
+export type ApiProposalReviewState = "agent_proposed" | "person_proposed" | "endorsed" | "rejected" | "withdrawn" | "confirmed_by_source" | "refuted_by_source";
+/** api.change_explanation: the cause event, what a source said the reason was, and (only when asked) our proposals. */
+export interface ApiChangeExplanation {
+  target: "fact" | "event" | "relationship";
+  revision_kind?: ApiRevisionKind | null; correction_reason?: ApiCorrectionReason | null; correction_reason_means?: string | null;
+  closed_kind?: "world_change" | "correction" | null; closed_reason?: ApiCorrectionReason | null; ended_in_world_at?: string | null;
+  cause_event: { event_id: string; kind: string; subject: string | null; object: string | null; occurred_from: string | null; payload: unknown } | null;
+  stated_reasons: { claim_id: string; statement: string; status: string; quote: string | null; stated_by: string[] | null; source_url: string | null }[];
+  proposals?: { proposal_id: string; ours: true; statement: string; rationale: string; confidence: "low" | "medium" | "high"; authored_by_kind: "person" | "agent"; authored_by: string;
+    review_state: ApiProposalReviewState; publication: "private" | "published"; basis: unknown }[];
+}
+/** api.propose (governed write; pipeline_agent and executor_service). An agent role always writes agent_proposed and private. */
+export interface ApiProposeResult extends ApiGovernedWriteReceipt { proposal_id: string; review_state: "agent_proposed" | "person_proposed"; publication: "private"; }

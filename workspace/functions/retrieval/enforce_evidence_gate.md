@@ -13,7 +13,7 @@ raises: ["evidence gate: claim % is %, not verified", "evidence gate: guidance i
 touches: { reads: [content.document_representation, evidence.claim, guidance.assurance_level, guidance.item], writes: [] }
 tokens: [retrieval, enforce_evidence_gate, retrieval.enforce_evidence_gate]
 defined_in: ["20260826001000_retrieval.sql", "20260826001050_fix_evidence_gate_generated_column.sql", "20260903010600_source_native_packet_members.sql", "20260903010700_packet_member_tenant_targets.sql", "20261108120000_build08_r2_knowledge_continuum.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # retrieval.enforce_evidence_gate
 

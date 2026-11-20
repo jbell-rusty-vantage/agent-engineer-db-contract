@@ -6,7 +6,7 @@ name: intent_type
 rows: 17
 rows_sha256: "sha256:51985056f0aa2a3d6cb6d13d773a707a00953e0a6ea70bbe7f0c97a3bd3ecafe"
 codes: [assign_taxonomy_term, capture_registration, claim_verification, content_link, governed_chain_write, ingest_research_bundle, knowledge_ingestion, link_entities, merge_entities, promote_candidate, publish_report, record_claim, record_metric_observations, retract_record, upsert_entity, upsert_knowledge, verify_claim]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.intent_type
 

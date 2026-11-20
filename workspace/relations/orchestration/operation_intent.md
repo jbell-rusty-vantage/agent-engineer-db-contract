@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [control_plane, executor_service, pipeline_agent, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_intent\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.operation_intent
 
@@ -63,7 +63,9 @@ table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Relationships
 
-3 outbound and 2 inbound foreign keys; full list in [details](operation_intent.details.md).
+Outbound: `intent_type` → [`orchestration.intent_type`](intent_type.md)`.code`; `mission_id` → [`orchestration.mission`](mission.md)`.id` on delete set null; `proposed_by_attempt` → [`orchestration.attempt`](attempt.md)`.id`.
+Inbound: [`evaluation.review_task`](../evaluation/review_task.md).operation_intent_id, [`orchestration.operation_receipt`](operation_receipt.md).intent_id.
+Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject).
 
 ## Indexes
 
@@ -71,11 +73,12 @@ table in domain `orchestration-ledger`, lens `machinery`.
 
 ## Triggers
 
-1 triggers; see [details](operation_intent.details.md).
+- `operation_intent_origin_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](operation_intent.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

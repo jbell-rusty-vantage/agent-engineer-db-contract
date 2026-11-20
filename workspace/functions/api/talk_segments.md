@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.work, content.document, content.document_about_entity, content.document_node, content.document_representation, content.document_version], writes: [] }
 tokens: [api, talk_segments, api.talk_segments]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120400_build08_r2_fixups4.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.talk_segments
 

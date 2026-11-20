@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"event\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # temporal.event
 
@@ -44,7 +44,8 @@ table in domain `temporal-facts`, lens `corpus`.
 ## Relationships
 
 Outbound: `kind` → [`temporal.event_kind`](event_kind.md)`.code`; `object_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `relationship_id` → [`catalog.relationship`](../catalog/relationship.md)`.id` (+tenant); `subject_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant).
-Inbound: [`temporal.event_occurrence`](event_occurrence.md).event_id, [`temporal.segment`](segment.md).caused_by_event_id.
+Inbound: [`catalog.proposal`](../catalog/proposal.md).cause_event_id|target_event_id, [`catalog.proposal_basis`](../catalog/proposal_basis.md).event_id, [`catalog.relationship`](../catalog/relationship.md).closed_by_event_id, [`temporal.event_occurrence`](event_occurrence.md).event_id, [`temporal.segment`](segment.md).caused_by_event_id.
+Polymorphic target of: [`catalog.proposal`](../catalog/proposal.md) (check constraint proposal_cause_shape), [`catalog.proposal_basis`](../catalog/proposal_basis.md) (check constraint proposal_basis_one_target).
 
 ## Indexes
 
@@ -72,7 +73,7 @@ Enabled.
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`temporal.assert_event`](../../functions/temporal/assert_event.md).
+- Via functions (best effort): [`catalog.merge_entities`](../../functions/catalog/merge_entities.md), [`catalog.undo_merge`](../../functions/catalog/undo_merge.md), [`temporal.assert_event`](../../functions/temporal/assert_event.md).
 
 ## TypeScript
 

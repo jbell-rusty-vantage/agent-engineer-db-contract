@@ -13,7 +13,7 @@ raises: [p_limit must be between 1 and 200, valid app.tenant_id context is requi
 touches: { reads: [retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space_version], writes: [] }
 tokens: [api, search_knowledge_1536, api.search_knowledge_1536]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.search_knowledge_1536
 

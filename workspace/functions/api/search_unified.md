@@ -13,7 +13,7 @@ raises: [evidence weight must be between 0 and 1, query text length must be betw
 touches: { reads: [retrieval.projection_target, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space, retrieval.vector_space_version], writes: [] }
 tokens: [api, search_unified, api.search_unified]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120100_build08_r2_fixups.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", "20261115120000_build08_loop7_search_collapse_restatements.sql", "20261115120100_build08_loop7_fixup_collapse_window.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.search_unified
 
@@ -47,7 +47,7 @@ Execute: `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `s
 
 Raises (mechanically extracted): `evidence weight must be between 0 and 1`; `query text length must be between 1 and 4096`; `result/candidate bounds are invalid`.
 
-Touches (best effort): reads [`retrieval.projection_target`](../../relations/retrieval/projection_target.md), [`retrieval.vector_item`](../../relations/retrieval/vector_item.md), [`retrieval.vector_item_embedding_1536`](../../relations/retrieval/vector_item_embedding_1536.md), [`retrieval.vector_space`](../../relations/retrieval/vector_space.md), [`retrieval.vector_space_version`](../../relations/retrieval/vector_space_version.md); writes —; calls [`retrieval.evidence_signal`](../retrieval/evidence_signal.md), [`util.default_tenant_id`](../util/default_tenant_id.md).
+Touches (best effort): reads [`retrieval.projection_target`](../../relations/retrieval/projection_target.md), [`retrieval.vector_item`](../../relations/retrieval/vector_item.md), [`retrieval.vector_item_embedding_1536`](../../relations/retrieval/vector_item_embedding_1536.md), [`retrieval.vector_space`](../../relations/retrieval/vector_space.md), [`retrieval.vector_space_version`](../../relations/retrieval/vector_space_version.md); writes —; calls [`catalog.canonical_entity`](../catalog/canonical_entity.md), [`catalog.with_merged`](../catalog/with_merged.md), [`retrieval.evidence_signal`](../retrieval/evidence_signal.md), [`util.default_tenant_id`](../util/default_tenant_id.md).
 
 Named queries: `q:retrieval.search_unified`.
 

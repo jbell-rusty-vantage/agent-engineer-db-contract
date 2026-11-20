@@ -1969,6 +1969,7 @@ export type Database = {
           amount: number | null
           belief: string | null
           caused_by_event_id: string | null
+          correction_reason: string | null
           created_at: string | null
           currency: string | null
           extent_id: string | null
@@ -1979,6 +1980,7 @@ export type Database = {
           primary_claim_id: string | null
           ref_entity_id: string | null
           replaces_segment_id: string | null
+          revision_kind: string | null
           scope_key: string | null
           status: string | null
           stream_id: string | null
@@ -3672,6 +3674,15 @@ export type Database = {
           watch_level: string
         }[]
       }
+      change_explanation: {
+        Args: {
+          p_event?: string
+          p_include_proposals?: boolean
+          p_relationship?: string
+          p_segment?: string
+        }
+        Returns: Json
+      }
       changes_since: {
         Args: {
           p_document_types?: string[]
@@ -3680,10 +3691,13 @@ export type Database = {
           p_stream_kinds?: string[]
         }
         Returns: {
+          cause_event_id: string
+          cause_event_kind: string
           change_kind: string
           change_source: string
           changed_attributes: Json
           claim_id: string
+          correction_reason: string
           document_id: string
           document_title: string
           knowledge_seq: number
@@ -3691,6 +3705,7 @@ export type Database = {
           logical_key: string
           new_value: Json
           old_value: Json
+          revision_kind: string
           scope_key: string
           stream_kind: string
           subject: string
@@ -3737,6 +3752,7 @@ export type Database = {
           amount: number
           belief: string
           caused_by_event_id: string
+          correction_reason: string
           created_at: string
           currency: string
           extent_id: string
@@ -3747,6 +3763,7 @@ export type Database = {
           primary_claim_id: string
           ref_entity_id: string
           replaces_segment_id: string
+          revision_kind: string
           scope_key: string
           status: string
           stream_id: string
@@ -3768,6 +3785,16 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      decide_proposal: {
+        Args: {
+          p_decided_by?: string
+          p_decision: string
+          p_note?: string
+          p_outcome_claim?: string
+          p_proposal: string
+        }
+        Returns: Json
       }
       digest_item_passages: {
         Args: { p_item: string }
@@ -3836,6 +3863,16 @@ export type Database = {
         }[]
       }
       entity_card: { Args: { p_entity: string }; Returns: Json }
+      entity_history: {
+        Args: { p_entity: string }
+        Returns: {
+          details: Json
+          item_kind: string
+          learned_at: string
+          world_from: string
+          world_to: string
+        }[]
+      }
       entity_rows: {
         Args: never
         Returns: Database["catalog"]["Tables"]["entity"]["Row"][]
@@ -4175,6 +4212,56 @@ export type Database = {
         Args: { p_operation: string; p_payload: Json }
         Returns: Json
       }
+      proposals: {
+        Args: {
+          p_entity?: string
+          p_event?: string
+          p_relationship?: string
+          p_review_states?: string[]
+          p_segment?: string
+        }
+        Returns: {
+          authored_by: string
+          authored_by_kind: string
+          basis: Json
+          cause_event_id: string
+          confidence: string
+          created_at: string
+          label: string
+          object: string
+          object_entity_id: string
+          outcome_claim_id: string
+          proposal_id: string
+          proposal_kind: string
+          publication: string
+          rationale: string
+          relationship_kind: string
+          review_state: string
+          statement: string
+          subject: string
+          subject_entity_id: string
+          target: Json
+        }[]
+      }
+      propose: {
+        Args: {
+          p_actor?: Json
+          p_basis?: Json
+          p_cause_event?: string
+          p_confidence: string
+          p_idempotency_key: string
+          p_kind: string
+          p_label?: string
+          p_object?: string
+          p_rationale: string
+          p_relationship_kind?: string
+          p_statement: string
+          p_subject?: string
+          p_target?: Json
+          p_world_during?: unknown
+        }
+        Returns: Json
+      }
       propose_verdict: {
         Args: {
           p_actor?: Json
@@ -4184,6 +4271,14 @@ export type Database = {
           p_probe_id: string
           p_rationale: string
           p_verdict: string
+        }
+        Returns: Json
+      }
+      publish_proposal: {
+        Args: {
+          p_proposal: string
+          p_publish?: boolean
+          p_published_by?: string
         }
         Returns: Json
       }
@@ -5935,28 +6030,46 @@ export type Database = {
           created_at: string
           from_entity_id: string
           id: string
+          knowledge_seq: number | null
+          note: string | null
+          proposal_id: string | null
           reason: string
+          reason_code: string | null
           receipt_id: string
           tenant_id: string
           to_entity_id: string
+          undone_at: string | null
+          undone_receipt_id: string | null
         }
         Insert: {
           created_at?: string
           from_entity_id: string
           id?: string
+          knowledge_seq?: number | null
+          note?: string | null
+          proposal_id?: string | null
           reason: string
+          reason_code?: string | null
           receipt_id: string
           tenant_id?: string
           to_entity_id: string
+          undone_at?: string | null
+          undone_receipt_id?: string | null
         }
         Update: {
           created_at?: string
           from_entity_id?: string
           id?: string
+          knowledge_seq?: number | null
+          note?: string | null
+          proposal_id?: string | null
           reason?: string
+          reason_code?: string | null
           receipt_id?: string
           tenant_id?: string
           to_entity_id?: string
+          undone_at?: string | null
+          undone_receipt_id?: string | null
         }
         Relationships: [
           {
@@ -5964,6 +6077,13 @@ export type Database = {
             columns: ["from_entity_id"]
             isOneToOne: false
             referencedRelation: "entity"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_merge_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposal"
             referencedColumns: ["id"]
           },
           {
@@ -5985,6 +6105,156 @@ export type Database = {
             columns: ["to_entity_id"]
             isOneToOne: false
             referencedRelation: "entity"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_split: {
+        Row: {
+          created_at: string
+          from_entity_id: string
+          id: string
+          knowledge_seq: number | null
+          note: string | null
+          proposal_id: string | null
+          reason_code: string
+          receipt_id: string
+          source_retired: boolean
+          tenant_id: string
+          undone_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          from_entity_id: string
+          id?: string
+          knowledge_seq?: number | null
+          note?: string | null
+          proposal_id?: string | null
+          reason_code: string
+          receipt_id: string
+          source_retired?: boolean
+          tenant_id?: string
+          undone_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          from_entity_id?: string
+          id?: string
+          knowledge_seq?: number | null
+          note?: string | null
+          proposal_id?: string | null
+          reason_code?: string
+          receipt_id?: string
+          source_retired?: boolean
+          tenant_id?: string
+          undone_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_split_from_entity_id_fkey"
+            columns: ["from_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_split_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposal"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entity_split_part: {
+        Row: {
+          split_id: string
+          tenant_id: string
+          to_entity_id: string
+        }
+        Insert: {
+          split_id: string
+          tenant_id?: string
+          to_entity_id: string
+        }
+        Update: {
+          split_id?: string
+          tenant_id?: string
+          to_entity_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entity_split_part_split_id_fkey"
+            columns: ["split_id"]
+            isOneToOne: false
+            referencedRelation: "entity_split"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entity_split_part_to_entity_id_fkey"
+            columns: ["to_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      identity_move: {
+        Row: {
+          action: string
+          column_name: string | null
+          created_at: string
+          detail: Json
+          id: string
+          merge_id: string | null
+          row_key: Json
+          seq: number
+          split_id: string | null
+          table_name: string
+          tenant_id: string
+          undone: boolean
+        }
+        Insert: {
+          action: string
+          column_name?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          merge_id?: string | null
+          row_key: Json
+          seq?: never
+          split_id?: string | null
+          table_name: string
+          tenant_id?: string
+          undone?: boolean
+        }
+        Update: {
+          action?: string
+          column_name?: string | null
+          created_at?: string
+          detail?: Json
+          id?: string
+          merge_id?: string | null
+          row_key?: Json
+          seq?: never
+          split_id?: string | null
+          table_name?: string
+          tenant_id?: string
+          undone?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "identity_move_merge_id_fkey"
+            columns: ["merge_id"]
+            isOneToOne: false
+            referencedRelation: "entity_merge"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "identity_move_split_id_fkey"
+            columns: ["split_id"]
+            isOneToOne: false
+            referencedRelation: "entity_split"
             referencedColumns: ["id"]
           },
         ]
@@ -6045,8 +6315,177 @@ export type Database = {
           },
         ]
       }
+      proposal: {
+        Row: {
+          authored_by: string
+          authored_by_kind: string
+          cause_event_id: string | null
+          confidence: string
+          created_at: string
+          created_by_receipt_id: string | null
+          decided_at: string | null
+          decided_by: string | null
+          decision_note: string | null
+          id: string
+          label: string | null
+          object_entity_id: string | null
+          outcome_claim_id: string | null
+          proposal_kind: string
+          publication: string
+          published_at: string | null
+          published_by: string | null
+          rationale: string
+          relationship_kind: string | null
+          review_state: string
+          statement: string
+          subject_entity_id: string | null
+          target_event_id: string | null
+          target_relationship_id: string | null
+          target_segment_id: string | null
+          tenant_id: string
+          updated_at: string
+          world_during: unknown
+        }
+        Insert: {
+          authored_by: string
+          authored_by_kind: string
+          cause_event_id?: string | null
+          confidence: string
+          created_at?: string
+          created_by_receipt_id?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          label?: string | null
+          object_entity_id?: string | null
+          outcome_claim_id?: string | null
+          proposal_kind: string
+          publication?: string
+          published_at?: string | null
+          published_by?: string | null
+          rationale: string
+          relationship_kind?: string | null
+          review_state?: string
+          statement: string
+          subject_entity_id?: string | null
+          target_event_id?: string | null
+          target_relationship_id?: string | null
+          target_segment_id?: string | null
+          tenant_id?: string
+          updated_at?: string
+          world_during?: unknown
+        }
+        Update: {
+          authored_by?: string
+          authored_by_kind?: string
+          cause_event_id?: string | null
+          confidence?: string
+          created_at?: string
+          created_by_receipt_id?: string | null
+          decided_at?: string | null
+          decided_by?: string | null
+          decision_note?: string | null
+          id?: string
+          label?: string | null
+          object_entity_id?: string | null
+          outcome_claim_id?: string | null
+          proposal_kind?: string
+          publication?: string
+          published_at?: string | null
+          published_by?: string | null
+          rationale?: string
+          relationship_kind?: string | null
+          review_state?: string
+          statement?: string
+          subject_entity_id?: string | null
+          target_event_id?: string | null
+          target_relationship_id?: string | null
+          target_segment_id?: string | null
+          tenant_id?: string
+          updated_at?: string
+          world_during?: unknown
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_object_entity_id_fkey"
+            columns: ["object_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposal_subject_entity_id_fkey"
+            columns: ["subject_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entity"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposal_target_relationship_id_fkey"
+            columns: ["target_relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationship"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      proposal_basis: {
+        Row: {
+          claim_id: string | null
+          event_id: string | null
+          id: string
+          note: string | null
+          proposal_id: string
+          relationship_id: string | null
+          role: string
+          segment_id: string | null
+          tenant_id: string
+        }
+        Insert: {
+          claim_id?: string | null
+          event_id?: string | null
+          id?: string
+          note?: string | null
+          proposal_id: string
+          relationship_id?: string | null
+          role?: string
+          segment_id?: string | null
+          tenant_id?: string
+        }
+        Update: {
+          claim_id?: string | null
+          event_id?: string | null
+          id?: string
+          note?: string | null
+          proposal_id?: string
+          relationship_id?: string | null
+          role?: string
+          segment_id?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proposal_basis_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "proposal"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "proposal_basis_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationship"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       relationship: {
         Row: {
+          closed_by_event_id: string | null
+          closed_kind: string | null
+          closed_reason: string | null
           created_at: string
           episode: number
           from_entity_id: string
@@ -6061,6 +6500,9 @@ export type Database = {
           to_entity_id: string
         }
         Insert: {
+          closed_by_event_id?: string | null
+          closed_kind?: string | null
+          closed_reason?: string | null
           created_at?: string
           episode?: number
           from_entity_id: string
@@ -6075,6 +6517,9 @@ export type Database = {
           to_entity_id: string
         }
         Update: {
+          closed_by_event_id?: string | null
+          closed_kind?: string | null
+          closed_reason?: string | null
           created_at?: string
           episode?: number
           from_entity_id?: string
@@ -6191,11 +6636,102 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _carry_relationship_streams: {
+        Args: { p_from_rel: string; p_reason: string; p_to_rel: string }
+        Returns: undefined
+      }
+      _ensure_stream: {
+        Args: {
+          p_entity: string
+          p_kind: string
+          p_relationship: string
+          p_scope_key: string
+        }
+        Returns: string
+      }
+      _log_move: {
+        Args: {
+          p_action: string
+          p_column: string
+          p_detail?: Json
+          p_merge: string
+          p_row_key: Json
+          p_split: string
+          p_table: string
+        }
+        Returns: undefined
+      }
+      _move_relationship: {
+        Args: {
+          p_from: string
+          p_reason: string
+          p_relationship: string
+          p_to: string
+        }
+        Returns: string
+      }
+      _move_segment: {
+        Args: {
+          p_reason: string
+          p_ref: string
+          p_segment: string
+          p_stream: string
+        }
+        Returns: string
+      }
+      _reopen_segment: {
+        Args: { p_reason: string; p_segment: string }
+        Returns: string
+      }
+      _repoint_references: {
+        Args: { p_from: string; p_merge: string; p_split: string; p_to: string }
+        Returns: number
+      }
+      _row_key: { Args: { p_row: Json; p_table: unknown }; Returns: Json }
+      caller_is_person: { Args: never; Returns: boolean }
+      caller_role: { Args: never; Returns: string }
+      canonical_entity: { Args: { p_entity: string }; Returns: string }
+      entity_references: {
+        Args: { p_entity: string }
+        Returns: {
+          column_name: string
+          row_count: number
+          table_name: string
+        }[]
+      }
       import_research_starter_catalog: {
         Args: { p_receipt: string }
         Returns: Json
       }
+      merge_entities: {
+        Args: {
+          p_loser: string
+          p_note?: string
+          p_proposal?: string
+          p_reason?: string
+          p_receipt: string
+          p_winner: string
+        }
+        Returns: Json
+      }
       rebuild_entity_projections: { Args: { p_k?: number }; Returns: number }
+      split_entity: {
+        Args: {
+          p_note?: string
+          p_parts: Json
+          p_proposal?: string
+          p_reason?: string
+          p_receipt: string
+          p_retire_source?: boolean
+          p_source: string
+        }
+        Returns: Json
+      }
+      undo_merge: {
+        Args: { p_merge: string; p_note?: string; p_receipt: string }
+        Returns: Json
+      }
+      with_merged: { Args: { p_ids: string[] }; Returns: string[] }
     }
     Enums: {
       [_ in never]: never
@@ -22500,6 +23036,24 @@ export type Database = {
   }
   temporal: {
     Tables: {
+      correction_reason: {
+        Row: {
+          applies_to: string[]
+          code: string
+          description: string
+        }
+        Insert: {
+          applies_to: string[]
+          code: string
+          description: string
+        }
+        Update: {
+          applies_to?: string[]
+          code?: string
+          description?: string
+        }
+        Relationships: []
+      }
       event: {
         Row: {
           created_at: string
@@ -22752,6 +23306,7 @@ export type Database = {
           amount: number | null
           belief: string
           caused_by_event_id: string | null
+          correction_reason: string | null
           created_at: string
           currency: string | null
           extent_id: string | null
@@ -22762,6 +23317,7 @@ export type Database = {
           primary_claim_id: string | null
           ref_entity_id: string | null
           replaces_segment_id: string | null
+          revision_kind: string | null
           status: string | null
           stream_id: string
           temporal_basis: string
@@ -22773,6 +23329,7 @@ export type Database = {
           amount?: number | null
           belief?: string
           caused_by_event_id?: string | null
+          correction_reason?: string | null
           created_at?: string
           currency?: string | null
           extent_id?: string | null
@@ -22783,6 +23340,7 @@ export type Database = {
           primary_claim_id?: string | null
           ref_entity_id?: string | null
           replaces_segment_id?: string | null
+          revision_kind?: string | null
           status?: string | null
           stream_id: string
           temporal_basis: string
@@ -22794,6 +23352,7 @@ export type Database = {
           amount?: number | null
           belief?: string
           caused_by_event_id?: string | null
+          correction_reason?: string | null
           created_at?: string
           currency?: string | null
           extent_id?: string | null
@@ -22804,6 +23363,7 @@ export type Database = {
           primary_claim_id?: string | null
           ref_entity_id?: string | null
           replaces_segment_id?: string | null
+          revision_kind?: string | null
           status?: string | null
           stream_id?: string
           temporal_basis?: string
@@ -22818,6 +23378,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "event"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "segment_correction_reason_fkey"
+            columns: ["correction_reason"]
+            isOneToOne: false
+            referencedRelation: "correction_reason"
+            referencedColumns: ["code"]
           },
           {
             foreignKeyName: "segment_extent_id_fkey"
@@ -22996,13 +23563,16 @@ export type Database = {
         Args: {
           p_amount?: number
           p_belief?: string
+          p_caused_by_event?: string
           p_claim?: string
+          p_correction_reason?: string
           p_currency?: string
           p_entity: string
           p_extent?: string
           p_payload?: Json
           p_ref_entity?: string
           p_relationship?: string
+          p_revision_kind?: string
           p_scope_key?: string
           p_status?: string
           p_stream_kind: string
@@ -23013,6 +23583,18 @@ export type Database = {
         Returns: string
       }
       begin_batch: { Args: { p_expected_head?: number }; Returns: number }
+      close_relationship: {
+        Args: {
+          p_claim?: string
+          p_closed_kind: string
+          p_event?: string
+          p_extent?: string
+          p_reason?: string
+          p_relationship: string
+          p_world_end?: string
+        }
+        Returns: undefined
+      }
       close_segment: { Args: { p_segment: string }; Returns: undefined }
       commit_batch: {
         Args: {

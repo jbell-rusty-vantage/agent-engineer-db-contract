@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"review_task\"][\"Row\"]"
 defined_in: ["20260826001100_evaluation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evaluation.review_task
 
@@ -52,7 +52,9 @@ table in domain `evaluation`, lens `machinery`.
 
 ## Relationships
 
-7 outbound and 5 inbound foreign keys; full list in [details](review_task.details.md).
+Outbound: `candidate_id` → [`staging.candidate`](../staging/candidate.md)`.id` on delete cascade; `capability_version_id` → [`orchestration.capability_version`](../orchestration/capability_version.md)`.id` on delete cascade; `claim_conflict_id` → [`evidence.claim_conflict`](../evidence/claim_conflict.md)`.id` on delete cascade; `claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` on delete cascade; `entity_merge_id` → [`catalog.entity_merge`](../catalog/entity_merge.md)`.id` on delete cascade; `operation_intent_id` → [`orchestration.operation_intent`](../orchestration/operation_intent.md)`.id` on delete cascade; `vector_space_version_id` → [`retrieval.vector_space_version`](../retrieval/vector_space_version.md)`.id` on delete cascade.
+Inbound: [`evaluation.review_decision`](review_decision.md).review_task_id, [`evidence.conflict_reconciliation`](../evidence/conflict_reconciliation.md).review_task_id, [`evidence.degraded_assurance`](../evidence/degraded_assurance.md).approved_by_review_task_id, [`taxonomy.assignment`](../taxonomy/assignment.md).review_task_id, [`taxonomy.facet_version`](../taxonomy/facet_version.md).approved_by_review_task_id.
+Polymorphic: exactly one of `candidate_id`, `claim_id`, `claim_conflict_id`, `entity_merge_id`, `operation_intent_id`, `capability_version_id`, `vector_space_version_id` → [`catalog.entity_merge`](../catalog/entity_merge.md) | [`evidence.claim`](../evidence/claim.md) | [`evidence.claim_conflict`](../evidence/claim_conflict.md) | [`orchestration.capability_version`](../orchestration/capability_version.md) | [`orchestration.operation_intent`](../orchestration/operation_intent.md) | [`retrieval.vector_space_version`](../retrieval/vector_space_version.md) | [`staging.candidate`](../staging/candidate.md) — basis: check constraint review_task_exactly_one_subject.
 
 ## Indexes
 
@@ -60,11 +62,12 @@ table in domain `evaluation`, lens `machinery`.
 
 ## Triggers
 
-1 triggers; see [details](review_task.details.md).
+- `review_task_set_updated_at` → [`util.set_updated_at`](../../functions/util/set_updated_at.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](review_task.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

@@ -7,7 +7,7 @@ queries: [evidence.verified_claims, evidence.claim_verdicts, chain.governed_writ
 aliases: [not allowed, forbidden write, agent limits, human review, human confirmed, verify claim, admission, release review, append-only, immutable, lines agents do not cross]
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # What is an agent not allowed to write?
 

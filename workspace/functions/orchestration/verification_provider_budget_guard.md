@@ -13,7 +13,7 @@ raises: [verification provider budget immutable identity, verification provider 
 touches: { reads: [], writes: [] }
 tokens: [orchestration, verification_provider_budget_guard, orchestration.verification_provider_budget_guard]
 defined_in: ["20260906012000_harden_verification_provider_accounting.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.verification_provider_budget_guard
 

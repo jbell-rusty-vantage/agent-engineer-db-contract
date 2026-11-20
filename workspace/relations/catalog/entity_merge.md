@@ -6,7 +6,7 @@ name: entity_merge
 domain: identity
 lens: corpus
 aliases: [merge]
-tokens: [catalog, entity_merge, catalog.entity_merge, id, tenant_id, from_entity_id, to_entity_id, reason, receipt_id, created_at]
+tokens: [catalog, entity_merge, catalog.entity_merge, id, tenant_id, from_entity_id, to_entity_id, reason, receipt_id, created_at, reason_code, note, proposal_id, knowledge_seq, undone_at, undone_receipt_id]
 summary: Durable merge of two entities; loser becomes lifecycle merged.
 summary_basis: curated
 rls: enabled
@@ -14,11 +14,11 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, service_role]
 typescript: "Database[\"catalog\"][\"Tables\"][\"entity_merge\"][\"Row\"]"
 defined_in: []
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # catalog.entity_merge
 
-table in domain `identity`, lens `corpus`.
+table in domain `identity`, lens `corpus` — A merge of two records that were one thing (our mistake, never a merger in the world). Written by catalog.merge_entities; what moved is in catalog.identity_move; undone_at marks a merge that was reversed..
 
 > curated (model_assisted, unreviewed) — Durable merge of two entities; loser becomes lifecycle merged.
 
@@ -33,6 +33,12 @@ table in domain `identity`, lens `corpus`.
 | 5 | `reason` | `text` | no | — | — |
 | 6 | `receipt_id` | `uuid` | no | — | FK → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md).id; _curated:_ Required. |
 | 7 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 8 | `reason_code` | `text` | yes | — | FK → [`temporal.correction_reason`](../temporal/correction_reason.md).code |
+| 9 | `note` | `text` | yes | — | — |
+| 10 | `proposal_id` | `uuid` | yes | — | FK → [`catalog.proposal`](proposal.md).id |
+| 11 | `knowledge_seq` | `bigint` | yes | — | — |
+| 12 | `undone_at` | `timestamp with time zone` | yes | — | — |
+| 13 | `undone_receipt_id` | `uuid` | yes | — | FK → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md).id |
 
 ## Constraints
 
@@ -42,9 +48,9 @@ table in domain `identity`, lens `corpus`.
 
 ## Relationships
 
-Outbound: `from_entity_id` → [`catalog.entity`](entity.md)`.id` (+tenant); `receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`; `to_entity_id` → [`catalog.entity`](entity.md)`.id` (+tenant).
-Inbound: [`evaluation.review_task`](../evaluation/review_task.md).entity_merge_id.
-Polymorphic target of: [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject).
+Outbound: `from_entity_id` → [`catalog.entity`](entity.md)`.id` (+tenant); `proposal_id` → [`catalog.proposal`](proposal.md)`.id`; `reason_code` → [`temporal.correction_reason`](../temporal/correction_reason.md)`.code`; `receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`; `to_entity_id` → [`catalog.entity`](entity.md)`.id` (+tenant); `undone_receipt_id` → [`orchestration.operation_receipt`](../orchestration/operation_receipt.md)`.id`.
+Inbound: [`catalog.identity_move`](identity_move.md).merge_id, [`evaluation.review_task`](../evaluation/review_task.md).entity_merge_id.
+Polymorphic target of: [`catalog.identity_move`](identity_move.md) (check constraint identity_move_one_parent), [`evaluation.review_task`](../evaluation/review_task.md) (check constraint review_task_exactly_one_subject).
 
 ## Indexes
 
@@ -65,11 +71,13 @@ Enabled.
 
 ## Read paths
 
+- Named queries: `q:facts.changes_since`.
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
 - Direct DML: `executor_service`.
+- Via functions (best effort): [`catalog.merge_entities`](../../functions/catalog/merge_entities.md), [`catalog.undo_merge`](../../functions/catalog/undo_merge.md).
 
 ## TypeScript
 

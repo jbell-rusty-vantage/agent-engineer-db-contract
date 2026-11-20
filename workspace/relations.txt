@@ -89,8 +89,13 @@ catalog.entity
 catalog.entity_alias
 catalog.entity_identifier
 catalog.entity_merge
+catalog.entity_split
+catalog.entity_split_part
+catalog.identity_move
 catalog.license
 catalog.media_platform
+catalog.proposal
+catalog.proposal_basis
 catalog.relationship
 catalog.work
 # content  lens=corpus
@@ -356,6 +361,7 @@ taxonomy.term
 taxonomy.term_relation
 taxonomy.term_target_kind
 # temporal  lens=corpus
+temporal.correction_reason
 temporal.event
 temporal.event_kind
 temporal.event_occurrence

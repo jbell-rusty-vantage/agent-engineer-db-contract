@@ -3,14 +3,14 @@ id: "voc:taxonomy.relationship_kind"
 kind: vocabulary
 schema: taxonomy
 name: relationship_kind
-rows: 70
-rows_sha256: "sha256:a6f58980a24bd4c8cafb15bab45076cc1ab295f52850a7261cfa928140caac1f"
-codes: [about, active_on, advisor_to, affected_by_advisory, announced_at, authored_by, backed_by_repository, benchmark_uses_dataset, board_member_of, built_on_model, bundles, case_study_uses, channel_owned_by, cites, compatible_with, competes_with, customer_of, depends_on, derived_from_model, develops, distributes, edition_of, employed_by, feature_of_protocol, founded, hardware_requirement, has_code, has_feature, hosts, implements_protocol, implements_technique, in_series, instance_of_concept, integrates_with, introduces_technique, investor_in, listed_in, maintains, manufactures, offered_as, offered_by, operates, operates_channel, organized_by, owns_stake_in, participates_in_round, partner_of, party_to_transaction, presented_at, presented_by, provides_compute, published_by, published_in, published_on, recipient_of_round, recorded_as, records_event, runs_on, same_actor_as, series_on_channel, sponsors, subsidiary_of, supersedes, technique_relates_to, trained_on, transaction_asset, uses_technique, variant_of, vends, version_of]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+rows: 71
+rows_sha256: "sha256:cf08da68bc6c88919952a0f528a0bd9536b212184bebca8c55a8fc8bda81983b"
+codes: [about, active_on, advisor_to, affected_by_advisory, announced_at, authored_by, backed_by_repository, benchmark_uses_dataset, board_member_of, built_on_model, bundles, case_study_uses, channel_owned_by, cites, compatible_with, competes_with, customer_of, depends_on, derived_from_model, develops, distributes, edition_of, employed_by, feature_of_protocol, founded, hardware_requirement, has_code, has_feature, hosts, implements_protocol, implements_technique, in_series, instance_of_concept, integrates_with, introduces_technique, investor_in, listed_in, maintains, manufactures, offered_as, offered_by, operates, operates_channel, organized_by, owns_stake_in, participates_in_round, partner_of, party_to_transaction, presented_at, presented_by, provides_compute, published_by, published_in, published_on, recipient_of_round, recorded_as, records_event, runs_on, same_actor_as, series_on_channel, split_from, sponsors, subsidiary_of, supersedes, technique_relates_to, trained_on, transaction_asset, uses_technique, variant_of, vends, version_of]
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # taxonomy.relationship_kind
 
-Reference data snapshot (70 rows, digest `sha256:a6f58980a24bd4c8cafb15bab45076cc1ab295f52850a7261cfa928140caac1f`). Codes are enforced wherever a column has a foreign key to [`taxonomy.relationship_kind`](../relations/taxonomy/relationship_kind.md).
+Reference data snapshot (71 rows, digest `sha256:cf08da68bc6c88919952a0f528a0bd9536b212184bebca8c55a8fc8bda81983b`). Codes are enforced wherever a column has a foreign key to [`taxonomy.relationship_kind`](../relations/taxonomy/relationship_kind.md).
 
 | code | description | from_kinds | inverse_label | property_schema | symmetric | temporal | to_kinds |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -51,7 +51,7 @@ Reference data snapshot (70 rows, digest `sha256:a6f58980a24bd4c8cafb15bab45076c
 | `introduces_technique` | introduces technique | paper | — | `{}` | no | no | technique |
 | `investor_in` | investor in | person | — | `{}` | no | yes | organization |
 | `listed_in` | listed in | dataset, ai_model, library, agent_skill, agent_plugin, mcp_server | — | `{}` | no | yes | registry |
-| `maintains` | maintains | person, organization | — | `{}` | no | yes | library, repository, mcp_server, agent_skill |
+| `maintains` | maintains | person, organization | — | `{}` | no | yes | library, repository, mcp_server, agent_skill, ai_protocol |
 | `manufactures` | manufactures | organization | — | `{}` | no | no | compute_device |
 | `offered_as` | offered as | ai_model_version | — | `{}` | no | no | model_offering |
 | `offered_by` | offered by | model_offering | — | `{}` | no | no | organization |
@@ -74,9 +74,10 @@ Reference data snapshot (70 rows, digest `sha256:a6f58980a24bd4c8cafb15bab45076c
 | `runs_on` | runs on | model_offering, compute_offering | — | `{}` | no | no | compute_device |
 | `same_actor_as` | Only when the platform itself states the link (e.g. a GitHub MEMBER of the vendor org who is a catalogued maintainer); … | community_actor | has_handle | `{"properties":{"stated_by":{"type":"string"}},"type":"object"}` | no | no | person |
 | `series_on_channel` | series on channel | media_series | — | `{}` | no | no | media_channel |
+| `split_from` | The first thing was carved out of the second in the world (a package split out of another, a spin-off). Both records st… | library, product, repository, organization, ai_protocol | split into | `{}` | no | no | library, product, repository, organization, ai_protocol |
 | `sponsors` | sponsors | organization | — | `{}` | no | no | industry_event |
 | `subsidiary_of` | subsidiary of | organization | — | `{}` | no | yes | organization |
-| `supersedes` | supersedes | product, ai_model | — | `{}` | no | no | product, ai_model |
+| `supersedes` | The first thing succeeds the second in the world (successor to predecessor). Both records stay. | product, ai_model, library, repository, organization, ai_protocol, mcp_server, agent_skill | — | `{}` | no | no | product, ai_model, library, repository, organization, ai_protocol, mcp_server, agent_skill |
 | `technique_relates_to` | technique relates to | technique | — | `{}` | no | no | technique |
 | `trained_on` | trained on | ai_model_version | — | `{}` | no | no | dataset |
 | `transaction_asset` | transaction asset | corporate_transaction | — | `{}` | no | no | product, repository, ai_model |

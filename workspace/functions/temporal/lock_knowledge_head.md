@@ -13,7 +13,7 @@ raises: [expected knowledge head required, knowledge batch already open, rebase_
 touches: { reads: [], writes: [temporal.knowledge_head] }
 tokens: [temporal, lock_knowledge_head, temporal.lock_knowledge_head]
 defined_in: ["20260914010900_content_link_head_lock.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # temporal.lock_knowledge_head
 

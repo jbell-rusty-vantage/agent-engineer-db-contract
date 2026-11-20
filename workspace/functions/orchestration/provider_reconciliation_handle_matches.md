@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [orchestration.artifact, orchestration.verification_artifact_metadata], writes: [] }
 tokens: [orchestration, provider_reconciliation_handle_matches, orchestration.provider_reconciliation_handle_matches]
 defined_in: ["20260906032800_verification_provider_reconciliation_ledger.sql", "20260914010000_artifact_logical_custody.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.provider_reconciliation_handle_matches
 

@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_summary\"][\"Row\"]"
 defined_in: ["20260912010600_km_06_content.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # content.document_summary
 
@@ -63,7 +63,9 @@ table in domain `content`, lens `corpus`.
 
 ## Relationships
 
-15 outbound and 6 inbound foreign keys; full list in [details](document_summary.details.md).
+Outbound: `derived_from_representation_id` → [`content.document_representation`](document_representation.md)`.id` (+tenant); `digest_id` → [`content.document_digest`](document_digest.md)`.id`; `document_version_id` → [`content.document_version`](document_version.md)`.id` (+tenant); `focus_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `representation_id` → [`content.document_representation`](document_representation.md)`.id` (+tenant); `scope_node_id` → [`content.document_node`](document_node.md)`.id` (+tenant); `supersedes_id` → [`content.document_summary`](document_summary.md)`.id` (+tenant); `transformation_run_id` → [`content.transformation_run`](transformation_run.md)`.id` (+tenant).
+Inbound: [`content.document_summary`](document_summary.md).supersedes_id, [`content.document_summary_source`](document_summary_source.md).summary_id, [`retrieval.projection_target`](../retrieval/projection_target.md).summary_id.
+Polymorphic target of: [`retrieval.projection_target`](../retrieval/projection_target.md) (check constraint projection_target_exactly_one).
 
 ## Indexes
 

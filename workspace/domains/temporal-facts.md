@@ -10,7 +10,7 @@ tasks: [admit-support-for-claim, check-knowledge-head, compare-models, compose-i
 summary: A fact is a segment on a stream with a world interval and a knowledge interval; one home for every number.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # Temporal facts (two clocks)
 
@@ -47,6 +47,18 @@ A fact is a segment on a stream with a world interval and a knowledge interval; 
 > scope_key to meter|tier|region; an existing series keeps its own scope_key, so read
 > `q:facts.price_history` before asserting a correction. Agents never DML temporal tables;
 > they submit fact.assert_state / event.assert intents.
+> 
+> Why a fact changed (Build 09, RV01). A fact that replaces another carries
+> `revision_kind`: `world_change` (it starts later than the fact it replaces; it may name
+> `caused_by_event_id`), `correction` (it rewrites the past and must carry a
+> `correction_reason` from `temporal.correction_reason`, or `temporal.assert_state` raises
+> `correction requires a reason`) or `carried` (the unchanged part, cut again). It is empty for a
+> first fact and for replacements made before 2026-11-20. An edge is ended with
+> `temporal.close_relationship`: a correction closes it in knowledge with a reason; a world
+> ending keeps the row and ends its `relationship_active` fact with the cause event. A claim
+> attached with role `explains` is a stated motive. `api.changes_since` reports all of this and
+> `api.change_explanation` answers why. Trap: a second parse of the same page asserted with a
+> later start reads as a world change; say `correction` and `misread`.
 
 ## Relations that matter
 

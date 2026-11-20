@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document_representation\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # content.document_representation
 
@@ -58,15 +58,18 @@ Inbound: [`content.conversion_evaluation`](conversion_evaluation.md).representat
 
 ## Indexes
 
-2 indexes; see [details](document_representation.details.md).
+`document_representation_tenant_id_id_key` unique; `representation_version_idx`
 
 ## Triggers
 
-3 triggers; see [details](document_representation.details.md).
+- `artifact_retirement_b4c43d45f45a0674ce9260bf` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `document_representation_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+- `predecessor_direction` → [`util.validate_predecessor`](../../functions/util/validate_predecessor.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](document_representation.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

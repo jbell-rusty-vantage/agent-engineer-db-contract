@@ -13,7 +13,7 @@ raises: [entity/record receipt tenant mismatch]
 touches: { reads: [orchestration.operation_intent, orchestration.operation_receipt], writes: [] }
 tokens: [catalog, check_receipt_tenant, catalog.check_receipt_tenant]
 defined_in: []
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # catalog.check_receipt_tenant
 

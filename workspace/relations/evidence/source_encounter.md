@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_encounter\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evidence.source_encounter
 

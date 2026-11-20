@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"retrieval\"][\"Tables\"][\"search_projection\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # retrieval.search_projection
 
@@ -66,7 +66,7 @@ Inbound: [`retrieval.embedding_item`](embedding_item.md).search_projection_id, [
 
 ## Indexes
 
-3 indexes; see [details](search_projection.details.md).
+`search_projection_target_idx`; `search_projection_tenant_id_id_key` unique; `search_projection_tenant_id_projection_target_id_projection_key` unique
 
 ## Triggers
 
@@ -74,7 +74,9 @@ Inbound: [`retrieval.embedding_item`](embedding_item.md).search_projection_id, [
 
 ## Row-level security
 
-Enabled; 2 policies in [details](search_projection.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+- `product_private_access` (ALL) for `product_api_owner`: `true`
 
 ## Grants
 

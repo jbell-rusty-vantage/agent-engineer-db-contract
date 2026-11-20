@@ -4,7 +4,7 @@ kind: details
 schema: temporal
 name: segment
 of: "rel:temporal.segment"
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # temporal.segment — details
 
@@ -18,14 +18,17 @@ Spill-over from [the main page](segment.md).
 - check `segment_check`: `((k_to IS NULL) OR (k_to > k_from))`
 - check `segment_check1`: `((replaces_segment_id IS NULL) OR (replaces_segment_id <> id))`
 - check `segment_check2`: `((temporal_basis = ANY (ARRAY['observation_bounded'::text, 'unresolved'::text])) OR (extent_id IS NOT NULL))`
+- check `segment_correction_has_reason`: `((revision_kind IS DISTINCT FROM 'correction'::text) OR (correction_reason IS NOT NULL))`
+- check `segment_reason_only_on_correction`: `((correction_reason IS NULL) OR (revision_kind = 'correction'::text))`
+- check `segment_revision_kind_check`: `(revision_kind = ANY (ARRAY['world_change'::text, 'correction'::text, 'carried'::text]))`
 - check `segment_temporal_basis_check`: `(temporal_basis = ANY (ARRAY['explicit'::text, 'carry_forward'::text, 'observation_bounded'::text, 'unresolved'::text]))`
 - check `segment_valid_during_check`: `((NOT isempty(valid_during)) AND lower_inc(valid_during) AND (NOT upper_inc(valid_during)) AND (NOT lower_inf(valid_during)))`
 
 ## Relationships
 
-Outbound: `caused_by_event_id` → [`temporal.event`](event.md)`.id` (+tenant); `extent_id` → [`temporal.extent`](extent.md)`.id` (+tenant); `primary_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant); `ref_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `replaces_segment_id` → [`temporal.segment`](segment.md)`.id` (+tenant); `stream_id` → [`temporal.stream`](stream.md)`.id` (+tenant).
-Inbound: [`evidence.segment_support`](../evidence/segment_support.md).segment_id, [`temporal.segment`](segment.md).replaces_segment_id.
-Polymorphic target of: [`evidence.segment_support`](../evidence/segment_support.md) (check constraint segment_support_check).
+Outbound: `caused_by_event_id` → [`temporal.event`](event.md)`.id` (+tenant); `correction_reason` → [`temporal.correction_reason`](correction_reason.md)`.code`; `extent_id` → [`temporal.extent`](extent.md)`.id` (+tenant); `primary_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant); `ref_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id` (+tenant); `replaces_segment_id` → [`temporal.segment`](segment.md)`.id` (+tenant); `stream_id` → [`temporal.stream`](stream.md)`.id` (+tenant).
+Inbound: [`catalog.proposal`](../catalog/proposal.md).target_segment_id, [`catalog.proposal_basis`](../catalog/proposal_basis.md).segment_id, [`evidence.segment_support`](../evidence/segment_support.md).segment_id, [`temporal.segment`](segment.md).replaces_segment_id.
+Polymorphic target of: [`catalog.proposal`](../catalog/proposal.md) (check constraint proposal_cause_shape), [`catalog.proposal_basis`](../catalog/proposal_basis.md) (check constraint proposal_basis_one_target), [`evidence.segment_support`](../evidence/segment_support.md) (check constraint segment_support_check).
 
 ## Indexes
 

@@ -68,6 +68,7 @@
     "taxonomy.relationship_kind",
     "temporal.stream_kind",
     "temporal.event_kind",
+    "temporal.correction_reason",
     "content.document_type",
     "content.format",
     "content.source_role",
@@ -83,7 +84,7 @@
     "updated_at"
   ],
   "budgets": {
-    "relation_main_bytes": 6144,
+    "relation_main_bytes": 6656,
     "relation_details_bytes": 16384,
     "domain_bytes": 12288,
     "schema_readme_bytes": 16384,
@@ -93,7 +94,7 @@
     "start_here_lines": 60,
     "map_bytes": 4096,
     "map_lines": 40,
-    "search_index_bytes": 720896
+    "search_index_bytes": 786432
   },
   "operations": {
     "dispatchers": [

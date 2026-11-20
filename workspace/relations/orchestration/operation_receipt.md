@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_receipt\"][\"Row\"]"
 defined_in: ["20260826000200_orchestration.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.operation_receipt
 
@@ -52,7 +52,7 @@ table in domain `orchestration-ledger`, lens `machinery`.
 ## Relationships
 
 Outbound: `intent_id` → [`orchestration.operation_intent`](operation_intent.md)`.id`.
-Inbound: [`catalog.entity`](../catalog/entity.md).created_by_receipt_id, [`catalog.entity_merge`](../catalog/entity_merge.md).receipt_id, [`evidence.claim`](../evidence/claim.md).created_by_receipt_id, [`evidence.source_encounter`](../evidence/source_encounter.md).receipt_id, [`guidance.item`](../guidance/item.md).created_by_receipt_id, [`orchestration.artifact_lineage`](artifact_lineage.md).receipt_id, [`orchestration.operation_receipt_target`](operation_receipt_target.md).receipt_id, [`retrieval.vector_item`](../retrieval/vector_item.md).receipt_id, [`staging.resolution_decision`](../staging/resolution_decision.md).receipt_id, [`staging.vetting_decision`](../staging/vetting_decision.md).receipt_id, [`taxonomy.assignment`](../taxonomy/assignment.md).created_by_receipt_id, [`temporal.knowledge_batch`](../temporal/knowledge_batch.md).receipt_id.
+Inbound: [`catalog.entity`](../catalog/entity.md).created_by_receipt_id, [`catalog.entity_merge`](../catalog/entity_merge.md).receipt_id|undone_receipt_id, [`catalog.entity_split`](../catalog/entity_split.md).receipt_id, [`catalog.proposal`](../catalog/proposal.md).created_by_receipt_id, [`evidence.claim`](../evidence/claim.md).created_by_receipt_id, [`evidence.source_encounter`](../evidence/source_encounter.md).receipt_id, [`guidance.item`](../guidance/item.md).created_by_receipt_id, [`orchestration.artifact_lineage`](artifact_lineage.md).receipt_id, [`orchestration.operation_receipt_target`](operation_receipt_target.md).receipt_id, [`retrieval.vector_item`](../retrieval/vector_item.md).receipt_id, [`staging.resolution_decision`](../staging/resolution_decision.md).receipt_id, [`staging.vetting_decision`](../staging/vetting_decision.md).receipt_id … 2 more in [details](operation_receipt.details.md).
 
 ## Indexes
 

@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.event, authoring.revision_binding, authoring.runtime_requirement, authoring.work, authoring.work_revision, authoring.workspace, authoring.workspace_member, conversation.message, conversation.thread, curriculum.outcome, curriculum.outcome_alignment, curriculum.part, curriculum.prerequisite, curriculum.requirement, curriculum.requirement_option, inquiry.assertion], writes: [] }
 tokens: [product, dispatch_authoring_read, product.dispatch_authoring_read]
 defined_in: ["20261116140000_build08_authoring_review_reads.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # product.dispatch_authoring_read
 

@@ -13,7 +13,7 @@ raises: [actor identity and reason are required, compatible active successor is 
 touches: { reads: [], writes: [retrieval.vector_store, retrieval.vector_store_lifecycle_event] }
 tokens: [retrieval, transition_vector_store_lifecycle, retrieval.transition_vector_store_lifecycle]
 defined_in: ["20260904015000_vector_store_lifecycle_control_plane.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # retrieval.transition_vector_store_lifecycle
 

@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"inquiry\"][\"Tables\"][\"support\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # inquiry.support
 
@@ -71,7 +71,8 @@ table in domain `inquiry`, lens `ours`.
 
 ## Relationships
 
-11 outbound and 0 inbound foreign keys; full list in [details](support.details.md).
+Outbound: `assessed_by` → `auth.users``.id` on delete restrict; `tenant_id,capture_id` → [`evidence.source_capture`](../evidence/source_capture.md)`.tenant_id,id` on delete restrict; `tenant_id,claim_id` → [`evidence.claim`](../evidence/claim.md)`.tenant_id,id` on delete restrict; `tenant_id,locator_id` → [`evidence.locator`](../evidence/locator.md)`.tenant_id,id` on delete restrict; `tenant_id,record_id` → [`guidance.item`](../guidance/item.md)`.tenant_id,id` on delete restrict; `tenant_id,workspace_id,assertion_id` → [`inquiry.assertion`](assertion.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,cell_id` → [`dataset.cell`](../dataset/cell.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,decision_revision_id` → [`authoring.work_revision`](../authoring/work_revision.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,source_revision_id` → [`authoring.work_revision`](../authoring/work_revision.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,target_assertion_id` → [`inquiry.assertion`](assertion.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,target_cell_id` → [`dataset.cell`](../dataset/cell.md)`.tenant_id,workspace_id,id` on delete restrict.
+Inbound: none.
 
 ## Indexes
 
@@ -79,11 +80,12 @@ table in domain `inquiry`, lens `ours`.
 
 ## Triggers
 
-1 triggers; see [details](support.details.md).
+- `immutable_guard` → [`product.guard_immutable`](../../functions/product/guard_immutable.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](support.details.md).
+Enabled and forced.
+- `product_api_all` (ALL) for `product_api_owner`: `true`
 
 ## Grants
 

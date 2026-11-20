@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"evidence\"][\"Tables\"][\"segment_support\"][\"Row\"]"
 defined_in: ["20260912010500_km_05_evidence.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evidence.segment_support
 
@@ -32,7 +32,7 @@ table in domain `evidence`, lens `evidence`.
 | 4 | `event_occurrence_id` | `uuid` | yes | — | FK → [`temporal.event_occurrence`](../temporal/event_occurrence.md).id |
 | 5 | `claim_id` | `uuid` | no | — | FK → [`evidence.claim`](claim.md).id |
 | 6 | `locator_id` | `uuid` | no | — | FK → [`evidence.locator`](locator.md).id |
-| 7 | `role` | `text` | no | — | _curated:_ supports, challenges, or context. |
+| 7 | `role` | `text` | no | — | supports, challenges, context, or explains (this claim states why the fact or event happened: a stated motive, attributed to its source).; _curated:_ supports, challenges, or context. |
 | 8 | `k_from` | `bigint` | no | — | — |
 | 9 | `k_to` | `bigint` | yes | — | — |
 
@@ -42,7 +42,7 @@ table in domain `evidence`, lens `evidence`.
 - unique (tenant_id, id)
 - check `segment_support_check`: `(num_nonnulls(segment_id, event_occurrence_id) = 1)`
 - check `segment_support_check1`: `((k_to IS NULL) OR (k_to > k_from))`
-- check `segment_support_role_check`: `(role = ANY (ARRAY['supports'::text, 'challenges'::text, 'context'::text]))`
+- check `segment_support_role_check`: `(role = ANY (ARRAY['supports'::text, 'challenges'::text, 'context'::text, 'explains'::text]))`
 
 ## Relationships
 
@@ -78,7 +78,7 @@ Enabled.
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`temporal.admit_support`](../../functions/temporal/admit_support.md), [`temporal.withdraw_support`](../../functions/temporal/withdraw_support.md).
+- Via functions (best effort): [`catalog._move_segment`](../../functions/catalog/_move_segment.md), [`catalog._reopen_segment`](../../functions/catalog/_reopen_segment.md), [`temporal.admit_support`](../../functions/temporal/admit_support.md), [`temporal.withdraw_support`](../../functions/temporal/withdraw_support.md).
 
 ## TypeScript
 

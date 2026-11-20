@@ -13,7 +13,7 @@ raises: ["% cannot be deleted", "terminal % is immutable"]
 touches: { reads: [], writes: [] }
 tokens: [retrieval, guard_terminal_status, retrieval.guard_terminal_status]
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # retrieval.guard_terminal_status
 

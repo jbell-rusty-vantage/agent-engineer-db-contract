@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"inquiry\"][\"Tables\"][\"acceptance\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # inquiry.acceptance
 
@@ -71,7 +71,8 @@ table in domain `inquiry`, lens `ours`.
 
 ## Relationships
 
-4 outbound and 3 inbound foreign keys; full list in [details](acceptance.details.md).
+Outbound: `accepted_by` → `auth.users``.id` on delete restrict; `tenant_id,workspace_id,accepted_event_id` → [`authoring.event`](../authoring/event.md)`.tenant_id,workspace_id,id` on delete restrict; `tenant_id,workspace_id,brief_work_id,brief_revision_id` → [`authoring.work_revision`](../authoring/work_revision.md)`.tenant_id,workspace_id,work_id,id` on delete restrict; `tenant_id,workspace_id,revises_acceptance_id` → [`inquiry.acceptance`](acceptance.md)`.tenant_id,workspace_id,id` on delete restrict.
+Inbound: [`dataset.proposal`](../dataset/proposal.md).workspace_id,acceptance_id, [`inquiry.acceptance`](acceptance.md).workspace_id,revises_acceptance_id, [`inquiry.obligation`](obligation.md).workspace_id,acceptance_id.
 
 ## Indexes
 
@@ -79,11 +80,12 @@ table in domain `inquiry`, lens `ours`.
 
 ## Triggers
 
-1 triggers; see [details](acceptance.details.md).
+- `mutable_guard` → [`product.guard_mutable`](../../functions/product/guard_mutable.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](acceptance.details.md).
+Enabled and forced.
+- `product_api_all` (ALL) for `product_api_owner`: `true`
 
 ## Grants
 

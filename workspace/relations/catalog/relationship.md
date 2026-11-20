@@ -6,7 +6,7 @@ name: relationship
 domain: relationships
 lens: corpus
 aliases: [edge, link]
-tokens: [catalog, relationship, catalog.relationship, id, tenant_id, kind, from_entity_id, to_entity_id, qualifier, episode, properties, primary_claim_id, k_from, k_to, created_at]
+tokens: [catalog, relationship, catalog.relationship, id, tenant_id, kind, from_entity_id, to_entity_id, qualifier, episode, properties, primary_claim_id, k_from, k_to, created_at, closed_kind, closed_reason, closed_by_event_id]
 summary: One edge table; kinds constrain endpoints and may be temporal.
 summary_basis: curated
 rls: enabled
@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"catalog\"][\"Tables\"][\"relationship\"][\"Row\"]"
 defined_in: []
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # catalog.relationship
 
@@ -38,6 +38,9 @@ table in domain `relationships`, lens `corpus` — The only link between two ent
 | 10 | `k_from` | `bigint` | no | — | — |
 | 11 | `k_to` | `bigint` | yes | — | _curated:_ Null means current knowledge of the edge. |
 | 12 | `created_at` | `timestamp with time zone` | no | `now()` | — |
+| 13 | `closed_kind` | `text` | yes | — | Why the edge stopped being current knowledge: world_change or correction. Set by temporal.close_relationship and by merge and split. |
+| 14 | `closed_reason` | `text` | yes | — | FK → [`temporal.correction_reason`](../temporal/correction_reason.md).code; Coded reason when closed_kind is correction. |
+| 15 | `closed_by_event_id` | `uuid` | yes | — | FK → [`temporal.event`](../temporal/event.md).id; The event that ended the edge, when a source names one. |
 
 ## Constraints
 
@@ -45,30 +48,27 @@ table in domain `relationships`, lens `corpus` — The only link between two ent
 - unique (tenant_id, id)
 - check `relationship_check`: `(from_entity_id <> to_entity_id)`
 - check `relationship_check1`: `((k_to IS NULL) OR (k_to > k_from))`
+- check `relationship_closed_kind_check`: `(closed_kind = ANY (ARRAY['world_change'::text, 'correction'::text]))`
+- check `relationship_closed_kind_needs_closure`: `((closed_kind IS NULL) OR (k_to IS NOT NULL))`
+- check `relationship_correction_has_reason`: `((closed_kind IS DISTINCT FROM 'correction'::text) OR (closed_reason IS NOT NULL))`
 - check `relationship_episode_check`: `(episode >= 1)`
+- check `relationship_reason_only_on_correction`: `((closed_reason IS NULL) OR (closed_kind = 'correction'::text))`
 
 ## Relationships
 
-Outbound: `from_entity_id` → [`catalog.entity`](entity.md)`.id` (+tenant); `kind` → [`taxonomy.relationship_kind`](../taxonomy/relationship_kind.md)`.code`; `primary_claim_id` → [`evidence.claim`](../evidence/claim.md)`.id` (+tenant); `to_entity_id` → [`catalog.entity`](entity.md)`.id` (+tenant).
-Inbound: [`evidence.claim`](../evidence/claim.md).relationship_id, [`retrieval.chunk_relationship_evidence`](../retrieval/chunk_relationship_evidence.md).relationship_id, [`temporal.event`](../temporal/event.md).relationship_id, [`temporal.stream`](../temporal/stream.md).subject_relationship_id.
-Polymorphic target of: [`temporal.stream`](../temporal/stream.md) (check constraint stream_check).
+9 outbound and 9 inbound foreign keys; full list in [details](relationship.details.md).
 
 ## Indexes
 
-`relationship_current_uq` unique where `(k_to IS NULL)`; `relationship_from_idx` where `(k_to IS NULL)`; `relationship_tenant_id_id_key` unique; `relationship_to_idx` where `(k_to IS NULL)`
+4 indexes; see [details](relationship.details.md).
 
 ## Triggers
 
-- `guard_k` → [`temporal.guard_k`](../../functions/temporal/guard_k.md)
-- `relationship_kinds` → [`catalog.check_relationship_kinds`](../../functions/catalog/check_relationship_kinds.md)
-- `relationship_properties` → [`catalog.check_relationship_properties`](../../functions/catalog/check_relationship_properties.md)
-- `sealed_batch` → [`temporal.require_sealed_batch`](../../functions/temporal/require_sealed_batch.md) (constraint trigger, deferred)
-- `stamp_k` → [`temporal.stamp_k`](../../functions/temporal/stamp_k.md)
+5 triggers; see [details](relationship.details.md).
 
 ## Row-level security
 
-Enabled.
-- `km_tenant_access` (ALL) for `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
+Enabled; 1 policies in [details](relationship.details.md).
 
 ## Grants
 
@@ -76,14 +76,14 @@ Enabled.
 
 ## Read paths
 
-- Named queries: `q:acquisition.attention_due`, `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.software_releases`, `q:catalog.talks`, `q:entity.relationships`, `q:entity.what_changed`, `q:relationships.current_by_kind`.
+- Named queries: `q:acquisition.attention_due`, `q:catalog.benchmark_scores`, `q:catalog.concepts`, `q:catalog.events`, `q:catalog.organizations`, `q:catalog.papers`, `q:catalog.people`, `q:catalog.software`, `q:catalog.software_releases`, `q:catalog.talks`, `q:entity.relationships`, `q:entity.what_changed`, `q:facts.changes_since`, `q:relationships.current_by_kind`.
 - Exposed through: [`api.advisories`](../api/advisories.md), [`api.benchmark_scores`](../api/benchmark_scores.md), [`api.benchmarks`](../api/benchmarks.md), [`api.capabilities`](../api/capabilities.md), [`api.compute_devices`](../api/compute_devices.md), [`api.compute_offerings`](../api/compute_offerings.md), [`api.concepts`](../api/concepts.md), [`api.current_relationships`](../api/current_relationships.md), [`api.events`](../api/events.md), [`api.organizations`](../api/organizations.md), [`api.papers`](../api/papers.md), [`api.people`](../api/people.md), [`api.protocol_versions`](../api/protocol_versions.md), [`api.registry_listings`](../api/registry_listings.md), [`api.software`](../api/software.md), [`api.software_releases`](../api/software_releases.md), [`api.talks`](../api/talks.md).
 - Direct SELECT: `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`.
 
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`temporal.assert_relationship`](../../functions/temporal/assert_relationship.md).
+- Via functions (best effort): [`catalog._move_relationship`](../../functions/catalog/_move_relationship.md), [`catalog.split_entity`](../../functions/catalog/split_entity.md), [`catalog.undo_merge`](../../functions/catalog/undo_merge.md), [`temporal.assert_relationship`](../../functions/temporal/assert_relationship.md), [`temporal.close_relationship`](../../functions/temporal/close_relationship.md).
 
 ## TypeScript
 

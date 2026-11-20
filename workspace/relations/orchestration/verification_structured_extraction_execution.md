@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, executor_service, service_role, verifier_ag
 writers: [control_plane, executor_service, service_role, verifier_agent]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"verification_structured_extraction_execution\"][\"Row\"]"
 defined_in: ["20260906031800_verification_structured_extraction_execution.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.verification_structured_extraction_execution
 
@@ -60,15 +60,21 @@ Inbound: [`orchestration.verification_structured_extraction_failure`](verificati
 
 ## Indexes
 
-0 indexes; see [details](verification_structured_extraction_execution.details.md).
+_None._
 
 ## Triggers
 
-5 triggers; see [details](verification_structured_extraction_execution.details.md).
+- `artifact_retirement_03dfe7d63ead38cf6b8b527f` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `artifact_retirement_0951a2f767de80a2cb3c8b32` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `artifact_retirement_16fbe6fa517b63b7940dff78` → [`orchestration.guard_retired_artifact_reference`](../../functions/orchestration/guard_retired_artifact_reference.md)
+- `verification_structured_extraction_execution_guard` → [`orchestration.guard_verification_structured_extraction_execution`](../../functions/orchestration/guard_verification_structured_extraction_execution.md)
+- `verification_structured_extraction_execution_source_guard` → [`orchestration.guard_structured_extraction_source_custody`](../../functions/orchestration/guard_structured_extraction_source_custody.md)
 
 ## Row-level security
 
-Enabled; 2 policies in [details](verification_structured_extraction_execution.details.md).
+Enabled.
+- `verification_structured_extraction_execution_reader` (SELECT) for `app_reader`: `(tenant_id = util.current_tenant_id())`
+- `verification_structured_extraction_execution_worker` (ALL) for `control_plane`, `executor_service`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"source_capture\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evidence.source_capture
 
@@ -52,7 +52,9 @@ table in domain `evidence`, lens `evidence`.
 
 ## Relationships
 
-9 outbound and 17 inbound foreign keys; full list in [details](source_capture.details.md).
+Outbound: `acquisition_fetch_id` → [`acquisition.fetch`](../acquisition/fetch.md)`.id`; `artifact_id` → [`orchestration.artifact`](../orchestration/artifact.md)`.id` (+tenant); `capture_method` → [`evidence.capture_method`](capture_method.md)`.code`; `tenant_id,knowledge_operation_id` → [`knowledge_service.operation`](../knowledge_service/operation.md)`.tenant_id,id` on delete restrict; `produced_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.id` (+tenant); `source_id` → [`evidence.source`](source.md)`.id` (+tenant).
+Inbound: [`access.source_restriction`](../access/source_restriction.md).capture_id, [`acquisition.fetch`](../acquisition/fetch.md).prior_capture_id, [`authoring.release_item`](../authoring/release_item.md).capture_id, [`authoring.revision_binding`](../authoring/revision_binding.md).capture_id, [`content.document_version_source_capture`](../content/document_version_source_capture.md).source_capture_id, [`content.transformation_input`](../content/transformation_input.md).source_capture_id, [`evaluation.eval_case_provenance`](../evaluation/eval_case_provenance.md).source_capture_id, [`evidence.locator`](locator.md).capture_id, [`evidence.source`](source.md).last_capture_id, [`evidence.source_encounter`](source_encounter.md).capture_id, [`inquiry.support`](../inquiry/support.md).capture_id, [`orchestration.verification_structured_extraction`](../orchestration/verification_structured_extraction.md).capture_id … 2 more in [details](source_capture.details.md).
+Polymorphic: exactly one of `produced_by_attempt_id`, `knowledge_operation_id`, `acquisition_fetch_id` → [`acquisition.fetch`](../acquisition/fetch.md) | [`orchestration.attempt`](../orchestration/attempt.md) — basis: check constraint source_capture_exactly_one_producer_ck.
 
 ## Indexes
 

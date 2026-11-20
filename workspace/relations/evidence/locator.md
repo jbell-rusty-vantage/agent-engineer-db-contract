@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"evidence\"][\"Tables\"][\"locator\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evidence.locator
 
@@ -55,7 +55,18 @@ table in domain `evidence`, lens `evidence`.
 
 - PK (id)
 - unique (tenant_id, id)
-- 12 check constraints; see [details](locator.details.md)
+- check `locator_check`: `((end_ms IS NULL) OR ((start_ms IS NOT NULL) AND (end_ms >= start_ms)))`
+- check `locator_check1`: `((selector_kind <> ALL (ARRAY['media_timecode'::text, 'media_region'::text])) OR (start_ms IS NOT NULL))`
+- check `locator_occurrence_count_check`: `((occurrence_count IS NULL) OR (occurrence_count >= 0))`
+- check `locator_resolution_cardinality_ck`: `((verification_contract_version IS NULL) OR ((tenant_id IS NOT NULL) AND (representation_artifact_id IS NOT NULL) AND (selector_sha256 IS N…`
+- check `locator_resolution_state_check`: `((resolution_state IS NULL) OR (resolution_state = ANY (ARRAY['resolved'::text, 'not_found'::text, 'ambiguous'::text, 'invalid'::text, 'par…`
+- check `locator_selected_content_sha256_check`: `(selected_content_sha256 ~ '^[0-9a-f]{64}$'::text)`
+- check `locator_selected_size_bytes_check`: `((selected_size_bytes IS NULL) OR (selected_size_bytes >= 0))`
+- check `locator_selector_kind_check`: `(selector_kind = ANY (ARRAY['text_quote'::text, 'character_position'::text, 'multi_fragment_text'::text, 'json_pointer'::text, 'html'::text…`
+- check `locator_selector_sha256_check`: `((selector_sha256 IS NULL) OR (selector_sha256 ~ '^[0-9a-f]{64}$'::text))`
+- check `locator_start_ms_check`: `((start_ms IS NULL) OR (start_ms >= 0))`
+- check `locator_verification_contract_version_check`: `((verification_contract_version IS NULL) OR (verification_contract_version = 'verification.v1'::text))`
+- check `locator_verification_contract_version_ck`: `((verification_contract_version IS NULL) OR (verification_contract_version = 'verification.v1'::text))`
 
 ## Relationships
 

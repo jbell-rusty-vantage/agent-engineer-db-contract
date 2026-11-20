@@ -2,12 +2,12 @@
 id: rules
 kind: entry
 rules: 14
-rules_version: "ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687"
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+rules_version: "ingestion-rules.v1@fb66765c367f5fa632271a05eca5e861588b5f89933020dadb4f403d6f996fe2"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # Ingestion rules
 
-The knowledge executor applies these rules in its plan phase and cites `rulesVersion: ingestion-rules.v1@c36ddd5cc0bc31406df785eb0333381a6ca07fd91181d2340a7733203cbdb687` in every plan and receipt. `basis: enforced` means the database already guarantees the rule (the executor only reports it early); `basis: curated` means only the executor checks it.
+The knowledge executor applies these rules in its plan phase and cites `rulesVersion: ingestion-rules.v1@fb66765c367f5fa632271a05eca5e861588b5f89933020dadb4f403d6f996fe2` in every plan and receipt. `basis: enforced` means the database already guarantees the rule (the executor only reports it early); `basis: curated` means only the executor checks it.
 
 | Rule | Basis | Applies to | Action | Detail |
 | --- | --- | --- | --- | --- |
@@ -32,7 +32,7 @@ The knowledge executor applies these rules in its plan phase and cites `rulesVer
 
 `entity.kind_in_vocabulary` refs: `rel:catalog.entity`, `rel:taxonomy.entity_kind`, `fn:catalog.validate_entity_attributes()`
 
-`fact.world_time_required` refs: `rel:temporal.segment`, `rel:temporal.event_occurrence`, `fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)`
+`fact.world_time_required` refs: `rel:temporal.segment`, `rel:temporal.event_occurrence`, `fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)`
 
 `identifier.namespace_in_vocabulary` refs: `rel:catalog.entity_identifier`
 
@@ -40,7 +40,7 @@ The knowledge executor applies these rules in its plan phase and cites `rulesVer
 
 `price.scope_key_is_meter` refs: `voc:temporal.stream_kind.offering_price`, `rel:temporal.segment`, `rel:temporal.stream`
 
-`proposal.idempotent_repeat` refs: `fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text)`, `rel:temporal.knowledge_batch`, `rel:orchestration.operation_intent`
+`proposal.idempotent_repeat` refs: `fn:temporal.assert_state(uuid,text,tstzrange,text,text,numeric,text,text,uuid,jsonb,uuid,uuid,text,uuid,text,text,text,uuid)`, `rel:temporal.knowledge_batch`, `rel:orchestration.operation_intent`
 
 `relationship.kinds_constrain_endpoints` refs: `rel:catalog.relationship`, `rel:taxonomy.relationship_kind`, `fn:temporal.assert_relationship(text,uuid,uuid,tstzrange,text,int4,jsonb,uuid,uuid)`
 

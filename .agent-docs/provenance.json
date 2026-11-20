@@ -26,7 +26,7 @@
   "sourceState": "Filesystem snapshot; may include uncommitted changes. No deployment or commit claim.",
   "inputs": {
     ".agent-docs/config.json": "f00ae37a619e42f4ddde5784d4842a157b7e59e8cffc731a2517ead4d4e3fea5",
-    "README.md": "81704bbc5cbf8ce10cb70a6d7d53c389e34a48a8a631d94db42da268a240c8b6",
+    "README.md": "733b2883ba5ac76e7c49b8a3e811f96105c93cd5180c753ad7ddd10363e21071",
     "docs/SCHEMA_WORKSPACE_MATERIALIZATION_SPEC.md": "46c0ed1517139c8d7ce1abacea0efc2322f840428a528e95408832fc62aac0b8",
     "docs/knowledge-model/MIGRATION-RESULT.md": "b236fb2423c0faf887749b03835cde6ade5b152bf851eb8527a664d6246e12e6",
     "docs/knowledge-model/SCHEMA-SUMMARY.md": "e94b40020ff3d1d3acb50406b2b18df620cb5f564854aff35816433a0526a703",
@@ -35,18 +35,18 @@
     "docs/schema-workspace/SKILLS.md": "c28c597d371f81b1c2743312d4d2cefb11a00c9b51525457e836e52a5a99f2d0",
     "docs/schema-workspace/WORKSPACE_LAYOUT_AND_SAMPLES.md": "b26b243a7925ff87a115190d2e7115199534b5bbc092136ec29d0dc8030c0359",
     "features/README.md": "558f986981a7bd5ecb3413bfb825573b8045cf761f26a38c26dd8f170560791d",
-    "features/schema-change.md": "44709cbfe2e8571853155ea75f3080e63650ce9857681de6536df2081a84e1b2",
-    "package.json": "3f6de464a61ab38b41fb8d9e73bb2c67cafbc1b183304e24743f8a0a9e5bd0b4",
+    "features/schema-change.md": "6092ab2841d78e05b325785337d25426f24bf47febf930c07ee43d8dcfb34708",
+    "package.json": "70247de6cf3e84d65572ea53f646ea26bec1e61bd00ad6e1c7e86996a41081c6",
     "scripts/dev/dev_cli.py": "ff276488565d45b0f7c14488c8ac66b650f6efd72fb2d39274f819b0ee8f22af",
     "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
     "scripts/reset-disposable-local.mjs": "0b6e40c2557a39eeddef6909001a53eab39ead8592bc912afd39bf597bbeaa42",
     "scripts/schema-workspace/cli.mjs": "6cc3c7193000d19f952578ce8912c34c114f360d9a32356ef7572649f82846c3",
-    "workspace.config.json": "61e48661a74b2459dbdfb378736fe4db63de0f644393c357c2cfefec3e2a4b44"
+    "workspace.config.json": "85b9bf0ae66da1fcb42dc4b81b652b36d707118e0d37de4c6c515597b96b4707"
   },
   "semantic": {
     "inputs": {
       ".agent-docs/modules.json": "91a2439f1a9c1492c3ac24e1ef2fc8f62ef7360542668d9b9b9aae9c6ee427d0",
-      "package.json": "3f6de464a61ab38b41fb8d9e73bb2c67cafbc1b183304e24743f8a0a9e5bd0b4",
+      "package.json": "70247de6cf3e84d65572ea53f646ea26bec1e61bd00ad6e1c7e86996a41081c6",
       "scripts/generate-types-native.mjs": "cacbe7b47a66cde35bbe2113a07368b8c31ece6c0cd1eab8848813d187b59fd4",
       "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
       "scripts/install-ai-engineer.mjs": "567fbca64f432b418685c60e51591c2bf0a0d156eb69d15716cad049d5bc59ad",
@@ -63,16 +63,16 @@
       "scripts/schema-workspace/lib/validate.mjs": "cdb457c4797b78b6feb173bb1e49ef1f9ba21d51c5b32fdeebb25ed6ff689312",
       "scripts/schema-workspace/README.md": "5692ed8c9e723dc01fedef23d1a0743b641032b4f96ebfb80567125926eee9df",
       "scripts/schema-workspace/test/helpers.test.mjs": "0551367c902bce871b9682b8e3a883ef4e839e71326244d35cb7574a680ba27d",
-      "src/api.ts": "6e6f6ac59910d1e4017220eeec37c5306455e84a878092cded98fe251b38de02",
+      "src/api.ts": "7a79e44d99fcfab1cfd5c91db899337b1b9b44b4667e945df4a71b0d6bc86d92",
       "src/index.ts": "d940fa0c5211020fae288e31b5108b4974609ddc9da29b98a926f1f41b9a1572",
       "supabase/config.toml": "d08bc818a526927d776192c96919ef37eb85352088a02ebfacbdcd87bb7fd509",
       "supabase/tests/legacy_verification_withdrawal.sql": "4590702a9bfadcd48fb3bad488044521f721f3407835e130fc06f9ee1b25324a",
       "supabase/tests/verification_evaluation_dataset_manifest.sql": "315728d1eb025e0ca42142d1a2f87b2b7ea9929cd28c4792a6cb2a5e9cc310bb",
-      "workspace-enrichment/domains.yaml": "b3277a56cfd899ec034f24122655cd6f87eb250f39eec500959352a53d5e5f3a",
+      "workspace-enrichment/domains.yaml": "8f95c3ef0705618d2a44c212f524106f51a3bd0b2648fe4bfd73a166ba17e576",
       "workspace-enrichment/queries.yaml": "e9f07a2b9dae006c70e6e7f1ce641b82af3ce83cccbd02033b568bb0764eae01",
       "workspace-enrichment/README.md": "aefc06053d815752effb08147104c98af9785e837c6339c0f803f2fa67c3cacb",
       "workspace-scopes/db-aware-research.json": "74d59b8e38d9bba439a6c26a60b11b2ea27e3c447ed443c3a30e1ab4e9657840",
-      "workspace.config.json": "61e48661a74b2459dbdfb378736fe4db63de0f644393c357c2cfefec3e2a4b44"
+      "workspace.config.json": "85b9bf0ae66da1fcb42dc4b81b652b36d707118e0d37de4c6c515597b96b4707"
     },
     "inventories": {}
   }

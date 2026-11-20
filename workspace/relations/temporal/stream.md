@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: []
 typescript: "Database[\"temporal\"][\"Tables\"][\"stream\"][\"Row\"]"
 defined_in: ["20260912010400_km_04_temporal.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # temporal.stream
 
@@ -73,7 +73,7 @@ Enabled.
 ## Write path
 
 - No direct DML for any agent role.
-- Via functions (best effort): [`temporal.assert_state`](../../functions/temporal/assert_state.md).
+- Via functions (best effort): [`catalog._ensure_stream`](../../functions/catalog/_ensure_stream.md), [`temporal.assert_state`](../../functions/temporal/assert_state.md).
 
 ## TypeScript
 

@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, content.unit_entity_role], writes: [] }
 tokens: [api, unit_entities, api.unit_entities]
 defined_in: ["20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261110140200_build08_loop3_fixups2.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.unit_entities
 

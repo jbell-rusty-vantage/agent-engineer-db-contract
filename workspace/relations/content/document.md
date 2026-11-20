@@ -14,7 +14,7 @@ readers: [app_reader, executor_service, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"content\"][\"Tables\"][\"document\"][\"Row\"]"
 defined_in: ["20260903010000_knowledge_content_contract.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # content.document
 
@@ -50,19 +50,23 @@ table in domain `content`, lens `corpus`.
 
 ## Relationships
 
-6 outbound and 9 inbound foreign keys; full list in [details](document.details.md).
+Outbound: `document_type_code` → [`content.document_type`](document_type.md)`.code`; `source_role_code` → [`content.source_role`](source_role.md)`.code`; `tenant_id,canonical_source_id` → [`evidence.source`](../evidence/source.md)`.tenant_id,id` on delete restrict; `tenant_id,created_by_attempt_id` → [`orchestration.attempt`](../orchestration/attempt.md)`.tenant_id,id` on delete restrict; `tenant_id,supersedes_id` → [`content.document`](document.md)`.tenant_id,id` on delete restrict; `work_entity_id` → [`catalog.entity`](../catalog/entity.md)`.id`.
+Inbound: [`content.document`](document.md).supersedes_id, [`content.document_about_entity`](document_about_entity.md).document_id, [`content.document_identifier`](document_identifier.md).document_id, [`content.document_kind_assignment`](document_kind_assignment.md).document_id, [`content.document_version`](document_version.md).document_id, [`content.refresh_check`](refresh_check.md).document_id, [`content.unit_change`](unit_change.md).document_id, [`retrieval.vector_store_document`](../retrieval/vector_store_document.md).document_id.
 
 ## Indexes
 
-2 indexes; see [details](document.details.md).
+`document_tenant_id_id_key` unique; `document_title_trgm_idx`
 
 ## Triggers
 
-3 triggers; see [details](document.details.md).
+- `document_immutable` → [`util.reject_mutation`](../../functions/util/reject_mutation.md)
+- `document_work_integrity` → [`content.check_document_work`](../../functions/content/check_document_work.md)
+- `predecessor_direction` → [`util.validate_predecessor`](../../functions/util/validate_predecessor.md)
 
 ## Row-level security
 
-Enabled; 1 policies in [details](document.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

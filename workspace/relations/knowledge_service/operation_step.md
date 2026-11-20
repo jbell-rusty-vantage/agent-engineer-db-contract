@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, service_role]
 writers: [control_plane, executor_service, service_role]
 typescript: "Database[\"knowledge_service\"][\"Tables\"][\"operation_step\"][\"Row\"]"
 defined_in: ["20260903010200_knowledge_runtime_security.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # knowledge_service.operation_step
 
@@ -54,7 +54,7 @@ Inbound: [`knowledge_service.lease`](lease.md).operation_step_id, [`knowledge_se
 
 ## Indexes
 
-3 indexes; see [details](operation_step.details.md).
+`knowledge_step_queue_idx` where `(status = 'queued'::text)`; `operation_step_tenant_id_id_key` unique; `operation_step_tenant_id_operation_id_step_key_key` unique
 
 ## Triggers
 
@@ -71,7 +71,8 @@ Inbound: [`knowledge_service.lease`](lease.md).operation_step_id, [`knowledge_se
 
 ## Row-level security
 
-Enabled; 1 policies in [details](operation_step.details.md).
+Enabled.
+- `bounded_role_access` (ALL) for `app_reader`, `control_plane`, `executor_service`, `pipeline_agent`, `verifier_agent`: `(tenant_id = util.current_tenant_id())`
 
 ## Grants
 

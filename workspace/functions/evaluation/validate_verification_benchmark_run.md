@@ -13,7 +13,7 @@ raises: [benchmark checkpoint plan duplicate key, benchmark checkpoint plan entr
 touches: { reads: [knowledge_service.operation, orchestration.artifact], writes: [] }
 tokens: [evaluation, validate_verification_benchmark_run, evaluation.validate_verification_benchmark_run]
 defined_in: ["20260906029000_verification_benchmark_durable_run.sql", "20260906029300_verification_benchmark_nullsafe_request_binding.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evaluation.validate_verification_benchmark_run
 

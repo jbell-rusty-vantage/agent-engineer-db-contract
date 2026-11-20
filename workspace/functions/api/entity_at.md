@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, temporal.knowledge_head, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, entity_at, api.entity_at]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # api.entity_at
 

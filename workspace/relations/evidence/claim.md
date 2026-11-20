@@ -14,7 +14,7 @@ readers: [executor_service, pipeline_agent, service_role, verifier_agent]
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"evidence\"][\"Tables\"][\"claim\"][\"Row\"]"
 defined_in: ["20260826000300_evidence_core.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # evidence.claim
 
@@ -51,7 +51,7 @@ table in domain `evidence`, lens `evidence`.
 
 ## Relationships
 
-9 outbound and 47 inbound foreign keys; full list in [details](claim.details.md).
+9 outbound and 49 inbound foreign keys; full list in [details](claim.details.md).
 
 ## Indexes
 

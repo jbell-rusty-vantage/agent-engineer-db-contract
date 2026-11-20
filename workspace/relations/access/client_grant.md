@@ -14,7 +14,7 @@ readers: []
 writers: []
 typescript: "Database[\"access\"][\"Tables\"][\"client_grant\"][\"Row\"]"
 defined_in: ["20261105010100_product_foundation.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # access.client_grant
 

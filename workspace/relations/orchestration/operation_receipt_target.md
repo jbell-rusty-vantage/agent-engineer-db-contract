@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role]
 writers: [executor_service, service_role]
 typescript: "Database[\"orchestration\"][\"Tables\"][\"operation_receipt_target\"][\"Row\"]"
 defined_in: ["20261031010000_operation_receipt_targets.sql"]
-workspace_fingerprint: "sha256:3cbce2e1f51948facb352a727c22966b1e5ceea4646ae43b07860ce6e83127b4"
+workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
 ---
 # orchestration.operation_receipt_target
 
@@ -51,7 +51,9 @@ table in domain `orchestration-ledger`, lens `machinery` — Normalized targets 
 
 ## Relationships
 
-4 outbound and 0 inbound foreign keys; full list in [details](operation_receipt_target.details.md).
+Outbound: `entity_kind` → [`taxonomy.entity_kind`](../taxonomy/entity_kind.md)`.code`; `receipt_id` → [`orchestration.operation_receipt`](operation_receipt.md)`.id`; `tenant_id,claim_id` → [`evidence.claim`](../evidence/claim.md)`.tenant_id,id`; `tenant_id,entity_id,entity_kind` → [`catalog.entity`](../catalog/entity.md)`.tenant_id,id,kind`.
+Inbound: none.
+Polymorphic: `entity_kind` selects one of 39 typed tables listed in [`taxonomy.entity_kind`](../../vocabularies/taxonomy.entity_kind.md) (`canonical_table`) — basis: vocabulary taxonomy.entity_kind.canonical_table + FK operation_receipt_target_entity_kind_fkey.
 
 ## Indexes
 
