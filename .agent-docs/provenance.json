@@ -49,7 +49,7 @@
       "package.json": "e76ddf2c156ccc8ec7e0ab659264f7886eca9d7bd5dd3d6d1632dc2bdd067018",
       "scripts/generate-types-native.mjs": "cacbe7b47a66cde35bbe2113a07368b8c31ece6c0cd1eab8848813d187b59fd4",
       "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
-      "scripts/install-ai-engineer.mjs": "8baa0090d09bfeb798df131bb316ccb9e46936ddb806439667a3205d85092361",
+      "scripts/install-ai-engineer.mjs": "bb76cf0f56523e474fbd09976deacc5e2b4e984a325bc114bfc71f192d3000eb",
       "scripts/install-manifest.mjs": "d3e6ac648986899c41363b0ecc73136403f3099fc1e6b0ab4ad151bb63f8b69a",
       "scripts/install-target.mjs": "a10004ea798cc035a5a8e9f4944effe378551063c00e93d7ac07cefda4392c21",
       "scripts/install-target.test.mjs": "edcf4b820cc12c82858ebf922add07e35804ce15fa46d7dce1973de2112d84ce",

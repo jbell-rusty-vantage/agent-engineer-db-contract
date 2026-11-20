@@ -116,11 +116,14 @@ Each consumer's own commit is the evidence for its row; this page does not prove
 - The committed workspace records one head, and CI compares it with the fresh install: build it from a database at
   exactly the migration head (keep one lab draft per promotion, or give the promoted migration the last draft's version).
 - Mission Control's runtime roles are created by its component after this repository's migrations, so the migration
-  cannot grant to them. The `database-release` step and the `stamp` command grant `api.database_release()` to
-  `mission_control_runtime` and `mission_control_readonly` when they exist.
+  cannot grant to them. The `database-release` step and the `stamp` command grant USAGE on schema `api` and EXECUTE
+  on `api.database_release()` to `mission_control_runtime` and `mission_control_readonly` when they exist. Mission
+  Control's login role inherits from `mission_control_runtime`. USAGE opens nothing else: every `api` view and
+  function is granted by name.
 - The installer pins Mission Control component 1.9.0. Mission Control's local stack uses 1.16.0 and `aieng-db` ran
-  1.13.0 when last read (2026-11-18). A database with another Mission Control version reports `component_drift`. Which
-  version the AI Engineer release should pin is the owner's decision.
+  1.13.0 when last read (2026-11-18). Today's Mission Control refuses a database whose component lacks its migrations
+  0070 to 0072, which 1.9.0 does, so it would not start on a database this installer builds; on a newer component
+  the database reports `component_drift`. Which version the AI Engineer release should pin is the owner's decision.
 - The wipe manifest `scripts/install-manifest.json` is pinned at 191 migrations (2026-11-05) and was not regenerated
   for Build 08 or later, so five `npm run test:installer` cases fail with `WIPE_MANIFEST_STALE` and a wipe is refused
   until it is regenerated (`scripts/install-manifest.mjs`).

@@ -98,10 +98,17 @@ export const PINS = Object.freeze({
 // so no migration can grant to them by name. The database-release step (and the lab stamp command) lets the ones that
 // exist ask for the release; the contract's own service roles hold their grant from the migration.
 export const RELEASE_READER_ROLES = Object.freeze(["mission_control_runtime", "mission_control_readonly"]);
-/** Grants EXECUTE on api.database_release() to the Mission Control runtime roles present; returns their names. */
+/**
+ * Lets the Mission Control runtime roles present ask for the release; returns their names. A role needs USAGE on schema
+ * api as well as EXECUTE on the function. USAGE alone opens nothing else: every api view and function is granted by name,
+ * and these roles hold no other api grant (proven on the lab in a rolled-back transaction, VER-S1).
+ */
 export async function grantReleaseReaders(client) {
   const present = (await client.query("select rolname from pg_roles where rolname = any($1) order by 1", [[...RELEASE_READER_ROLES]])).rows.map((r) => r.rolname);
-  for (const role of present) await client.query(`grant execute on function api.database_release() to ${role}`);
+  for (const role of present) {
+    await client.query(`grant usage on schema api to ${role}`);
+    await client.query(`grant execute on function api.database_release() to ${role}`);
+  }
   return present;
 }
 /** The pins as a release records them (contract.version.json `components`); check-contract-version.mjs writes and checks it. */
