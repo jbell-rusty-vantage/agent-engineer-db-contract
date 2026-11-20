@@ -14,7 +14,7 @@ checkouts and a cached Linear snapshot; it is derived and never edited. Chain an
 
 | Id | Resolved from |
 | --- | --- |
-| `B08-S<n>` (schema session), `D-<n>` (schema decision) | the [review workspace](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/REVIEW-LEDGER.md): answers `id:` frontmatter, decision tables and headings under `reviews/`. Not a git repository; absent, the id is a note |
+| `B08-S<n>` (schema session), `D-<n>` (schema decision) | the [review workspace](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/REVIEW-LEDGER.md): answers `id:` frontmatter, decision tables and headings under `reviews/`. Not a git repository; absent, the id is a note |
 | `AS-S<n>`, `AS-D<n>`, `ADR-NNNN` | Mission Control's answers files and `docs/adr/`; absent, a note |
 | `OVE-n` | the Linear snapshot `.sdlc/trace/linear-snapshot.json` (git-ignored); without one, shape only |
 

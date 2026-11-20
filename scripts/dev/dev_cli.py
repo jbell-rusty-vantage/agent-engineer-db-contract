@@ -41,7 +41,7 @@ HOOK_SOURCE = ROOT / "scripts" / "dev" / "hooks" / "commit-msg"
 HOOK_MARKER = "# aidb-provenance-managed-v1"
 MIGRATION_FILE = re.compile(r"^(\d{14})_.*\.sql$")
 WORKSPACE_ROOT = ROOT.parents[1]
-REVIEW_WORKSPACE = WORKSPACE_ROOT / "platform" / "ai-engineer-research-2026-11-02" / "10-review-workspace"
+REVIEW_WORKSPACE = WORKSPACE_ROOT / "platform" / "ai-engineer-research-2026-11-02" / "schema-units"
 ENTRYPOINTS = [
     "AGENTS.md",
     "features/README.md",

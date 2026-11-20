@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lab_common import append_jsonl, now_iso, log
 
 WS = r"C:\Users\Pinda\Proyectos\BellLabs\aiengineer\ai-engineer-db-contract\workspace"
-LEDGER = r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\10-review-workspace\reviews\QUERY-LEDGER.jsonl"
+LEDGER = r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\schema-units\provenance\query-ledger\QUERY-LEDGER.jsonl"
 
 QUESTIONS = [
     ("T1", "Which operation searches my private notes and course material, and how do I call it?", ["search", "private", "note"], r"op:search|ops/search.md"),

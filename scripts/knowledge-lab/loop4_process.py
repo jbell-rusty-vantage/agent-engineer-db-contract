@@ -14,7 +14,7 @@ import loop1_acquire as A
 import loop1_process as L1
 import loop2_acquire as A2
 
-RUN4 = os.path.join(C.LAB, "knowledge-loop-4")
+RUN4 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
 SOURCES4 = os.path.join(C.LAB, "sources", "2026-11-13")
 PROBE_RUNS = os.path.join(RUN4, "probe-runs")
 SCOUT = os.path.join(RUN4, "scout")

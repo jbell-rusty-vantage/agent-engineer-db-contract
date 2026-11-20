@@ -3,10 +3,10 @@
 > **As practised today; the owner's schema session decides the rules.** This page describes how a schema change has
 > actually moved through this repository up to contract 0.10.0 (2026-11-18), assembled from the
 > [README](../README.md), the review workspace's
-> [FINAL-SCHEMA-PROCESS](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/process/FINAL-SCHEMA-PROCESS.md)
-> and [AGENT-SESSION-PROTOCOL](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/process/AGENT-SESSION-PROTOCOL.md),
+> [FINAL-SCHEMA-PROCESS](../../../platform/ai-engineer-research-2026-11-02/schema-units/process/FINAL-SCHEMA-PROCESS.md)
+> and [AGENT-SESSION-PROTOCOL](../../../platform/ai-engineer-research-2026-11-02/schema-units/process/AGENT-SESSION-PROTOCOL.md),
 > and the CI workflow. It is input for step S4 of the
-> [schema brief](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/process/OFFICIAL-SCHEMA-SEQUENCE.md#s2)
+> [schema brief](../../../platform/ai-engineer-research-2026-11-02/schema-units/process/OFFICIAL-SCHEMA-SEQUENCE.md#s2)
 > ("Encode how to mutate the schema", AS-D68), not a new rule. Where practice and the written process disagree, both are
 > stated.
 
@@ -15,7 +15,7 @@
 
 | # | Step | Where and with what | Who decides |
 | --- | --- | --- | --- |
-| 1 | **Recommend** | One cycle record under the review workspace's `reviews/` (Build 08: [BUILD-08-KNOWLEDGE-LOOP](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/reviews/BUILD-08-KNOWLEDGE-LOOP.md)): scope, keep/change/add/remove schema, affected consumers, targets, proof plan, budget (protocol Stage A) | agent prepares |
+| 1 | **Recommend** | One cycle record under the review workspace's `reviews/` (Build 08: [BUILD-08-KNOWLEDGE-LOOP](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/BUILD-08-KNOWLEDGE-LOOP.md)): scope, keep/change/add/remove schema, affected consumers, targets, proof plan, budget (protocol Stage A) | agent prepares |
 | 2 | **Approve** | John's answer bound to the exact recommendation revision, targets and spend (Stage B). Recorded in the cycle record; from the schema session on, as a `B08-S<n>` answers file with `D-<n>` rows | John |
 | 3 | **Draft** | The migration as a lab draft `supabase/drafts/<14 digits>_<name>.sql` (`workspace.config.json` `paths.draftMigrations`) | agent |
 | 4 | **Lab trial** | `node scripts/apply-disposable-migration.mjs --project-dir=<lab workdir> --migration=<file> --source-dir=supabase/drafts` on the populated lab `disposable-aieng-build04` (refuses a non-`disposable-*` project or a container whose labels name another workdir); sample data; the affected suites on the lab | agent, under the approval |
@@ -28,7 +28,7 @@
 | 11 | **Consumer re-pin** | `npm run pack:contract`; Knowledge Services re-vendors `vendor/aiengineer-database-contract-<v>.tgz` and updates its docs; Mission Control and the AI Engineer service have no pin today | agent per consumer repo |
 | 12 | **Remote apply** | Checkpoint and identity evidence; `wipe --dry-run`, `wipe --from-dry-run`, then `install-ai-engineer.mjs --remote-reinstall --target <MC target.toml> --confirm-target <ref>:<installation_id>` with the seal key and the Mission Control release; the three gates of `install-target.mjs` | John's explicit go (a separate authority) |
 | 13 | **Readback** | `supabase_migrations.schema_migrations` on the target equals the frozen head; a consumer write and read (Mission Control W1 native write with readback); update Mission Control `deployments/ai-engineer/release.lock.json` | agent, evidence to John |
-| 14 | **Record** | Disposition and evidence in the cycle record; unit and feature rows in [REVIEW-LEDGER](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/REVIEW-LEDGER.md) (the only progress authority); commit trailers name the session and decisions | agent |
+| 14 | **Record** | Disposition and evidence in the cycle record; unit and feature rows in [REVIEW-LEDGER](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/REVIEW-LEDGER.md) (the only progress authority); commit trailers name the session and decisions | agent |
 
 One step per line:
 

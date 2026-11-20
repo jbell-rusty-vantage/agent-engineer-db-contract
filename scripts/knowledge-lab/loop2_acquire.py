@@ -14,7 +14,7 @@ from lab_common import *  # noqa
 import loop1_acquire as A
 
 SOURCES2 = os.path.join(C.LAB, "sources", "2026-11-09")
-RUN2 = os.path.join(C.LAB, "knowledge-loop-2")
+RUN2 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-2")
 # downloaded tarballs are untrusted data: kept outside the repository and the lab tree (override with LOOP2_TARBALL_DIR)
 TARBALLS = os.environ.get("LOOP2_TARBALL_DIR") or os.path.join(os.environ.get("TEMP") or os.environ.get("TMPDIR") or "/tmp", "aieng-loop2-tarballs")
 for d in (SOURCES2, RUN2, TARBALLS):

@@ -23,7 +23,7 @@ from lab_common import *  # noqa
 import loop1_process as L1
 import loop4_process as P4
 
-RUN5 = os.path.join(C.LAB, "knowledge-loop-5")
+RUN5 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-5")
 PROBE_RUNS5 = os.path.join(RUN5, "probe-runs")
 CALLS5 = os.path.join(RUN5, "model-calls")
 for d in (RUN5, PROBE_RUNS5, CALLS5):
@@ -270,7 +270,7 @@ def stage_revalidate():
     rel = one("select release_id from api.software_releases where software = 'Deep Agents' order by released_at desc limit 1")
     sweep = P4.open_sweep("probe-revalidation", "event", {"release_id": rel, "release": "deepagents 0.7.38", "due": [d["probe"] for d in due]},
                           "Loop 5: deepagents 0.7.38 (2026-11-13T14:32Z) made P10 and P19 due; latest cell rebuilt as D4-latest-2026-11-13T15")
-    keys4 = json.load(open(os.path.join(C.LAB, "knowledge-loop-4", "claim-keys.json"), encoding="utf-8"))
+    keys4 = json.load(open(os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4", "claim-keys.json"), encoding="utf-8"))
     outcome = {}
     for d in due:
         p = d["probe"].split("-")[0]

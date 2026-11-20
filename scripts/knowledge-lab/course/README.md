@@ -6,7 +6,7 @@ with `claude-haiku-4-5`, a disposable Postgres database (`course_demo` on the re
 
 - `scout.py`: the Release Scout tools; their data (`data/release_scout.json`) is exported from the AI Engineer knowledge base
   (PyPI release histories captured 2026-11-13, 13 claims verified through a Knowledge Services admission).
-- `s01`–`s13`, `deploy/`: the lessons. `run_course.py` runs them and records stdout, tokens and cost in `11-build04-lab/course-prototype/outputs/`.
+- `s01`–`s13`, `deploy/`: the lessons. `run_course.py` runs them and records stdout, tokens and cost in `schema-units/provenance/evidence/B08-course-prototype/outputs/`.
 - `build_artifact.py` + `artifact_template.html`: build the module page from the files that ran and their recorded outputs.
 
 Run: `python -I -X utf8 scripts/knowledge-lab/course/run_course.py [s01 ...]`, then

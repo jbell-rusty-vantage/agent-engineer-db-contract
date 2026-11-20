@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lab_common import *  # noqa
 import loop1_questions as Q1
 
-RUN4 = os.path.join(LAB, "knowledge-loop-4")
+RUN4 = os.path.join(LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
 EXPECTED = json.load(open(os.path.join(RUN4, "EXPECTED.json"), encoding="utf-8"))
 STATE = json.load(open(os.path.join(RUN4, "product-state.json"), encoding="utf-8"))
 PASS = int(os.environ.get("LOOP4_QUESTION_PASS", "1"))

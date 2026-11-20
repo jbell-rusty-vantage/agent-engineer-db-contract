@@ -1,6 +1,6 @@
 # Build 07 R1: research requests and missions, editable datasets, reports with claims and evidence
 
-**Status: ACCEPTED by John, 2026-11-05** (“Approved. Let's do it.”, with the recommended answers to Q1–Q4) **and implemented in the lab**: folded into the unreleased lab migrations on branch `build-04-product-schema-lab`, as Build 05 was. Clean replay and proof results are in the [Build 07 record](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/reviews/BUILD-07-RESEARCH-TO-CONTENT.md). Section J lists where the build differs from this text; J takes precedence.
+**Status: ACCEPTED by John, 2026-11-05** (“Approved. Let's do it.”, with the recommended answers to Q1–Q4) **and implemented in the lab**: folded into the unreleased lab migrations on branch `build-04-product-schema-lab`, as Build 05 was. Clean replay and proof results are in the [Build 07 record](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/BUILD-07-RESEARCH-TO-CONTENT.md). Section J lists where the build differs from this text; J takes precedence.
 
 Units: **RV22** (research request, interview, proposal, acceptance, output obligations), **RV08** (product research datasets, reports, interactive experiences), **RV10 seam** (statements inside reports and datasets, their support and contradiction, review). Accepted inputs: FC-D06–FC-D15 (datasets, revisions, reports, preservation, interactivity), FC-D27 (refresh and watches), the bounded-decision model, Build 02's rule that private content never becomes a tenant-shared row.
 

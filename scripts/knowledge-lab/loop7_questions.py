@@ -8,7 +8,7 @@ from lab_common import *  # noqa
 import loop1_questions as Q1
 import loop4_questions as L4
 
-RUN7 = os.path.join(LAB, "knowledge-loop-7")
+RUN7 = os.path.join(LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-7")
 EXP = json.load(open(os.path.join(RUN7, "EXPECTED.json"), encoding="utf-8"))
 rows = L4.rows
 Q13 = "create_react_agent deprecated prompt system_prompt create_agent"

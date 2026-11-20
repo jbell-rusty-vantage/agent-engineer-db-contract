@@ -16,7 +16,7 @@ import loop1_acquire as A
 import loop2_acquire as A2
 
 SOURCES3 = os.path.join(C.LAB, "sources", "2026-11-10")
-RUN3 = os.path.join(C.LAB, "knowledge-loop-3")
+RUN3 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-3")
 TARBALLS = os.environ.get("LOOP3_TARBALL_DIR") or os.path.join(os.environ.get("TEMP") or "/tmp", "aieng-loop3-tarballs")
 for d in (SOURCES3, RUN3, TARBALLS):
     os.makedirs(d, exist_ok=True)

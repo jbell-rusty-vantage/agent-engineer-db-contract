@@ -17,12 +17,12 @@ Run: python -I -X utf8 scripts/knowledge-lab/loop4_review.py verdicts | preview 
 import json, os, sys, uuid
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "product-lab"))
-os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\11-build04-lab")
+os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\lab")
 import lab_common as C
 from lab_common import *  # noqa
 import run_lab as L
 
-RUN4 = os.path.join(C.LAB, "knowledge-loop-4")
+RUN4 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
 STATE = os.path.join(RUN4, "product-state.json")
 REVIEW = os.path.join(RUN4, "owner-review-2026-11-13.json")
 INSTRUCTION = ("Recorded under the lab author account b08author4 on John's written instruction in the 2026-11-13 session "

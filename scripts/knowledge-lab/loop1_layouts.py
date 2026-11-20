@@ -8,7 +8,7 @@ import os, sys, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lab_common import *  # noqa
 
-OUT = r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\10-review-workspace\reviews\BUILD-08-LAYOUTS.json"
+OUT = r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\schema-units\provenance\evidence\B08-loop-1\LAYOUTS.json"
 PROBES = [
     ("transcript passage about slop and judgment", "the war against slop: judgment is scarce, generation is cheap", "units", {"document_types": ["aie_talk"], "unit_kinds": ["transcript_segment", "talk_writeup"]}, "no more slop"),
     ("price row for GPT-6.1 Terra input", "GPT-6.1 Terra input tokens price per million", "units", {"document_types": ["pricing_page", "product_page"], "unit_kinds": ["price_row"]}, "gpt-6.1-terra"),

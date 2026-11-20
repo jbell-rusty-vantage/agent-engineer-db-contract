@@ -14,7 +14,7 @@ import lab_common as C
 from lab_common import *  # noqa
 import loop1_process as L1
 
-RUN7 = os.path.join(C.LAB, "knowledge-loop-7")
+RUN7 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-7")
 os.makedirs(RUN7, exist_ok=True)
 DECIDED_BY = "human:john (written answer 2026-11-15, confirmed the 14 restated claims, D-80; recorded by the session agent)"
 

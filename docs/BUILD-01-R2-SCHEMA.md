@@ -1,6 +1,6 @@
 # Build 01 R2: RV14/RV15 residual schema — publishing, rich runtime, competency and credit compatibility
 
-**Status: schema ACCEPTED by John, 2026-11-05 ("Approved."), with both recommended choices: amend R1 before migration; public creator library = authenticated principals of the deployment. Not migrated, not runtime-tested.** Schema-only packet under the "approve schema and continue" mode. It extends the accepted [R1 schema](BUILD-01-R1-SCHEMA.md) and is recorded in [Build 01](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/reviews/BUILD-01-COURSE-FOUNDATION.md#recommendation-r2--rv14rv15-residual-schema-2026-11-05). No lab, prototype, course content, migration file or consumer change is requested.
+**Status: schema ACCEPTED by John, 2026-11-05 ("Approved."), with both recommended choices: amend R1 before migration; public creator library = authenticated principals of the deployment. Not migrated, not runtime-tested.** Schema-only packet under the "approve schema and continue" mode. It extends the accepted [R1 schema](BUILD-01-R1-SCHEMA.md) and is recorded in [Build 01](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/BUILD-01-COURSE-FOUNDATION.md#recommendation-r2--rv14rv15-residual-schema-2026-11-05). No lab, prototype, course content, migration file or consumer change is requested.
 
 R2 closes the three residual design areas R1 listed for RV14/RV15:
 

@@ -2,7 +2,7 @@
 
 Environment: %TEMP%\\aieng-course-env (langchain 1.5.0, langgraph 1.2.21, deepagents 0.7.38, langchain-anthropic, langgraph-cli[inmem],
 langgraph-checkpoint-postgres). Model: claude-haiku-4-5 via the lab's Anthropic key (read by name, passed to the child process only).
-Postgres: a disposable database `course_demo` on the replay stack (port 55722). Outputs: 11-build04-lab/course-prototype/outputs/.
+Postgres: a disposable database `course_demo` on the replay stack (port 55722). Outputs: schema-units/provenance/evidence/B08-course-prototype/outputs/.
 Run: python -I -X utf8 scripts/knowledge-lab/course/run_course.py [s01 ... s12]
 """
 import json, os, subprocess, sys, time, urllib.request, uuid
@@ -11,7 +11,7 @@ import lab_common as C
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PY = os.path.join(os.environ["TEMP"], "aieng-course-env", "Scripts", "python.exe")
-OUT = os.path.join(C.LAB, "course-prototype", "outputs")
+OUT = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-course-prototype", "outputs")
 os.makedirs(OUT, exist_ok=True)
 DSN = "postgresql://postgres:postgres@127.0.0.1:55722/course_demo"
 PRICE_IN, PRICE_OUT = 1.0, 5.0   # claude-haiku-4-5, USD per million tokens

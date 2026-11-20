@@ -9,8 +9,8 @@ from lab_common import *  # noqa
 import loop1_questions as Q1
 import loop4_questions as L4
 
-RUN5 = os.path.join(LAB, "knowledge-loop-5")
-RUN6 = os.path.join(LAB, "knowledge-loop-6")
+RUN5 = os.path.join(LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-5")
+RUN6 = os.path.join(LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-6")
 E5 = json.load(open(os.path.join(RUN5, "EXPECTED.json"), encoding="utf-8"))
 E6 = json.load(open(os.path.join(RUN6, "EXPECTED.json"), encoding="utf-8"))
 EXP = {x["q"]: x["expect"] for x in E5["questions"]}

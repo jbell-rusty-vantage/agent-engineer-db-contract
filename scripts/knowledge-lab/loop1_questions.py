@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lab_common import *  # noqa
 import loop1_parse as P
 
-LEDGER = r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\10-review-workspace\reviews\QUERY-LEDGER.jsonl"
+LEDGER = r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\schema-units\provenance\query-ledger\QUERY-LEDGER.jsonl"
 SCHEMA_REF = re.compile(r"\b(api|catalog|temporal|content|evidence|retrieval|guidance|authoring|library|verification|acquisition|taxonomy|ranking|learning|access)\.([a-z_0-9]+)")
 RESULTS = []
 

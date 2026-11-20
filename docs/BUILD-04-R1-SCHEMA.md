@@ -1,6 +1,6 @@
 # Build 04 R1: RV20 permissions, youth/guardian scope, processing consent, client grants, retention and source revocation
 
-**Status: schema ACCEPTED by owner pre-approval, 2026-11-05** ("I will pre-approve RV 20 recommendations. Use the feature context to come up with the best structure you can."). Implemented together with Builds 01–03 in the disposable lab recorded in [Build 04](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/reviews/BUILD-04-SCHEMA-LAB.md). Not a legal opinion: youth and retention rules are stored as reviewed policy data and need jurisdiction review before any youth launch.
+**Status: schema ACCEPTED by owner pre-approval, 2026-11-05** ("I will pre-approve RV 20 recommendations. Use the feature context to come up with the best structure you can."). Implemented together with Builds 01–03 in the disposable lab recorded in [Build 04](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/BUILD-04-SCHEMA-LAB.md). Not a legal opinion: youth and retention rules are stored as reviewed policy data and need jurisdiction review before any youth launch.
 
 ## A. What RV20 adds
 

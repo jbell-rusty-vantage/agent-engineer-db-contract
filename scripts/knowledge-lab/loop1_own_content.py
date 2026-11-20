@@ -7,7 +7,7 @@ passage (lens private). Fixture content is synthetic lab material, labelled as s
 import os, sys, json, uuid
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "product-lab"))
-os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\11-build04-lab")
+os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\lab")
 from lab_common import *  # noqa
 import run_lab as L  # the Build 01-07 lab helpers: User, worker, ok, body
 

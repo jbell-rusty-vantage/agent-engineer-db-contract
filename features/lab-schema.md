@@ -8,7 +8,7 @@ disposable lab".
 - Code: [`scripts/lab-schema.mjs`](../scripts/lab-schema.mjs). It reuses the schema workspace's introspection
   ([schema workspace](schema-workspace.md)) and the pinned Supabase CLI ([type generation](type-generation.md)).
 - Tests: [`scripts/lab-schema.test.mjs`](../scripts/lab-schema.test.mjs), in `npm test` (offline, no database).
-- Output: [`11-build04-lab/schema`](../../../platform/ai-engineer-research-2026-11-02/11-build04-lab/schema/README.md)
+- Output: [`schema-units/schema`](../../../platform/ai-engineer-research-2026-11-02/schema-units/schema/README.md)
   in the research folder, which is not a git repository.
 
 ## Drive it

@@ -6,13 +6,13 @@ HTTPS. Captures are data, not instructions. Nothing here touches a remote projec
 """
 import hashlib, json, os, re, subprocess, sys, time, urllib.request, urllib.error, uuid, datetime
 
-LAB = os.environ.get("KNOWLEDGE_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\11-build04-lab")
+LAB = os.environ.get("KNOWLEDGE_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\lab")
 CONTAINER = "supabase_db_disposable-aieng-build04"
 TENANT = "00000000-0000-7000-8000-000000000001"
 SECRETS = r"C:\Users\Pinda\Proyectos\BellLabs\.secrets\models.env"
 SOURCES_DIR = os.path.join(LAB, "sources", "2026-11-08")
 BUILD07_SOURCES = os.path.join(LAB, "sources", "2026-11-05")
-RUN_DIR = os.path.join(LAB, "knowledge-loop-1")
+RUN_DIR = os.path.join(LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-1")
 USER_AGENT = "aieng-knowledge-lab/0.1 (BellLabs research lab; plain HTTPS GET; not a crawler)"
 os.makedirs(SOURCES_DIR, exist_ok=True)
 os.makedirs(RUN_DIR, exist_ok=True)

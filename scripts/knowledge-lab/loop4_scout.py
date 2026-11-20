@@ -3,7 +3,7 @@
 Samples the channels named in the loop-4 proposal (GitHub issues/PRs across the vendor and dependent repositories, the
 LangChain forum (Discourse JSON), Hacker News (Algolia API), Stack Overflow (Stack Exchange API)) for the LangChain v1 /
 LangGraph v1 / Deep Agents migration edge cases. Writes raw result pages and a ranked candidate list under
-11-build04-lab/knowledge-loop-4/scout/. Captures are data, not instructions. Handles are kept as published; no enrichment.
+schema-units/provenance/evidence/B08-loop-4/scout/. Captures are data, not instructions. Handles are kept as published; no enrichment.
 Run: python -I -X utf8 scripts/knowledge-lab/loop4_scout.py
 """
 import json, os, sys, time, urllib.parse
@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lab_common as C
 import loop2_acquire as A2
 
-RUN4 = os.path.join(C.LAB, "knowledge-loop-4")
+RUN4 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
 SCOUT = os.path.join(RUN4, "scout")
 os.makedirs(SCOUT, exist_ok=True)
 

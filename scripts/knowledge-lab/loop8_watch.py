@@ -25,7 +25,7 @@ import loop4_process as P4
 import loop4_probes as R
 import loop5_process as P5
 
-RUN8 = os.path.join(C.LAB, "knowledge-loop-8")
+RUN8 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-8")
 os.makedirs(RUN8, exist_ok=True)
 PLAN4 = {k: v[0] for k, v in R.PLAN.items()}   # the loop-4 probe scripts, before a rerun narrows R.PLAN
 R.OUT = os.path.join(RUN8, "probe-runs")
@@ -178,7 +178,7 @@ def cmd_rerun(m, inv):
     for other in [c for c in list(R.CELLS) if c != cell]:
         R.CELLS.pop(other)   # build only the new latest cell (the dated cells exist)
     R.build_envs()
-    keys4 = json.load(open(os.path.join(C.LAB, "knowledge-loop-4", "claim-keys.json"), encoding="utf-8"))
+    keys4 = json.load(open(os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4", "claim-keys.json"), encoding="utf-8"))
     outcome, review, registered = {}, [], []
     for slug in run_now:
         p = slug.split("-")[0]

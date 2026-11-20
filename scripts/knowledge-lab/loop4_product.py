@@ -12,12 +12,12 @@ Run: python -I -X utf8 scripts/knowledge-lab/loop4_product.py interview | module
 import json, os, sys, uuid
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "product-lab"))
-os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\11-build04-lab")
+os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\lab")
 import lab_common as C
 from lab_common import *  # noqa
 import run_lab as L
 
-RUN4 = os.path.join(C.LAB, "knowledge-loop-4")
+RUN4 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
 STATE = os.path.join(RUN4, "product-state.json")
 TOKENS = os.path.join(RUN4, ".session-tokens.json")
 
@@ -268,7 +268,7 @@ def stage_module():
         log(f"module {mod['revisionId']} with {len(rev['bindings'])} bindings; activity {act['revisionId']}; {n} passages")
     st["bindings"] = len(rev["bindings"])
     write_json(STATE, st)
-    out = os.path.join(C.LAB, "..", "10-review-workspace", "reviews", "BUILD-08-LOOP-4-MODULE.md")
+    out = os.path.join(C.LAB, "..", "schema-units", "provenance", "records", "BUILD-08-LOOP-4-MODULE.md")
     open(out, "w", encoding="utf-8", newline="\n").write(body + "\n\n---\n\n" + ACTIVITY_MD)
 
 

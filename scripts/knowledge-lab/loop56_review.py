@@ -18,12 +18,12 @@ Run: python -I -X utf8 scripts/knowledge-lab/loop56_review.py record | verdicts 
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "product-lab"))
-os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\11-build04-lab")
+os.environ.setdefault("PRODUCT_LAB_WORKDIR", r"C:\Users\Pinda\Proyectos\BellLabs\platform\ai-engineer-research-2026-11-02\lab")
 import lab_common as C
 from lab_common import *  # noqa
 
-RUN4 = os.path.join(C.LAB, "knowledge-loop-4")
-RUN5 = os.path.join(C.LAB, "knowledge-loop-5")
+RUN4 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
+RUN5 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-5")
 STATE = os.path.join(RUN4, "product-state.json")
 REVIEW = os.path.join(RUN5, "owner-review-2026-11-15.json")
 LOOP5_PROBES = ("P14", "P15", "P16", "P17", "P18", "P19")

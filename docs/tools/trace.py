@@ -64,8 +64,8 @@ GOALS = (
 EXTERNAL = (
     (
         "review-workspace",
-        WORKSPACE_ROOT / "platform" / "ai-engineer-research-2026-11-02" / "10-review-workspace",
-        ("*.md", "reviews/**/*.md"),
+        WORKSPACE_ROOT / "platform" / "ai-engineer-research-2026-11-02" / "schema-units",
+        ("*.md", "units/*/sessions/*/*.md", "provenance/records/**/*.md"),
     ),
     (
         "mission-control",

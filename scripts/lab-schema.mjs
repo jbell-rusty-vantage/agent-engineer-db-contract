@@ -6,8 +6,9 @@
 //   node scripts/lab-schema.mjs [--workdir <lab workdir>] [--out <dir>] [--no-start] [--keep-running] [--no-types]
 //
 // --workdir       the lab's Supabase workdir (the folder that holds supabase/config.toml). Default: KNOWLEDGE_LAB_WORKDIR,
-//                 else platform/ai-engineer-research-2026-11-02/11-build04-lab next to this repository.
-// --out           output folder. Default: <workdir>/schema.
+//                 else platform/ai-engineer-research-2026-11-02/lab next to this repository.
+// --out           output folder. Default: platform/ai-engineer-research-2026-11-02/schema-units/schema (the schema workspace),
+//                 or <workdir>/schema when --workdir is given.
 // --no-start      refuse when the lab database is not running, instead of starting it.
 // --keep-running  leave the database running when this command started it (default: stop it again, volumes kept).
 // --no-types      skip database.types.ts.
@@ -29,7 +30,8 @@ import { introspect } from "./schema-workspace/lib/introspect.mjs";
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "..");
 const supabaseCli = path.join(repositoryRoot, "node_modules", "supabase", "dist", "supabase.js");
-const DEFAULT_WORKDIR = path.resolve(repositoryRoot, "..", "..", "platform", "ai-engineer-research-2026-11-02", "11-build04-lab");
+const DEFAULT_WORKDIR = path.resolve(repositoryRoot, "..", "..", "platform", "ai-engineer-research-2026-11-02", "lab");
+const DEFAULT_OUT = path.resolve(repositoryRoot, "..", "..", "platform", "ai-engineer-research-2026-11-02", "schema-units", "schema");
 
 class Refused extends Error {}
 
@@ -217,8 +219,7 @@ function renderFrontPage({ stamp, ir, enrichment, comparison, schemas, relativeW
     `| As SQL | [supabase/migrations](${relativeContract}/supabase/migrations) and [supabase/drafts](${relativeContract}/supabase/drafts) in the contract repository | The only place a schema change is written. ${stamp.repository.migration_files} migrations, head ${code(stamp.repository.migration_head)} |`,
     "| Readable, current | this folder: [schemas](#schemas), [vocabularies](VOCABULARIES.md) | Rebuilt from the database on every run |",
     "| TypeScript types, current | [database.types.ts](database.types.ts) | Generated from the database by the pinned Supabase CLI |",
-    `| For agents | [workspace](${relativeContract}/workspace/START_HERE.md) in the contract repository | Rebuilt only when a change is promoted, so it can lag the lab |`,
-    `| The first lab (2026-11-03) | [09-disposable-postgres-lab](../../09-disposable-postgres-lab/README.md) | Historical. Its 640-relation tables report is the design before Build 08, not this schema |`, "",
+    `| For agents | [workspace](${relativeContract}/workspace/START_HERE.md) in the contract repository | Rebuilt only when a change is promoted, so it can lag the lab |`, "",
     "<a id=\"stamp\"></a>", "## Stamp", "",
     "| | |", "| --- | --- |",
     `| Lab migration head | ${code(stamp.lab.migration_head)} |`,
@@ -254,7 +255,7 @@ function renderFrontPage({ stamp, ir, enrichment, comparison, schemas, relativeW
 async function main(argv) {
   const options = parseArgs(argv);
   const workdir = realpathSync(path.resolve(options.workdir ?? process.env.KNOWLEDGE_LAB_WORKDIR ?? DEFAULT_WORKDIR));
-  const outDir = path.resolve(options.out ?? path.join(workdir, "schema"));
+  const outDir = path.resolve(options.out ?? (options.workdir ? path.join(workdir, "schema") : DEFAULT_OUT));
   const { project, port } = readLabConfig(workdir);
   const startedHere = ensureRunning(workdir, project, options.start);
   const databaseUrl = `postgresql://postgres:postgres@127.0.0.1:${port}/postgres`;

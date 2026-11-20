@@ -11,7 +11,7 @@ import lab_common as C
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROBES = os.path.join(HERE, "probes")
-RUN4 = os.path.join(C.LAB, "knowledge-loop-4")
+RUN4 = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-4")
 OUT = os.path.join(RUN4, "probe-runs")
 ENVS = os.environ.get("LOOP4_ENV_DIR") or os.path.join(os.environ.get("TEMP") or "/tmp", "aieng-loop4-envs")
 os.makedirs(OUT, exist_ok=True)

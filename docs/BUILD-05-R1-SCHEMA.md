@@ -1,6 +1,6 @@
 # Build 05 R1: content blocks, media roles, file sets and deployments, learner layer, projects, challenges, environments
 
-**Status: ACCEPTED by John, 2026-11-05** (“I agree with all your recommendations.” — answers C1–C8 in the [Build 05 record](../../../platform/ai-engineer-research-2026-11-02/10-review-workspace/reviews/BUILD-05-CONTENT-AND-PROJECTS.md)). Implemented in the lab migrations on branch `build-04-product-schema-lab`, folded into the unreleased Build 01–04 files rather than layered on top.
+**Status: ACCEPTED by John, 2026-11-05** (“I agree with all your recommendations.” — answers C1–C8 in the [Build 05 record](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/BUILD-05-CONTENT-AND-PROJECTS.md)). Implemented in the lab migrations on branch `build-04-product-schema-lab`, folded into the unreleased Build 01–04 files rather than layered on top.
 
 ## A. One lesson section, end to end
 

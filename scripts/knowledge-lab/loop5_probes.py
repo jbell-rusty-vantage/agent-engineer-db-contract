@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lab_common as C
 import loop4_probes as R
 
-R.OUT = os.path.join(C.LAB, "knowledge-loop-5", "probe-runs")
+R.OUT = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-5", "probe-runs")
 os.makedirs(R.OUT, exist_ok=True)
 D0, D1, D2, D3 = "D0-2025-10-16", "D1-2025-10-18", "D2-2026-04-23", "D3-latest"
 R.PLAN = {

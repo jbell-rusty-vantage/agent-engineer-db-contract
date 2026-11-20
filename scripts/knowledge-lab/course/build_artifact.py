@@ -6,8 +6,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, ".."))
 import lab_common as C
 
-OUT_DIR = os.path.join(C.LAB, "course-prototype", "outputs")
-HIST = json.load(open(os.path.join(C.LAB, "knowledge-loop-5", "release-history-from-captures.json"), encoding="utf-8"))
+OUT_DIR = os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-course-prototype", "outputs")
+HIST = json.load(open(os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-5", "release-history-from-captures.json"), encoding="utf-8"))
 E = html.escape
 
 

@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import lab_common as C
 from lab_common import *  # noqa
 
-RUN6 = os.environ.get("ADMISSION_RUN_DIR") or os.path.join(C.LAB, "knowledge-loop-6")   # loop 7 (J) passes knowledge-loop-7
+RUN6 = os.environ.get("ADMISSION_RUN_DIR") or os.path.join(C.LAB, "..", "schema-units", "provenance", "evidence", "B08-loop-6")   # loop 7 (J) passes knowledge-loop-7
 os.makedirs(RUN6, exist_ok=True)
 CAPTURES = os.path.join(C.LAB, "sources")   # every dated capture folder (loop-4 and loop-5 probe outputs)
 DETERMINISTIC = ("executed", "static_docs", "resolution", "registry_check")
