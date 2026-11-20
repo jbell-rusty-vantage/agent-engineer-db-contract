@@ -1,7 +1,19 @@
 {
-  "format": "ai-engineer-contract-version/1",
-  "version": "0.11.0",
-  "migration_head": "20261119122000_build09_rv01_old_replacements_unlabelled",
-  "migrations": 206,
-  "migrations_sha256": "sha256:e4c7792c2bc74fd2b553787925638ab2823fce771443d6f341ba7ad344593678"
+  "format": "ai-engineer-contract-version/2",
+  "version": "0.12.0",
+  "migration_head": "20261120120000_database_release_record",
+  "migrations": 207,
+  "migrations_sha256": "sha256:f5043b0c1ab93d3e9d228e8467f85b8d655fd393a03d312c2f18d3beb817faa1",
+  "components": {
+    "knowledge_verification": {
+      "version": "2.5.0",
+      "digest": "sha256:00550d59a2fe487a80e97d746d1897234e2f98c246091c06e5d2d5a07b108b88"
+    },
+    "mission_control": {
+      "version": "1.9.0",
+      "lock_sha256": "sha256:b3ecf3f8e68c4e015731e62ad5398ab8ef195ba51e6929595b6b5f2989222885",
+      "reader_version": "mission-control-runtime/1",
+      "writer_version": "mission-control-runtime/1"
+    }
+  }
 }

@@ -1,0 +1,7 @@
+{
+  "format": "ai-engineer-contract-version/1",
+  "version": "0.8.0",
+  "migration_head": "20261116130000_build08_governed_chain_writes",
+  "migrations": 201,
+  "migrations_sha256": "sha256:963e999f7eb7cee6bcbdc711128c30eccec119938f0070e479e2c2f6ba8b6c9c"
+}

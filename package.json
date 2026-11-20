@@ -1,6 +1,6 @@
 {
   "name": "@aiengineer/database-contract",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "Canonical Supabase migrations and generated TypeScript database contract for AI Engineer systems.",
   "type": "module",
@@ -24,7 +24,9 @@
     "workspace",
     "workspace-scopes",
     "workspace.config.json",
-    "contract.version.json"
+    "contract.version.json",
+    "releases",
+    "release-check.cases.json"
   ],
   "scripts": {
     "db:start": "supabase start",
@@ -38,8 +40,10 @@
     "types:check:native": "node --env-file-if-exists=.env scripts/generate-types.mjs --local-node --check",
     "typecheck": "tsc --noEmit",
     "version:check": "node scripts/check-contract-version.mjs",
+    "release:show": "node scripts/database-release.mjs show",
+    "release:stamp": "node scripts/database-release.mjs stamp",
     "pack:contract": "node scripts/pack-contract.mjs",
-    "test": "node --test \"scripts/schema-workspace/test/**/*.test.mjs\" scripts/check-contract-version.test.mjs scripts/lab-schema.test.mjs",
+    "test": "node --test \"scripts/schema-workspace/test/**/*.test.mjs\" scripts/check-contract-version.test.mjs scripts/database-release.test.mjs scripts/lab-schema.test.mjs",
     "lab:schema": "node scripts/lab-schema.mjs",
     "test:installer": "node --test scripts/install-target.test.mjs",
     "workspace:build": "node --env-file-if-exists=.env scripts/schema-workspace/cli.mjs build",

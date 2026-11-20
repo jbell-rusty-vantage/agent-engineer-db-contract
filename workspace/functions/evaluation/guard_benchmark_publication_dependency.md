@@ -13,7 +13,7 @@ raises: [published benchmark dataset versions are immutable, published benchmark
 touches: { reads: [evaluation.eval_run, evaluation.experiment_arm, evaluation.verification_benchmark_arm_publication], writes: [] }
 tokens: [evaluation, guard_benchmark_publication_dependency, evaluation.guard_benchmark_publication_dependency]
 defined_in: ["20260906030000_verification_benchmark_arm_publication.sql", "20260906030300_verification_benchmark_published_dataset_immutable.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # evaluation.guard_benchmark_publication_dependency
 

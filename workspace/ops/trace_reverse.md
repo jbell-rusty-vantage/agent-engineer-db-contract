@@ -8,7 +8,7 @@ call: api.product_read
 lens: ours
 relations: [authoring.revision_binding, authoring.work, authoring.work_revision, dataset.cell, dataset.row, inquiry.assertion, inquiry.delivery, inquiry.obligation, inquiry.support]
 tokens: [trace_reverse, research, api.product_read]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # trace_reverse
 

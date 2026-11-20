@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [verification.probe, verification.probe_run], writes: [evidence.claim, evidence.claim_evidence_link, verification.probe_claim, verification.probe_verdict] }
 tokens: [api, propose_verdict, api.propose_verdict]
 defined_in: ["20261116130000_build08_governed_chain_writes.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # api.propose_verdict
 

@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [authoring.asset_scope, authoring.file_set_entry, authoring.revision_binding, authoring.work_revision, curriculum.part, curriculum.prerequisite, curriculum.requirement, curriculum.requirement_option, dataset.cell, inquiry.assertion, inquiry.support], writes: [] }
 tokens: [product, exposure, product.exposure]
 defined_in: ["20261105010300_product_api.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # product.exposure
 

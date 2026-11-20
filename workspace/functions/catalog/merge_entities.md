@@ -13,7 +13,7 @@ raises: ["merge: % is not a reason for a merge", "merge: a record cannot be merg
 touches: { reads: [catalog.identity_move, catalog.relationship, temporal.correction_reason, temporal.segment, temporal.stream], writes: [catalog.entity, catalog.entity_alias, catalog.entity_identifier, catalog.entity_merge, temporal.event] }
 tokens: [catalog, merge_entities, catalog.merge_entities]
 defined_in: ["20261119120000_build09_rv01_change_reasons_identity_proposals.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # catalog.merge_entities
 

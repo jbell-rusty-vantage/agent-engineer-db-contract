@@ -6,7 +6,7 @@ name: entity_kind
 rows: 39
 rows_sha256: "sha256:ee57f07b282646556557a324da36333474eb55d23437a1ec7786a9928c094e8e"
 codes: [agent_plugin, agent_skill, ai_model, ai_model_version, ai_protocol, ai_protocol_feature, ai_protocol_version, benchmark, benchmark_version, case_study, community_actor, compute_device, compute_offering, concept, corporate_transaction, dataset, event_series, funding_round, industry_event, library, library_release, mcp_server, media_channel, media_series, media_work, model_offering, organization, paper, person, product, product_feature, product_version, registry, repository, security_advisory, source_channel, story, talk, technique]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # taxonomy.entity_kind
 

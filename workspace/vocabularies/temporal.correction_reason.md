@@ -6,7 +6,7 @@ name: correction_reason
 rows: 9
 rows_sha256: "sha256:361f3c84b1869477e96a2aa4a8c6d9f7f5c271f591032d65a5bbd5ff7d6445f7"
 codes: [better_source, duplicate_record, late_evidence, merge_undone, misread, mixed_record, not_recorded, source_corrected, wrong_entity]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # temporal.correction_reason
 

@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { RECORD_FILE, checkContractVersion, migrationChain, recordFor } from "./check-contract-version.mjs";
+import { RECORD_FILE, RELEASES_DIR, checkContractVersion, migrationChain, recordFor, writeRecord } from "./check-contract-version.mjs";
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -14,7 +14,7 @@ function fixture(version, migrations) {
   mkdirSync(join(root, "supabase", "migrations"), { recursive: true });
   writeFileSync(join(root, "package.json"), JSON.stringify({ name: "fixture", version }));
   for (const [name, sql] of Object.entries(migrations)) writeFileSync(join(root, "supabase", "migrations", name), sql);
-  writeFileSync(join(root, RECORD_FILE), JSON.stringify(recordFor(root)));
+  writeRecord(root);
   return root;
 }
 const codes = (root) => checkContractVersion(root).problems.map((problem) => problem.code);
@@ -76,5 +76,23 @@ test("a workspace generated under another version fails", () => {
     assert.deepEqual(codes(root), []);
     writeFileSync(join(root, "workspace", "manifest.json"), JSON.stringify({ build: { contract_version: "0.9.0", migration_head: "20260101000000" } }));
     assert.deepEqual(codes(root), ["WORKSPACE_VERSION_STALE"]);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test("the record carries the installer pins for both components, and its tracked copy under releases/ must match", () => {
+  const root = fixture("1.0.0", { "20260101000000_first.sql": "select 1;\n" });
+  try {
+    const record = JSON.parse(readFileSync(join(root, RECORD_FILE), "utf8"));
+    assert.deepEqual(Object.keys(record.components), ["knowledge_verification", "mission_control"]);
+    assert.deepEqual(codes(root), []);
+    const release = join(root, RELEASES_DIR, "1.0.0.json");
+    writeFileSync(release, JSON.stringify({ ...record, migrations: 99 }));
+    assert.deepEqual(codes(root), ["RELEASE_RECORD_DIFFERS"]);
+    rmSync(release);
+    assert.deepEqual(codes(root), ["RELEASE_RECORD_MISSING"]);
+    const edited = { ...record, components: { ...record.components, knowledge_verification: { version: "0.0.1", digest: "sha256:0" } } };
+    writeFileSync(join(root, RECORD_FILE), JSON.stringify(edited));
+    writeFileSync(release, JSON.stringify(edited));
+    assert.deepEqual(codes(root), ["COMPONENT_PINS_DIFFER"]);
   } finally { rmSync(root, { recursive: true, force: true }); }
 });

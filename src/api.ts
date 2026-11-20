@@ -192,3 +192,27 @@ export interface ApiChangeExplanation {
 }
 /** api.propose (governed write; pipeline_agent and executor_service). An agent role always writes agent_proposed and private. */
 export interface ApiProposeResult extends ApiGovernedWriteReceipt { proposal_id: string; review_state: "agent_proposed" | "person_proposed"; publication: "private"; }
+
+// VER-S1 (2026-11-20, contract 0.12.0): the database states its release. One release number covers the whole database:
+// the contract version, which names the migration chain and pins the two guest components. A service reads
+// api.database_release() before it starts and applies the rule in release-check.cases.json.
+/** What a database says about its release at the moment it is asked. */
+export type ApiDatabaseReleaseState = "current" | "ahead" | "inconsistent" | "component_drift" | "unstamped" | "unverifiable";
+/** A pinned guest component as a release records it; Mission Control also records its lock digest and runtime versions. */
+export interface ApiReleaseComponentPin { version: string; digest?: string; lock_sha256?: string; reader_version?: string; writer_version?: string; }
+/** api.database_release(): the newest stamp (declared), what is in the database now (observed) and one state word. */
+export interface ApiDatabaseRelease {
+  format: "ai-engineer-database-release/1";
+  /** The contract version this database was stamped with; null when it was never stamped. */
+  release: string | null;
+  state: ApiDatabaseReleaseState;
+  declared: { migration_head: string; migrations: number; migrations_sha256: string; components: Record<string, ApiReleaseComponentPin> } | null;
+  observed: { migration_version: string | null; migrations: number | null; components: { knowledge_verification: string | null; mission_control: string | null } };
+  stamped_at: string | null;
+  stamped_by: string | null;
+}
+/** The verdict of the startup check: `start` is whether a service in enforce mode starts, `warning` that it starts on a database that is not exactly the stamped release. */
+export interface ApiReleaseVerdict {
+  verdict: "ok" | "unknown" | "unstamped" | "incompatible" | "inconsistent";
+  start: boolean; warning: boolean; range: string; release: string | null; state: ApiDatabaseReleaseState | null; reason: string;
+}

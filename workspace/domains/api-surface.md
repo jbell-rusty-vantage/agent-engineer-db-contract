@@ -4,13 +4,13 @@ kind: domain
 lens: corpus
 schemas: [api, util]
 aliases: [rpc, views, app_reader, L1, catalog views, models table]
-relations: [api.models, api.model_offerings, api.software, api.software_releases, api.talks, api.people, api.organizations, api.events, api.concepts, api.papers, api.benchmark_scores, api.works_authored, api.guidance_items, api.libraries, api.repositories, api.mcp_servers, api.agent_skills, api.entities, api.current_facts, api.current_relationships, api.events_current]
-functions: [api.changes_since, api.document_digest, api.document_units, api.entity_at, api.entity_card, api.entity_timeline, api.evidence_packet, api.fact_locators, api.knowledge_head, api.leaderboard, api.model_offerings_at, api.models_at, api.modules_affected_by_release, api.price_history, api.product_command, api.product_read, api.product_scope, api.product_worker, api.relationships, api.resolve_entity, api.search_knowledge, api.search_unified, api.summary_evidence, api.talk_segments, api.what_changed, util.current_tenant_id]
+relations: [api.models, api.model_offerings, api.software, api.software_releases, api.talks, api.people, api.organizations, api.events, api.concepts, api.papers, api.benchmark_scores, api.works_authored, api.guidance_items, api.libraries, api.repositories, api.mcp_servers, api.agent_skills, api.entities, api.current_facts, api.current_relationships, api.events_current, util.database_release]
+functions: [api.changes_since, api.database_release, api.document_digest, api.document_units, api.entity_at, api.entity_card, api.entity_timeline, api.evidence_packet, api.fact_locators, api.knowledge_head, api.leaderboard, api.model_offerings_at, api.models_at, api.modules_affected_by_release, api.price_history, api.product_command, api.product_read, api.product_scope, api.product_worker, api.relationships, api.resolve_entity, api.search_knowledge, api.search_unified, api.summary_evidence, api.talk_segments, api.what_changed, util.current_tenant_id, util.stamp_database_release]
 tasks: [cheapest-qualified-model, check-knowledge-head, compare-models, modules-affected-by-release, modules-covering-concept, price-with-locator, release-history, talk-passage-at-timecode, talk-to-repo-to-paper, talks-on-topic, what-a-release-affects, what-changed-since, what-do-we-know-about-entity]
 summary: The only surface apps and agents see; invoker views and definer RPCs organised as the L1–L3 knowledge continuum.
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # API surface (L1 views, L2 and L3 functions)
 
@@ -55,6 +55,14 @@ The only surface apps and agents see; invoker views and definer RPCs organised a
 > tenant-filtered views and functions answer it; `anon` and `service_role` get no tenant.
 > Invariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new
 > catalog entries, not raw SQL.
+> 
+> **Which release is this database?** `api.database_release()` returns `release` (the contract
+> version, which covers every schema and pins the guest components), `declared` (the newest
+> stamp in `util.database_release`), `observed` (the live migration version and the installed
+> component versions) and `state` (`current`, `ahead`, `inconsistent`, `component_drift`,
+> `unstamped`, `unverifiable`). A service pins a range and checks it before it starts; the rule
+> and its cases are `release-check.cases.json`. Only the installer and the lab stamp command
+> write a stamp, through `util.stamp_database_release`.
 
 ## Relations that matter
 
@@ -81,10 +89,11 @@ The only surface apps and agents see; invoker views and definer RPCs organised a
 | [`api.current_facts`](../relations/api/current_facts.md) | Current segments whose valid_during contains now(). | — | helpers only |
 | [`api.current_relationships`](../relations/api/current_relationships.md) | Current relationships, hiding inactive temporal edges. | — | helpers only |
 | [`api.events_current`](../relations/api/events_current.md) | Current event occurrences for the tenant. | — | helpers only |
+| [`util.database_release`](../relations/util/database_release.md) | Which release this database is: one row per stamp, newest last, never edited. A release is the contract versi… | PK (release_seq) | helpers only |
 
 ## Functions
 
-[`api.changes_since`](../functions/api/changes_since.md), [`api.document_digest`](../functions/api/document_digest.md), [`api.document_units`](../functions/api/document_units.md), [`api.entity_at`](../functions/api/entity_at.md), [`api.entity_card`](../functions/api/entity_card.md), [`api.entity_timeline`](../functions/api/entity_timeline.md), [`api.evidence_packet`](../functions/api/evidence_packet.md), [`api.fact_locators`](../functions/api/fact_locators.md), [`api.knowledge_head`](../functions/api/knowledge_head.md), [`api.leaderboard`](../functions/api/leaderboard.md), [`api.model_offerings_at`](../functions/api/model_offerings_at.md), [`api.models_at`](../functions/api/models_at.md), [`api.modules_affected_by_release`](../functions/api/modules_affected_by_release.md), [`api.price_history`](../functions/api/price_history.md), [`api.product_command`](../functions/api/product_command.md), [`api.product_read`](../functions/api/product_read.md), [`api.product_scope`](../functions/api/product_scope.md), [`api.product_worker`](../functions/api/product_worker.md), [`api.relationships`](../functions/api/relationships.md), [`api.resolve_entity`](../functions/api/resolve_entity.md), [`api.search_knowledge`](../functions/api/search_knowledge.md), [`api.search_unified`](../functions/api/search_unified.md), [`api.summary_evidence`](../functions/api/summary_evidence.md), [`api.talk_segments`](../functions/api/talk_segments.md), [`api.what_changed`](../functions/api/what_changed.md), [`util.current_tenant_id`](../functions/util/current_tenant_id.md)
+[`api.changes_since`](../functions/api/changes_since.md), [`api.database_release`](../functions/api/database_release.md), [`api.document_digest`](../functions/api/document_digest.md), [`api.document_units`](../functions/api/document_units.md), [`api.entity_at`](../functions/api/entity_at.md), [`api.entity_card`](../functions/api/entity_card.md), [`api.entity_timeline`](../functions/api/entity_timeline.md), [`api.evidence_packet`](../functions/api/evidence_packet.md), [`api.fact_locators`](../functions/api/fact_locators.md), [`api.knowledge_head`](../functions/api/knowledge_head.md), [`api.leaderboard`](../functions/api/leaderboard.md), [`api.model_offerings_at`](../functions/api/model_offerings_at.md), [`api.models_at`](../functions/api/models_at.md), [`api.modules_affected_by_release`](../functions/api/modules_affected_by_release.md), [`api.price_history`](../functions/api/price_history.md), [`api.product_command`](../functions/api/product_command.md), [`api.product_read`](../functions/api/product_read.md), [`api.product_scope`](../functions/api/product_scope.md), [`api.product_worker`](../functions/api/product_worker.md), [`api.relationships`](../functions/api/relationships.md), [`api.resolve_entity`](../functions/api/resolve_entity.md), [`api.search_knowledge`](../functions/api/search_knowledge.md), [`api.search_unified`](../functions/api/search_unified.md), [`api.summary_evidence`](../functions/api/summary_evidence.md), [`api.talk_segments`](../functions/api/talk_segments.md), [`api.what_changed`](../functions/api/what_changed.md), [`util.current_tenant_id`](../functions/util/current_tenant_id.md), [`util.stamp_database_release`](../functions/util/stamp_database_release.md)
 
 ## Named queries
 

@@ -1,0 +1,7 @@
+{
+  "format": "ai-engineer-contract-version/1",
+  "version": "0.9.0",
+  "migration_head": "20261116140000_build08_authoring_review_reads",
+  "migrations": 202,
+  "migrations_sha256": "sha256:72303654f8a296d3866c37d8f9c2bfb8708a608582afd29537d7f6525174d845"
+}

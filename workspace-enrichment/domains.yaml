@@ -442,8 +442,8 @@ domains:
     reviewed: null
     aliases: [rpc, views, app_reader, L1, catalog views, models table]
     schemas: [api, util]
-    relations: [api.models, api.model_offerings, api.software, api.software_releases, api.talks, api.people, api.organizations, api.events, api.concepts, api.papers, api.benchmark_scores, api.works_authored, api.guidance_items, api.libraries, api.repositories, api.mcp_servers, api.agent_skills, api.entities, api.current_facts, api.current_relationships, api.events_current]
-    functions: [api.resolve_entity, api.entity_card, api.entity_at, api.relationships, api.entity_timeline, api.what_changed, api.changes_since, api.price_history, api.fact_locators, api.models_at, api.model_offerings_at, api.modules_affected_by_release, api.search_unified, api.search_knowledge, api.talk_segments, api.document_units, api.document_digest, api.leaderboard, api.knowledge_head, api.evidence_packet, api.summary_evidence, api.product_command, api.product_read, api.product_worker, api.product_scope, util.current_tenant_id]
+    relations: [api.models, api.model_offerings, api.software, api.software_releases, api.talks, api.people, api.organizations, api.events, api.concepts, api.papers, api.benchmark_scores, api.works_authored, api.guidance_items, api.libraries, api.repositories, api.mcp_servers, api.agent_skills, api.entities, api.current_facts, api.current_relationships, api.events_current, util.database_release]
+    functions: [api.database_release, util.stamp_database_release, api.resolve_entity, api.entity_card, api.entity_at, api.relationships, api.entity_timeline, api.what_changed, api.changes_since, api.price_history, api.fact_locators, api.models_at, api.model_offerings_at, api.modules_affected_by_release, api.search_unified, api.search_knowledge, api.talk_segments, api.document_units, api.document_digest, api.leaderboard, api.knowledge_head, api.evidence_packet, api.summary_evidence, api.product_command, api.product_read, api.product_worker, api.product_scope, util.current_tenant_id]
     tasks: [compare-models, price-with-locator, what-changed-since, cheapest-qualified-model, release-history, talks-on-topic, talk-to-repo-to-paper, what-do-we-know-about-entity, check-knowledge-head]
     queries: [catalog.models, catalog.model_offerings, catalog.software, catalog.software_releases, catalog.talks, catalog.people, catalog.organizations, catalog.events, catalog.concepts, catalog.papers, catalog.benchmark_scores, ours.works_authored, guidance.items, facts.changes_since, facts.price_history, facts.locators, catalog.models_at, catalog.model_offerings_at, ours.modules_affected_by_release, content.talk_segments, content.document_units, content.document_digest, retrieval.search_unified, ranking.leaderboard, entity.resolve, entity.card, knowledge.head]
     summary: The only surface apps and agents see; invoker views and definer RPCs organised as the L1–L3 knowledge continuum.
@@ -487,6 +487,14 @@ domains:
       tenant-filtered views and functions answer it; `anon` and `service_role` get no tenant.
       Invariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new
       catalog entries, not raw SQL.
+
+      **Which release is this database?** `api.database_release()` returns `release` (the contract
+      version, which covers every schema and pins the guest components), `declared` (the newest
+      stamp in `util.database_release`), `observed` (the live migration version and the installed
+      component versions) and `state` (`current`, `ahead`, `inconsistent`, `component_drift`,
+      `unstamped`, `unverifiable`). A service pins a range and checks it before it starts; the rule
+      and its cases are `release-check.cases.json`. Only the installer and the lab stamp command
+      write a stamp, through `util.stamp_database_release`.
 
   - slug: orchestration-ledger
     title: Orchestration ledger

@@ -14,7 +14,7 @@ readers: [control_plane, service_role]
 writers: [control_plane, service_role]
 typescript: "Database[\"evaluation\"][\"Tables\"][\"experiment_arm\"][\"Row\"]"
 defined_in: ["20260903010100_knowledge_retrieval_contract.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # evaluation.experiment_arm
 

@@ -13,7 +13,7 @@ raises: [claim limit or visibility timeout is outside the admitted range, claim 
 touches: { reads: [], writes: [knowledge_service.outbox] }
 tokens: [knowledge_service, claim_outbox, knowledge_service.claim_outbox]
 defined_in: ["20260903010500_outbox_claiming_and_packet_materialization.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # knowledge_service.claim_outbox
 

@@ -3786,6 +3786,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      database_release: { Args: never; Returns: Json }
       decide_proposal: {
         Args: {
           p_decided_by?: string
@@ -23640,7 +23641,39 @@ export type Database = {
   }
   util: {
     Tables: {
-      [_ in never]: never
+      database_release: {
+        Row: {
+          components: Json
+          contract_version: string
+          migration_head: string
+          migrations: number
+          migrations_sha256: string
+          release_seq: number
+          stamped_at: string
+          stamped_by: string
+        }
+        Insert: {
+          components: Json
+          contract_version: string
+          migration_head: string
+          migrations: number
+          migrations_sha256: string
+          release_seq?: never
+          stamped_at?: string
+          stamped_by: string
+        }
+        Update: {
+          components?: Json
+          contract_version?: string
+          migration_head?: string
+          migrations?: number
+          migrations_sha256?: string
+          release_seq?: never
+          stamped_at?: string
+          stamped_by?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23651,6 +23684,17 @@ export type Database = {
       ensure_month_partitions: {
         Args: { p_months_ahead?: number }
         Returns: number
+      }
+      stamp_database_release: {
+        Args: {
+          p_components: Json
+          p_contract_version: string
+          p_migration_head: string
+          p_migrations: number
+          p_migrations_sha256: string
+          p_stamped_by: string
+        }
+        Returns: Json
       }
       uuidv7: { Args: never; Returns: string }
     }

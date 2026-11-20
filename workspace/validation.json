@@ -7,13 +7,13 @@
       "retrieval.hybrid_search"
     ]
   },
-  "files": 973,
+  "files": 976,
   "largest": {
-    "bytes": 5448334,
+    "bytes": 5460383,
     "path": "schema-ir.json"
   },
   "ok": true,
-  "total_bytes": 9355770,
+  "total_bytes": 9379523,
   "warning_count": 0,
   "warnings": []
 }

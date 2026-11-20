@@ -14,7 +14,7 @@ readers: [control_plane, executor_service, pipeline_agent, service_role, verifie
 writers: [executor_service, pipeline_agent, service_role]
 typescript: "Database[\"retrieval\"][\"Tables\"][\"chunk_relationship_evidence\"][\"Row\"]"
 defined_in: ["20260903010300_knowledge_retrieval_completeness.sql", "20260912010800_km_08_retrieval.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # retrieval.chunk_relationship_evidence
 

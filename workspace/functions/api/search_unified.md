@@ -13,7 +13,7 @@ raises: [evidence weight must be between 0 and 1, query text length must be betw
 touches: { reads: [retrieval.projection_target, retrieval.vector_item, retrieval.vector_item_embedding_1536, retrieval.vector_space, retrieval.vector_space_version], writes: [] }
 tokens: [api, search_unified, api.search_unified]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261108120100_build08_r2_fixups.sql", "20261110140000_build08_loop3_libraries_talks_capabilities.sql", "20261113160000_build08_loop5_followups.sql", "20261113160000_build08_loop5_ranking_rules_revalidation_triage.sql", "20261115120000_build08_loop7_search_collapse_restatements.sql", "20261115120100_build08_loop7_fixup_collapse_window.sql", part3_retrieval.sql]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # api.search_unified
 

@@ -13,7 +13,7 @@ raises: [authorized rollback operation is required, current and rollback target 
 touches: { reads: [knowledge_service.operation, retrieval.content_promotion_decision], writes: [retrieval.publication_switch_receipt, retrieval.space_publication, retrieval.vector_space_version, retrieval.vector_store_space] }
 tokens: [retrieval, rollback_vector_space, retrieval.rollback_vector_space]
 defined_in: ["20260903010400_atomic_publication_and_hybrid_retrieval.sql", "20260904011000_governed_projection_embedding_publication.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # retrieval.rollback_vector_space
 

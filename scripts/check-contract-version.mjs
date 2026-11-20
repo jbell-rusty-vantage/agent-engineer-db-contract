@@ -8,19 +8,30 @@
 //   MIGRATION_HEAD_MISSING  the recorded head file is not in supabase/migrations
 //   MIGRATION_CHAIN_CHANGED same head, but a file was added, removed or edited below it
 //   WORKSPACE_VERSION_STALE the committed schema workspace was generated under another version or head
+//   COMPONENT_PINS_DIFFER   the record's `components` are not the pins the installer holds (VER-S1)
+//   RELEASE_RECORD_MISSING  releases/<version>.json, the tracked copy of the record for this release, is absent
+//   RELEASE_RECORD_DIFFERS  releases/<version>.json is not the record
+//
+// A release is the whole database: the contract version names the migration chain and pins the two guest components
+// (the Knowledge Services verification component and the Mission Control component). The installer stamps the record
+// into the database (util.database_release) and every service reads it with api.database_release() before it starts.
 //
 // Usage (from the repository root):
 //   node scripts/check-contract-version.mjs            exit 0 current, 1 stale (JSON report on stdout)
 //   node scripts/check-contract-version.mjs --write    record the present chain for the version in package.json
-// Cutting a version: bump package.json, run --write, rebuild the schema workspace, add the README row.
+// Cutting a version: bump package.json, run --write (it also writes releases/<version>.json), rebuild the schema
+// workspace, add the README row.
 // The digest reads file contents with CRLF folded to LF, so a Windows checkout and a Linux checkout agree.
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { releaseComponents } from "./install-ai-engineer.mjs";
 
 export const RECORD_FILE = "contract.version.json";
-export const RECORD_FORMAT = "ai-engineer-contract-version/1";
+export const RECORD_FORMAT = "ai-engineer-contract-version/2";
+export const RELEASES_DIR = "releases";
+const serialize = (record) => `${JSON.stringify(record, null, 2)}\n`;
 const MIGRATION_FILE = /^(\d{14})_[a-z0-9_]+\.sql$/;
 const sha256 = (text) => createHash("sha256").update(text).digest("hex");
 
@@ -35,7 +46,16 @@ export function migrationChain(root) {
 export function recordFor(root) {
   const { version } = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
   const chain = migrationChain(root);
-  return { format: RECORD_FORMAT, version, migration_head: chain.head?.replace(/\.sql$/, "") ?? null, migrations: chain.count, migrations_sha256: `sha256:${chain.sha256}` };
+  return { format: RECORD_FORMAT, version, migration_head: chain.head?.replace(/\.sql$/, "") ?? null, migrations: chain.count, migrations_sha256: `sha256:${chain.sha256}`, components: releaseComponents() };
+}
+
+/** Records the present chain for the version in package.json: the record and its tracked copy under releases/. */
+export function writeRecord(root) {
+  const record = recordFor(root);
+  writeFileSync(join(root, RECORD_FILE), serialize(record));
+  mkdirSync(join(root, RELEASES_DIR), { recursive: true });
+  writeFileSync(join(root, RELEASES_DIR, `${record.version}.json`), serialize(record));
+  return record;
 }
 
 /** Every disagreement between the label and the chain; an empty list means the version identifies the schema. */
@@ -57,6 +77,15 @@ export function checkContractVersion(root) {
   } else if (expected.migrations !== recorded.migrations || expected.migrations_sha256 !== recorded.migrations_sha256) {
     problems.push({ code: "MIGRATION_CHAIN_CHANGED", detail: `the chain below ${recorded.migration_head} differs from the one contract ${recorded.version} was cut from (${recorded.migrations} files recorded, ${expected.migrations} present); promoted migrations are not edited, add a new one and cut a version` });
   }
+  if (JSON.stringify(recorded.components ?? null) !== JSON.stringify(expected.components)) {
+    problems.push({ code: "COMPONENT_PINS_DIFFER", detail: `${RECORD_FILE} records ${JSON.stringify(recorded.components ?? null)}; the installer pins ${JSON.stringify(expected.components)}. Cut a version (bump package.json, then --write).` });
+  }
+  const releasePath = join(root, RELEASES_DIR, `${recorded.version}.json`);
+  if (!existsSync(releasePath)) {
+    problems.push({ code: "RELEASE_RECORD_MISSING", detail: `${RELEASES_DIR}/${recorded.version}.json is missing; run this script with --write` });
+  } else if (JSON.stringify(JSON.parse(readFileSync(releasePath, "utf8"))) !== JSON.stringify(recorded)) {
+    problems.push({ code: "RELEASE_RECORD_DIFFERS", detail: `${RELEASES_DIR}/${recorded.version}.json is not ${RECORD_FILE}; a released record is not edited, cut a new version` });
+  }
   const manifestPath = join(root, "workspace", "manifest.json");
   if (existsSync(manifestPath)) {
     const build = JSON.parse(readFileSync(manifestPath, "utf8")).build ?? {};
@@ -70,9 +99,8 @@ export function checkContractVersion(root) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
   if (process.argv.includes("--write")) {
-    const record = recordFor(root);
-    writeFileSync(join(root, RECORD_FILE), `${JSON.stringify(record, null, 2)}\n`);
-    process.stdout.write(`${JSON.stringify({ written: RECORD_FILE, ...record })}\n`);
+    const record = writeRecord(root);
+    process.stdout.write(`${JSON.stringify({ written: [RECORD_FILE, `${RELEASES_DIR}/${record.version}.json`], ...record })}\n`);
   } else {
     const result = checkContractVersion(root);
     process.stdout.write(`${JSON.stringify(result.ok ? { ok: true, ...result.recorded } : result, null, 2)}\n`);

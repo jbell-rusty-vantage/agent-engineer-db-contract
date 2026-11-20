@@ -3,7 +3,10 @@
 Builds an AI Engineer database from nothing, or brings one to the current head, in one ordered, idempotent,
 interrupt-safe run: the pinned Knowledge Services `knowledge_verification` component, this repository's
 `supabase/migrations`, the custody and grant checks (including the closed `api` surface), the KS seal key, the Mission
-Control common release, and a JSON receipt (`changed: false` when nothing was applied). It is the only release and
+Control common release, the release stamp (`util.database_release`, read by every service through
+`api.database_release()`; [version and release](version-and-release.md#database)), and a JSON receipt
+(`changed: false` when nothing was applied). `--release <version>` installs a named earlier release from
+[`releases/`](../releases) on a local disposable target, which is how an upgrade is proven. It is the only release and
 fresh-install path; `db:start`, `db:migrate` and `scripts/apply-disposable-migration.mjs` are development tools.
 
 - Code: [`scripts/install-ai-engineer.mjs`](../scripts/install-ai-engineer.mjs) (steps in its header),

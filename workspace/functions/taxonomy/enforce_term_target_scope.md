@@ -13,7 +13,7 @@ raises: [taxonomy term does not admit target kind]
 touches: { reads: [authoring.work, catalog.entity, guidance.item, taxonomy.term_target_kind], writes: [] }
 tokens: [taxonomy, enforce_term_target_scope, taxonomy.enforce_term_target_scope]
 defined_in: ["20260829192855_optimize_ai_entity_taxonomy_and_relationships.sql", "20260912010700_km_07_knowledge.sql", "20261105010200_product_curriculum_cutover.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # taxonomy.enforce_term_target_scope
 

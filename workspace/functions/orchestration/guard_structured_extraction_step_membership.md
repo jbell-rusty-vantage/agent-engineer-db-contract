@@ -13,7 +13,7 @@ raises: [structured extraction bound step membership is immutable]
 touches: { reads: [orchestration.verification_structured_extraction_execution], writes: [] }
 tokens: [orchestration, guard_structured_extraction_step_membership, orchestration.guard_structured_extraction_step_membership]
 defined_in: ["20260906032300_verification_structured_extraction_step_membership.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # orchestration.guard_structured_extraction_step_membership
 

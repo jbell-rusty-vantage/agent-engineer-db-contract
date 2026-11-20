@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.relationship, taxonomy.relationship_kind, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, current_relationship_rows, api.current_relationship_rows]
 defined_in: ["20260912011000_km_10_api.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # api.current_relationship_rows
 

@@ -14,7 +14,7 @@ readers: [app_reader, control_plane, pipeline_agent, service_role, verifier_agen
 writers: [control_plane, pipeline_agent, service_role, verifier_agent]
 typescript: "Database[\"verification\"][\"Tables\"][\"probe_verdict\"][\"Row\"]"
 defined_in: ["20261113120000_build08_loop4_source_intelligence_experiments.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # verification.probe_verdict
 

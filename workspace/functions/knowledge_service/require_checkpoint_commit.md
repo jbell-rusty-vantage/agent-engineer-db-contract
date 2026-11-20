@@ -13,7 +13,7 @@ raises: [checkpoint requires manifest custody and committed head]
 touches: { reads: [knowledge_service.checkpoint_artifact_reference, knowledge_service.checkpoint_scope], writes: [] }
 tokens: [knowledge_service, require_checkpoint_commit, knowledge_service.require_checkpoint_commit]
 defined_in: ["20260914010500_scoped_checkpoints.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # knowledge_service.require_checkpoint_commit
 

@@ -371,6 +371,8 @@ temporal.knowledge_head
 temporal.segment
 temporal.stream
 temporal.stream_kind
+# util  lens=machinery
+util.database_release
 # verification  lens=evidence
 verification.claim_triage
 verification.probe

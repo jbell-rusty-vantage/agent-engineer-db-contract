@@ -13,7 +13,7 @@ raises: [a correction reason belongs to a correction, a world change cannot rewr
 touches: { reads: [catalog.entity, catalog.relationship, taxonomy.relationship_kind, temporal.correction_reason, temporal.stream_kind], writes: [temporal.segment, temporal.stream] }
 tokens: [temporal, assert_state, temporal.assert_state]
 defined_in: ["20260912010400_km_04_temporal.sql", "20261108120000_build08_r2_knowledge_continuum.sql", "20261119120000_build09_rv01_change_reasons_identity_proposals.sql", part1_renames.sql]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # temporal.assert_state
 

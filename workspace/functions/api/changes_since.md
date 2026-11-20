@@ -13,7 +13,7 @@ raises: []
 touches: { reads: [catalog.entity, catalog.entity_merge, catalog.entity_split, catalog.entity_split_part, catalog.identity_move, catalog.relationship, content.document, content.document_node, content.document_version, content.unit_change, temporal.event, temporal.event_occurrence, temporal.knowledge_batch, temporal.segment, temporal.stream], writes: [] }
 tokens: [api, changes_since, api.changes_since]
 defined_in: ["20261108120000_build08_r2_knowledge_continuum.sql", "20261109130000_build08_loop2_numbers_compute_apis.sql", "20261119120000_build09_rv01_change_reasons_identity_proposals.sql", part4_views_seeds.sql]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # api.changes_since
 

@@ -13,7 +13,7 @@ raises: [artifact blob address custody collision]
 touches: { reads: [orchestration.artifact], writes: [] }
 tokens: [orchestration, guard_artifact_blob_alias, orchestration.guard_artifact_blob_alias]
 defined_in: ["20260914010000_artifact_logical_custody.sql", "20260914010100_artifact_legacy_registration_compatibility.sql"]
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # orchestration.guard_artifact_blob_alias
 

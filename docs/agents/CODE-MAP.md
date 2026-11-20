@@ -35,7 +35,7 @@ Type-only Database export plus the api view/function row types (L1 catalog views
 **Declared internal package dependencies:** none declared
 **Other runtime dependencies:** none declared
 **Reviewed runtime/data relationships:** none declared
-**Checks:** No specific test anchor registered. Package script names: db:migrate, db:reset, db:start, install:disposable, install:target, lab:schema, pack:contract, test, test:installer, typecheck, types:check, types:check:native, types:generate, types:generate:native, version:check, workspace:build, workspace:check, workspace:materialize, workspace:validate.
+**Checks:** No specific test anchor registered. Package script names: db:migrate, db:reset, db:start, install:disposable, install:target, lab:schema, pack:contract, release:show, release:stamp, test, test:installer, typecheck, types:check, types:check:native, types:generate, types:generate:native, version:check, workspace:build, workspace:check, workspace:materialize, workspace:validate.
 - database.generated.ts is generated output; inspect it explicitly when needed rather than including its full contents in the map.
 
 **Architecture and detailed docs:**

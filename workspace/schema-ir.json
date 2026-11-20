@@ -1,9 +1,9 @@
 {
   "build": {
-    "contract_version": "0.11.0",
-    "enrichment_sha256": "sha256:f14e97e0086052221548a153a0adc07d7195d376b0d6d4f1267f79d06aad082b",
-    "generated_types_sha256": "sha256:c92e7827009432c2c59a1a6d831e118201f70d107db12acd00eaecbbb8dd2d74",
-    "migration_head": "20261119122000",
+    "contract_version": "0.12.0",
+    "enrichment_sha256": "sha256:ba0f64891d6d24e5deed0df0b468fbf62f0c52cca20783cffb3cb323a877f277",
+    "generated_types_sha256": "sha256:c6e86168c8d3347853169be5fe14bc6212d0e483ef40fca2642d26b42498f07a",
+    "migration_head": "20261120120000",
     "renderer_version": "4.0.0",
     "source": {
       "kind": "local_disposable"
@@ -34,6 +34,9 @@
       ],
       "api.current_relationship_rows": [
         "fn:api.current_relationship_rows()"
+      ],
+      "api.database_release": [
+        "fn:api.database_release()"
       ],
       "api.decide_proposal": [
         "fn:api.decide_proposal(uuid,text,text,uuid,text)"
@@ -928,6 +931,9 @@
       ],
       "util.set_updated_at": [
         "fn:util.set_updated_at()"
+      ],
+      "util.stamp_database_release": [
+        "fn:util.stamp_database_release(text,text,int4,text,jsonb,text)"
       ],
       "util.uuidv7": [
         "fn:util.uuidv7()"
@@ -3982,6 +3988,9 @@
         "fn:temporal.guard_k()",
         "fn:temporal.require_sealed_batch()",
         "fn:temporal.stamp_k()"
+      ],
+      "rel:util.database_release": [
+        "fn:util.reject_mutation()"
       ],
       "rel:verification.claim_triage": [
         "fn:util.reject_mutation()",
@@ -7045,6 +7054,13 @@
         "direct_dml_roles": [],
         "via_functions": []
       },
+      "rel:util.database_release": {
+        "basis": "grants + best_effort body scan",
+        "direct_dml_roles": [],
+        "via_functions": [
+          "fn:util.stamp_database_release(text,text,int4,text,jsonb,text)"
+        ]
+      },
       "rel:verification.claim_triage": {
         "basis": "grants + best_effort body scan",
         "direct_dml_roles": [
@@ -7208,8 +7224,10 @@
           "catalog views",
           "models table"
         ],
-        "body": "`api` has no tables. **L1 catalog views** (lens corpus unless noted) answer filter / compare /\nrank questions with no embeddings: `api.models` (one row per model version with developer,\nrelease date, context, modalities, capability statuses, cutoff, availability and the minimum\ncurrent price per 1M tokens), `api.model_offerings` (model as sold by a provider, normalized\nUSD per 1M tokens for input/output/cached/batch, with the exact claim and locator behind the\ninput price), `api.software` (+ the `api.libraries`, `api.repositories`, `api.mcp_servers`,\n`api.agent_skills` slices), `api.software_releases`, `api.talks`, `api.people`,\n`api.organizations`, `api.events`, `api.concepts`, `api.papers`, `api.benchmark_scores`,\n`api.guidance_items`, and `api.works_authored` (lens ours, tier 1: our courses, modules,\nreports at head). Every L1 row carries `as_of_knowledge_seq` or `learned_k` so you can cite\nthe head.\n\n**L2 facts and time**: `api.changes_since(since, stream_kinds, entity_kinds, document_types)`,\n`api.price_history(offering, meter)`, `api.fact_locators(entity, stream_kind, scope_key)`,\n`api.entity_at`, `api.what_changed`, `api.models_at` / `api.model_offerings_at` (L1 replayed\nat a world time), `api.modules_affected_by_release(release)`.\n\n**L3 scoped semantic**: `api.search_unified` (facets: lens, tier, space, document type, unit\nkind, entity, as-of, workspace; trusted roles only) and `api.search_knowledge` (the same\nsearch for a signed-in session: corpus and evidence lenses, no workspace),\n`api.talk_segments(talk, from_ms, to_ms, query)`,\n`api.document_units(document, unit_kinds)`, `api.document_digest(document)`.\n\n**Product**: `api.product_command(workspace, operation, idempotency_key, expected_head,\npayload)`, `api.product_read(workspace, operation, payload)` for `authenticated`;\n`api.product_worker(operation, payload)` for `service_role`. The operations are one page\neach under `ops/` (see INDEX.md). `api.product_scope(scope)` is the client-grant check of\n`api.product_read` on its own: a service that composes a read from the views and functions\nabove calls it first when the request carries a client token (D-82).\n\nOlder surface: `api.entities`, `api.current_facts` (applies `k_to is null` and\n`valid_during @> now()` — the usual trap; historical reads use `api.entity_at`),\n`api.current_relationships`, `api.events_current`, `api.hybrid_knowledge_search_1536`.\n`util.current_tenant_id` reads the app.tenant_id GUC and fails closed; every database\nsession needs it. The one exception (D-82): a signed-in PostgREST session (role\n`authenticated` with a verified subject) reads the single deployment tenant, so the\ntenant-filtered views and functions answer it; `anon` and `service_role` get no tenant.\nInvariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new\ncatalog entries, not raw SQL.\n",
+        "body": "`api` has no tables. **L1 catalog views** (lens corpus unless noted) answer filter / compare /\nrank questions with no embeddings: `api.models` (one row per model version with developer,\nrelease date, context, modalities, capability statuses, cutoff, availability and the minimum\ncurrent price per 1M tokens), `api.model_offerings` (model as sold by a provider, normalized\nUSD per 1M tokens for input/output/cached/batch, with the exact claim and locator behind the\ninput price), `api.software` (+ the `api.libraries`, `api.repositories`, `api.mcp_servers`,\n`api.agent_skills` slices), `api.software_releases`, `api.talks`, `api.people`,\n`api.organizations`, `api.events`, `api.concepts`, `api.papers`, `api.benchmark_scores`,\n`api.guidance_items`, and `api.works_authored` (lens ours, tier 1: our courses, modules,\nreports at head). Every L1 row carries `as_of_knowledge_seq` or `learned_k` so you can cite\nthe head.\n\n**L2 facts and time**: `api.changes_since(since, stream_kinds, entity_kinds, document_types)`,\n`api.price_history(offering, meter)`, `api.fact_locators(entity, stream_kind, scope_key)`,\n`api.entity_at`, `api.what_changed`, `api.models_at` / `api.model_offerings_at` (L1 replayed\nat a world time), `api.modules_affected_by_release(release)`.\n\n**L3 scoped semantic**: `api.search_unified` (facets: lens, tier, space, document type, unit\nkind, entity, as-of, workspace; trusted roles only) and `api.search_knowledge` (the same\nsearch for a signed-in session: corpus and evidence lenses, no workspace),\n`api.talk_segments(talk, from_ms, to_ms, query)`,\n`api.document_units(document, unit_kinds)`, `api.document_digest(document)`.\n\n**Product**: `api.product_command(workspace, operation, idempotency_key, expected_head,\npayload)`, `api.product_read(workspace, operation, payload)` for `authenticated`;\n`api.product_worker(operation, payload)` for `service_role`. The operations are one page\neach under `ops/` (see INDEX.md). `api.product_scope(scope)` is the client-grant check of\n`api.product_read` on its own: a service that composes a read from the views and functions\nabove calls it first when the request carries a client token (D-82).\n\nOlder surface: `api.entities`, `api.current_facts` (applies `k_to is null` and\n`valid_during @> now()` — the usual trap; historical reads use `api.entity_at`),\n`api.current_relationships`, `api.events_current`, `api.hybrid_knowledge_search_1536`.\n`util.current_tenant_id` reads the app.tenant_id GUC and fails closed; every database\nsession needs it. The one exception (D-82): a signed-in PostgREST session (role\n`authenticated` with a verified subject) reads the single deployment tenant, so the\ntenant-filtered views and functions answer it; `anon` and `service_role` get no tenant.\nInvariant: `app_reader` never SELECTs catalog or temporal tables. Long-tail reads are new\ncatalog entries, not raw SQL.\n\n**Which release is this database?** `api.database_release()` returns `release` (the contract\nversion, which covers every schema and pins the guest components), `declared` (the newest\nstamp in `util.database_release`), `observed` (the live migration version and the installed\ncomponent versions) and `state` (`current`, `ahead`, `inconsistent`, `component_drift`,\n`unstamped`, `unverifiable`). A service pins a range and checks it before it starts; the rule\nand its cases are `release-check.cases.json`. Only the installer and the lab stamp command\nwrite a stamp, through `util.stamp_database_release`.\n",
         "functions": [
+          "fn:api.database_release()",
+          "fn:util.stamp_database_release(text,text,int4,text,jsonb,text)",
           "fn:api.resolve_entity(text)",
           "fn:api.entity_card(uuid)",
           "fn:api.entity_at(uuid,timestamptz,int8)",
@@ -7289,7 +7307,8 @@
           "rel:api.entities",
           "rel:api.current_facts",
           "rel:api.current_relationships",
-          "rel:api.events_current"
+          "rel:api.events_current",
+          "rel:util.database_release"
         ],
         "reviewed": null,
         "schemas": [
@@ -16364,7 +16383,7 @@
       "util": "api-surface",
       "verification": "evidence"
     },
-    "sha256": "sha256:f14e97e0086052221548a153a0adc07d7195d376b0d6d4f1267f79d06aad082b",
+    "sha256": "sha256:ba0f64891d6d24e5deed0df0b468fbf62f0c52cca20783cffb3cb323a877f277",
     "tasks": [
       {
         "aliases": [
@@ -18870,7 +18889,7 @@
       }
     ]
   },
-  "fingerprint": "sha256:a4480bd9fe02607c32e4da7c41ae66bc73093a7228833d691d9c1c030bca8814",
+  "fingerprint": "sha256:de0b4820cecdeddbd47ba0b505e320596d6eaef1d3a056fdb1e8fadfac25687c",
   "format": "ai-engineer-schema-ir/1",
   "functions": {
     "fn:api.advisories_for(text,text)": {
@@ -19533,6 +19552,69 @@
         "writes": []
       },
       "typescript": "Database[\"api\"][\"Functions\"][\"current_relationship_rows\"]",
+      "volatility": "stable"
+    },
+    "fn:api.database_release()": {
+      "arguments": [],
+      "body_sha256": "sha256:956c907b344a47ec9ce31d76447cee70b58ecace222414fd9864a5449cff3543",
+      "comment": "Which release this database is, for a service to check before it starts. Returns {format, release, state, declared, observed, stamped_at, stamped_by}. declared is the newest stamp (migration head, count, digest, pinned components). observed is read now: the live migration version and count, and the installed version of each guest component (null when that component is not in this database). state: unstamped (no stamp), current (the live head is the stamped head and every present component matches its pin), ahead (migrations applied after the stamp, as on a lab during a unit session), inconsistent (the live head is behind the stamp), component_drift (a present component differs from its pin), unverifiable (the migration list cannot be read).",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261120120000_database_release_record.sql"
+      ],
+      "executors": [
+        "app_reader",
+        "authenticated",
+        "control_plane",
+        "executor_service",
+        "pipeline_agent",
+        "service_role",
+        "verifier_agent"
+      ],
+      "grants": {
+        "app_reader": [
+          "EXECUTE"
+        ],
+        "authenticated": [
+          "EXECUTE"
+        ],
+        "control_plane": [
+          "EXECUTE"
+        ],
+        "executor_service": [
+          "EXECUTE"
+        ],
+        "pipeline_agent": [
+          "EXECUTE"
+        ],
+        "service_role": [
+          "EXECUTE"
+        ],
+        "verifier_agent": [
+          "EXECUTE"
+        ]
+      },
+      "id": "fn:api.database_release()",
+      "identity_arguments": "",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "database_release",
+      "raises": [],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "api",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [
+          "util.database_release"
+        ],
+        "writes": []
+      },
+      "typescript": "Database[\"api\"][\"Functions\"][\"database_release\"]",
       "volatility": "stable"
     },
     "fn:api.decide_proposal(uuid,text,text,uuid,text)": {
@@ -41103,6 +41185,78 @@
         "writes": []
       },
       "typescript": null,
+      "volatility": "volatile"
+    },
+    "fn:util.stamp_database_release(text,text,int4,text,jsonb,text)": {
+      "arguments": [
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_contract_version",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_migration_head",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_migrations",
+          "type": "integer"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_migrations_sha256",
+          "type": "text"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_components",
+          "type": "jsonb"
+        },
+        {
+          "default": null,
+          "mode": "in",
+          "name": "p_stamped_by",
+          "type": "text"
+        }
+      ],
+      "body_sha256": "sha256:ab0aa1e0e954db7145a8b0d9a61502fb7ed3885be657b388081b095b1f3eaca2",
+      "comment": "Records the release this database was installed or upgraded to. Refuses a head the database is not at; adds a row only when the latest stamp differs. Owner only: the installer (scripts/install-ai-engineer.mjs) and the lab stamp command (scripts/database-release.mjs) call it.",
+      "config": [
+        "search_path=\"\""
+      ],
+      "defined_in": [
+        "20261120120000_database_release_record.sql"
+      ],
+      "executors": [],
+      "grants": {},
+      "id": "fn:util.stamp_database_release(text,text,int4,text,jsonb,text)",
+      "identity_arguments": "p_contract_version text, p_migration_head text, p_migrations integer, p_migrations_sha256 text, p_components jsonb, p_stamped_by text",
+      "kind": "function",
+      "language": "plpgsql",
+      "name": "stamp_database_release",
+      "raises": [
+        "release % ends at migration %, but this database is at %"
+      ],
+      "returns": "jsonb",
+      "returns_set": false,
+      "schema": "util",
+      "security": "definer",
+      "touches": {
+        "basis": "best_effort",
+        "calls": [],
+        "reads": [],
+        "writes": [
+          "util.database_release"
+        ]
+      },
+      "typescript": "Database[\"util\"][\"Functions\"][\"stamp_database_release\"]",
       "volatility": "volatile"
     },
     "fn:util.uuidv7()": {
@@ -160766,6 +160920,182 @@
       "view_definition": null,
       "writers": []
     },
+    "rel:util.database_release": {
+      "checks": [
+        {
+          "expression": "(jsonb_typeof(components) = 'object'::text)",
+          "name": "database_release_components_check"
+        },
+        {
+          "expression": "(contract_version ~ '^[0-9]+\\.[0-9]+\\.[0-9]+$'::text)",
+          "name": "database_release_contract_version_check"
+        },
+        {
+          "expression": "(migration_head ~ '^[0-9]{14}_[a-z0-9_]+$'::text)",
+          "name": "database_release_migration_head_check"
+        },
+        {
+          "expression": "(migrations > 0)",
+          "name": "database_release_migrations_check"
+        },
+        {
+          "expression": "(migrations_sha256 ~ '^sha256:[0-9a-f]{64}$'::text)",
+          "name": "database_release_migrations_sha256_check"
+        },
+        {
+          "expression": "((length(stamped_by) >= 1) AND (length(stamped_by) <= 200))",
+          "name": "database_release_stamped_by_check"
+        }
+      ],
+      "columns": [
+        {
+          "comment": null,
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.release_seq",
+          "identity": "always",
+          "name": "release_seq",
+          "nullable": false,
+          "position": 1,
+          "type": "bigint"
+        },
+        {
+          "comment": "The release: the version in the contract repository's contract.version.json.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.contract_version",
+          "identity": null,
+          "name": "contract_version",
+          "nullable": false,
+          "position": 2,
+          "type": "text"
+        },
+        {
+          "comment": "The last migration of the release's chain, as <14 digits>_<name>.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.migration_head",
+          "identity": null,
+          "name": "migration_head",
+          "nullable": false,
+          "position": 3,
+          "type": "text"
+        },
+        {
+          "comment": "How many migrations the release's chain holds.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.migrations",
+          "identity": null,
+          "name": "migrations",
+          "nullable": false,
+          "position": 4,
+          "type": "integer"
+        },
+        {
+          "comment": "Digest of the chain's file names and contents (line endings folded), as recorded in contract.version.json.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.migrations_sha256",
+          "identity": null,
+          "name": "migrations_sha256",
+          "nullable": false,
+          "position": 5,
+          "type": "text"
+        },
+        {
+          "comment": "The guest components the release pins, by name: {\"knowledge_verification\": {\"version\", \"digest\"}, \"mission_control\": {\"version\", ...}}.",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.components",
+          "identity": null,
+          "name": "components",
+          "nullable": false,
+          "position": 6,
+          "type": "jsonb"
+        },
+        {
+          "comment": null,
+          "default": "now()",
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.stamped_at",
+          "identity": null,
+          "name": "stamped_at",
+          "nullable": false,
+          "position": 7,
+          "type": "timestamp with time zone"
+        },
+        {
+          "comment": "The tool that stamped the row (the installer, or the lab stamp command).",
+          "default": null,
+          "fk": null,
+          "generated": null,
+          "id": "col:util.database_release.stamped_by",
+          "identity": null,
+          "name": "stamped_by",
+          "nullable": false,
+          "position": 8,
+          "type": "text"
+        }
+      ],
+      "comment": "Which release this database is: one row per stamp, newest last, never edited. A release is the contract version; it names one migration chain and pins the guest components. Written only by util.stamp_database_release; read through api.database_release.",
+      "defined_in": [
+        "20261120120000_database_release_record.sql"
+      ],
+      "exclusions": [],
+      "foreign_keys": [],
+      "grants": {
+        "anon": [],
+        "app_reader": [],
+        "authenticated": [],
+        "control_plane": [],
+        "executor_service": [],
+        "pipeline_agent": [],
+        "service_role": [],
+        "verifier_agent": []
+      },
+      "id": "rel:util.database_release",
+      "inbound_foreign_keys": [],
+      "indexes": [],
+      "kind": "table",
+      "name": "database_release",
+      "partitions": null,
+      "primary_key": [
+        "release_seq"
+      ],
+      "readers": [],
+      "rls": {
+        "enabled": false,
+        "forced": false,
+        "policies": []
+      },
+      "schema": "util",
+      "triggers": [
+        {
+          "constraint": false,
+          "definition": "CREATE TRIGGER database_release_append_only BEFORE DELETE OR UPDATE ON util.database_release FOR EACH ROW EXECUTE FUNCTION util.reject_mutation()",
+          "function": "util.reject_mutation",
+          "id": "trg:util.database_release.database_release_append_only",
+          "initially_deferred": false,
+          "name": "database_release_append_only"
+        }
+      ],
+      "typescript": {
+        "insert": "Database[\"util\"][\"Tables\"][\"database_release\"][\"Insert\"]",
+        "row": "Database[\"util\"][\"Tables\"][\"database_release\"][\"Row\"]",
+        "update": "Database[\"util\"][\"Tables\"][\"database_release\"][\"Update\"]"
+      },
+      "unique": [],
+      "view_definition": null,
+      "writers": []
+    },
     "rel:verification.claim_triage": {
       "checks": [
         {
@@ -162910,6 +163240,7 @@
         "fn:api.current_event_rows()",
         "fn:api.current_fact_rows()",
         "fn:api.current_relationship_rows()",
+        "fn:api.database_release()",
         "fn:api.decide_proposal(uuid,text,text,uuid,text)",
         "fn:api.digest_item_passages(uuid)",
         "fn:api.document_digest(uuid)",
@@ -163834,12 +164165,15 @@
         "fn:util.ensure_month_partitions(int4)",
         "fn:util.reject_mutation()",
         "fn:util.set_updated_at()",
+        "fn:util.stamp_database_release(text,text,int4,text,jsonb,text)",
         "fn:util.uuidv7()",
         "fn:util.validate_predecessor()"
       ],
       "id": "sch:util",
       "name": "util",
-      "relation_ids": [],
+      "relation_ids": [
+        "rel:util.database_release"
+      ],
       "type_ids": []
     },
     "verification": {
@@ -175393,6 +175727,7 @@
       "rel:temporal.segment": "medium",
       "rel:temporal.stream": "medium",
       "rel:temporal.stream_kind": "small",
+      "rel:util.database_release": "unknown",
       "rel:verification.claim_triage": "small",
       "rel:verification.probe": "small",
       "rel:verification.probe_claim": "small",
@@ -175401,5 +175736,5 @@
       "rel:verification.use_admission": "unknown"
     }
   },
-  "workspace_fingerprint": "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+  "workspace_fingerprint": "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 }

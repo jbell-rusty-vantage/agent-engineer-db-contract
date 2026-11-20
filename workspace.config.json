@@ -86,7 +86,7 @@
   "budgets": {
     "relation_main_bytes": 6656,
     "relation_details_bytes": 16384,
-    "domain_bytes": 12288,
+    "domain_bytes": 13312,
     "schema_readme_bytes": 16384,
     "task_bytes": 5120,
     "operation_bytes": 4096,

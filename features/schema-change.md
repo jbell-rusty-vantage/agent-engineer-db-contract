@@ -2,11 +2,11 @@
 
 > **As practised today; the owner's schema session decides the rules.** This page describes how a schema change has
 > actually moved through this repository up to contract 0.10.0 (2026-11-18), assembled from the
-> [README](../README.md), the review workspace's
-> [FINAL-SCHEMA-PROCESS](../../../platform/ai-engineer-research-2026-11-02/schema-units/process/FINAL-SCHEMA-PROCESS.md)
-> and [AGENT-SESSION-PROTOCOL](../../../platform/ai-engineer-research-2026-11-02/schema-units/process/AGENT-SESSION-PROTOCOL.md),
+> [README](../README.md), the review workspace's process pages of that date (FINAL-SCHEMA-PROCESS and
+> AGENT-SESSION-PROTOCOL, removed on 2026-11-20; the
+> [runbook](../../../platform/ai-engineer-research-2026-11-02/schema-units/RUNBOOK.md#rules) succeeds them),
 > and the CI workflow. It is input for step S4 of the
-> [schema brief](../../../platform/ai-engineer-research-2026-11-02/schema-units/process/OFFICIAL-SCHEMA-SEQUENCE.md#s2)
+> [release sequence](../../../platform/ai-engineer-research-2026-11-02/schema-units/RELEASE.md#sequence)
 > ("Encode how to mutate the schema", AS-D68), not a new rule. Where practice and the written process disagree, both are
 > stated.
 
@@ -21,11 +21,11 @@
 | 4 | **Lab trial** | `node scripts/apply-disposable-migration.mjs --project-dir=<lab workdir> --migration=<file> --source-dir=supabase/drafts` on the populated lab `disposable-aieng-build04` (refuses a non-`disposable-*` project or a container whose labels name another workdir); sample data; the affected suites on the lab | agent, under the approval |
 | 5 | **Determine** | `LEAVE AS IS`, `ADD THESE CHANGES` or `BLOCKED / INCOMPLETE`, with evidence, in the cycle record; routine repairs loop back to 3-4 without a new approval | agent; John reviews |
 | 6 | **Promote to the chain** | Copy the draft to `supabase/migrations/` with the version of the last draft it folds (the "draft twin" is kept), regenerate `src/database.generated.ts`, update `src/api.ts`, `workspace-enrichment/` and the generated `workspace/` (`npm run workspace:build -- --db-url <lab DSN>`); commit migration and types together | agent |
-| 7 | **Version cut** | Bump `package.json`, `node scripts/check-contract-version.mjs --write`, rebuild the workspace, add the README version row ([version and release](version-and-release.md)) | agent (see "Where practice drifted") |
+| 7 | **Version cut** | Bump `package.json`, `node scripts/check-contract-version.mjs --write` (it writes the record and `releases/<version>.json`; from 0.12.0 the record also carries the component pins), rebuild the workspace, add the README version row ([version and release](version-and-release.md)) | agent (see "Where practice drifted") |
 | 8 | **Fresh install from empty** | The root installer on a `disposable-*` stack, twice; the repeat must report `changed: false` ([install a target](install-a-target.md)). Locally optional; CI runs it on every push to `main` | CI |
 | 9 | **All suites** | Every `supabase/tests/*.sql` but the named exceptions ([SQL suites](sql-suites.md)), then `generate-types.mjs --check`, `workspace:check`, `workspace:validate` against that install | CI |
 | 10 | **Push** | One repository at a time; read CI before the next push (owner rule 2026-11-07, [worktree routing](../../../docs/navigation/WORKTREES.md#github-move-and-clean-slate-2026-11-06)) | John's go |
-| 11 | **Consumer re-pin** | `npm run pack:contract`; Knowledge Services re-vendors `vendor/aiengineer-database-contract-<v>.tgz` and updates its docs; Mission Control and the AI Engineer service have no pin today | agent per consumer repo |
+| 11 | **Consumer re-pin** | `npm run pack:contract`; Knowledge Services re-vendors `vendor/aiengineer-database-contract-<v>.tgz` and updates its docs; from 0.12.0 every consumer states the release it works with and checks `api.database_release()` at startup ([version and release](version-and-release.md#consumers)), so a cut is followed by a re-pin in each | agent per consumer repo |
 | 12 | **Remote apply** | Checkpoint and identity evidence; `wipe --dry-run`, `wipe --from-dry-run`, then `install-ai-engineer.mjs --remote-reinstall --target <MC target.toml> --confirm-target <ref>:<installation_id>` with the seal key and the Mission Control release; the three gates of `install-target.mjs` | John's explicit go (a separate authority) |
 | 13 | **Readback** | `supabase_migrations.schema_migrations` on the target equals the frozen head; a consumer write and read (Mission Control W1 native write with readback); update Mission Control `deployments/ai-engineer/release.lock.json` | agent, evidence to John |
 | 14 | **Record** | Disposition and evidence in the cycle record; unit and feature rows in [REVIEW-LEDGER](../../../platform/ai-engineer-research-2026-11-02/schema-units/provenance/records/REVIEW-LEDGER.md) (the only progress authority); commit trailers name the session and decisions | agent |

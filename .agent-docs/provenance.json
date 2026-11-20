@@ -26,7 +26,7 @@
   "sourceState": "Filesystem snapshot; may include uncommitted changes. No deployment or commit claim.",
   "inputs": {
     ".agent-docs/config.json": "f00ae37a619e42f4ddde5784d4842a157b7e59e8cffc731a2517ead4d4e3fea5",
-    "README.md": "733b2883ba5ac76e7c49b8a3e811f96105c93cd5180c753ad7ddd10363e21071",
+    "README.md": "16bd6c2a424c0155575ed37474661c9d3cb1aaf3a8f562e0af6cce58ebf8f550",
     "docs/SCHEMA_WORKSPACE_MATERIALIZATION_SPEC.md": "46c0ed1517139c8d7ce1abacea0efc2322f840428a528e95408832fc62aac0b8",
     "docs/knowledge-model/MIGRATION-RESULT.md": "b236fb2423c0faf887749b03835cde6ade5b152bf851eb8527a664d6246e12e6",
     "docs/knowledge-model/SCHEMA-SUMMARY.md": "e94b40020ff3d1d3acb50406b2b18df620cb5f564854aff35816433a0526a703",
@@ -34,22 +34,22 @@
     "docs/schema-workspace/INTENT_AND_EXECUTOR_CONTRACTS.md": "a30e2ef4b9550567d501df1216b603ae191563130f269db669f1991e7f65167d",
     "docs/schema-workspace/SKILLS.md": "c28c597d371f81b1c2743312d4d2cefb11a00c9b51525457e836e52a5a99f2d0",
     "docs/schema-workspace/WORKSPACE_LAYOUT_AND_SAMPLES.md": "b26b243a7925ff87a115190d2e7115199534b5bbc092136ec29d0dc8030c0359",
-    "features/README.md": "558f986981a7bd5ecb3413bfb825573b8045cf761f26a38c26dd8f170560791d",
-    "features/schema-change.md": "bbbff5d855a88f7b72ac821372d527e305c7724de0bff8762466419cc7fc3e1a",
-    "package.json": "70247de6cf3e84d65572ea53f646ea26bec1e61bd00ad6e1c7e86996a41081c6",
+    "features/README.md": "7e981fa31b87eea85742718d1ea21c1aaaf3d18269f0f1e13639d7275194b1ae",
+    "features/schema-change.md": "d5f22035734a27451bf11b1130b91a868ef5dd282a65d1974fc8696a734a654d",
+    "package.json": "e76ddf2c156ccc8ec7e0ab659264f7886eca9d7bd5dd3d6d1632dc2bdd067018",
     "scripts/dev/dev_cli.py": "d6cdb3f4724fb803db5b979995b105271c72ce5bf12876c2a60ee8fbf9a89c98",
     "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
     "scripts/reset-disposable-local.mjs": "0b6e40c2557a39eeddef6909001a53eab39ead8592bc912afd39bf597bbeaa42",
     "scripts/schema-workspace/cli.mjs": "6cc3c7193000d19f952578ce8912c34c114f360d9a32356ef7572649f82846c3",
-    "workspace.config.json": "85b9bf0ae66da1fcb42dc4b81b652b36d707118e0d37de4c6c515597b96b4707"
+    "workspace.config.json": "2997e10bd166c27d0b88ec6e3fd8108b6ce6a7ae060710fc5f0a0f111c635cfa"
   },
   "semantic": {
     "inputs": {
       ".agent-docs/modules.json": "91a2439f1a9c1492c3ac24e1ef2fc8f62ef7360542668d9b9b9aae9c6ee427d0",
-      "package.json": "70247de6cf3e84d65572ea53f646ea26bec1e61bd00ad6e1c7e86996a41081c6",
+      "package.json": "e76ddf2c156ccc8ec7e0ab659264f7886eca9d7bd5dd3d6d1632dc2bdd067018",
       "scripts/generate-types-native.mjs": "cacbe7b47a66cde35bbe2113a07368b8c31ece6c0cd1eab8848813d187b59fd4",
       "scripts/generate-types.mjs": "fbaf20ee5e1975a30aa6d966e78c8cae0ae29df5416beee85779e410ef4b8f9a",
-      "scripts/install-ai-engineer.mjs": "567fbca64f432b418685c60e51591c2bf0a0d156eb69d15716cad049d5bc59ad",
+      "scripts/install-ai-engineer.mjs": "8baa0090d09bfeb798df131bb316ccb9e46936ddb806439667a3205d85092361",
       "scripts/install-manifest.mjs": "d3e6ac648986899c41363b0ecc73136403f3099fc1e6b0ab4ad151bb63f8b69a",
       "scripts/install-target.mjs": "a10004ea798cc035a5a8e9f4944effe378551063c00e93d7ac07cefda4392c21",
       "scripts/install-target.test.mjs": "edcf4b820cc12c82858ebf922add07e35804ce15fa46d7dce1973de2112d84ce",
@@ -63,16 +63,16 @@
       "scripts/schema-workspace/lib/validate.mjs": "cdb457c4797b78b6feb173bb1e49ef1f9ba21d51c5b32fdeebb25ed6ff689312",
       "scripts/schema-workspace/README.md": "5692ed8c9e723dc01fedef23d1a0743b641032b4f96ebfb80567125926eee9df",
       "scripts/schema-workspace/test/helpers.test.mjs": "0551367c902bce871b9682b8e3a883ef4e839e71326244d35cb7574a680ba27d",
-      "src/api.ts": "7a79e44d99fcfab1cfd5c91db899337b1b9b44b4667e945df4a71b0d6bc86d92",
+      "src/api.ts": "1136833c1e0bc6ad9079158a7a3a191855eeebe8cfc8c130dc6fe3024eac1189",
       "src/index.ts": "d940fa0c5211020fae288e31b5108b4974609ddc9da29b98a926f1f41b9a1572",
       "supabase/config.toml": "d08bc818a526927d776192c96919ef37eb85352088a02ebfacbdcd87bb7fd509",
       "supabase/tests/legacy_verification_withdrawal.sql": "4590702a9bfadcd48fb3bad488044521f721f3407835e130fc06f9ee1b25324a",
       "supabase/tests/verification_evaluation_dataset_manifest.sql": "315728d1eb025e0ca42142d1a2f87b2b7ea9929cd28c4792a6cb2a5e9cc310bb",
-      "workspace-enrichment/domains.yaml": "8f95c3ef0705618d2a44c212f524106f51a3bd0b2648fe4bfd73a166ba17e576",
+      "workspace-enrichment/domains.yaml": "39c679f7fa53be8ff6035cc562d7e9116ac523f5fb287613498104179d297939",
       "workspace-enrichment/queries.yaml": "e9f07a2b9dae006c70e6e7f1ce641b82af3ce83cccbd02033b568bb0764eae01",
       "workspace-enrichment/README.md": "aefc06053d815752effb08147104c98af9785e837c6339c0f803f2fa67c3cacb",
       "workspace-scopes/db-aware-research.json": "74d59b8e38d9bba439a6c26a60b11b2ea27e3c447ed443c3a30e1ab4e9657840",
-      "workspace.config.json": "85b9bf0ae66da1fcb42dc4b81b652b36d707118e0d37de4c6c515597b96b4707"
+      "workspace.config.json": "2997e10bd166c27d0b88ec6e3fd8108b6ce6a7ae060710fc5f0a0f111c635cfa"
     },
     "inventories": {}
   }

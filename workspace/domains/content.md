@@ -10,7 +10,7 @@ tasks: [build-evidence-packet, find-stale-facts, price-with-locator, talk-passag
 summary: "Faithful documents decomposed into typed units with stable logical keys; census before kind, digests anchored to units, refresh as data."
 provenance: model_assisted
 reviewed: null
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
 ---
 # Documents, typed units, census and digests
 

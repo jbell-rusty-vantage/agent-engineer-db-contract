@@ -1,14 +1,14 @@
 ---
 id: start
 kind: entry
-workspace_fingerprint: "sha256:cb1a65412d0fb43423d4f775d78507ab4b320e27f820adab0423446aac89f036"
-migration_head: "20261119122000"
-contract_version: "0.11.0"
+workspace_fingerprint: "sha256:db20bac4d9e82d9b94cd2f3b580d4c145bcc3820969fdd572c6e7868ecca53fd"
+migration_head: "20261120120000"
+contract_version: "0.12.0"
 scope: null
 ---
 # Start here
 
-AI Engineer database at head `20261119122000` (contract 0.11.0); generated from the catalog, `> curated` blocks are guidance.
+AI Engineer database at head `20261120120000` (contract 0.12.0); generated from the catalog, `> curated` blocks are guidance.
 
 ## Router: question shape → level → page
 

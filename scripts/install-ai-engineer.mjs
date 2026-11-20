@@ -18,7 +18,12 @@
 //                         KS_KNOWLEDGE_SEAL_RETIRE_KEY_IDS (the generator's install.env). --remote-reinstall
 //                         refuses SEAL_KEY_REQUIRED without a key unless --no-seal-key; local mode warns on stderr
 //   6. mission-control    MC common release via `mission-db plan/apply/verify` with the pinned target lock
-//   7. receipt            JSON receipt (no DSN, no secret); `changed: false` when the run applied nothing
+//   7. database-release   (VER-S1) stamp the release this database now is: the contract version, its migration head,
+//                         count and digest and the pinned components, from contract.version.json, through
+//                         util.stamp_database_release. Services read it with api.database_release() before they start.
+//                         Refuses RELEASE_RECORD_STALE when the record does not describe the chain just applied;
+//                         `unsupported` on a chain that predates the table; a repeat run stamps nothing
+//   8. receipt            JSON receipt (no DSN, no secret); `changed: false` when the run applied nothing
 //
 // Every step is idempotent on its own, so an interrupted run is completed by rerunning the same command. A state
 // lock (`install.lock`, pid inside) refuses a concurrent installer and is taken over when its owner is dead.
@@ -36,8 +41,10 @@
 //     --component-installation-id <uuid> --mc-installation-id <uuid> [--receipt <file>] [--state-dir <dir>] \
 //     [--seal-key-id <id> --seal-key-file <executor PKCS#8 PEM> [--seal-issuer <name>] [--retire-seal-key-ids <a,b>] | --no-seal-key] \
 //     [--ks-root <dir>] [--ks-component-root <dir>] [--mc-root <dir>] [--mc-lock <release.lock.json>] [--mc-release-root <dir>] \
-//     [--skip-mission-control] \
+//     [--skip-mission-control] [--release <version>] \
 //     [--interrupt-after <step>]
+//   --release <version> installs a named earlier release from releases/<version>.json (its chain only, digest checked);
+//   local disposable targets only. It is how an upgrade is proven: install the previous release, then the current one.
 //   node scripts/install-ai-engineer.mjs --remote-reinstall --target <target.toml> --confirm-target <ref>:<installation_id> \
 //     --component-installation-id <uuid> [--identity-evidence <json>] [--mc-installation-id <same as target>] \
 //     [--state-dir <dir>] [--receipt <file>] [--ks-root <dir>] [--mc-root <dir>] [--mc-lock <file>] [--mc-release-root <dir>] \
@@ -87,6 +94,26 @@ export const PINS = Object.freeze({
     writerVersion: "mission-control-runtime/1",
   },
 });
+// Mission Control's runtime roles are created by its component, after this repository's migrations on a fresh install,
+// so no migration can grant to them by name. The database-release step (and the lab stamp command) lets the ones that
+// exist ask for the release; the contract's own service roles hold their grant from the migration.
+export const RELEASE_READER_ROLES = Object.freeze(["mission_control_runtime", "mission_control_readonly"]);
+/** Grants EXECUTE on api.database_release() to the Mission Control runtime roles present; returns their names. */
+export async function grantReleaseReaders(client) {
+  const present = (await client.query("select rolname from pg_roles where rolname = any($1) order by 1", [[...RELEASE_READER_ROLES]])).rows.map((r) => r.rolname);
+  for (const role of present) await client.query(`grant execute on function api.database_release() to ${role}`);
+  return present;
+}
+/** The pins as a release records them (contract.version.json `components`); check-contract-version.mjs writes and checks it. */
+export function releaseComponents() {
+  return {
+    knowledge_verification: { version: PINS.component.version, digest: PINS.component.digest },
+    mission_control: {
+      version: PINS.missionControl.version, lock_sha256: `sha256:${PINS.missionControl.lockFileSha256}`,
+      reader_version: PINS.missionControl.readerVersion, writer_version: PINS.missionControl.writerVersion,
+    },
+  };
+}
 // Capability-role grants declared by 20261024010000_knowledge_component_binding.sql (the owner); verified here only.
 export const EXPECTED_GRANTS = Object.freeze([
   ["knowledge_verification_reader", "app_reader"], ["knowledge_verification_reader", "pipeline_agent"],
@@ -101,7 +128,7 @@ const WITHDRAWN = Object.freeze([
   "research.report_package_seal", "research.report_assessment", "research.report_ingestion_link",
   "knowledge_service.recovery_case",
 ]);
-const STEPS = ["preflight", "component", "domain-migrations", "custody-grants", "seal-key", "mission-control", "receipt"];
+const STEPS = ["preflight", "component", "domain-migrations", "custody-grants", "seal-key", "mission-control", "database-release", "receipt"];
 const DISPOSABLE_PROJECT = /^(?:disposable|vfy)-[a-z0-9][a-z0-9-]{5,63}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -180,7 +207,7 @@ export function assertDisposableWorkdir(workdir) {
   return { project, containerName };
 }
 
-function resolveDsn(workdir) {
+export function resolveDsn(workdir) {
   const out = supabase(["status", "-o", "env", "--workdir", workdir], { allowFailure: false }).stdout;
   const line = out.split(/\r?\n/).find((l) => l.startsWith("DB_URL="));
   if (!line) throw new Refused("DSN_UNRESOLVED", "supabase status did not report DB_URL");
@@ -190,7 +217,7 @@ function resolveDsn(workdir) {
   return { dsn, host: url.hostname === "localhost" ? "127.0.0.1" : url.hostname, port: url.port || "5432", user: decodeURIComponent(url.username), database: url.pathname.slice(1) };
 }
 
-async function withClient(dsn, fn) {
+export async function withClient(dsn, fn) {
   const { default: pg } = await import("pg");
   const client = new pg.Client({ ...pgConfig(dsn), application_name: "install-ai-engineer" });
   await client.connect();
@@ -280,7 +307,15 @@ export async function domainMigrations(context) {
   // migrationsRoot is this repository; only tests substitute a fixture tree to exercise the remote CLI path.
   const migrationsRoot = context.migrationsRoot ?? repository;
   const source = join(migrationsRoot, "supabase", "migrations");
-  const repoFiles = migrationFiles(migrationsRoot);
+  // --release <version>: only that release's chain (files up to its head), and its bytes must be the recorded ones.
+  const named = context.release;
+  const repoFiles = migrationFiles(migrationsRoot).filter((f) => !named || f.slice(0, 14) <= named.migration_head.slice(0, 14));
+  if (named) {
+    const lines = repoFiles.map((f) => `${f}:${sha256(readFileSync(join(source, f), "utf8").replaceAll("\r\n", "\n"))}`);
+    if (repoFiles.length !== named.migrations || `sha256:${sha256(lines.join("\n"))}` !== named.migrations_sha256) {
+      throw new Refused("RELEASE_CHAIN_DIFFERS", `release ${named.version} recorded ${named.migrations} migrations ${named.migrations_sha256}; this checkout holds ${repoFiles.length} up to its head`);
+    }
+  }
   let copied = 0;
   if (!context.remote) {
     const destination = join(context.workdir, "supabase", "migrations");
@@ -415,6 +450,32 @@ export function sealKey(context) {
   if (result.status !== 0) throw new Error(`knowledge-db seal-key exited ${result.status}: ${scrubOutput((result.stderr || "").slice(-400), [context.target.dsn])}`);
   const receipt = lastJson(result.stdout);
   return { status: receipt.status, details: { keyId: receipt.keyId, issuer: receipt.issuer, publicKeySha256: receipt.publicKeySha256, registered: receipt.registered, retired: receipt.retired } };
+}
+
+/** Step 7: the database states its release (util.database_release), from the record that describes the chain just applied. */
+export async function databaseRelease(context) {
+  const root = context.migrationsRoot ?? repository;
+  const { RECORD_FILE, migrationChain } = await import("./check-contract-version.mjs");
+  let record = context.release;
+  if (!record) {
+    const recordPath = join(root, RECORD_FILE);
+    if (!existsSync(recordPath)) return { status: "skipped", details: { reason: `${RECORD_FILE} is not in this tree` } };
+    record = JSON.parse(readFileSync(recordPath, "utf8"));
+    const chain = migrationChain(root);
+    if (record.migration_head !== chain.head?.replace(/\.sql$/, "") || record.migrations !== chain.count || record.migrations_sha256 !== `sha256:${chain.sha256}`) {
+      throw new Refused("RELEASE_RECORD_STALE", `${RECORD_FILE} names ${record.version} at ${record.migration_head}; the chain ends at ${chain.head} (cut a version: check-contract-version.mjs --write)`);
+    }
+  }
+  return withClient(context.target.dsn, async (c) => {
+    const supported = (await c.query("select to_regprocedure('util.stamp_database_release(text,text,integer,text,jsonb,text)') is not null as ok")).rows[0].ok;
+    if (!supported) return { status: "unsupported", details: { release: record.version, reason: "this chain predates util.database_release" } };
+    const components = record.components ?? releaseComponents();
+    const stamp = (await c.query("select util.stamp_database_release($1, $2, $3, $4, $5::jsonb, $6) as r",
+      [record.version, record.migration_head, record.migrations, record.migrations_sha256, JSON.stringify(components), "install-ai-engineer.mjs"])).rows[0].r;
+    const readers = await grantReleaseReaders(c);
+    const release = (await c.query("select api.database_release() as r")).rows[0].r;
+    return { status: stamp.stamped ? "applied" : "current", details: { release: release.release, state: release.state, releaseSeq: Number(stamp.release_seq), observed: release.observed, missionControlReaders: readers } };
+  });
 }
 
 function writeMcTarget(context) {
@@ -590,6 +651,14 @@ export async function main(argv = process.argv.slice(2)) {
   const skipMissionControl = argv.includes("--skip-mission-control");
   if (!UUID.test(componentInstallationId ?? "")) throw new Refused("INSTALLATION_ID_REQUIRED", "--component-installation-id <uuid>");
   const interruptAfter = option(argv, "interrupt-after");
+  const releaseName = option(argv, "release");
+  if (releaseName && remoteMode) throw new Refused("RELEASE_LOCAL_ONLY", "--release installs a named earlier release on a disposable local target only");
+  let release = null;
+  if (releaseName) {
+    const releasePath = join(repository, "releases", `${releaseName}.json`);
+    if (!/^[0-9]+\.[0-9]+\.[0-9]+$/.test(releaseName) || !existsSync(releasePath)) throw new Refused("RELEASE_UNKNOWN", `releases/${releaseName}.json`);
+    release = JSON.parse(readFileSync(releasePath, "utf8"));
+  }
   if (interruptAfter && !STEPS.includes(interruptAfter)) throw new Refused("UNKNOWN_STEP", interruptAfter);
   const ksRoot = resolve(option(argv, "ks-root") ?? join(repository, "..", "..", "platform", "knowledge-services"));
   const mcRoot = resolve(option(argv, "mc-root") ?? join(repository, "..", "..", "platform", "mission-control"));
@@ -632,6 +701,7 @@ export async function main(argv = process.argv.slice(2)) {
       missionDb: missionDbPath(mcRoot),
       target: { ...endpoint, project, containerName },
       sealKey: sealKeyInputs,
+      release,
     };
     const steps = [];
     const handlers = {
@@ -641,6 +711,7 @@ export async function main(argv = process.argv.slice(2)) {
       "custody-grants": () => custodyGrants(context),
       "seal-key": () => sealKey(context),
       "mission-control": () => (skipMissionControl ? { status: "skipped", details: { reason: "--skip-mission-control" } } : missionControl(context)),
+      "database-release": () => databaseRelease(context),
     };
     journal(stateDir, { event: "start", pid: process.pid, resumedAfterInterruption: lock.tookOver, mode: remote ? "remote-reinstall" : "disposable" });
     for (const name of STEPS.slice(0, -1)) {
