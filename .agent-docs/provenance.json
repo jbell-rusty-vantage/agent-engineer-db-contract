@@ -26,7 +26,7 @@
   "sourceState": "Filesystem snapshot; may include uncommitted changes. No deployment or commit claim.",
   "inputs": {
     ".agent-docs/config.json": "f00ae37a619e42f4ddde5784d4842a157b7e59e8cffc731a2517ead4d4e3fea5",
-    "README.md": "16bd6c2a424c0155575ed37474661c9d3cb1aaf3a8f562e0af6cce58ebf8f550",
+    "README.md": "514ebac589408ba9ed750122149a33c5af89c277083dfdea5a6d548a25786000",
     "docs/SCHEMA_WORKSPACE_MATERIALIZATION_SPEC.md": "46c0ed1517139c8d7ce1abacea0efc2322f840428a528e95408832fc62aac0b8",
     "docs/knowledge-model/MIGRATION-RESULT.md": "b236fb2423c0faf887749b03835cde6ade5b152bf851eb8527a664d6246e12e6",
     "docs/knowledge-model/SCHEMA-SUMMARY.md": "e94b40020ff3d1d3acb50406b2b18df620cb5f564854aff35816433a0526a703",

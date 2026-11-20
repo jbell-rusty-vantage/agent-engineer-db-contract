@@ -79,6 +79,10 @@ node scripts/install-ai-engineer.mjs --workdir <disposable workdir> --release 0.
 A stamp may not claim a head the database is not at. The lab is built from drafts, so its migration count differs from
 the chain's; the state is decided by the head.
 
+Proven on 2026-11-20 on two throwaway local stacks: `--release 0.11.0` from empty, then the current release (one
+migration applied, stamped 0.12.0, state `current`), then a repeat with `changed: false`; and the current release from
+empty. The two schemas (`pg_dump --schema-only`) are identical. CI does not run this upgrade proof yet.
+
 <a id="check"></a>
 ## The startup check
 
