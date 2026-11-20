@@ -98,6 +98,12 @@ own tests.
 
 `AIENG_DB_RELEASE_CHECK` sets the mode: `enforce` (default), `warn` (start and log the verdict), `off` (do not ask).
 
+One pre-check sits outside the rule. A consumer that can be bound to a database with no AI Engineer contract in it
+(no `api` schema: Mission Control's own local database, or a component-only database in a drill) reports
+`not_applicable` and starts. A database that has the `api` schema but no `api.database_release()` is `unknown`.
+Mission Control and Knowledge Services apply the pre-check; the AI Engineer service always needs the contract and
+does not.
+
 <a id="consumers"></a>
 ## Consumers (as of 2026-11-20)
 

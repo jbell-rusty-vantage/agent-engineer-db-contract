@@ -16,6 +16,10 @@
 //       record. Refuses unless the database head is the record's head. Disposable local projects only.
 //
 // A range is an exact version (X.Y.Z) or ">=A.B.C <D.E.F". Until 1.0.0 every consumer pins the exact version.
+//
+// One pre-check sits outside the rule: a consumer that can be bound to a database with no AI Engineer contract in it
+// (no `api` schema: Mission Control's own local database, a component-only database in a drill) reports
+// `not_applicable` and starts. A database that has the `api` schema but no api.database_release() is `unknown`.
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -75,6 +79,16 @@ export function checkMode(env = process.env) {
   return mode;
 }
 
+/** Whether this database holds the AI Engineer contract at all (its `api` schema exists). */
+export async function holdsContract(client) {
+  return (await client.query("select to_regnamespace('api') is not null as ok")).rows[0].ok;
+}
+
+/** The pre-check's verdict for a database without the contract: nothing to check, the consumer starts. */
+export function notApplicable(range) {
+  return { verdict: "not_applicable", start: true, warning: false, range, release: null, state: null, reason: "this database does not hold the AI Engineer contract (no api schema)" };
+}
+
 /** What the database says: the JSON of api.database_release(), or null when the function is not there. */
 export async function readDatabaseRelease(client) {
   const present = (await client.query("select to_regprocedure('api.database_release()') is not null as ok")).rows[0].ok;
@@ -110,8 +124,11 @@ async function show(argv) {
   const { installer, dsn } = await target(argv, { disposableOnly: false });
   const record = loadRecord();
   const range = option(argv, "range") ?? record.version;
-  const database = await installer.withClient(dsn, readDatabaseRelease);
-  const verdict = releaseVerdict(database, range);
+  const { contract, database } = await installer.withClient(dsn, async (client) => {
+    const present = await holdsContract(client);
+    return { contract: present, database: present ? await readDatabaseRelease(client) : null };
+  });
+  const verdict = contract ? releaseVerdict(database, range) : notApplicable(range);
   process.stdout.write(`${JSON.stringify({ record: { version: record.version, migration_head: record.migration_head, components: record.components ?? null }, database, verdict }, null, 2)}\n`);
   return verdict.start ? 0 : 1;
 }

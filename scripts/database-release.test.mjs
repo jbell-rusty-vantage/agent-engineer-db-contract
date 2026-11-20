@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { CHECK_VARIABLE, RELEASE_FORMAT, checkMode, compareVersions, inRange, releaseVerdict } from "./database-release.mjs";
+import { CHECK_VARIABLE, RELEASE_FORMAT, checkMode, compareVersions, inRange, notApplicable, releaseVerdict } from "./database-release.mjs";
 
 const repository = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const cases = JSON.parse(readFileSync(join(repository, "release-check.cases.json"), "utf8"));
@@ -30,6 +30,13 @@ test("every shared verdict case holds", () => {
     assert.equal(verdict.warning, c.warning, c.name);
     assert.ok(verdict.reason.length > 0, c.name);
   }
+});
+
+test("a database without the contract is not applicable and the consumer starts", () => {
+  const verdict = notApplicable("0.12.0");
+  assert.equal(verdict.verdict, "not_applicable");
+  assert.equal(verdict.start, true);
+  assert.equal(verdict.warning, false);
 });
 
 test("the mode defaults to enforce and refuses an unknown value", () => {
